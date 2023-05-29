@@ -38,7 +38,6 @@ function FolderContent() {
     };
 
 
-
     return (
         <div>
             <input type="text" value={folderPath} onChange={handlePathChange} />

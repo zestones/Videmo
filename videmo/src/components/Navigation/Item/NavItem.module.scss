@@ -1,0 +1,32 @@
+.navItem {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+
+    .navIconContainer.active {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+
+        width: 50%;
+        max-width: 150px;
+        min-width: 100px;
+
+        background-color: rgba(217, 217, 217, 0.21);
+        border-radius: 32px;
+
+        .navIcon {
+            font-size: 1.5rem;
+        }
+    }
+
+    .navLabel {
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-top: 0.25rem;
+    }
+}

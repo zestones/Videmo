@@ -10,7 +10,6 @@ const protocol = electron.protocol;
 
 // Module to handle file system paths
 const path = require('path');
-const url = require('url');
 const fs = require('fs');
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -22,7 +21,7 @@ function createWindow() {
     // Create the browser window.
     mainWindow = new BrowserWindow({
         width: 1000,
-        height: 800,
+        height: 750,
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'), // use a preload script
             nodeIntegration: false,
