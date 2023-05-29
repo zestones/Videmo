@@ -10,11 +10,10 @@ function NavItem({ item, activeItem, handleItemClick }) {
     return (
         <li
             className={`${styles.navItem} ${activeItem === item ? styles.active : ""}`}
-            onClick={handleClick}
         >
             <div
-                className={`${styles.navIconContainer} ${activeItem === item ? styles.active : ""
-                    }`}
+                className={`${styles.navIconContainer} ${activeItem === item ? styles.active : ""}`}
+                onClick={handleClick}
             >
                 <img className={styles.navIcon} src={`/icons/${item}.png`} alt={item} />
             </div>

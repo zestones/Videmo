@@ -11,53 +11,31 @@ function Navigation() {
         setActiveItem(item);
     };
 
+    const itemList = {
+        Accueil: "Home Content",
+        Bibliotheque: "Library Content",
+        Explorer: "Extension Content",
+        Historique: "History Content",
+        Plus: <FolderContent />,
+    };
+
     const renderContent = () => {
         // Render different content based on the active item
-        switch (activeItem) {
-            case "home":
-                return <p>Home Content</p>;
-            case "library":
-                return <p>Library Content</p>;
-            case "extension":
-                return <p>Extension Content</p>;
-            case "history":
-                return <p>History Content</p>;
-            case "more":
-                return <FolderContent />;
-            default:
-                return null;
-        }
+        return itemList[activeItem] || null;
     };
 
     return (
         <div>
             <nav className={styles.nav}>
                 <ul className={styles.navList}>
-                    <NavItem
-                        item="Accueil"
-                        activeItem={activeItem}
-                        handleItemClick={handleItemClick}
-                    />
-                    <NavItem
-                        item="Bibliotheque"
-                        activeItem={activeItem}
-                        handleItemClick={handleItemClick}
-                    />
-                    <NavItem
-                        item="Explorer"
-                        activeItem={activeItem}
-                        handleItemClick={handleItemClick}
-                    />
-                    <NavItem
-                        item="Historique"
-                        activeItem={activeItem}
-                        handleItemClick={handleItemClick}
-                    />
-                    <NavItem
-                        item="Plus"
-                        activeItem={activeItem}
-                        handleItemClick={handleItemClick}
-                    />
+                    {Object.entries(itemList).map(([key, value]) => (
+                        <NavItem
+                            key={key}
+                            item={key}
+                            activeItem={activeItem}
+                            handleItemClick={handleItemClick}
+                        />
+                    ))}
                 </ul>
             </nav>
             <div className={styles.content}>{renderContent()}</div>
