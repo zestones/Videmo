@@ -3,9 +3,13 @@ const electron = require('electron');
 const app = electron.app;
 // Module to create native browser window.
 const BrowserWindow = electron.BrowserWindow;
+// Module to communicate with the renderer process
+const ipcMain = electron.ipcMain;
 
+// Module to handle file system paths
 const path = require('path');
 const url = require('url');
+const fs = require('fs');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -13,7 +17,15 @@ let mainWindow;
 
 function createWindow() {
     // Create the browser window.
-    mainWindow = new BrowserWindow({ width: 800, height: 600 });
+    mainWindow = new BrowserWindow({
+        width: 1000,
+        height: 800,
+        webPreferences: {
+            preload: path.join(__dirname, 'preload.js'), // use a preload script
+            nodeIntegration: false,
+            contextIsolation: true
+        }
+    });
 
     // and load the index.html of the app.
     mainWindow.loadURL('http://localhost:3000');
@@ -50,6 +62,17 @@ app.on('activate', function () {
     if (mainWindow === null) {
         createWindow()
     }
+});
+
+
+ipcMain.on('getFolderContents', (event, folderPath) => {
+    fs.readdir(folderPath, (err, files) => {
+        if (err) {
+            event.reply('folderContents', { success: false, error: err.message, files: [] });
+        } else {
+            event.reply('folderContents', { success: true, error: null, files });
+        }
+    });
 });
 
 // In this file you can include the rest of your app's specific main process
