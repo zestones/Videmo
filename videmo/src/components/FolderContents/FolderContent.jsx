@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 function FolderContent() {
     const [folderPath, setFolderPath] = useState('');
     const [files, setFiles] = useState([]);
+    const defaultCoverName = "Cover";
 
     const handlePathChange = (event) => {
         setFolderPath(event.target.value);
@@ -24,13 +25,30 @@ function FolderContent() {
         });
     }, []);
 
+    const getFileName = (filePath) => {
+        const fileName = filePath.split('\\').pop().split('/').pop();
+        return fileName;
+    }
+
+    const getCoverPath = (filePath) => {
+        const fileName = getFileName(filePath);
+        // Construct the file path using the custom protocol 'app://'
+        const coverPath = `app:///${folderPath}/${filePath}/${defaultCoverName}/${fileName}.jpg`;
+        return coverPath;
+    };
+
+
+
     return (
         <div>
             <input type="text" value={folderPath} onChange={handlePathChange} />
             <button onClick={handleRetrieveClick}>Retrieve Folder Content</button>
             <ul>
                 {files.map((file) => (
-                    <li key={file}>{file}</li>
+                    <li key={file}>
+                        <img src={getCoverPath(file)} alt={getCoverPath(file)} />
+                        <p>{getFileName(file)}</p>
+                    </li>
                 ))}
             </ul>
         </div>

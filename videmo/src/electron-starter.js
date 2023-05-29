@@ -5,6 +5,8 @@ const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
 // Module to communicate with the renderer process
 const ipcMain = electron.ipcMain;
+// Module to define custom protocol
+const protocol = electron.protocol;
 
 // Module to handle file system paths
 const path = require('path');
@@ -14,6 +16,7 @@ const fs = require('fs');
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
+
 
 function createWindow() {
     // Create the browser window.
@@ -65,15 +68,31 @@ app.on('activate', function () {
 });
 
 
+// Register a custom protocol to allow loading local resources
+app.whenReady().then(() => {
+    protocol.registerFileProtocol('app', (request, callback) => {
+        const filePath = request.url.replace('app:///', '');
+        const resolvedPath = path.normalize(filePath);
+        callback(resolvedPath);
+    });
+});
+
+
+// Listen for async message from renderer process
+// TODO: Store the folder path in a DB or file,
+// TODO: so that it can be retrieved when the app is restarted
 ipcMain.on('getFolderContents', (event, folderPath) => {
     fs.readdir(folderPath, (err, files) => {
         if (err) {
             event.reply('folderContents', { success: false, error: err.message, files: [] });
-        } else {
+        }
+        else {
             event.reply('folderContents', { success: true, error: null, files });
         }
     });
 });
+
+
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
