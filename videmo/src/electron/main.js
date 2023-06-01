@@ -80,18 +80,33 @@ app.whenReady().then(() => {
 // Listen for async message from renderer process
 // TODO: Store the folder path in a DB or file,
 // TODO: so that it can be retrieved when the app is restarted
-ipcMain.on('getFolderContents', (event, folderPath) => {
-    fs.readdir(folderPath, (err, files) => {
+ipcMain.on('getFolderContents', (event, { folderPath, coverFolder }) => {
+    fs.readdir(folderPath, (err, contents) => {
         if (err) {
-            event.reply('folderContents', { success: false, error: err.message, files: [] });
+            event.reply('folderContents', { success: false, error: err.message, folderContents: [{}] });
         }
         else {
-            event.reply('folderContents', { success: true, error: null, files });
+            // create an array of objects with the file name and path
+            const folderContents = contents.map((folder) => { return { cover: getCoverImage(folderPath, coverFolder, folder), path: path.join(folderPath, folder) } });
+            event.reply('folderContents', { success: true, error: null, folderContents: folderContents });
         }
     });
 });
 
 
+function getCoverImage(folderPath, coverFolder, fileNameWithoutExtension) {
+    const supportedExtensions = ['.jpg', '.jpeg', '.png', '.gif'];
+
+    // Iterate through supported extensions and check if the image file exists
+    for (const extension of supportedExtensions) {
+        const imagePath = path.join(folderPath, fileNameWithoutExtension, coverFolder, `${fileNameWithoutExtension}${extension}`);
+        if (fs.existsSync(imagePath)) {
+            
+            return imagePath;
+        }
+    }
+    return "default.png";
+}
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
