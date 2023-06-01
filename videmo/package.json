@@ -11,7 +11,7 @@
     "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4"
   },
-  "main": "src/electron-starter.js",
+  "main": "src/electron/main.js",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
