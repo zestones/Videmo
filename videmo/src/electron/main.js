@@ -7,6 +7,8 @@ const BrowserWindow = electron.BrowserWindow;
 const ipcMain = electron.ipcMain;
 // Module to define custom protocol
 const protocol = electron.protocol;
+// Module to display native system dialogs for opening and saving files, alerting, etc.
+const dialog = electron.dialog;
 
 // Module to handle file system paths
 const path = require('path');
@@ -101,12 +103,30 @@ function getCoverImage(folderPath, coverFolder, fileNameWithoutExtension) {
     for (const extension of supportedExtensions) {
         const imagePath = path.join(folderPath, fileNameWithoutExtension, coverFolder, `${fileNameWithoutExtension}${extension}`);
         if (fs.existsSync(imagePath)) {
-            
             return imagePath;
         }
     }
     return "default.png";
 }
+
+ipcMain.on("openFolderDialog", async (event) => {
+    try {
+        const result = await dialog.showOpenDialog({
+            properties: ["openDirectory"],
+        });
+
+        if (!result.canceled) {
+            const selectedPath = result.filePaths[0];
+            event.reply("folderSelected", { success: true, error: null, folderPath: selectedPath });
+        } 
+        else {
+            event.reply("folderSelected", { success: false, error: "No folder selected", folderPath: null });
+        }
+    } catch (error) {
+        event.reply("folderSelected", { success: false, error: error.message, folderPath: null });
+    }
+});
+
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.

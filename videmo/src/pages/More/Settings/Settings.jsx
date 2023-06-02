@@ -5,16 +5,29 @@ import styles from "./Settings.module.scss";
 
 
 function Settings() {
+    // The purpose of this state is to trigger a re-render when the folder path changes
     const [folderPath, setFolderPath] = useState("");
     const [folderManager] = useState(() => new FolderManager());
     const [folderContents, setFolderContents] = useState([]);
 
-    const handlePathChange = (event) => {
-        setFolderPath(event.target.value);
-        folderManager.setFolderPath(event.target.value);
+    const handlePathChange = async () => {
+        console.log("handlePathChange");
+        // Send a message to the main process to open a folder dialog
+        window.api.send("openFolderDialog");
+
+        // Wait for a response from the main process with the selected folder path
+        await window.api.receive("folderSelected", (data) => {
+            if (data.success) {
+                setFolderPath(data.folderPath); // Update the state with the selected folder path to trigger a re-render
+                folderManager.setFolderPath(data.folderPath);
+            }
+        });
     };
 
+
     const handleRetrieveClick = () => {
+        console.log("handleRetrieveClick");
+        console.log(folderManager.folderPath);
         folderManager.handleRetrieveClick();
     };
 
@@ -35,13 +48,10 @@ function Settings() {
         <div className={styles.settings}>
             <h1>Settings</h1>
             <div>
-                <input
-                    type="text"
-                    value={folderPath}
-                    onChange={handlePathChange}
-                    style={{ color: "black" }}
-                />
-                <button onClick={handleRetrieveClick}>Retrieve Folder Content</button>
+                <button onClick={handlePathChange}>Select Folder</button>
+                {folderPath && (
+                    <button onClick={handleRetrieveClick}>Retrieve Folder Content</button>
+                )}
                 <ul>
                     {folderContents.map((folderContent) => (
                         <li key={folderContent.path}>
