@@ -1,4 +1,10 @@
+// Description: Main process of the Electron app.
+// It is responsible for creating the browser window and for communicating with the renderer process.
+
 const electron = require('electron');
+const path = require('path');
+const fs = require('fs');
+
 // Module to control application life.
 const app = electron.app;
 // Module to create native browser window.
@@ -10,9 +16,6 @@ const protocol = electron.protocol;
 // Module to display native system dialogs for opening and saving files, alerting, etc.
 const dialog = electron.dialog;
 
-// Module to handle file system paths
-const path = require('path');
-const fs = require('fs');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -80,8 +83,7 @@ app.whenReady().then(() => {
 
 
 // Listen for async message from renderer process
-// TODO: Store the folder path in a DB or file,
-// TODO: so that it can be retrieved when the app is restarted
+
 ipcMain.on('getFolderContents', (event, { folderPath, coverFolder }) => {
     fs.readdir(folderPath, (err, contents) => {
         if (err) {
@@ -127,6 +129,8 @@ ipcMain.on("openFolderDialog", async (event) => {
     }
 });
 
+// Import the IPC main event handlers
+require('./api/api');
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.

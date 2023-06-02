@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from "react";
 
-import FolderManager from "../../../utilities/local/FolderManager";
+import FolderManager from "../../../utilities/folderManager/FolderManager";
 import styles from "./Settings.module.scss";
 
+
+import Extension from "../../../services/api/extension/Extension";
 
 function Settings() {
     // The purpose of this state is to trigger a re-render when the folder path changes
     const [folderPath, setFolderPath] = useState("");
     const [folderManager] = useState(() => new FolderManager());
+    const [extension] = useState(() => new Extension());
+
     const [folderContents, setFolderContents] = useState([]);
 
     const handlePathChange = async () => {
@@ -20,10 +24,10 @@ function Settings() {
             if (data.success) {
                 setFolderPath(data.folderPath); // Update the state with the selected folder path to trigger a re-render
                 folderManager.setFolderPath(data.folderPath);
+                extension.createExtension(data.folderPath, "TEST");
             }
         });
     };
-
 
     const handleRetrieveClick = () => {
         console.log("handleRetrieveClick");

@@ -4,6 +4,8 @@
     --primary-color-light: #4a4e5a;
     --primary-color-dark: #303644;
 
+    --secondary-color: #E9F6FF;
+
     --black-color: #000000;
     --white-color: #ffffff;
     --gray-1: #fafafa;
@@ -53,8 +55,19 @@ ul {
 
 button {
 	border: none;
-	background: none;
 	cursor: pointer;
+    color: var(--primary-color);
+    background-color: var(--secondary-color);
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    font-weight: 700;
+    transition: all 0.3s ease-in-out;
+}
+
+button:hover {
+    background-color: var(--primary-color-light);
+    color: var(--white-color);
 }
 
 input {
