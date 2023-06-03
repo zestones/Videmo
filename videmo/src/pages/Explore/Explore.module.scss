@@ -1,22 +1,16 @@
 .container {
-
-    display: flex;
-    flex-direction: column;
-    width: 80%;
-    margin: 0 auto;
-
+    margin: 12px auto;
+    width: 90%;
+    overflow-y: scroll;
+    height: 90vh;
 
     .cardsContainer {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-between;
         margin-top: 2rem;
 
         .cardContainer {
-
-            margin-bottom: 2rem;
             display: flex;
-            justify-content: space-between;
+            justify-content: left;
+            
             flex-wrap: wrap;
         }
     }

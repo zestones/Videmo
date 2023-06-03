@@ -33,6 +33,27 @@ code {
         monospace;
 }
 
+/* Scrollbar Styles */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--primary-color-darker);
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: var(--secondary-color);
+    border-radius: 6px;
+    border: 3px solid var(--primary-color);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: var(--primary-color-light);
+}
+
+
+
 /* ************************************ */
 /* ********** GLOBAL STYLES *********** */
 /* ************************************ */

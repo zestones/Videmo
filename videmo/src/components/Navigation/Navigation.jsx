@@ -32,7 +32,7 @@ function Navigation({ onPageTitleChange, searchValue }) {
     };
 
     return (
-        <div>
+        <>
             <nav className={styles.nav}>
                 <ul className={styles.navList}>
                     {Object.entries(itemList).map(([key, value]) => (
@@ -46,8 +46,7 @@ function Navigation({ onPageTitleChange, searchValue }) {
                 </ul>
             </nav>
             <div className={styles.content}>{renderContent()}</div>
-
-        </div>
+        </>
     );
 }
 
