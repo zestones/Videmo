@@ -6,6 +6,9 @@ import FolderManager from "../../utilities/folderManager/FolderManager";
 // Pages
 import Source from "./Source/Source";
 
+// Components
+import Card from "../../components/Card/Card";
+
 // Styles
 import styles from "./Explore.module.scss";
 
@@ -56,14 +59,11 @@ function Explore({ searchValue }) {
                 <div className={styles.cardsContainer}>
                     <ul className={styles.cardContainer}>
                         {filteredFolderContents.map((folderContent) => (
-                            <li key={folderContent.path} className={styles.card}>
-                                <img
-                                    className={styles.cardImage}
-                                    src={folderManager.getCoverImage(folderContent.cover)}
-                                    alt={folderManager.getFileName(folderContent.path)}
-                                />
-                                <p className={styles.cardTitle}>{folderManager.getFileName(folderContent.path)}</p>
-                            </li>
+                            <Card
+                                link={folderContent.path}
+                                title={folderManager.getFileName(folderContent.path)}
+                                image={folderManager.getCoverImage(folderContent.cover)}
+                            />
                         ))}
                     </ul>
                 </div>
