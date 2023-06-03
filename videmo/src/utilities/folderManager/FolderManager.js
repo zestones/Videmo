@@ -16,7 +16,7 @@ class FolderManager {
         const folderPath = this.folderPath;
         const coverFolder = this.defaultCoverName;
 
-        window.api.send("getFolderContents", { folderPath, coverFolder});
+        window.api.send("getFolderContents", { folderPath, coverFolder });
 
         // Listen for the response from the main Electron process
         window.api.receive("folderContents", (data) => this.handleFolderContents(data));
@@ -40,6 +40,22 @@ class FolderManager {
     getCoverImage(coverImage) {
         // Construct the file path using the custom protocol 'app://'
         return `app:///${coverImage}`;
+    }
+
+    openDialogWindow() {
+        // Send a message to the main process to open a folder dialog
+        window.api.send("openFolderDialog");
+
+        // Create a promise to handle the response from window.api.receive
+        return new Promise((resolve, reject) => {
+            window.api.receive("folderSelected", (data) => {
+                if (data.success) {
+                    resolve(data.folderPath);
+                } else {
+                    reject(data.error);
+                }
+            });
+        });
     }
 
     // Register a listener to be notified when files are updated

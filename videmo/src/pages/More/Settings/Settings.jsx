@@ -1,39 +1,41 @@
-import React, { useState, useEffect } from "react";
-
+import React, { useState, useEffect, useMemo } from "react";
 import FolderManager from "../../../utilities/folderManager/FolderManager";
 import styles from "./Settings.module.scss";
-
-
-import Extension from "../../../services/api/extension/Extension";
+import ExtensionApi from "../../../services/api/extension/ExtensionApi";
 
 function Settings() {
     // The purpose of this state is to trigger a re-render when the folder path changes
     const [folderPath, setFolderPath] = useState("");
-    const [folderManager] = useState(() => new FolderManager());
-    const [extension] = useState(() => new Extension());
 
+    const [folderManager] = useState(() => new FolderManager());
     const [folderContents, setFolderContents] = useState([]);
 
-    const handlePathChange = async () => {
-        console.log("handlePathChange");
-        // Send a message to the main process to open a folder dialog
-        window.api.send("openFolderDialog");
+    const extensionApi = useMemo(() => new ExtensionApi(), []); // Memoize the extensionApi instance
+    const [extensions, setExtensions] = useState([]);
 
-        // Wait for a response from the main process with the selected folder path
-        await window.api.receive("folderSelected", (data) => {
-            if (data.success) {
-                setFolderPath(data.folderPath); // Update the state with the selected folder path to trigger a re-render
-                folderManager.setFolderPath(data.folderPath);
-                extension.createExtension(data.folderPath, "TEST");
-            }
-        });
+    const handlePathChange = () => {
+
+        // Open the dialog window to select a folder
+        folderManager.openDialogWindow()
+            .then((path) => {
+                setFolderPath(path); // Update the state with the selected folder path to trigger a re-render
+                folderManager.setFolderPath(path);
+                extensionApi.createExtension(path, "OKAY")
+                .then((link) => {
+                        console.log(link);
+                        setExtensions([...extensions, link]);
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                    });
+            })
+            .catch((error) => {
+                console.error(error);
+            });
     };
 
-    const handleRetrieveClick = () => {
-        console.log("handleRetrieveClick");
-        console.log(folderManager.folderPath);
-        folderManager.handleRetrieveClick();
-    };
+
+    const handleRetrieveClick = () => folderManager.handleRetrieveClick();
 
     useEffect(() => {
         // Register the listener when the component mounts
@@ -48,11 +50,34 @@ function Settings() {
         };
     }, [folderManager]); // Empty dependency array ensures that the effect runs only once
 
+    useEffect(() => {
+        extensionApi.readExtension()
+            .then((data) => {
+                console.log(data);
+                setExtensions(data);
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+    }, [extensionApi]);
+
+
     return (
         <div className={styles.settings}>
             <h1>Settings</h1>
             <div>
-                <button onClick={() => extension.readExtension()} >Read Extension</button>
+                <h2>List of local source folders</h2>
+                <ul>
+                    {extensions &&
+                        extensions.map((extension) => (
+                            <li key={extension.path}>
+                                <p>{extension.name}</p>
+                            </li>
+                        ))}
+                </ul>
+            </div>
+
+            <div>
                 <button onClick={handlePathChange}>Select Folder</button>
                 {folderPath && (
                     <button onClick={handleRetrieveClick}>Retrieve Folder Content</button>
@@ -60,7 +85,10 @@ function Settings() {
                 <ul>
                     {folderContents.map((folderContent) => (
                         <li key={folderContent.path}>
-                            <img src={folderManager.getCoverImage(folderContent.cover)} alt={folderManager.getFileName(folderContent.path)} />
+                            <img
+                                src={folderManager.getCoverImage(folderContent.cover)}
+                                alt={folderManager.getFileName(folderContent.path)}
+                            />
                             <p>{folderManager.getFileName(folderContent.path)}</p>
                         </li>
                     ))}
