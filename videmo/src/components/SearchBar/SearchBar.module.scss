@@ -1,0 +1,37 @@
+.searchBar {
+    display: flex;
+    align-items: center;
+
+    .searchIcon {
+        cursor: pointer;
+        width: 1.5rem;
+    }
+
+    .searchInput {
+        padding: 0.5rem;
+        margin-right: 1rem;
+
+        border: none;
+        border-bottom: 1px solid var(--gray-3);
+
+        background-color: var(--primary-color);
+        color: var(--white-color);
+        width: 0;
+
+        &.active {
+            display: block;
+            width: 12rem;
+            animation: expand 0.5s ease forwards;
+
+            @keyframes expand {
+                0% {
+                    width: 0;
+                }
+
+                100% {
+                    width: 12rem;
+                }
+            }
+        }
+    }
+}

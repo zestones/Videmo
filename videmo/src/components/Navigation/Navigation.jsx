@@ -10,11 +10,12 @@ import Explore from '../../pages/Explore/Explore';
 // Styles
 import styles from './Navigation.module.scss';
 
-function Navigation() {
+function Navigation({ onPageTitleChange }) {
     const [activeItem, setActiveItem] = useState('Accueil');
 
     const handleItemClick = (item) => {
         setActiveItem(item);
+        onPageTitleChange(item); // Invoke the callback with the new title
     };
 
     const itemList = {

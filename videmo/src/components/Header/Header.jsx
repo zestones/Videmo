@@ -5,10 +5,10 @@ import React from "react";
 import styles from "./Header.module.scss";
 
 
-function Header({title}) {
+function Header({ children }) {
     return (
         <header className={styles.header}>
-            <h1>{title}</h1>
+            {children}
         </header>
     );
 }

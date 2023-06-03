@@ -6,4 +6,7 @@
     background-color: var(--primary-color);
     color: var(--white-color);
     border-bottom: 1px solid var(--white-color);
+    position: sticky;
+    top: 0;
+    z-index: 99999;
 }
