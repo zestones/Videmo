@@ -43,14 +43,16 @@
         border-radius: 4px;
         overflow: hidden;
 
-        width: 100%;
-        height: 100%;
+        width: 0%;
+        height: 0%;
 
         animation-duration: 0.5s;
         animation-timing-function: ease-in-out;
 
         &.hovered {
             animation: expandBottomToUp 0.5s ease-in-out;
+            width: 100%;
+            height: 100%;
 
             @keyframes expandBottomToUp {
                 0% {
@@ -65,7 +67,7 @@
 
         &.unhovered {
             animation: shrinkTopToBottom 0.5s ease-in-out forwards;
-
+            
             @keyframes shrinkTopToBottom {
                 0% {
                     height: 100%;

@@ -25,8 +25,8 @@ function Card({ link, title, image }) {
             <p className={styles.cardTitle}>{title}</p>
             <div className={`${styles.cardLayer} ${isHovered ? styles.hovered : styles.unhovered}`}>
                 <div className={styles.cardLayerContent}>
-                    <img className={styles.cardLayerImage} src="/icons/cards/play.png" alt="Play" onClick={() => window.open(link)} />
-                    <hr className={styles.sparator} />
+                    <img className={styles.cardLayerImage} src="/icons/cards/play.png" alt="Play" />
+                    <hr className={styles.separator} />
                     <img className={styles.cardLayerImage} src="/icons/cards/more.png" alt="More" />
                 </div>
             </div>
