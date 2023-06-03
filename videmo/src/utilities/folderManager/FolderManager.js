@@ -20,7 +20,7 @@ class FolderManager {
         });
     }
 
-    getLevel(baseLink, link) {
+    retrieveLevel(baseLink, link) {
         window.api.send("getLevel", { baseLink, link });
 
         return new Promise((resolve, reject) => {

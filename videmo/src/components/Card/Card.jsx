@@ -15,7 +15,7 @@ function Card({ link, title, image, local = false, onMoreClick }) {
         >
             <img className={styles.cardImage} src={image} alt={title} />
             <p className={styles.cardTitle}>{title}</p>
-            <div className={`${styles.cardLayer} ${isHovered ? styles.hovered : styles.unhovered}`}>
+            <div className={`${styles.cardLayer} ${isHovered && styles.hovered}`}>
                 <div className={styles.cardLayerContent}>
                     <img className={styles.cardLayerImage} src="/icons/cards/play.png" alt="Play" />
                     <hr className={styles.separator} />

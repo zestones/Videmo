@@ -38,7 +38,7 @@ function Explore({ searchValue }) {
     );
 
     const handleMoreDisplay = (link) => {
-        folderManager.getLevel(selectedExtension.link, link)
+        folderManager.retrieveLevel(selectedExtension.link, link)
             .then((level) => {
                 folderManager.retrieveFolderContents(link, level)
                     .then((data) => {
