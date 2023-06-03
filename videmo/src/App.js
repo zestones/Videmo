@@ -10,9 +10,14 @@ import SearchBar from './components/SearchBar/SearchBar';
 
 function App() {
 	const [pageTitle, setPageTitle] = useState('Accueil');
+	const [searchValue, setSearchValue] = useState('');
 
 	const handlePageTitleChange = (title) => {
 		setPageTitle(title);
+	};
+
+	const handleSearch = (value) => {
+		setSearchValue(value);
 	};
 
 	return (
@@ -22,11 +27,11 @@ function App() {
 					<h1>{pageTitle}</h1>
 				</div>
 				<div className="headerRight">
-					<SearchBar />
+					<SearchBar onSearch={handleSearch} />
 				</div>
 			</Header>
 
-			<Navigation onPageTitleChange={handlePageTitleChange} />
+			<Navigation onPageTitleChange={handlePageTitleChange} searchValue={searchValue} />
 		</div>
 	);
 }

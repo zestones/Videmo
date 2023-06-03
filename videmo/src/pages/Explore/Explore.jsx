@@ -9,7 +9,7 @@ import Source from "./Source/Source";
 // Styles
 import styles from "./Explore.module.scss";
 
-function Explore() {
+function Explore({ searchValue }) {
     const [folderManager] = useState(() => new FolderManager());
     const [folderContents, setFolderContents] = useState([]);
     const [selectedExtension, setSelectedExtension] = useState(null);
@@ -40,6 +40,14 @@ function Explore() {
             });
     };
 
+    // Filter the folder contents based on the search value
+    const filteredFolderContents = folderContents.filter((folderContent) =>
+        folderManager
+            .getFileName(folderContent.path)
+            .toLowerCase()
+            .includes(searchValue.toLowerCase())
+    );
+
     return (
         <div className={styles.container}>
             {selectedExtension === null ? (
@@ -47,7 +55,7 @@ function Explore() {
             ) : (
                 <div className={styles.cardsContainer}>
                     <ul className={styles.cardContainer}>
-                        {folderContents.map((folderContent) => (
+                        {filteredFolderContents.map((folderContent) => (
                             <li key={folderContent.path} className={styles.card}>
                                 <img
                                     className={styles.cardImage}

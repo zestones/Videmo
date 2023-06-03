@@ -12,7 +12,7 @@ function SearchBar({ onSearch }) {
 
     const handleSearchInputChange = (event) => {
         setSearchValue(event.target.value);
-        // onSearch(event.target.value);
+        onSearch(event.target.value);
     };
 
     const handleSearchInputBlur = () => {

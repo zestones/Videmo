@@ -10,7 +10,7 @@ import Explore from '../../pages/Explore/Explore';
 // Styles
 import styles from './Navigation.module.scss';
 
-function Navigation({ onPageTitleChange }) {
+function Navigation({ onPageTitleChange, searchValue }) {
     const [activeItem, setActiveItem] = useState('Accueil');
 
     const handleItemClick = (item) => {
@@ -21,7 +21,7 @@ function Navigation({ onPageTitleChange }) {
     const itemList = {
         Accueil: 'Home Content',
         Bibliotheque: 'Library Content',
-        Explorer: <Explore />,
+        Explorer: <Explore searchValue={searchValue} />,
         Historique: 'History Content',
         Plus: <Settings />,
     };
