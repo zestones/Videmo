@@ -1,16 +1,13 @@
 .container {
     margin: 12px auto;
     width: 90%;
-    overflow-y: scroll;
-    height: 90vh;
 
     .cardsContainer {
         margin-top: 2rem;
 
         .cardContainer {
             display: flex;
-            justify-content: left;
-            
+            justify-content: center;
             flex-wrap: wrap;
         }
     }
