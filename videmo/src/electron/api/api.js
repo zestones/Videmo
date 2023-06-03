@@ -3,11 +3,10 @@ const ExtensionsDAO = require('../services/dao/settings/ExtensionsDAO');
 
 
 // Add new extension
-ipcMain.on('test', (event, arg) => {
-    console.log(arg) // prints "ping"
+ipcMain.on('/create/extension/', (event, arg) => {
+
     new ExtensionsDAO()
-        .createExtension(arg.link, arg.name, arg.local)
-        .close();
+        .createExtension(arg.link, arg.name, arg.local);
 
     event.reply('/create/extension/', { success: true });
 })
@@ -15,8 +14,12 @@ ipcMain.on('test', (event, arg) => {
 // Read all extensions
 ipcMain.on('/read/extension/', (event) => {
     const dao = new ExtensionsDAO();
-    const extensions = dao.getAllExtensions();
-    console.log(extensions);
-    dao.close();
-    event.reply('/read/extension/', { success: true, extensions: extensions });
+    dao.getAllExtensions()
+        .then((extensions) => {
+            console.log(extensions);
+            event.reply('/read/extension/', { success: true, extensions: extensions });
+        }).catch((err) => {
+            console.error('Error retrieving extensions:', err);
+            event.reply('/read/extension/', { success: false, error: err });
+        });
 })

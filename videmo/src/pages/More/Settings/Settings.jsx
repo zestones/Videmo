@@ -52,6 +52,7 @@ function Settings() {
         <div className={styles.settings}>
             <h1>Settings</h1>
             <div>
+                <button onClick={() => extension.readExtension()} >Read Extension</button>
                 <button onClick={handlePathChange}>Select Folder</button>
                 {folderPath && (
                     <button onClick={handleRetrieveClick}>Retrieve Folder Content</button>

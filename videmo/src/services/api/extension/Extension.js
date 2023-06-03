@@ -15,18 +15,27 @@ export default class Extensions {
             return;
         }
         console.log("Creating extension: ", link, name, local);
-        window.api.send("test", { link: link, name: name, local: local });
+        // TODO: Check if extension already exists
+        window.api.send("/create/extension/", { link: link, name: name, local: local });
 
-        window.api.receive("/create/extension/", (data) => data.success ? "" : console.error(data.error));
+        // Listen for the response from the main Electron process
+        window.api.receive("/create/extension/", (data) => data.success ? console.log('hourra') : console.error(data.error));
     }
 
     // Read all extensions
     readExtension() {
-        window.api.send("/read/extension/", (data) => this.#handleReadExtension(data));
+        console.log("Reading extensions");
+        // Send the request to the main Electron process
+        window.api.send("/read/extension/");
+
+        // Listen for the response from the main Electron process
+        window.api.receive("/read/extension/", (data) => this.#handleReadExtension(data));
     }
 
     #handleReadExtension(data) {
         if (data.success) {
+            console.log("Extensions retrieved: ");
+            console.log(data.extensions);
             this.extensions = data.extensions;
         } else {
             console.error(data.error);
@@ -41,5 +50,9 @@ export default class Extensions {
     getExtensionByName(name) {
         const extension = this.extensions.find(extension => extension.name === name);
         return extension;
+    }
+
+    getAllExtensions() {
+        return this.extensions;
     }
 }

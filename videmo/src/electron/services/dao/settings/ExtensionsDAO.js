@@ -2,15 +2,16 @@ const QueryExecutor = require('../../sqlite/QueryExecutor');
 
 class ExtensionsDAO {
     constructor() {
-        this.db = new QueryExecutor();
+        this.queryExecutor = new QueryExecutor();
     }
 
     // Create a new extension
-    createExtension(link, name, type_id) {
-        const sql = 'INSERT INTO Extension (link, name, type_id) VALUES (?, ?, ?)';
-        const params = [link, name, type_id];
-
-        this.db.executeAndCommit(sql, params);
+    createExtension(link, name, local) {
+        const sql = 'INSERT INTO Extension (link, name, local) VALUES (?, ?, ?)';
+        const params = [link, name, local ? 1 : 0];
+        
+        this.queryExecutor.executeAndCommit(sql, params);
+        return this;
     }
 
     // Read extension by ID
@@ -18,13 +19,13 @@ class ExtensionsDAO {
         const sql = 'SELECT * FROM Extension WHERE id = ?';
         const params = [extensionId];
 
-        return this.db.executeAndFetchOne(sql, params);
+        return this.queryExecutor.executeAndFetchOne(sql, params);
     }
 
     // Read all extensions
     getAllExtensions() {
         const sql = 'SELECT * FROM Extension';
-        return this.db.executeAndFetchAll(sql);
+        return this.queryExecutor.executeAndFetchAll(sql);
     }
 
     // Update extension by ID
@@ -32,7 +33,7 @@ class ExtensionsDAO {
         const sql = 'UPDATE Extension SET link = ?, name = ?, type_id = ? WHERE id = ?';
         const params = [link, name, type_id, extensionId];
         
-        this.db.executeAndCommit(sql, params);
+        this.queryExecutor.executeAndCommit(sql, params);
     }
 
     // Delete extension by ID
@@ -40,7 +41,7 @@ class ExtensionsDAO {
         const sql = 'DELETE FROM Extension WHERE id = ?';
         const params = [extensionId];
 
-        this.db.executeAndCommit(sql, params);
+        this.queryExecutor.executeAndCommit(sql, params);
     }
 }
 

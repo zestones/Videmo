@@ -2,12 +2,14 @@ const SQLiteQueryExecutor = require('./SQLiteQueryExecutor');
 
 class QueryExecutor {
     constructor() {
-        this.queryExecutor = new SQLiteQueryExecutor();
+        this.sqlQueryExecutor = new SQLiteQueryExecutor();
     }
 
     async executeAndCommit(sql, params = []) {
         try {
-            await this.queryExecutor.executeAndCommit(sql, params);
+            await this.open();
+            await this.sqlQueryExecutor.executeAndCommit(sql, params);
+            await this.close();
         } catch (err) {
             console.error('Error executing query and committing changes:', err);
             throw err;
@@ -16,7 +18,8 @@ class QueryExecutor {
 
     async executeAndFetchOne(sql, params = []) {
         try {
-            return await this.queryExecutor.executeAndFetchOne(sql, params);
+            await this.open();
+            return await this.sqlQueryExecutor.executeAndFetchOne(sql, params);
         } catch (err) {
             console.error('Error executing query and fetching one result:', err);
             throw err;
@@ -25,7 +28,11 @@ class QueryExecutor {
 
     async executeAndFetchAll(sql, params = []) {
         try {
-            return await this.queryExecutor.executeAndFetchAll(sql, params);
+            console.log('QueryExecutor.executeAndFetchAll()');
+            await this.open();
+            const result =  await this.sqlQueryExecutor.executeAndFetchAll(sql, params);
+            await this.close();
+            return result;
         } catch (err) {
             console.error('Error executing query and fetching all results:', err);
             throw err;
@@ -34,7 +41,7 @@ class QueryExecutor {
 
     async executeAndFetchMany(sql, params = [], size = 2) {
         try {
-            return await this.queryExecutor.executeAndFetchMany(sql, params, size);
+            return await this.sqlQueryExecutor.executeAndFetchMany(sql, params, size);
         } catch (err) {
             console.error('Error executing query and fetching multiple results:', err);
             throw err;
@@ -43,16 +50,25 @@ class QueryExecutor {
 
     async executeManyAndCommit(sql, params) {
         try {
-            await this.queryExecutor.executeManyAndCommit(sql, params);
+            await this.sqlQueryExecutor.executeManyAndCommit(sql, params);
         } catch (err) {
             console.error('Error executing query with multiple parameters and committing changes:', err);
             throw err;
         }
     }
 
+    async open() {
+        try {
+            await this.sqlQueryExecutor.open();
+        } catch (err) {
+            console.error('Error opening database connection:', err);
+            throw err;
+        }
+    }
+
     async close() {
         try {
-            await this.queryExecutor.close();
+            await this.sqlQueryExecutor.close();
         } catch (err) {
             console.error('Error closing database connection:', err);
             throw err;

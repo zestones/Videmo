@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS Extension (
   id INTEGER PRIMARY KEY,
   link TEXT,
   name TEXT,
-  local BOOLEAN,
+  local INTEGER
 );
 
 -- Create the Serie table

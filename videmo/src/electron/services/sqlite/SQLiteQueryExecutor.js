@@ -1,30 +1,38 @@
 const sqlite3 = require('sqlite3');
+const path = require('path');
 const fs = require('fs');
-
 
 class SQLiteQueryExecutor {
     constructor() {
-        const dbFilePath = "./sql/videmo.db"
+        this.database = path.join(__dirname, 'sql', 'videmo.db');
+        this.#initializeDatabase(this.database);
+    }
 
-        if (!fs.existsSync(dbFilePath)) {
-            this.#createDatabase(dbFilePath);
+    /**
+     * Initializes the database by creating it if it doesn't exist.
+     * @param {string} dbFilePath - The path to the SQLite database file.
+     * @returns {Promise<void>} A promise that resolves when the database is initialized.
+     * @private
+    */
+    async #initializeDatabase() {
+
+        if (!fs.existsSync(this.database)) {
+            await this.#createDatabase(this.database);
         }
 
-        // Retrieve the database
-        this.db = new sqlite3.Database(dbFilePath);
+        this.db = new sqlite3.Database(this.database);
     }
 
     /**
      * Creates the database by executing the SQL statements from the tables.sql file.
      * @param {string} dbFilePath - The path to the SQLite database file.
+     * @returns {Promise<void>} A promise that resolves when the database is created.
+     * @private
     */
     async #createDatabase(dbFilePath) {
-        const tablesFilePath = "../sql/tables.sql";
-
+        const tablesFilePath = path.join(__dirname, 'sql', 'tables.sql');
         try {
-            const response = await fetch(tablesFilePath);
-            const createTablesQuery = await response.text();
-
+            const createTablesQuery = fs.readFileSync(tablesFilePath, 'utf8');
             const db = new sqlite3.Database(dbFilePath);
 
             db.serialize(() => {
@@ -37,7 +45,7 @@ class SQLiteQueryExecutor {
                 });
             });
 
-            db.close();
+            // Do not close the database connection here
         } catch (error) {
             console.error('Error loading or executing SQL file:', error);
             throw error;
@@ -54,7 +62,7 @@ class SQLiteQueryExecutor {
         return new Promise((resolve, reject) => {
             this.db.serialize(() => {
                 this.db.run('BEGIN TRANSACTION');
-                this.db.run(sql, params, (err) => {
+                this.db.run(sql, params, (err) => {  // Use an arrow function here
                     if (err) {
                         this.db.run('ROLLBACK');
                         reject(err);
@@ -97,6 +105,7 @@ class SQLiteQueryExecutor {
      * @returns {Promise<Array>} A promise that resolves with all rows of the query results.
     */
     executeAndFetchAll(sql, params = []) {
+        console.log('executeAndFetchAll', sql, params);
         return new Promise((resolve, reject) => {
             this.db.all(sql, params, (err, rows) => {
                 if (err) {
@@ -161,6 +170,22 @@ class SQLiteQueryExecutor {
                         });
                     }
                 });
+            });
+        });
+    }
+
+    /**
+     * Opens the database connection.
+     * @returns {Promise<void>} A promise that resolves when the database connection is opened.
+    */
+    open() {
+        return new Promise((resolve, reject) => {
+            this.db = new sqlite3.Database(this.database, (err) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve();
+                }
             });
         });
     }
