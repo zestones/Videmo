@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 // Utilities
 import FolderManager from "../../utilities/folderManager/FolderManager";
@@ -12,29 +12,15 @@ import Card from "../../components/Card/Card";
 // Styles
 import styles from "./Explore.module.scss";
 
+
 function Explore({ searchValue }) {
     const [folderManager] = useState(() => new FolderManager());
     const [folderContents, setFolderContents] = useState([]);
     const [selectedExtension, setSelectedExtension] = useState(null);
 
-
-    useEffect(() => {
-        // Register the listener when the component mounts
-        const listener = (updatedFiles) => {
-            setFolderContents([...updatedFiles]);
-        };
-        folderManager.registerListener(listener);
-
-        return () => {
-            // Unregister the listener when the component unmounts
-            folderManager.unregisterListener(listener);
-        };
-    }, [folderManager]); // Empty dependency array ensures that the effect runs only once
-
-
-    const handleSelectedExtension = (selection) => {
-        setSelectedExtension(selection);
-        folderManager.retrieveFolderContents(selection.link)
+    const handleSelectedExtension = (extension) => {
+        setSelectedExtension(extension);
+        folderManager.retrieveFolderContents(extension.link)
             .then((data) => {
                 setFolderContents(data);
             })
@@ -51,6 +37,19 @@ function Explore({ searchValue }) {
             .includes(searchValue.toLowerCase())
     );
 
+    const handleMoreDisplay = (link) => {
+        folderManager.getLevel(selectedExtension.link, link)
+            .then((level) => {
+                folderManager.retrieveFolderContents(link, level)
+                    .then((data) => {
+                        setFolderContents(data);
+                    })
+                    .catch((error) => console.error(error));
+            })
+            .catch((error) => console.error(error));
+
+    };
+
     return (
         <div className={styles.container}>
             {selectedExtension === null ? (
@@ -63,6 +62,7 @@ function Explore({ searchValue }) {
                                 link={folderContent.path}
                                 title={folderManager.getFileName(folderContent.path)}
                                 image={folderManager.getCoverImage(folderContent.cover)}
+                                onMoreClick={handleMoreDisplay}
                             />
                         ))}
                     </ul>

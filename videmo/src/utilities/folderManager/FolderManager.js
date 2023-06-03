@@ -1,32 +1,30 @@
 class FolderManager {
 
-    constructor() {
-        this.defaultCoverName = "Cover";
-        this.listeners = []; // Store the listeners to be notified when files are updated
-        this.folderContents = [{}]; // Initialize the folder contents to an empty array
-    }
+    static DEFAULT_COVER_FOLDER_NAME = "Cover";
 
-    setFolderPath(folderPath) {
-        this.folderPath = folderPath;
-    }
+    retrieveFolderContents(folderPath, level = 0) {
+        const coverFolder = FolderManager.DEFAULT_COVER_FOLDER_NAME
 
-    retrieveFolderContents(folderPath) {
         // Send the folder path to the main Electron process
-        const coverFolder = this.defaultCoverName;
-
-        window.api.send("getFolderContents", { folderPath, coverFolder });
+        window.api.send("getFolderContents", { folderPath, coverFolder, level });
 
         // Listen for the response from the main Electron process
         return new Promise((resolve, reject) => {
             window.api.receive("folderContents", (data) => {
                 if (data.success) {
                     resolve(data.folderContents);
-                    // Notify listeners about the updated files
-                    this.notifyListeners();
                 } else {
                     reject(data.error);
                 }
             });
+        });
+    }
+
+    getLevel(baseLink, link) {
+        window.api.send("getLevel", { baseLink, link });
+
+        return new Promise((resolve, reject) => {
+            window.api.receive("level", (data) => data.success ? resolve(data.level) : reject(data.error));
         });
     }
 
@@ -48,26 +46,6 @@ class FolderManager {
         return new Promise((resolve, reject) => {
             window.api.receive("folderSelected", (data) => data.success ? resolve(data.folderPath) : reject(data.error));
         });
-    }
-
-    // Register a listener to be notified when files are updated
-    registerListener(listener) {
-        this.listeners.push(listener);
-    }
-
-    // Unregister a listener
-    unregisterListener(listener) {
-        const index = this.listeners.indexOf(listener);
-        if (index > -1) {
-            this.listeners.splice(index, 1);
-        }
-    }
-
-    // Notify all registered listeners about the updated files
-    notifyListeners() {
-        for (const listener of this.listeners) {
-            listener(this.folderContents);
-        }
     }
 }
 

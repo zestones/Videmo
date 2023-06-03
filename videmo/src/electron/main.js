@@ -82,35 +82,68 @@ app.whenReady().then(() => {
 });
 
 
-// Listen for async message from renderer process
+ipcMain.on('getLevel', (event, { baseLink, link }) => {
+    const baseSeparatorCount = (baseLink.split(path.sep).length - 1) || 0;
+    const linkSeparatorCount = (link.split(path.sep).length - 1) || 0;
 
-ipcMain.on('getFolderContents', (event, { folderPath, coverFolder }) => {
+    const level = linkSeparatorCount - baseSeparatorCount;
+
+    event.reply('level', { success: true, error: null, level: level });
+});
+
+
+// Listen for async message from renderer process
+ipcMain.on('getFolderContents', (event, { folderPath, coverFolder, level }) => {
     fs.readdir(folderPath, (err, contents) => {
         if (err) {
             event.reply('folderContents', { success: false, error: err.message, folderContents: [{}] });
-        }
-        else {
-            // create an array of objects with the file name and path
-            const folderContents = contents.map((folder) => { return { cover: getCoverImage(folderPath, coverFolder, folder), path: path.join(folderPath, folder) } });
+        } else {
+            const folderContents = getFolderContentsWithCovers(folderPath, contents, coverFolder, level);
             event.reply('folderContents', { success: true, error: null, folderContents: folderContents });
         }
     });
 });
 
+function getFolderContentsWithCovers(folderPath, contents, coverFolder, level) {
+    const folderContents = [];
 
-function getCoverImage(folderPath, coverFolder, fileNameWithoutExtension) {
+    for (const folder of contents) {
+        const fullPath = path.join(folderPath, folder);
+        const isDirectory = fs.statSync(fullPath).isDirectory();
+
+        // If the entry is a directory, process it
+        if (isDirectory && folder !== coverFolder) {
+            const coverImagePath = getCoverImagePath(fullPath, coverFolder, level);
+            folderContents.push({ cover: coverImagePath, path: fullPath });
+        }
+    }
+
+    return folderContents;
+}
+
+function getCoverImagePath(folderPath, coverFolder, level) {
+    const pathArray = folderPath.split(path.sep);
+    const slicedPathArray = pathArray.slice(0, pathArray.length - level);
+
+    const coverFolderPath = path.join(...slicedPathArray, coverFolder);
+    const folderName = path.basename(folderPath);
+    const coverImagePath = path.join(coverFolderPath, folderName);
+
     const supportedExtensions = ['.jpg', '.jpeg', '.png', '.gif'];
 
-    // Iterate through supported extensions and check if the image file exists
     for (const extension of supportedExtensions) {
-        const imagePath = path.join(folderPath, fileNameWithoutExtension, coverFolder, `${fileNameWithoutExtension}${extension}`);
+        const imagePath = `${coverImagePath}${extension}`;
+
         if (fs.existsSync(imagePath)) {
             return imagePath;
         }
     }
 
-    // If no image file was found, return the default image inside the public folder
-    return path.join(__dirname, '..', '..', 'public', 'images' , 'default_cover.jpeg');
+    return getDefaultCoverImage();
+}
+
+function getDefaultCoverImage() {
+    return path.join(__dirname, '..', '..', 'public', 'images', 'default_cover.jpeg');
 }
 
 ipcMain.on("openFolderDialog", async (event) => {
@@ -122,7 +155,7 @@ ipcMain.on("openFolderDialog", async (event) => {
         if (!result.canceled) {
             const selectedPath = result.filePaths[0];
             event.reply("folderSelected", { success: true, error: null, folderPath: selectedPath });
-        } 
+        }
         else {
             event.reply("folderSelected", { success: false, error: "No folder selected", folderPath: null });
         }
