@@ -7,9 +7,9 @@ class QueryExecutor {
 
     async executeAndCommit(sql, params = []) {
         try {
-            await this.open();
+            this.open();
             await this.sqlQueryExecutor.executeAndCommit(sql, params);
-            await this.close();
+            this.close();
         } catch (err) {
             console.error('Error executing query and committing changes:', err);
             throw err;
@@ -18,8 +18,10 @@ class QueryExecutor {
 
     async executeAndFetchOne(sql, params = []) {
         try {
-            await this.open();
-            return await this.sqlQueryExecutor.executeAndFetchOne(sql, params);
+            this.open();
+            const result = await this.sqlQueryExecutor.executeAndFetchOne(sql, params);
+            this.close();
+            return result;
         } catch (err) {
             console.error('Error executing query and fetching one result:', err);
             throw err;
@@ -28,10 +30,9 @@ class QueryExecutor {
 
     async executeAndFetchAll(sql, params = []) {
         try {
-            console.log('QueryExecutor.executeAndFetchAll()');
-            await this.open();
+            this.open();
             const result =  await this.sqlQueryExecutor.executeAndFetchAll(sql, params);
-            await this.close();
+            this.close();
             return result;
         } catch (err) {
             console.error('Error executing query and fetching all results:', err);
@@ -41,7 +42,10 @@ class QueryExecutor {
 
     async executeAndFetchMany(sql, params = [], size = 2) {
         try {
-            return await this.sqlQueryExecutor.executeAndFetchMany(sql, params, size);
+            this.open();
+            const result = await this.sqlQueryExecutor.executeAndFetchMany(sql, params, size);
+            this.close();
+            return result;
         } catch (err) {
             console.error('Error executing query and fetching multiple results:', err);
             throw err;
@@ -50,7 +54,10 @@ class QueryExecutor {
 
     async executeManyAndCommit(sql, params) {
         try {
-            await this.sqlQueryExecutor.executeManyAndCommit(sql, params);
+            this.open();
+            const result = await this.sqlQueryExecutor.executeManyAndCommit(sql, params);
+            this.close();
+            return result;
         } catch (err) {
             console.error('Error executing query with multiple parameters and committing changes:', err);
             throw err;

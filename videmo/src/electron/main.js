@@ -108,7 +108,9 @@ function getCoverImage(folderPath, coverFolder, fileNameWithoutExtension) {
             return imagePath;
         }
     }
-    return "default.png";
+
+    // If no image file was found, return the default image inside the public folder
+    return path.join(__dirname, '..', '..', 'public', 'images' , 'default_cover.jpeg');
 }
 
 ipcMain.on("openFolderDialog", async (event) => {

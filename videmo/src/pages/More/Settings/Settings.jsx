@@ -1,54 +1,20 @@
 import React, { useState, useEffect, useMemo } from "react";
+
+// Utilities
 import FolderManager from "../../../utilities/folderManager/FolderManager";
-import styles from "./Settings.module.scss";
+
+// Services
 import ExtensionApi from "../../../services/api/extension/ExtensionApi";
 
+// Styles
+import styles from "./Settings.module.scss";
+
+
 function Settings() {
-    // The purpose of this state is to trigger a re-render when the folder path changes
-    const [folderPath, setFolderPath] = useState("");
 
-    const [folderManager] = useState(() => new FolderManager());
-    const [folderContents, setFolderContents] = useState([]);
-
-    const extensionApi = useMemo(() => new ExtensionApi(), []); // Memoize the extensionApi instance
+    const extensionApi = useMemo(() => new ExtensionApi(), []); // Create a new instance of the extensionApi
+    const [folderManager] = useState(() => new FolderManager()); // Create a new instance of the folderManager
     const [extensions, setExtensions] = useState([]);
-
-    const handlePathChange = () => {
-
-        // Open the dialog window to select a folder
-        folderManager.openDialogWindow()
-            .then((path) => {
-                setFolderPath(path); // Update the state with the selected folder path to trigger a re-render
-                folderManager.setFolderPath(path);
-                extensionApi.createExtension(path, "OKAY")
-                .then((link) => {
-                        console.log(link);
-                        setExtensions([...extensions, link]);
-                    })
-                    .catch((error) => {
-                        console.error(error);
-                    });
-            })
-            .catch((error) => {
-                console.error(error);
-            });
-    };
-
-
-    const handleRetrieveClick = () => folderManager.handleRetrieveClick();
-
-    useEffect(() => {
-        // Register the listener when the component mounts
-        const listener = (updatedFiles) => {
-            setFolderContents([...updatedFiles]);
-        };
-        folderManager.registerListener(listener);
-
-        return () => {
-            // Unregister the listener when the component unmounts
-            folderManager.unregisterListener(listener);
-        };
-    }, [folderManager]); // Empty dependency array ensures that the effect runs only once
 
     useEffect(() => {
         extensionApi.readExtension()
@@ -62,36 +28,51 @@ function Settings() {
     }, [extensionApi]);
 
 
+    const handleDeleteExtension = (id) => {
+        extensionApi.deleteExtension(id)
+            .then(() => {
+                // Update the array of extensions by removing the deleted extension
+                setExtensions(extensions.filter((extension) => extension.id !== id));
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+    };
+
+    const selectLocalSourceFolder = () => {
+        // Open the dialog window to select a folder
+        folderManager.openDialogWindow()
+            .then((path) => {
+                // Create a new extension with the selected folder path
+                extensionApi.createExtension(path, "TEST")
+                    .then((link) => {
+                        // Update the array of extensions by adding the new extension
+                        setExtensions([...extensions, link]);
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                    });
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+    };
+
+
     return (
         <div className={styles.settings}>
             <h1>Settings</h1>
             <div>
                 <h2>List of local source folders</h2>
+                <button onClick={selectLocalSourceFolder}>Select Folder</button>
                 <ul>
                     {extensions &&
                         extensions.map((extension) => (
-                            <li key={extension.path}>
+                            <li key={extension.id}>
                                 <p>{extension.name}</p>
+                                <button onClick={() => handleDeleteExtension(extension.id)}>Delete</button>
                             </li>
                         ))}
-                </ul>
-            </div>
-
-            <div>
-                <button onClick={handlePathChange}>Select Folder</button>
-                {folderPath && (
-                    <button onClick={handleRetrieveClick}>Retrieve Folder Content</button>
-                )}
-                <ul>
-                    {folderContents.map((folderContent) => (
-                        <li key={folderContent.path}>
-                            <img
-                                src={folderManager.getCoverImage(folderContent.cover)}
-                                alt={folderManager.getFileName(folderContent.path)}
-                            />
-                            <p>{folderManager.getFileName(folderContent.path)}</p>
-                        </li>
-                    ))}
                 </ul>
             </div>
         </div>

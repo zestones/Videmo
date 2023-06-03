@@ -5,7 +5,9 @@ import NavItem from './Item/NavItem';
 
 // Pages
 import Settings from '../../pages/More/Settings/Settings';
+import Explore from '../../pages/Explore/Explore';
 
+// Styles
 import styles from './Navigation.module.scss';
 
 function Navigation() {
@@ -18,7 +20,7 @@ function Navigation() {
     const itemList = {
         Accueil: 'Home Content',
         Bibliotheque: 'Library Content',
-        Explorer: 'Extension Content',
+        Explorer: <Explore />,
         Historique: 'History Content',
         Plus: <Settings />,
     };

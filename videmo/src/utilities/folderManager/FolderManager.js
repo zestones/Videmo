@@ -1,7 +1,6 @@
 class FolderManager {
 
     constructor() {
-        this.folderPath = "";
         this.defaultCoverName = "Cover";
         this.listeners = []; // Store the listeners to be notified when files are updated
         this.folderContents = [{}]; // Initialize the folder contents to an empty array
@@ -11,25 +10,24 @@ class FolderManager {
         this.folderPath = folderPath;
     }
 
-    handleRetrieveClick() {
+    retrieveFolderContents(folderPath) {
         // Send the folder path to the main Electron process
-        const folderPath = this.folderPath;
         const coverFolder = this.defaultCoverName;
 
         window.api.send("getFolderContents", { folderPath, coverFolder });
 
         // Listen for the response from the main Electron process
-        window.api.receive("folderContents", (data) => this.handleFolderContents(data));
-    }
-
-    handleFolderContents(data) {
-        if (data.success) {
-            this.folderContents = data.folderContents;
-            // Notify listeners about the updated files
-            this.notifyListeners();
-        } else {
-            console.error(data.error);
-        }
+        return new Promise((resolve, reject) => {
+            window.api.receive("folderContents", (data) => {
+                if (data.success) {
+                    resolve(data.folderContents);
+                    // Notify listeners about the updated files
+                    this.notifyListeners();
+                } else {
+                    reject(data.error);
+                }
+            });
+        });
     }
 
     getFileName(filePath) {
@@ -48,13 +46,7 @@ class FolderManager {
 
         // Create a promise to handle the response from window.api.receive
         return new Promise((resolve, reject) => {
-            window.api.receive("folderSelected", (data) => {
-                if (data.success) {
-                    resolve(data.folderPath);
-                } else {
-                    reject(data.error);
-                }
-            });
+            window.api.receive("folderSelected", (data) => data.success ? resolve(data.folderPath) : reject(data.error));
         });
     }
 

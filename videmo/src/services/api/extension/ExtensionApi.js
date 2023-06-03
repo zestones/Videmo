@@ -20,7 +20,7 @@ export default class ExtensionsApi {
     }
 
     // Read all extensions
-    async readExtension() {
+    readExtension() {
         console.log("Reading extensions");
 
         // Send the request to the main Electron process
@@ -28,16 +28,19 @@ export default class ExtensionsApi {
 
         // Listen for the response from the main Electron process
         return new Promise((resolve, reject) => {
-            window.api.receive("/read/extension/", (data) => this.#handleReadExtension(resolve, reject, data));
+            window.api.receive("/read/extension/", (data) => data.success ? resolve(data.extensions) : reject(data.error));
         });
     }
 
-    #handleReadExtension(resolve, reject, data) {
-        if (data.success) {
-            resolve(data.extensions);
-        } else {
-            reject(data.error);
-        }
-    }
+    deleteExtension(id) {
+        console.log("Deleting extension");
 
+        // Send the request to the main Electron process
+        window.api.send("/delete/extension/", { id: id });
+
+        // Listen for the response from the main Electron process
+        return new Promise((resolve, reject) => {
+            window.api.receive("/delete/extension/", (data) => data.success ? resolve(data.extension) : reject(data.error));
+        });
+    }
 }

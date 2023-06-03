@@ -21,3 +21,12 @@ ipcMain.on('/read/extension/', (event) => {
             event.reply('/read/extension/', { success: false, error: err });
         });
 })
+
+// Delete extension
+ipcMain.on('/delete/extension/', (event, arg) => {
+    console.log("Deleting extension: ", arg.id);
+    new ExtensionsDAO()
+        .deleteExtensionById(arg.id);
+
+    event.reply('/delete/extension/', { success: true, extension: { id: arg.id } });
+})
