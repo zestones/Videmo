@@ -10,13 +10,19 @@ class FolderManager {
 
         // Listen for the response from the main Electron process
         return new Promise((resolve, reject) => {
-            window.api.receive("folderContents", (data) => {
-                if (data.success) {
-                    resolve(data.folderContents);
-                } else {
-                    reject(data.error);
-                }
-            });
+            window.api.receive("folderContents", (data) => data.success ? resolve(data.folderContents) : reject(data.error));
+        });
+    }
+
+    retrieveFolderCover(folderPath, level = 0) {
+        const coverFolder = FolderManager.DEFAULT_COVER_FOLDER_NAME
+        
+        // Send the folder path to the main Electron process
+        window.api.send("getFolderCover", { folderPath, coverFolder, level });
+
+        // Listen for the response from the main Electron process
+        return new Promise((resolve, reject) => {
+            window.api.receive("folderCover", (data) => data.success ? resolve(data.cover) : reject(data.error));
         });
     }
 

@@ -81,7 +81,6 @@ app.whenReady().then(() => {
     });
 });
 
-
 ipcMain.on('getSplittedPath', (event, { basePath, level }) => {
     const pathArray = basePath.split(path.sep); // Split the path by the platform-specific separator
 
@@ -117,6 +116,11 @@ ipcMain.on('getFolderContents', (event, { folderPath, coverFolder, level }) => {
             event.reply('folderContents', { success: true, error: null, folderContents: folderContents });
         }
     });
+});
+
+ipcMain.on('getFolderCover', (event, { folderPath, coverFolder, level }) => {
+    const coverImagePath = getCoverImagePath(folderPath, coverFolder, level);
+    event.reply('folderCover', { success: true, error: null, cover: coverImagePath });
 });
 
 function getFolderContentsWithCovers(folderPath, contents, coverFolder, level) {

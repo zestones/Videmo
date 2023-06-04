@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 
 // External
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -24,13 +24,14 @@ function Explore({
     onFolderContentsChange,
     onShowBackButtonChange,
     onShowSerieDetailsChange,
+    onSerieDetailsChange,
     showSerieDetails,
+    serieDetails,
     folderContents,
     currentLevel,
     selectedExtension,
     folderManager }) {
 
-    const [serieDetails, setSerieDetails] = useState(null); // [title, image, description, seasons, episodes]
 
     const handleSelectedExtension = (extension) => {
         onSelectedExtensionChange(extension);
@@ -42,7 +43,7 @@ function Explore({
                 onFolderContentsChange(data); // Set folderContents to the current folder contents
                 onCurrentLevelChange(0); // Reset currentLevel to 0 when a new extension is selected
                 onShowBackButtonChange(true); // Show back button when a new extension is selected
-                setSerieDetails(null); // Reset serieDetails when a new extension is selected
+                onSerieDetailsChange(null); // Reset serieDetails when a new extension is selected
                 onShowSerieDetailsChange(false); // Hide serieDetails when a new extension is selected
             })
             .catch((error) => console.error(error));
@@ -81,7 +82,7 @@ function Explore({
                                 "genres": ['Action', 'Adventure', 'Comedy'],
                                 "details": details
                             };
-                            setSerieDetails(test);
+                            onSerieDetailsChange(test);
                         })
                         .catch((error) => console.error(error));
                 })

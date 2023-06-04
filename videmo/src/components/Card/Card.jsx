@@ -17,9 +17,9 @@ function Card({ link, title, image, local = true, onMoreClick }) {
             <p className={styles.cardTitle}>{title}</p>
             <div className={`${styles.cardLayer} ${isHovered && styles.hovered}`}>
                 <div className={styles.cardLayerContent}>
-                    <img className={styles.cardLayerImage} src="/icons/cards/play.png" alt="Play" />
+                    <img className={styles.cardLayerImage} src="/icons/cards/more.png" alt="More" />
                     <hr className={styles.separator} />
-                    <img className={styles.cardLayerImage} src="/icons/cards/more.png" alt="More" onClick={() => onMoreClick({ link, title, image, local })} />
+                    <img className={styles.cardLayerImage} src="/icons/cards/play.png" alt="Play" onClick={() => onMoreClick({ link, title, image, local })} />
                 </div>
             </div>
         </li>

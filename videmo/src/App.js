@@ -28,6 +28,8 @@ function App() {
 	const [folderContents, setFolderContents] = useState([]);
 	const [showBackButton, setShowBackButton] = useState(false);
 	const [showSerieDetails, setShowSerieDetails] = useState(false);
+	const [serieDetails, setSerieDetails] = useState(null); // [title, image, description, gennres...]
+
 
 	const handleSearch = (value) => {
 		setSearchValue(value);
@@ -58,7 +60,9 @@ function App() {
 			onFolderContentsChange={setFolderContents}
 			onShowBackButtonChange={setShowBackButton}
 			onShowSerieDetailsChange={setShowSerieDetails}
+			onSerieDetailsChange={setSerieDetails}
 			showSerieDetails={showSerieDetails}
+			serieDetails={serieDetails}
 			folderContents={folderContents}
 			currentLevel={currentLevel}
 			selectedExtension={selectedExtension}
@@ -84,6 +88,16 @@ function App() {
 									setCurrentPath(parentPath); // Set currentPath to the parent folder
 									if (currentLevel === 1) {
 										setShowSerieDetails(false);
+									} else if (currentLevel > 1) {
+										setShowSerieDetails(true);
+										folderManager.retrieveFolderCover(parentPath, level - 1)
+											.then((cover) => {
+												// TODO: Retrieve serie real details
+												const title = folderManager.getFileName(parentPath);
+												const img = folderManager.getCoverImage(cover); 
+												setSerieDetails({ title: title, image: img, description: serieDetails.description, genres: serieDetails.genres, details: serieDetails.details });
+											})
+											.catch((error) => console.error(error));
 									}
 								})
 								.catch((error) => console.error(error));
