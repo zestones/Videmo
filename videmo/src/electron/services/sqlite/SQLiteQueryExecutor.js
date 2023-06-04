@@ -41,7 +41,6 @@ class SQLiteQueryExecutor {
                         console.error('Error creating tables:', err);
                         throw err;
                     }
-                    console.log('Tables created successfully.');
                 });
             });
 
@@ -105,7 +104,6 @@ class SQLiteQueryExecutor {
      * @returns {Promise<Array>} A promise that resolves with all rows of the query results.
     */
     executeAndFetchAll(sql, params = []) {
-        console.log('executeAndFetchAll', sql, params);
         return new Promise((resolve, reject) => {
             this.db.all(sql, params, (err, rows) => {
                 if (err) {

@@ -67,7 +67,6 @@ function App() {
 
 	// ! ATTENTION: ONLY WORK FOR LOCAL FILES
 	const handleBackClick = () => {
-		console.log('Back clicked');
 		if (currentLevel > 0) {
 			// Retrieve the parent folder path
 			folderManager.retrieveParentPath(currentPath)

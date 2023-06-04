@@ -21,8 +21,6 @@ export default class ExtensionsApi {
 
     // Read all extensions
     readExtension() {
-        console.log("Reading extensions");
-
         // Send the request to the main Electron process
         window.api.send("/read/extension/");
 
@@ -33,8 +31,6 @@ export default class ExtensionsApi {
     }
 
     deleteExtension(id) {
-        console.log("Deleting extension");
-
         // Send the request to the main Electron process
         window.api.send("/delete/extension/", { id: id });
 
