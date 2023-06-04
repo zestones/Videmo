@@ -6,6 +6,7 @@ import DetailsContainer from "./DetailsContainer/DetailsContainer";
 
 // Components
 import Card from "../../components/Card/Card";
+import EpisodeCard from "../../components/EpisodeCard/EpisodeCard";
 
 // Styles
 import styles from "./Explore.module.scss";
@@ -21,6 +22,8 @@ function Explore({
     onShowBackButtonChange,
     onShowSerieDetailsChange,
     onSerieDetailsChange,
+    onEpisodesFilesChange,
+    episodesFiles,
     showSerieDetails,
     serieDetails,
     folderContents,
@@ -54,12 +57,28 @@ function Explore({
     );
 
     // ! ATTENTION: ONLY WORK FOR LOCAL FILES
+    const retrieveSeriesEpisodes = (path) => {
+        console.log(path);
+        folderManager.retrieveFilesInFolder(path)
+            .then((data) => {
+                console.log(data);
+                onEpisodesFilesChange(data);
+            })
+            .catch((error) => console.error(error));
+    };
+
+    // ! ATTENTION: ONLY WORK FOR LOCAL FILES
     const handleMoreDisplay = (serie) => {
         if (serie.local) {
             folderManager.retrieveLevel(selectedExtension.link, serie.link)
                 .then((level) => {
                     folderManager.retrieveFolderContents(serie.link, level)
                         .then((data) => {
+                            // check if the data is empty
+                            if (data.length === 0) {
+                                retrieveSeriesEpisodes(serie.link);
+                            }
+
                             onCurrentPathChange(serie.link); // Set currentPath to the current folder
                             onFolderContentsChange(data);
                             onCurrentLevelChange(currentLevel + 1); // Increment currentLevel when more is displayed
@@ -100,6 +119,13 @@ function Explore({
                                 title={folderManager.getFileName(folderContent.path)}
                                 image={folderManager.getCoverImage(folderContent.cover)}
                                 onMoreClick={handleMoreDisplay}
+                            />
+                        ))}
+                        {episodesFiles.map((episode) => (
+                            <EpisodeCard
+                                title={episode.name}
+                                link={episode.path}
+                                modifiedTime={episode.modifiedTime}
                             />
                         ))}
                     </ul>

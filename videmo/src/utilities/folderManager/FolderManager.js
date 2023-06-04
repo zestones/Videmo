@@ -46,6 +46,14 @@ class FolderManager {
         });
     }
 
+    retrieveFilesInFolder(folderPath) {
+        window.api.send("getFilesInFolder", { folderPath });
+
+        return new Promise((resolve, reject) => {
+            window.api.receive("filesInFolder", (data) => data.success ? resolve(data.files) : reject(data.error));
+        });
+    }
+
     getFileName(filePath) {
         const fileName = filePath.split("\\").pop().split("/").pop();
         return fileName;

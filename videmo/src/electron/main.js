@@ -148,7 +148,7 @@ function getCoverImagePath(folderPath, coverFolder, level) {
     const folderName = path.basename(folderPath);
     const coverImagePath = path.join(coverFolderPath, folderName);
 
-    const supportedExtensions = ['.jpg', '.jpeg', '.png', '.gif'];
+    const supportedExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
 
     for (const extension of supportedExtensions) {
         const imagePath = `${coverImagePath}${extension}`;
@@ -182,6 +182,43 @@ ipcMain.on("openFolderDialog", async (event) => {
         event.reply("folderSelected", { success: false, error: error.message, folderPath: null });
     }
 });
+
+ipcMain.on("getFilesInFolder", (event, { folderPath }) => {
+    fs.readdir(folderPath, (err, contents) => {
+        if (err) {
+            event.reply("filesInFolder", { success: false, error: err.message, files: [] });
+        } else {
+            const files = [];
+
+            for (const file of contents) {
+                const fullPath = path.join(folderPath, file);
+                const fileStats = fs.statSync(fullPath);
+                const isDirectory = fileStats.isDirectory();
+                const formattedTime = formatTime(fileStats.mtime);
+
+                if (!isDirectory) {
+                    files.push({
+                        name: file,
+                        path: fullPath,
+                        modifiedTime: formattedTime,
+                    });
+                }
+            }
+
+            event.reply("filesInFolder", { success: true, error: null, files });
+        }
+    });
+});
+
+function formatTime(time) {
+    const year = time.getFullYear();
+    const month = String(time.getMonth() + 1).padStart(2, '0');
+    const day = String(time.getDate()).padStart(2, '0');
+    const hours = String(time.getHours()).padStart(2, '0');
+    const minutes = String(time.getMinutes()).padStart(2, '0');
+
+    return `${year}/${month}/${day} - ${hours}h${minutes}`;
+}
 
 // Import the IPC main event handlers
 require('./api/api');

@@ -29,6 +29,7 @@ function App() {
 	const [showBackButton, setShowBackButton] = useState(false);
 	const [showSerieDetails, setShowSerieDetails] = useState(false);
 	const [serieDetails, setSerieDetails] = useState(null); // [title, image, description, gennres...]
+    const [episodesFiles, setEpisodesFiles] = useState([]);
 
 
 	const handleSearch = (value) => {
@@ -61,6 +62,8 @@ function App() {
 			onShowBackButtonChange={setShowBackButton}
 			onShowSerieDetailsChange={setShowSerieDetails}
 			onSerieDetailsChange={setSerieDetails}
+			onEpisodesFilesChange={setEpisodesFiles}
+			episodesFiles={episodesFiles}
 			showSerieDetails={showSerieDetails}
 			serieDetails={serieDetails}
 			folderContents={folderContents}
@@ -75,6 +78,7 @@ function App() {
 	// ! ATTENTION: ONLY WORK FOR LOCAL FILES
 	const handleBackClick = () => {
 		if (currentLevel > 0) {
+			setEpisodesFiles([]); // Hide episode list (on back click list episode is impossible)
 			// Retrieve the parent folder path
 			folderManager.retrieveParentPath(currentPath)
 				.then((parentPath) => {
