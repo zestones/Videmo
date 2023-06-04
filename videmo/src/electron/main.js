@@ -82,6 +82,21 @@ app.whenReady().then(() => {
 });
 
 
+ipcMain.on('getSplittedPath', (event, { basePath, level }) => {
+    const pathArray = basePath.split(path.sep); // Split the path by the platform-specific separator
+
+    // Check if the level is within the valid range
+    if (level < 0 || level > pathArray.length - 1) {
+        // Return the original path if the level is invalid
+        event.reply('splittedPath', { success: false, error: 'Invalid level', splittedPath: path });
+    }
+
+    const slicedPathArray = pathArray.slice(0, pathArray.length - level); // Get the sliced array based on the level
+    const splittedPath = slicedPathArray.join(path.sep); // Join the sliced array back into a path string
+    // Return the splitted path
+    event.reply('splittedPath', { success: true, error: null, splittedPath: splittedPath });
+});
+
 ipcMain.on('getLevel', (event, { baseLink, link }) => {
     const baseSeparatorCount = (baseLink.split(path.sep).length - 1) || 0;
     const linkSeparatorCount = (link.split(path.sep).length - 1) || 0;

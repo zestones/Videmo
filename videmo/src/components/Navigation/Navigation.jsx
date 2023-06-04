@@ -3,14 +3,10 @@ import React, { useState } from 'react';
 // Components
 import NavItem from './Item/NavItem';
 
-// Pages
-import Settings from '../../pages/More/Settings/Settings';
-import Explore from '../../pages/Explore/Explore';
-
 // Styles
 import styles from './Navigation.module.scss';
 
-function Navigation({ onPageTitleChange, searchValue }) {
+function Navigation({ navItems, onPageTitleChange, searchValue }) {
     const [activeItem, setActiveItem] = useState('Accueil');
 
     const handleItemClick = (item) => {
@@ -18,24 +14,16 @@ function Navigation({ onPageTitleChange, searchValue }) {
         onPageTitleChange(item); // Invoke the callback with the new title
     };
 
-    const itemList = {
-        Accueil: 'Home Content',
-        Bibliotheque: 'Library Content',
-        Explorer: <Explore searchValue={searchValue} />,
-        Historique: 'History Content',
-        Plus: <Settings />,
-    };
-
     const renderContent = () => {
         // Render different content based on the active item
-        return itemList[activeItem] || null;
+        return navItems[activeItem] || null;
     };
 
     return (
         <>
             <nav className={styles.nav}>
                 <ul className={styles.navList}>
-                    {Object.entries(itemList).map(([key, value]) => (
+                    {Object.entries(navItems).map(([key, _]) => (
                         <NavItem
                             key={key}
                             item={key}

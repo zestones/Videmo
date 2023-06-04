@@ -8,6 +8,11 @@ import Header from './components/Header/Header';
 import Navigation from './components/Navigation/Navigation';
 import SearchBar from './components/SearchBar/SearchBar';
 
+// Pages
+import Settings from './pages/More/Settings/Settings';
+import Explore from './pages/Explore/Explore';
+
+
 function App() {
 	const [pageTitle, setPageTitle] = useState('Accueil');
 	const [searchValue, setSearchValue] = useState('');
@@ -18,6 +23,14 @@ function App() {
 
 	const handleSearch = (value) => {
 		setSearchValue(value);
+	};
+
+	const navItems = {
+		Accueil: 'Home Content',
+		Bibliotheque: 'Library Content',
+		Explorer: <Explore searchValue={searchValue} onPageTitleChange={handlePageTitleChange} />,
+		Historique: 'History Content',
+		Plus: <Settings />,
 	};
 
 	return (
@@ -31,7 +44,7 @@ function App() {
 				</div>
 			</Header>
 
-			<Navigation onPageTitleChange={handlePageTitleChange} searchValue={searchValue} />
+			<Navigation navItems={navItems} onPageTitleChange={handlePageTitleChange} searchValue={searchValue} />
 		</div>
 	);
 }
