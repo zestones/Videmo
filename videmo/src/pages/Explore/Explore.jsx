@@ -1,9 +1,5 @@
 import React from "react";
 
-// External
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faStar, faCalendar, faClock } from '@fortawesome/free-solid-svg-icons';
-
 // Pages
 import Source from "./Source/Source";
 import DetailsContainer from "./DetailsContainer/DetailsContainer";
@@ -69,18 +65,11 @@ function Explore({
                             onCurrentLevelChange(currentLevel + 1); // Increment currentLevel when more is displayed
                             onShowSerieDetailsChange(true);
 
-                            const details = [
-                                { icon: <FontAwesomeIcon icon={faStar} mask={['far', 'circle']} size="xs" />, label: '8.5/10' },
-                                { icon: <FontAwesomeIcon icon={faCalendar} mask={['far', 'circle']} size="xs" />, label: '15/09/2022' },
-                                { icon: <FontAwesomeIcon icon={faClock} mask={['far', 'circle']} size="xs" />, label: '2h 30min' },
-                            ];
-
                             const test = {
                                 "title": serie.title,
                                 "image": serie.image,
                                 "description": "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Alias expedita consequuntur, labore repellat blanditiis reiciendis consequatur aliquam accusamus libero fuga dolorum porro eos esse nostrum. Nam, adipisci. Obcaecati, voluptas! Eligendi?",
-                                "genres": ['Action', 'Adventure', 'Comedy'],
-                                "details": details
+                                "genres": ['Action', 'Adventure', 'Comedy']
                             };
                             onSerieDetailsChange(test);
                         })
@@ -102,7 +91,6 @@ function Explore({
                             title={serieDetails.title}
                             description={serieDetails.description}
                             genres={serieDetails.genres}
-                            details={serieDetails.details}
                         />
                     )}
                     <ul className={styles.cardContainer}>

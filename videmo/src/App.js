@@ -95,7 +95,7 @@ function App() {
 												// TODO: Retrieve serie real details
 												const title = folderManager.getFileName(parentPath);
 												const img = folderManager.getCoverImage(cover); 
-												setSerieDetails({ title: title, image: img, description: serieDetails.description, genres: serieDetails.genres, details: serieDetails.details });
+												setSerieDetails({ title: title, image: img, description: serieDetails.description, genres: serieDetails.genres});
 											})
 											.catch((error) => console.error(error));
 									}

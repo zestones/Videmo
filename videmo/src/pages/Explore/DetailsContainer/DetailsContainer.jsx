@@ -2,13 +2,21 @@ import React from 'react';
 
 // External
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHeart } from '@fortawesome/free-solid-svg-icons';
-
+import { faHeart, faStar, faCalendar, faClock } from '@fortawesome/free-solid-svg-icons';
 
 // Styles
 import styles from './DetailsContainer.module.scss';
 
-const DetailsContainer = ({ image, title, description, genres, details }) => {
+
+const DetailsContainer = ({ image, title, description, genres }) => {
+
+	const details = [
+		{ icon: <FontAwesomeIcon icon={faStar} mask={['far', 'circle']} size="xs" />, label: '8.5/10' },
+		{ icon: <FontAwesomeIcon icon={faCalendar} mask={['far', 'circle']} size="xs" />, label: '15/09/2022' },
+		{ icon: <FontAwesomeIcon icon={faClock} mask={['far', 'circle']} size="xs" />, label: '2h 30min' },
+	];
+
+
 	// TODO: Query to check if already inside library or not
 	return (
 		<div className={styles.detailsContainer}>
