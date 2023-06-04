@@ -54,6 +54,14 @@ class FolderManager {
         });
     }
 
+    openFileInLocalVideoPlayer(filePath) {
+        window.api.send("openFileInLocalVideoPlayer", { filePath });
+
+        return new Promise((resolve, reject) => {
+            window.api.receive("fileOpened", (data) => data.success ? resolve(data.message) : reject(data.error));
+        });
+    }
+
     getFileName(filePath) {
         const fileName = filePath.split("\\").pop().split("/").pop();
         return fileName;

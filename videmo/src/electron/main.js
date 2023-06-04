@@ -15,6 +15,8 @@ const ipcMain = electron.ipcMain;
 const protocol = electron.protocol;
 // Module to display native system dialogs for opening and saving files, alerting, etc.
 const dialog = electron.dialog;
+// Module to open files in the default video player
+const shell = electron.shell;
 
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -219,6 +221,12 @@ function formatTime(time) {
 
     return `${year}/${month}/${day} - ${hours}h${minutes}`;
 }
+
+ipcMain.on("openFileInLocalVideoPlayer", (event, { filePath }) => {
+    shell.openPath(filePath);
+    event.reply("fileOpened", { success: true, error: null });
+});
+
 
 // Import the IPC main event handlers
 require('./api/api');
