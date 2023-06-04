@@ -4,7 +4,6 @@ const ExtensionsDAO = require('../services/dao/settings/ExtensionsDAO');
 
 // Add new extension
 ipcMain.on('/create/extension/', (event, arg) => {
-    console.log("Creating extension: ", arg.link, arg.name, arg.local);
     new ExtensionsDAO()
         .createExtension(arg.link, arg.name, arg.local);
 
@@ -24,7 +23,6 @@ ipcMain.on('/read/extension/', (event) => {
 
 // Delete extension
 ipcMain.on('/delete/extension/', (event, arg) => {
-    console.log("Deleting extension: ", arg.id);
     new ExtensionsDAO()
         .deleteExtensionById(arg.id);
 

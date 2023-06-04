@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 // Styles
 import styles from './Card.module.scss';
 
-function Card({ link, title, image, local = false, onMoreClick }) {
+function Card({ link, title, image, local = true, onMoreClick }) {
     const [isHovered, setIsHovered] = useState(false);
 
     return (
@@ -19,7 +19,7 @@ function Card({ link, title, image, local = false, onMoreClick }) {
                 <div className={styles.cardLayerContent}>
                     <img className={styles.cardLayerImage} src="/icons/cards/play.png" alt="Play" />
                     <hr className={styles.separator} />
-                    <img className={styles.cardLayerImage} src="/icons/cards/more.png" alt="More" onClick={() => onMoreClick(link)} />
+                    <img className={styles.cardLayerImage} src="/icons/cards/more.png" alt="More" onClick={() => onMoreClick({ link, title, image, local })} />
                 </div>
             </div>
         </li>

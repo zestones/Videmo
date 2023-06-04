@@ -27,6 +27,7 @@ function App() {
 	const [currentPath, setCurrentPath] = useState('');
 	const [folderContents, setFolderContents] = useState([]);
 	const [showBackButton, setShowBackButton] = useState(false);
+	const [showSerieDetails, setShowSerieDetails] = useState(false);
 
 	const handleSearch = (value) => {
 		setSearchValue(value);
@@ -56,6 +57,8 @@ function App() {
 			onCurrentPathChange={setCurrentPath}
 			onFolderContentsChange={setFolderContents}
 			onShowBackButtonChange={setShowBackButton}
+			onShowSerieDetailsChange={setShowSerieDetails}
+			showSerieDetails={showSerieDetails}
 			folderContents={folderContents}
 			currentLevel={currentLevel}
 			selectedExtension={selectedExtension}
@@ -79,6 +82,9 @@ function App() {
 									setFolderContents(data);
 									setCurrentLevel(currentLevel - 1);
 									setCurrentPath(parentPath); // Set currentPath to the parent folder
+									if (currentLevel === 1) {
+										setShowSerieDetails(false);
+									}
 								})
 								.catch((error) => console.error(error));
 						})
