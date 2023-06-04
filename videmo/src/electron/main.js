@@ -1,4 +1,10 @@
+// Description: Main process of the Electron app.
+// It is responsible for creating the browser window and for communicating with the renderer process.
+
 const electron = require('electron');
+const path = require('path');
+const fs = require('fs');
+
 // Module to control application life.
 const app = electron.app;
 // Module to create native browser window.
@@ -7,10 +13,9 @@ const BrowserWindow = electron.BrowserWindow;
 const ipcMain = electron.ipcMain;
 // Module to define custom protocol
 const protocol = electron.protocol;
+// Module to display native system dialogs for opening and saving files, alerting, etc.
+const dialog = electron.dialog;
 
-// Module to handle file system paths
-const path = require('path');
-const fs = require('fs');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -77,21 +82,90 @@ app.whenReady().then(() => {
 });
 
 
+ipcMain.on('getLevel', (event, { baseLink, link }) => {
+    const baseSeparatorCount = (baseLink.split(path.sep).length - 1) || 0;
+    const linkSeparatorCount = (link.split(path.sep).length - 1) || 0;
+
+    const level = linkSeparatorCount - baseSeparatorCount;
+
+    event.reply('level', { success: true, error: null, level: level });
+});
+
+
 // Listen for async message from renderer process
-// TODO: Store the folder path in a DB or file,
-// TODO: so that it can be retrieved when the app is restarted
-ipcMain.on('getFolderContents', (event, folderPath) => {
-    fs.readdir(folderPath, (err, files) => {
+ipcMain.on('getFolderContents', (event, { folderPath, coverFolder, level }) => {
+    fs.readdir(folderPath, (err, contents) => {
         if (err) {
-            event.reply('folderContents', { success: false, error: err.message, files: [] });
-        }
-        else {
-            event.reply('folderContents', { success: true, error: null, files });
+            event.reply('folderContents', { success: false, error: err.message, folderContents: [{}] });
+        } else {
+            const folderContents = getFolderContentsWithCovers(folderPath, contents, coverFolder, level);
+            event.reply('folderContents', { success: true, error: null, folderContents: folderContents });
         }
     });
 });
 
+function getFolderContentsWithCovers(folderPath, contents, coverFolder, level) {
+    const folderContents = [];
 
+    for (const folder of contents) {
+        const fullPath = path.join(folderPath, folder);
+        const isDirectory = fs.statSync(fullPath).isDirectory();
+
+        // If the entry is a directory, process it
+        if (isDirectory && folder !== coverFolder) {
+            const coverImagePath = getCoverImagePath(fullPath, coverFolder, level);
+            folderContents.push({ cover: coverImagePath, path: fullPath });
+        }
+    }
+
+    return folderContents;
+}
+
+function getCoverImagePath(folderPath, coverFolder, level) {
+    const pathArray = folderPath.split(path.sep);
+    const slicedPathArray = pathArray.slice(0, pathArray.length - level);
+
+    const coverFolderPath = path.join(...slicedPathArray, coverFolder);
+    const folderName = path.basename(folderPath);
+    const coverImagePath = path.join(coverFolderPath, folderName);
+
+    const supportedExtensions = ['.jpg', '.jpeg', '.png', '.gif'];
+
+    for (const extension of supportedExtensions) {
+        const imagePath = `${coverImagePath}${extension}`;
+
+        if (fs.existsSync(imagePath)) {
+            return imagePath;
+        }
+    }
+
+    return getDefaultCoverImage();
+}
+
+function getDefaultCoverImage() {
+    return path.join(__dirname, '..', '..', 'public', 'images', 'default_cover.jpeg');
+}
+
+ipcMain.on("openFolderDialog", async (event) => {
+    try {
+        const result = await dialog.showOpenDialog({
+            properties: ["openDirectory"],
+        });
+
+        if (!result.canceled) {
+            const selectedPath = result.filePaths[0];
+            event.reply("folderSelected", { success: true, error: null, folderPath: selectedPath });
+        }
+        else {
+            event.reply("folderSelected", { success: false, error: "No folder selected", folderPath: null });
+        }
+    } catch (error) {
+        event.reply("folderSelected", { success: false, error: error.message, folderPath: null });
+    }
+});
+
+// Import the IPC main event handlers
+require('./api/api');
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.

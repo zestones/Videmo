@@ -1,22 +1,29 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
-import NavItem from "./Item/NavItem";
-import FolderContent from "../FolderContents/FolderContent";
-import styles from "./Navigation.module.scss";
+// Components
+import NavItem from './Item/NavItem';
 
-function Navigation() {
-    const [activeItem, setActiveItem] = useState(('Accueil'));
+// Pages
+import Settings from '../../pages/More/Settings/Settings';
+import Explore from '../../pages/Explore/Explore';
+
+// Styles
+import styles from './Navigation.module.scss';
+
+function Navigation({ onPageTitleChange, searchValue }) {
+    const [activeItem, setActiveItem] = useState('Accueil');
 
     const handleItemClick = (item) => {
         setActiveItem(item);
+        onPageTitleChange(item); // Invoke the callback with the new title
     };
 
     const itemList = {
-        Accueil: "Home Content",
-        Bibliotheque: "Library Content",
-        Explorer: "Extension Content",
-        Historique: "History Content",
-        Plus: <FolderContent />,
+        Accueil: 'Home Content',
+        Bibliotheque: 'Library Content',
+        Explorer: <Explore searchValue={searchValue} />,
+        Historique: 'History Content',
+        Plus: <Settings />,
     };
 
     const renderContent = () => {
@@ -25,7 +32,7 @@ function Navigation() {
     };
 
     return (
-        <div>
+        <>
             <nav className={styles.nav}>
                 <ul className={styles.navList}>
                     {Object.entries(itemList).map(([key, value]) => (
@@ -39,7 +46,7 @@ function Navigation() {
                 </ul>
             </nav>
             <div className={styles.content}>{renderContent()}</div>
-        </div>
+        </>
     );
 }
 

@@ -1,0 +1,16 @@
+.container {
+    margin: 12px auto;
+    width: 90%;
+
+    .cardsContainer {
+        margin-top: 2rem;
+
+        .cardContainer {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            
+            margin-bottom: 7rem;
+        }
+    }
+}
