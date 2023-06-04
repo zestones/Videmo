@@ -1,7 +1,4 @@
-import React, { useState } from "react";
-
-// Utilities
-import FolderManager from "../../utilities/folderManager/FolderManager";
+import React from "react";
 
 // Pages
 import Source from "./Source/Source";
@@ -13,16 +10,28 @@ import Card from "../../components/Card/Card";
 import styles from "./Explore.module.scss";
 
 
-function Explore({ searchValue }) {
-    const [folderManager] = useState(() => new FolderManager());
-    const [folderContents, setFolderContents] = useState([]);
-    const [selectedExtension, setSelectedExtension] = useState(null);
+function Explore({
+    searchValue,
+    onPageTitleChange,
+    onSelectedExtensionChange,
+    onCurrentLevelChange,
+    onCurrentPathChange,
+    onFolderContentsChange,
+    onShowBackButtonChange,
+    folderContents,
+    currentLevel,
+    selectedExtension,
+    folderManager }) {
 
     const handleSelectedExtension = (extension) => {
-        setSelectedExtension(extension);
+        onSelectedExtensionChange(extension);
+        onCurrentPathChange(extension.link); // Set currentPath to the current folder
+        onPageTitleChange(extension.name);
         folderManager.retrieveFolderContents(extension.link)
             .then((data) => {
-                setFolderContents(data);
+                onFolderContentsChange(data);
+                onCurrentLevelChange(0); // Reset currentLevel to 0 when a new extension is selected
+                onShowBackButtonChange(true); // Show back button when a new extension is selected
             })
             .catch((error) => {
                 console.error(error);
@@ -37,12 +46,15 @@ function Explore({ searchValue }) {
             .includes(searchValue.toLowerCase())
     );
 
+    // ! ATTENTION: ONLY WORK FOR LOCAL FILES
     const handleMoreDisplay = (link) => {
         folderManager.retrieveLevel(selectedExtension.link, link)
             .then((level) => {
                 folderManager.retrieveFolderContents(link, level)
                     .then((data) => {
-                        setFolderContents(data);
+                        onCurrentPathChange(link); // Set currentPath to the current folder
+                        onFolderContentsChange(data);
+                        onCurrentLevelChange(currentLevel + 1); // Increment currentLevel when more is displayed
                     })
                     .catch((error) => console.error(error));
             })

@@ -10,10 +10,10 @@ function Source({ handleSelectedExtension }) {
     const [extensionApi] = useState(() => new ExtensionApi());
     const [extensions, setExtensions] = useState([]);
 
-
     useEffect(() => {
         extensionApi.readExtension()
             .then((data) => {
+                console.log(data);
                 setExtensions(data);
             })
             .catch((error) => {

@@ -28,6 +28,18 @@ class FolderManager {
         });
     }
 
+    retrieveParentPath(path) {
+        return this.retrieveSplittedPath(path, 1);
+    }
+
+    retrieveSplittedPath(basePath, level) {
+        window.api.send("getSplittedPath", { basePath, level });
+
+        return new Promise((resolve, reject) => {
+            window.api.receive("splittedPath", (data) => data.success ? resolve(data.splittedPath) : reject(data.error));
+        });
+    }
+
     getFileName(filePath) {
         const fileName = filePath.split("\\").pop().split("/").pop();
         return fileName;
