@@ -1,0 +1,35 @@
+.backArrow {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    cursor: pointer;
+
+    .backArrowIcon {
+        width: 35px;
+        height: 35px;
+
+        margin: 0 22px 0 17px;
+
+        transition: all 0.3s ease-in-out;
+
+    }
+    
+    &:hover {
+    animation: slideLeft 0.3s ease-in-out forwards;
+
+    @keyframes slideLeft {
+        0% {
+            transform: translateX(0);
+        }
+
+        50% {
+            transform: translateX(-5px);
+        }
+
+        100% {
+            transform: translateX(-7px);
+        }
+    }
+}
+}

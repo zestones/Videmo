@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 // Components
 import NavItem from './Item/NavItem';
@@ -6,17 +6,15 @@ import NavItem from './Item/NavItem';
 // Styles
 import styles from './Navigation.module.scss';
 
-function Navigation({ navItems, onPageTitleChange, searchValue }) {
-    const [activeItem, setActiveItem] = useState('Accueil');
+function Navigation({ navItems, onPageTitleChange, activePage }) {
 
     const handleItemClick = (item) => {
-        setActiveItem(item);
         onPageTitleChange(item); // Invoke the callback with the new title
     };
 
     const renderContent = () => {
         // Render different content based on the active item
-        return navItems[activeItem] || null;
+        return navItems[activePage] || null;
     };
 
     return (
@@ -27,7 +25,7 @@ function Navigation({ navItems, onPageTitleChange, searchValue }) {
                         <NavItem
                             key={key}
                             item={key}
-                            activeItem={activeItem}
+                            activeItem={activePage}
                             handleItemClick={handleItemClick}
                         />
                     ))}

@@ -1,5 +1,8 @@
 .headerLeft {
     flex-grow: 1;
+    display: flex;
+    align-items: center;
+    height: 100%;
 }
 
 .headerRight {
