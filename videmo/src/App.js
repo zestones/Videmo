@@ -20,7 +20,7 @@ function App() {
 	const [selectedExtension, setSelectedExtension] = useState(null);
 	const [folderManager] = useState(() => new FolderManager());
 	const [activePage, setActivePage] = useState('Accueil');
-	const [headerTitle, setHeaderTitle] = useState('');
+	const [headerTitle, setHeaderTitle] = useState(activePage);
 
 	const [searchValue, setSearchValue] = useState('');
 	const [currentLevel, setCurrentLevel] = useState(0);

@@ -2,6 +2,7 @@
 // It is responsible for creating the browser window and for communicating with the renderer process.
 
 const electron = require('electron');
+const Menu = electron.Menu;
 const path = require('path');
 const fs = require('fs');
 
@@ -29,12 +30,16 @@ function createWindow() {
     mainWindow = new BrowserWindow({
         width: 1400,
         height: 800,
+        // frame: false, // Hide the default window frame
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'), // use a preload script
             nodeIntegration: false,
             contextIsolation: true
         }
     });
+
+    // Remove the default menu
+    Menu.setApplicationMenu(null);
 
     // and load the index.html of the app.
     mainWindow.loadURL('http://localhost:3000');

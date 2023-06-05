@@ -72,6 +72,12 @@ class FolderManager {
         return `app:///${coverImage}`;
     }
 
+    // TODO: Merge with getCoverImage
+    getVideoFile(videoFile) {
+        // Construct the file path using the custom protocol 'app://'
+        return `app:///${videoFile}`;
+    }
+
     openDialogWindow() {
         // Send a message to the main process to open a folder dialog
         window.api.send("openFolderDialog");

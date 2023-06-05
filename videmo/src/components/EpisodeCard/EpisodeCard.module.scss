@@ -11,28 +11,49 @@
     padding: 0 2rem;
     margin: 0.5rem;
 
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
     transition: all 0.3s ease-in-out;
-    cursor: pointer;
 
-    &:hover {
-        transform: scale(1.05);
-        box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-    }
     
     &:first-child {
         margin-top: 3rem;
     }
 
-    .cardTitle {
-        font-size: 1.3rem;
-        font-weight: 600;
-        margin-bottom: 0;
+    .cardContent {
+        display: flex;
+
+
+        .cardTitle {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0;
+        }
+    
+        .cardModifiedTime {
+            font-size: 0.8rem;
+            color: #777;
+            margin-left: 1rem;
+        }
+
+        .cardButtonsContainer {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            
+            .cardButton {
+                background-color: transparent;
+                border: none;
+                outline: none;
+                cursor: pointer;
+                margin-left: 1rem;
+                transition: all 0.3s ease-in-out;
+
+                &:hover {
+                    transform: scale(1.1);
+                }
+            }
+        }
     }
 
-    .cardModifiedTime {
-        font-size: 0.8rem;
-        color: #777;
-        margin-left: 1rem;
-    }
+    
 }
