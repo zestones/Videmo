@@ -1,7 +1,6 @@
 const { ipcMain } = require('electron');
 const ExtensionsDAO = require('../services/dao/settings/ExtensionsDAO');
 
-
 // Add new extension
 ipcMain.on('/create/extension/', (event, arg) => {
     new ExtensionsDAO()

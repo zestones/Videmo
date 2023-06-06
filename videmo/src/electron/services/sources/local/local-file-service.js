@@ -4,8 +4,10 @@ const FolderManager = require('../../../utilities/folderManager/FolderManager');
 const path = require('path');
 const fs = require('fs');
 
+// Create a new instance of the FolderManager class
 const folderManager = new FolderManager();
 
+// Register the 'getSplittedPath' event listener to the ipcMain module to get the path splitted by the level
 ipcMain.on('getSplittedPath', (event, { basePath, level }) => {
     const pathArray = basePath.split(path.sep); // Split the path by the platform-specific separator
 
@@ -21,6 +23,8 @@ ipcMain.on('getSplittedPath', (event, { basePath, level }) => {
     event.reply('splittedPath', { success: true, error: null, splittedPath: splittedPath });
 });
 
+
+// Register the 'getLevel' event listener to the ipcMain module to get the level of the path
 ipcMain.on('getLevel', (event, { baseLink, link }) => {
     const baseSeparatorCount = (baseLink.split(path.sep).length - 1) || 0;
     const linkSeparatorCount = (link.split(path.sep).length - 1) || 0;
@@ -31,7 +35,7 @@ ipcMain.on('getLevel', (event, { baseLink, link }) => {
 });
 
 
-// Listen for async message from renderer process
+// Register the 'getFolderContents' event listener to the ipcMain module to get the contents of a folder
 ipcMain.on('getFolderContents', (event, { folderPath, coverFolder, level }) => {
     fs.readdir(folderPath, (err, contents) => {
         if (err) {
@@ -43,25 +47,21 @@ ipcMain.on('getFolderContents', (event, { folderPath, coverFolder, level }) => {
     });
 });
 
+
+// Register the 'getFolderCover' event listener to the ipcMain module to get the cover of a folder
 ipcMain.on('getFolderCover', (event, { folderPath, coverFolder, level }) => {
     const coverImagePath = folderManager.getCoverImagePath(folderPath, coverFolder, level);
     event.reply('folderCover', { success: true, error: null, cover: coverImagePath });
 });
 
-
-
-
+// Register the 'openFolderDialog' event listener to the ipcMain module to open a folder dialog
 ipcMain.on("openFolderDialog", async (event) => {
     try {
-        const result = await dialog.showOpenDialog({
-            properties: ["openDirectory"],
-        });
+        const result = await dialog.showOpenDialog({ properties: ["openDirectory"], title: "Select a folder"});
 
         if (!result.canceled) {
-            const selectedPath = result.filePaths[0];
-            event.reply("folderSelected", { success: true, error: null, folderPath: selectedPath });
-        }
-        else {
+            event.reply("folderSelected", { success: true, error: null, folderPath: result.filePaths[0] });
+        } else {
             event.reply("folderSelected", { success: false, error: "No folder selected", folderPath: null });
         }
     } catch (error) {
@@ -69,6 +69,7 @@ ipcMain.on("openFolderDialog", async (event) => {
     }
 });
 
+// Register the 'getFilesInFolder' event listener to the ipcMain module to get the files in a folder
 ipcMain.on("getFilesInFolder", (event, { folderPath }) => {
     fs.readdir(folderPath, (err, contents) => {
         if (err) {
@@ -96,6 +97,8 @@ ipcMain.on("getFilesInFolder", (event, { folderPath }) => {
     });
 });
 
+
+// Register the 'openFileInLocalVideoPlayer' event listener to the ipcMain module to open a file in the local video player
 ipcMain.on("openFileInLocalVideoPlayer", (event, { filePath }) => {
     shell.openPath(filePath);
     event.reply("fileOpened", { success: true, error: null });

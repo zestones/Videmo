@@ -83,7 +83,7 @@ app.whenReady().then(() => {
 
 
 // Import the IPC main event handlers
-require('./api/api');
+require('./api/extension-api');
 require('./services/sources/local/local-file-service');
 
 // In this file you can include the rest of your app's specific main process
