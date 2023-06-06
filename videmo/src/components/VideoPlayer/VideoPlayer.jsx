@@ -17,7 +17,7 @@ function VideoPlayer({ videoUrl, onShowVideoChange }) {
     return (
         <div className={styles.videoPlayer}>
                 <video className={styles.videoPlayer__video} controls>
-                    <source src={folderManager.getVideoFile(videoUrl)} type="video/mp4" />;
+                    <source src={folderManager.accessFileWithCustomProtocol(videoUrl)} type="video/mp4" />;
                 </video>
 
                 <div className={styles.videoPlayer__close} onClick={() => onShowVideoChange(false)}>

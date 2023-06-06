@@ -12,25 +12,22 @@ function Source({ handleSelectedExtension }) {
 
     useEffect(() => {
         extensionApi.readExtension()
-            .then((data) => {
-                setExtensions(data);
-            })
-            .catch((error) => {
-                console.error(error);
-            });
+            .then((data) => setExtensions(data))
+            .catch((error) => console.error(error));
     }, [extensionApi]);
-
-
 
     return (
         <div className={styles.extensions}>
             <h3>Source local</h3>
             {extensions.map((extension) => (
-                <div className={styles.extension} onClick={() => handleSelectedExtension(extension)}>
+                <div
+                    key={extension.id}
+                    className={styles.extension}
+                    onClick={() => handleSelectedExtension(extension)}>
                     <div className={styles.extensionIcon} >
                         <img src="/icons/local-source.png" alt="Local source" />
                     </div>
-                    <p key={extension.id} className={styles.extensionName}>
+                    <p className={styles.extensionName}>
                         {extension.name}
                     </p>
                 </div>

@@ -1,7 +1,13 @@
 class FolderManager {
 
+    // Constants
     static DEFAULT_COVER_FOLDER_NAME = "Cover";
 
+    /**
+     * @param {String} folderPath 
+     * @param {Integer} level 
+     * @returns {Promise<Array>} A promise that resolves with the contents of the folder.
+     */
     retrieveFolderContents(folderPath, level = 0) {
         const coverFolder = FolderManager.DEFAULT_COVER_FOLDER_NAME
 
@@ -14,9 +20,14 @@ class FolderManager {
         });
     }
 
+    /**
+     * @param {String} folderPath 
+     * @param {Integer} level 
+     * @returns {Promise<String>} A promise that resolves with the path of the folder cover.
+     */
     retrieveFolderCover(folderPath, level = 0) {
         const coverFolder = FolderManager.DEFAULT_COVER_FOLDER_NAME
-        
+
         // Send the folder path to the main Electron process
         window.api.send("getFolderCover", { folderPath, coverFolder, level });
 
@@ -26,6 +37,11 @@ class FolderManager {
         });
     }
 
+    /**
+     * @param {String} baseLink 
+     * @param {String} link 
+     * @returns {Promise<String>} A promise that resolves with the level of the link.
+     */
     retrieveLevel(baseLink, link) {
         window.api.send("getLevel", { baseLink, link });
 
@@ -34,11 +50,20 @@ class FolderManager {
         });
     }
 
+    /**
+     * @param {String} path 
+     * @returns {Promise<String>} A promise that resolves with the parent path of the path.
+     */
     retrieveParentPath(path) {
-        return this.retrieveSplittedPath(path, 1);
+        return this.#retrieveSplittedPath(path, 1);
     }
 
-    retrieveSplittedPath(basePath, level) {
+    /**
+     * @param {String} basePath 
+     * @param {Integer} level 
+     * @returns {Promise<String>} A promise that resolves with the splitted path.
+     */
+    #retrieveSplittedPath(basePath, level) {
         window.api.send("getSplittedPath", { basePath, level });
 
         return new Promise((resolve, reject) => {
@@ -46,6 +71,10 @@ class FolderManager {
         });
     }
 
+    /**
+     * @param {String} folderPath 
+     * @returns {Promise<Array>} A promise that resolves with the files in the folder.
+     */
     retrieveFilesInFolder(folderPath) {
         window.api.send("getFilesInFolder", { folderPath });
 
@@ -54,30 +83,21 @@ class FolderManager {
         });
     }
 
+    /**
+     * @param {String} filePath 
+     * @returns {Promise<String>} A promise that resolves with the success message.
+     */
     openFileInLocalVideoPlayer(filePath) {
         window.api.send("openFileInLocalVideoPlayer", { filePath });
 
         return new Promise((resolve, reject) => {
-            window.api.receive("fileOpened", (data) => data.success ? resolve(data.message) : reject(data.error));
+            window.api.receive("fileOpened", (data) => data.success ? resolve(data.success) : reject(data.error));
         });
     }
 
-    getFileName(filePath) {
-        const fileName = filePath.split("\\").pop().split("/").pop();
-        return fileName;
-    }
-
-    getCoverImage(coverImage) {
-        // Construct the file path using the custom protocol 'app://'
-        return `app:///${coverImage}`;
-    }
-
-    // TODO: Merge with getCoverImage
-    getVideoFile(videoFile) {
-        // Construct the file path using the custom protocol 'app://'
-        return `app:///${videoFile}`;
-    }
-
+    /**
+     * @returns {Promise<String>} A promise that resolves with the selected folder path.
+     */
     openDialogWindow() {
         // Send a message to the main process to open a folder dialog
         window.api.send("openFolderDialog");
@@ -86,6 +106,23 @@ class FolderManager {
         return new Promise((resolve, reject) => {
             window.api.receive("folderSelected", (data) => data.success ? resolve(data.folderPath) : reject(data.error));
         });
+    }
+
+    /**
+     * @param {String} filePath 
+     * @returns {String} The file name of the file path.
+     */
+    retrieveFileName(filePath) {
+        return filePath.split("\\").pop().split("/").pop();
+    }
+
+    /**
+     * @param {String} filePath 
+     * @returns {String} The file path with the custom protocol 'app://'
+     */
+    accessFileWithCustomProtocol(filePath) {
+        // Construct the file path using the custom protocol 'app://'
+        return `app:///${filePath}`;
     }
 }
 

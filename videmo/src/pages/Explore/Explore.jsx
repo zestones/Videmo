@@ -31,7 +31,6 @@ function Explore({
     selectedExtension,
     folderManager }) {
 
-
     const handleSelectedExtension = (extension) => {
         onSelectedExtensionChange(extension);
         onCurrentPathChange(extension.link); // Set currentPath to the current folder
@@ -51,51 +50,55 @@ function Explore({
     // Filter the folder contents based on the search value
     const filteredFolderContents = folderContents.filter((folderContent) =>
         folderManager
-            .getFileName(folderContent.path)
+            .retrieveFileName(folderContent.path)
             .toLowerCase()
             .includes(searchValue.toLowerCase())
     );
 
-    // ! ATTENTION: ONLY WORK FOR LOCAL FILES
+    // Function to retrieve series episodes
     const retrieveSeriesEpisodes = (path) => {
-        console.log(path);
         folderManager.retrieveFilesInFolder(path)
-            .then((data) => {
-                console.log(data);
-                onEpisodesFilesChange(data);
-            })
+            .then((data) => onEpisodesFilesChange(data))
             .catch((error) => console.error(error));
     };
 
-    // ! ATTENTION: ONLY WORK FOR LOCAL FILES
+    // Function to handle "More" display for local files
     const handleMoreDisplay = (serie) => {
         if (serie.local) {
-            folderManager.retrieveLevel(selectedExtension.link, serie.link)
-                .then((level) => {
-                    folderManager.retrieveFolderContents(serie.link, level)
-                        .then((data) => {
-                            // check if the data is empty
-                            if (data.length === 0) {
-                                retrieveSeriesEpisodes(serie.link);
-                            }
-
-                            onCurrentPathChange(serie.link); // Set currentPath to the current folder
-                            onFolderContentsChange(data);
-                            onCurrentLevelChange(currentLevel + 1); // Increment currentLevel when more is displayed
-                            onShowSerieDetailsChange(true);
-
-                            const test = {
-                                "title": serie.title,
-                                "image": serie.image,
-                                "description": "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Alias expedita consequuntur, labore repellat blanditiis reiciendis consequatur aliquam accusamus libero fuga dolorum porro eos esse nostrum. Nam, adipisci. Obcaecati, voluptas! Eligendi?",
-                                "genres": ['Action', 'Adventure', 'Comedy']
-                            };
-                            onSerieDetailsChange(test);
-                        })
-                        .catch((error) => console.error(error));
-                })
-                .catch((error) => console.error(error));
+            retrieveLevelAndFolderContents(serie.link, serie);
         }
+    };
+
+    // Helper function to retrieve level and folder contents
+    const retrieveLevelAndFolderContents = (link, serie) => {
+        folderManager.retrieveLevel(selectedExtension.link, link)
+            .then((level) => retrieveFolderContentsAndHandleData(link, level, serie))
+            .catch((error) => console.error(error));
+    };
+
+    // Helper function to retrieve folder contents and handle the data
+    const retrieveFolderContentsAndHandleData = (link, level, serie) => {
+        folderManager.retrieveFolderContents(link, level)
+            .then((data) => {
+                if (data.length === 0) {
+                    retrieveSeriesEpisodes(link);
+                }
+
+                onCurrentPathChange(link);
+                onFolderContentsChange(data);
+                onCurrentLevelChange(currentLevel + 1);
+                onShowSerieDetailsChange(true);
+
+                // TODO: Retrieve real serie details
+                const test = {
+                    "title": serie.title,
+                    "image": serie.image,
+                    "description": "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Alias expedita consequuntur, labore repellat blanditiis reiciendis consequatur aliquam accusamus libero fuga dolorum porro eos esse nostrum. Nam, adipisci. Obcaecati, voluptas! Eligendi?",
+                    "genres": ['Action', 'Adventure', 'Comedy']
+                };
+                onSerieDetailsChange(test);
+            })
+            .catch((error) => console.error(error));
     };
 
     return (
@@ -116,8 +119,8 @@ function Explore({
                         {filteredFolderContents.map((folderContent) => (
                             <Card
                                 link={folderContent.path}
-                                title={folderManager.getFileName(folderContent.path)}
-                                image={folderManager.getCoverImage(folderContent.cover)}
+                                title={folderManager.retrieveFileName(folderContent.path)}
+                                image={folderManager.accessFileWithCustomProtocol(folderContent.cover)}
                                 onMoreClick={handleMoreDisplay}
                             />
                         ))}
