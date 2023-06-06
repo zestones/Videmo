@@ -19,7 +19,6 @@ function Settings() {
     useEffect(() => {
         extensionApi.readExtension()
             .then((data) => {
-                console.log(data);
                 setExtensions(data);
             })
             .catch((error) => {

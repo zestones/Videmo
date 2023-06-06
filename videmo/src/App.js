@@ -20,13 +20,17 @@ function App() {
 	const [selectedExtension, setSelectedExtension] = useState(null);
 	const [folderManager] = useState(() => new FolderManager());
 	const [activePage, setActivePage] = useState('Accueil');
-	const [headerTitle, setHeaderTitle] = useState('');
+	const [headerTitle, setHeaderTitle] = useState(activePage);
 
 	const [searchValue, setSearchValue] = useState('');
 	const [currentLevel, setCurrentLevel] = useState(0);
 	const [currentPath, setCurrentPath] = useState('');
 	const [folderContents, setFolderContents] = useState([]);
 	const [showBackButton, setShowBackButton] = useState(false);
+	const [showSerieDetails, setShowSerieDetails] = useState(false);
+	const [serieDetails, setSerieDetails] = useState(null); // [title, image, description, gennres...]
+	const [episodesFiles, setEpisodesFiles] = useState([]);
+
 
 	const handleSearch = (value) => {
 		setSearchValue(value);
@@ -56,6 +60,12 @@ function App() {
 			onCurrentPathChange={setCurrentPath}
 			onFolderContentsChange={setFolderContents}
 			onShowBackButtonChange={setShowBackButton}
+			onShowSerieDetailsChange={setShowSerieDetails}
+			onSerieDetailsChange={setSerieDetails}
+			onEpisodesFilesChange={setEpisodesFiles}
+			episodesFiles={episodesFiles}
+			showSerieDetails={showSerieDetails}
+			serieDetails={serieDetails}
 			folderContents={folderContents}
 			currentLevel={currentLevel}
 			selectedExtension={selectedExtension}
@@ -66,26 +76,40 @@ function App() {
 	};
 
 	// ! ATTENTION: ONLY WORK FOR LOCAL FILES
-	const handleBackClick = () => {
-		console.log('Back clicked');
+	// Function to update serie details
+	const updateSerieDetails = (parentPath, level) => {
+		folderManager.retrieveFolderCover(parentPath, level - 1)
+			.then((cover) => {
+				// TODO: Retrieve serie real details
+				const title = folderManager.retrieveFileName(parentPath);
+				const img = folderManager.accessFileWithCustomProtocol(cover);
+				setSerieDetails({ title: title, image: img, description: serieDetails.description, genres: serieDetails.genres });
+			})
+			.catch((error) => console.error(error));
+	};
+
+	const handleBackClick = async () => {
 		if (currentLevel > 0) {
-			// Retrieve the parent folder path
-			folderManager.retrieveParentPath(currentPath)
-				.then((parentPath) => {
-					// Retrieve the parent folder level
-					folderManager.retrieveLevel(selectedExtension.link, parentPath)
-						.then((level) => {
-							folderManager.retrieveFolderContents(parentPath, level)
-								.then((data) => {
-									setFolderContents(data);
-									setCurrentLevel(currentLevel - 1);
-									setCurrentPath(parentPath); // Set currentPath to the parent folder
-								})
-								.catch((error) => console.error(error));
-						})
-						.catch((error) => console.error(error));
-				})
-				.catch((error) => console.error(error));
+			setEpisodesFiles([]); // Hide episode list (on back click list episode is impossible)
+
+			try {
+				const parentPath = await folderManager.retrieveParentPath(currentPath);
+				const level = await folderManager.retrieveLevel(selectedExtension.link, parentPath);
+				const data = await folderManager.retrieveFolderContents(parentPath, level);
+
+				setFolderContents(data);
+				setCurrentLevel(currentLevel - 1);
+				setCurrentPath(parentPath);
+
+				if (currentLevel === 1) {
+					setShowSerieDetails(false);
+				} else if (currentLevel > 1) {
+					setShowSerieDetails(true);
+					updateSerieDetails(parentPath, level);
+				}
+			} catch (error) {
+				console.error(error);
+			}
 		} else {
 			handlePageTitleChange("Explorer");
 		}
@@ -95,16 +119,13 @@ function App() {
 		<div className="App">
 			<Header>
 				<div className="headerLeft">
-					{showBackButton && (
-						<BackArrow handleClick={handleBackClick} />
-					)}
+					{showBackButton && <BackArrow handleClick={handleBackClick} />}
 					<h1>{headerTitle}</h1>
 				</div>
 				<div className="headerRight">
 					<SearchBar onSearch={handleSearch} />
 				</div>
 			</Header>
-
 			<Navigation
 				navItems={navItems}
 				onPageTitleChange={handlePageTitleChange}
