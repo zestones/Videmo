@@ -1,8 +1,5 @@
 export default class ExtensionsApi {
 
-    // * --- API Calls --- * //
-    // ----------------------- 
-
     // Create a new extension
     createExtension(link = "", name = "", local = true) {
         if (link === "" || name === "") {

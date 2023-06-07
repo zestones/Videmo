@@ -17,8 +17,9 @@ import Explore from './pages/Explore/Explore';
 import FolderManager from './utilities/folderManager/FolderManager';
 
 function App() {
+	const [folderManager] = useState(() => new FolderManager()); 
+
 	const [selectedExtension, setSelectedExtension] = useState(null);
-	const [folderManager] = useState(() => new FolderManager());
 	const [activePage, setActivePage] = useState('Accueil');
 	const [headerTitle, setHeaderTitle] = useState(activePage);
 

@@ -83,7 +83,11 @@ app.whenReady().then(() => {
 
 
 // Import the IPC main event handlers
+// handle the queries to the database
 require('./api/extension-api');
+require('./api/category-api');
+
+// handle local file system
 require('./services/sources/local/local-file-service');
 
 // In this file you can include the rest of your app's specific main process

@@ -24,3 +24,6 @@ CREATE TABLE IF NOT EXISTS Serie (
   FOREIGN KEY (category_id) REFERENCES Category (id),
   FOREIGN KEY (extension_id) REFERENCES Extension (id)
 );
+
+-- Insert the default category
+INSERT INTO Category (name) VALUES ('Default');
