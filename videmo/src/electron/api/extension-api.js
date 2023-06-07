@@ -14,6 +14,8 @@ ipcMain.on('/read/extension/', (event) => {
     const dao = new ExtensionsDAO();
     dao.getAllExtensions()
         .then((extensions) => {
+            // convert local to boolean
+            extensions.forEach((extension) => extension.local = extension.local === 1);
             event.reply('/read/extension/', { success: true, extensions: extensions });
         }).catch((err) => {
             event.reply('/read/extension/', { success: false, error: err });

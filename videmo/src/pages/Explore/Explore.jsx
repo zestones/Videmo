@@ -93,12 +93,25 @@ function Explore({
                 const test = {
                     "title": serie.title,
                     "image": serie.image,
+                    "local": selectedExtension.local,
                     "description": "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Alias expedita consequuntur, labore repellat blanditiis reiciendis consequatur aliquam accusamus libero fuga dolorum porro eos esse nostrum. Nam, adipisci. Obcaecati, voluptas! Eligendi?",
                     "genres": ['Action', 'Adventure', 'Comedy']
                 };
                 onSerieDetailsChange(test);
             })
             .catch((error) => console.error(error));
+    };
+
+    const constructSerieObject = (serie) => {
+        return {
+            "name": folderManager.retrieveFileName(serie.path),
+            "link": serie.path,
+            "image": folderManager.accessFileWithCustomProtocol(serie.cover),
+            "local": selectedExtension.local,
+            "extensionId": selectedExtension.id,
+            "description": "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Alias expedita consequuntur, labore repellat blanditiis reiciendis consequatur aliquam accusamus libero fuga dolorum porro eos esse nostrum. Nam, adipisci. Obcaecati, voluptas! Eligendi?",
+            "genres": ['Action', 'Adventure', 'Comedy']
+        };
     };
 
     return (
@@ -118,10 +131,8 @@ function Explore({
                     <ul className={styles.cardContainer}>
                         {filteredFolderContents.map((folderContent) => (
                             <Card
-                                link={folderContent.path}
-                                title={folderManager.retrieveFileName(folderContent.path)}
-                                image={folderManager.accessFileWithCustomProtocol(folderContent.cover)}
-                                onMoreClick={handleMoreDisplay}
+                                serie={constructSerieObject(folderContent)}
+                                onPlayClick={handleMoreDisplay}
                             />
                         ))}
                         {episodesFiles.map((episode) => (

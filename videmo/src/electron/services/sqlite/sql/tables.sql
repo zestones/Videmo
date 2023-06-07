@@ -19,6 +19,8 @@ CREATE TABLE IF NOT EXISTS Serie (
   nb_episodes INTEGER,
   nb_season INTEGER,
   description TEXT,
+  link TEXT,
+  image TEXT,
   category_id INTEGER,
   extension_id INTEGER,
   FOREIGN KEY (category_id) REFERENCES Category (id),

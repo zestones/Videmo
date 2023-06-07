@@ -27,4 +27,13 @@ export default class CategoryApi {
             window.api.receive("/delete/category/", (data) => data.success ? resolve(data.category) : reject(data.error));
         });
     }
+
+        // Add Serie to Categories
+        addSerieToCategories(serie, categoriesId = [1]) {
+            window.api.send("/add/serie/to/categories/", { serie: JSON.stringify(serie), categoriesId: categoriesId });
+    
+            return new Promise((resolve, reject) => {
+                window.api.receive("/add/serie/to/categories/", (data) => data.success ? resolve(data.category) : reject(data.error));
+            });
+        }
 }

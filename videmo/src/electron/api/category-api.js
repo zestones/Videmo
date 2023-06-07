@@ -28,3 +28,11 @@ ipcMain.on('/delete/category/', (event, arg) => {
 
     event.reply('/delete/category/', { success: true, category: { id: arg.id } });
 })
+
+// Add Serie to Category
+ipcMain.on('/add/serie/to/categories/', (event, arg) => {
+    new CategoriesDAO()
+        .updateSerieCategories(arg.serie, arg.categoriesId);
+
+    event.reply('/add/serie/to/categories/', { success: true, category: { id: arg.categoriesId } });
+})
