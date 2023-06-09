@@ -10,12 +10,21 @@ export default class CategoryApi {
         });
     }
 
-    // Read all categories
-    readAllCategories() {
-        window.api.send("/read/category/");
+    // read categories by serie id
+    readCategoriesBySerieName(serieName) {
+        window.api.send("/read/categories/by/serie/id/", { serieName: serieName });
 
         return new Promise((resolve, reject) => {
-            window.api.receive("/read/category/", (data) => data.success ? resolve(data.categories) : reject(data.error));
+            window.api.receive("/read/categories/by/serie/id/", (data) => data.success ? resolve(data.categories) : reject(data.error));
+        });
+    }
+
+    // Read all categories
+    readAllCategories() {
+        window.api.send("/read/all/categories/");
+
+        return new Promise((resolve, reject) => {
+            window.api.receive("/read/all/categories/", (data) => data.success ? resolve(data.categories) : reject(data.error));
         });
     }
 

@@ -10,14 +10,27 @@ ipcMain.on('/create/category/', (event, arg) => {
     event.reply('/create/category/', { success: true, category: { name: arg.name } });
 })
 
+
+// Read categories by serie id
+ipcMain.on('/read/categories/by/serie/id/', (event, arg) => {
+    new CategoriesDAO()
+        .getCategoriesBySerieName(arg.serieName)
+        .then((categories) => {
+            event.reply('/read/categories/by/serie/id/', { success: true, categories: categories });
+        }).catch((err) => {
+            event.reply('/read/categories/by/serie/id/', { success: false, error: err });
+        });
+})
+
+
 // Read all categories
-ipcMain.on('/read/category/', (event) => {
+ipcMain.on('/read/all/categories/', (event) => {
     const dao = new CategoriesDAO();
     dao.getAllCategories()
         .then((categories) => {
-            event.reply('/read/category/', { success: true, categories: categories });
+            event.reply('/read/all/categories/', { success: true, categories: categories });
         }).catch((err) => {
-            event.reply('/read/category/', { success: false, error: err });
+            event.reply('/read/all/categories/', { success: false, error: err });
         });
 })
 

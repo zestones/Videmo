@@ -1,12 +1,12 @@
 .card {
     width: 100%;
     height: 100%;
-    
+
     display: flex;
     flex-direction: column;
 
     background-color: var(--tertiary-color);
-    
+
     border-radius: 10px;
     padding: 0 2rem;
     margin: 0.5rem;
@@ -14,32 +14,45 @@
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
     transition: all 0.3s ease-in-out;
 
-    
+
     &:first-child {
         margin-top: 3rem;
     }
 
     .cardContent {
         display: flex;
+        max-height: 100%;
 
+        .cardInfo {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
 
-        .cardTitle {
-            font-size: 1.3rem;
-            font-weight: 600;
-            margin-bottom: 0;
-        }
-    
-        .cardModifiedTime {
-            font-size: 0.8rem;
-            color: #777;
-            margin-left: 1rem;
+            max-width: 80%;
+
+            .cardTitle {
+                font-size: 1.3rem;
+                font-weight: 600;
+                margin-bottom: 0;
+
+                // if the text is too long, it will be cut off
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            .cardModifiedTime {
+                font-size: 0.8rem;
+                color: #777;
+                margin-left: 1rem;
+            }
         }
 
         .cardButtonsContainer {
             margin-left: auto;
             display: flex;
             align-items: center;
-            
+
             .cardButton {
                 background-color: transparent;
                 border: none;
@@ -55,5 +68,5 @@
         }
     }
 
-    
+
 }

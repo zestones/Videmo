@@ -38,7 +38,8 @@ function Explore({
 
         folderManager.retrieveFolderContents(extension.link)
             .then((data) => {
-                onFolderContentsChange(data); // Set folderContents to the current folder contents
+                onFolderContentsChange(data.contents); // Set folderContents to the current folder contents
+                console.log(data.basename);
                 onCurrentLevelChange(0); // Reset currentLevel to 0 when a new extension is selected
                 onShowBackButtonChange(true); // Show back button when a new extension is selected
                 onSerieDetailsChange(null); // Reset serieDetails when a new extension is selected
@@ -80,18 +81,20 @@ function Explore({
     const retrieveFolderContentsAndHandleData = (link, level, serie) => {
         folderManager.retrieveFolderContents(link, level)
             .then((data) => {
-                if (data.length === 0) {
+                if (data.contents.length === 0) {
                     retrieveSeriesEpisodes(link);
                 }
 
                 onCurrentPathChange(link);
-                onFolderContentsChange(data);
+                onFolderContentsChange(data.contents);
+                console.log(data.basename);
                 onCurrentLevelChange(currentLevel + 1);
                 onShowSerieDetailsChange(true);
 
                 // TODO: Retrieve real serie details
                 const test = {
-                    "title": serie.title,
+                    "basename": data.basename,
+                    "name": serie.name,
                     "image": serie.image,
                     "local": selectedExtension.local,
                     "description": "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Alias expedita consequuntur, labore repellat blanditiis reiciendis consequatur aliquam accusamus libero fuga dolorum porro eos esse nostrum. Nam, adipisci. Obcaecati, voluptas! Eligendi?",
@@ -106,6 +109,7 @@ function Explore({
         return {
             "name": folderManager.retrieveFileName(serie.path),
             "link": serie.path,
+            "basename": serie.basename,
             "image": folderManager.accessFileWithCustomProtocol(serie.cover),
             "local": selectedExtension.local,
             "extensionId": selectedExtension.id,
@@ -123,7 +127,8 @@ function Explore({
                     {showSerieDetails && (
                         <DetailsContainer
                             image={serieDetails.image}
-                            title={serieDetails.title}
+                            name={serieDetails.name}
+                            basename={serieDetails.basename}
                             description={serieDetails.description}
                             genres={serieDetails.genres}
                         />

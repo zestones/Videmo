@@ -42,7 +42,8 @@ ipcMain.on('getFolderContents', (event, { folderPath, coverFolder, level }) => {
             event.reply('folderContents', { success: false, error: err.message, folderContents: [{}] });
         } else {
             const folderContents = folderManager.getFolderContentsWithCovers(folderPath, contents, coverFolder, level);
-            event.reply('folderContents', { success: true, error: null, folderContents: folderContents });
+            const basename = folderManager.getBasenameByLevel(folderPath, level);
+            event.reply('folderContents', { success: true, error: null, folderContents: folderContents, basename: basename});
         }
     });
 });
@@ -53,6 +54,7 @@ ipcMain.on('getFolderCover', (event, { folderPath, coverFolder, level }) => {
     const coverImagePath = folderManager.getCoverImagePath(folderPath, coverFolder, level);
     event.reply('folderCover', { success: true, error: null, cover: coverImagePath });
 });
+
 
 // Register the 'openFolderDialog' event listener to the ipcMain module to open a folder dialog
 ipcMain.on("openFolderDialog", async (event) => {
@@ -68,6 +70,7 @@ ipcMain.on("openFolderDialog", async (event) => {
         event.reply("folderSelected", { success: false, error: error.message, folderPath: null });
     }
 });
+
 
 // Register the 'getFilesInFolder' event listener to the ipcMain module to get the files in a folder
 ipcMain.on("getFilesInFolder", (event, { folderPath }) => {

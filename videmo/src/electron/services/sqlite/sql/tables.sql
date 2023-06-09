@@ -21,10 +21,21 @@ CREATE TABLE IF NOT EXISTS Serie (
   description TEXT,
   link TEXT,
   image TEXT,
-  category_id INTEGER,
   extension_id INTEGER,
+  serie_category_id INTEGER,
+  FOREIGN KEY (extension_id) REFERENCES Extension (id),
+  FOREIGN KEY (serie_category_id) REFERENCES SerieCategory (id)
+  UNIQUE (name)
+);
+
+-- Create SerieCategory table
+CREATE TABLE IF NOT EXISTS SerieCategory (
+  id INTEGER PRIMARY KEY,
+  serie_id INTEGER,
+  category_id INTEGER,
+  FOREIGN KEY (serie_id) REFERENCES Serie (id),
   FOREIGN KEY (category_id) REFERENCES Category (id),
-  FOREIGN KEY (extension_id) REFERENCES Extension (id)
+  UNIQUE (serie_id, category_id)
 );
 
 -- Insert the default category

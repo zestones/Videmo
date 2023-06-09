@@ -10,15 +10,15 @@ ipcMain.on('/create/extension/', (event, arg) => {
 })
 
 // Read all extensions
-ipcMain.on('/read/extension/', (event) => {
+ipcMain.on('/read/all/extensions/', (event) => {
     const dao = new ExtensionsDAO();
     dao.getAllExtensions()
         .then((extensions) => {
             // convert local to boolean
             extensions.forEach((extension) => extension.local = extension.local === 1);
-            event.reply('/read/extension/', { success: true, extensions: extensions });
+            event.reply('/read/all/extensions/', { success: true, extensions: extensions });
         }).catch((err) => {
-            event.reply('/read/extension/', { success: false, error: err });
+            event.reply('/read/all/extensions/', { success: false, error: err });
         });
 })
 

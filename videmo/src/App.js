@@ -84,7 +84,7 @@ function App() {
 				// TODO: Retrieve serie real details
 				const title = folderManager.retrieveFileName(parentPath);
 				const img = folderManager.accessFileWithCustomProtocol(cover);
-				setSerieDetails({ title: title, image: img, description: serieDetails.description, genres: serieDetails.genres });
+				setSerieDetails({ name: title, image: img, description: serieDetails.description, genres: serieDetails.genres, basename: serieDetails.basename });
 			})
 			.catch((error) => console.error(error));
 	};
@@ -98,7 +98,7 @@ function App() {
 				const level = await folderManager.retrieveLevel(selectedExtension.link, parentPath);
 				const data = await folderManager.retrieveFolderContents(parentPath, level);
 
-				setFolderContents(data);
+				setFolderContents(data.contents);
 				setCurrentLevel(currentLevel - 1);
 				setCurrentPath(parentPath);
 

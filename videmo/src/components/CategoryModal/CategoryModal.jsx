@@ -16,10 +16,18 @@ function CategoryModal({ serie, onClose }) {
     const [checkedCategories, setCheckedCategories] = useState([]);
 
     useEffect(() => {
+        // Retrieve all categories
         categoryApi.readAllCategories()
             .then((data) => setCategories(data))
             .catch((error) => console.error(error));
-    }, [categoryApi]);
+
+        // Retrieve the categories of the serie
+        categoryApi.readCategoriesBySerieName(serie.name)
+            .then((data) => {
+                setCheckedCategories(data.map((category) => category.id))
+            })
+            .catch((error) => console.error(error));
+    }, [categoryApi, serie.name]);
 
     const handleCategoryChange = (e, categoryId) => {
         const isChecked = e.target.checked;
@@ -40,10 +48,7 @@ function CategoryModal({ serie, onClose }) {
         console.log(checkedCategories); // Example usage
         console.log(serie); // Example usage
         categoryApi.addSerieToCategories(serie, checkedCategories)
-            .then(() => {
-                onClose();
-                alert("Série déplacée avec succès !");
-            })
+            .then(() => onClose())
             .catch((error) => console.error(error));
     };
 

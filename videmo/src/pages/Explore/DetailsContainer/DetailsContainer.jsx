@@ -8,7 +8,7 @@ import { faHeart, faStar, faCalendar, faClock } from '@fortawesome/free-solid-sv
 import styles from './DetailsContainer.module.scss';
 
 
-const DetailsContainer = ({ image, title, description, genres }) => {
+const DetailsContainer = ({ image, name, description, genres, basename = "" }) => {
 
 	const details = [
 		{ icon: <FontAwesomeIcon icon={faStar} mask={['far', 'circle']} size="xs" />, label: '8.5/10' },
@@ -31,7 +31,10 @@ const DetailsContainer = ({ image, title, description, genres }) => {
 			</div>
 			<div className={styles.content}>
 				<div className={styles.mainContent}>
-					<h2 className={styles.title}>{title}</h2>
+					<h2 className={styles.title}>{basename}</h2>
+					{basename && basename !== name && (
+						<h4 className={styles.subtitle}>{name}</h4>
+					)}
 					<p className={styles.description}>{description}</p>
 
 					<div className={styles.genres}>
