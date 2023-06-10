@@ -44,7 +44,10 @@ function CategoryModal({ serie, onClose, onMoreClick }) {
         categoryApi.addSerieToCategories(serie, checkedCategories)
             .then(() => {
                 onClose()
-                onMoreClick();
+                // if OnMoreClick is passed as a prop, call it
+                if (onMoreClick) {
+                    onMoreClick();
+                }
             })
             .catch((error) => console.error(error));
     };
