@@ -16,7 +16,7 @@ class FolderManager {
 
         // Listen for the response from the main Electron process
         return new Promise((resolve, reject) => {
-            window.api.receive("folderContents", (data) => data.success ? resolve(data.folderContents) : reject(data.error));
+            window.api.receive("folderContents", (data) => data.success ? resolve({contents: data.folderContents, basename: data.basename}) : reject(data.error));
         });
     }
 

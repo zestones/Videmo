@@ -19,8 +19,22 @@ CREATE TABLE IF NOT EXISTS Serie (
   nb_episodes INTEGER,
   nb_season INTEGER,
   description TEXT,
-  category_id INTEGER,
+  link TEXT,
+  image TEXT,
   extension_id INTEGER,
-  FOREIGN KEY (category_id) REFERENCES Category (id),
-  FOREIGN KEY (extension_id) REFERENCES Extension (id)
+  FOREIGN KEY (extension_id) REFERENCES Extension (id),
+  UNIQUE (name)
 );
+
+-- Create SerieCategory table
+CREATE TABLE IF NOT EXISTS SerieCategory (
+  id INTEGER PRIMARY KEY,
+  serie_id INTEGER,
+  category_id INTEGER,
+  FOREIGN KEY (serie_id) REFERENCES Serie (id),
+  FOREIGN KEY (category_id) REFERENCES Category (id),
+  UNIQUE (serie_id, category_id)
+);
+
+-- Insert the default category
+INSERT INTO Category (name) VALUES ('Default');

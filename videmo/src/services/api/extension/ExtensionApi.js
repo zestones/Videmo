@@ -1,8 +1,5 @@
 export default class ExtensionsApi {
 
-    // * --- API Calls --- * //
-    // ----------------------- 
-
     // Create a new extension
     createExtension(link = "", name = "", local = true) {
         if (link === "" || name === "") {
@@ -22,11 +19,11 @@ export default class ExtensionsApi {
     // Read all extensions
     readExtension() {
         // Send the request to the main Electron process
-        window.api.send("/read/extension/");
+        window.api.send("/read/all/extensions/");
 
         // Listen for the response from the main Electron process
         return new Promise((resolve, reject) => {
-            window.api.receive("/read/extension/", (data) => data.success ? resolve(data.extensions) : reject(data.error));
+            window.api.receive("/read/all/extensions/", (data) => data.success ? resolve(data.extensions) : reject(data.error));
         });
     }
 

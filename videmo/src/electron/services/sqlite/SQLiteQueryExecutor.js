@@ -146,27 +146,35 @@ class SQLiteQueryExecutor {
      * @param {Array<Array>} params - An array of parameter sets for the query.
      * @returns {Promise<void>} A promise that resolves when the changes are committed.
     */
-    executeManyAndCommit(sql, params) {
+    executeManyAndCommit(sql, paramsArray) {
         return new Promise((resolve, reject) => {
             this.db.serialize(() => {
                 this.db.run('BEGIN TRANSACTION');
+
                 const stmt = this.db.prepare(sql);
-                params.forEach((param) => {
-                    stmt.run(param);
+
+                paramsArray.forEach((params) => {
+                    stmt.run(params, function (err) {
+                        if (err) {
+                            this.db.run('ROLLBACK', () => reject(err));
+                            return;
+                        }
+                    });
                 });
+
                 stmt.finalize((err) => {
                     if (err) {
-                        this.db.run('ROLLBACK');
-                        reject(err);
-                    } else {
-                        this.db.run('COMMIT', (err) => {
-                            if (err) {
-                                reject(err);
-                            } else {
-                                resolve();
-                            }
-                        });
+                        this.db.run('ROLLBACK', () => reject(err));
+                        return;
                     }
+
+                    this.db.run('COMMIT', (err) => {
+                        if (err) {
+                            reject(err);
+                        } else {
+                            resolve();
+                        }
+                    });
                 });
             });
         });
