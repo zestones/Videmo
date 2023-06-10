@@ -23,6 +23,17 @@ class SerieDAO {
         return await this.queryExecutor.executeAndFetchOne(sql, params);
     }
 
+    async getSeriesByCategoryId(categoryId) {
+        const sql = `
+            SELECT Serie.*
+            FROM Serie
+            INNER JOIN SerieCategory ON Serie.id = SerieCategory.serie_id
+            WHERE SerieCategory.category_id = ?`;
+
+        const params = [categoryId];
+        return await this.queryExecutor.executeAndFetchAll(sql, params);
+    }
+
     async getAllSeries() {
         const sql = `SELECT * FROM Serie`;
         return await this.queryExecutor.executeAndFetchAll(sql);

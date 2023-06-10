@@ -10,7 +10,7 @@ import CategoryApi from "../../services/api/category/CategoryApi";
 // Styles
 import styles from "./CategoryModal.module.scss";
 
-function CategoryModal({ serie, onClose }) {
+function CategoryModal({ serie, onClose, onMoreClick }) {
     const [categoryApi] = useState(() => new CategoryApi());
     const [categories, setCategories] = useState([]);
     const [checkedCategories, setCheckedCategories] = useState([]);
@@ -35,16 +35,17 @@ function CategoryModal({ serie, onClose }) {
             setCheckedCategories((prevCategories) => [...prevCategories, categoryId]);
         } else {
             // Remove the category ID from the checkedCategories state
-            setCheckedCategories((prevCategories) =>
-                prevCategories.filter((id) => id !== categoryId)
-            );
+            setCheckedCategories((prevCategories) => prevCategories.filter((id) => id !== categoryId));
         }
     };
 
-    const handleAddToCategory = (checkedCategories) => {
+    const handleAddToCategory = () => {
         // Pass the checkedCategories to the API call or handle them as needed
         categoryApi.addSerieToCategories(serie, checkedCategories)
-            .then(() => onClose())
+            .then(() => {
+                onClose()
+                onMoreClick();
+            })
             .catch((error) => console.error(error));
     };
 
@@ -73,10 +74,9 @@ function CategoryModal({ serie, onClose }) {
                     </div>
                     <div className={styles.modalCategoryActions}>
                         <button className={styles.emptyButton} onClick={onClose}>Annuler</button>
-                        <button className={styles.filledButton} onClick={() => handleAddToCategory(checkedCategories)}>
+                        <button className={styles.filledButton} onClick={handleAddToCategory}>
                             Déplacer
                         </button>
-
                     </div>
                 </div>
             </div>

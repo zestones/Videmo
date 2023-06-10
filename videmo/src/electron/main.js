@@ -84,9 +84,10 @@ app.whenReady().then(() => {
 
 // Import the IPC main event handlers
 // handle the queries to the database
+require('./api/serie-category-api');
 require('./api/extension-api');
 require('./api/category-api');
-require('./api/serie-category-api');
+require('./api/serie-api');
 
 // handle local file system
 require('./services/sources/local/local-file-service');

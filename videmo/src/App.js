@@ -12,12 +12,13 @@ import BackArrow from './components/BackArrow/BackArrow';
 // Pages
 import Settings from './pages/More/Settings/Settings';
 import Explore from './pages/Explore/Explore';
+import Library from './pages/Library/Library';
 
 // Utilities
 import FolderManager from './utilities/folderManager/FolderManager';
 
 function App() {
-	const [folderManager] = useState(() => new FolderManager()); 
+	const [folderManager] = useState(() => new FolderManager());
 
 	const [selectedExtension, setSelectedExtension] = useState(null);
 	const [activePage, setActivePage] = useState('Accueil');
@@ -52,7 +53,7 @@ function App() {
 
 	const navItems = {
 		Accueil: 'Home Content',
-		Bibliotheque: 'Library Content',
+		Bibliotheque: <Library searchValue={searchValue} />,
 		Explorer: <Explore
 			searchValue={searchValue}
 			onPageTitleChange={handlePageTitleChange}

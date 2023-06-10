@@ -6,9 +6,9 @@ import CategoryModal from '../CategoryModal/CategoryModal';
 // Styles
 import styles from './Card.module.scss';
 
-function Card({ serie, onPlayClick }) {
+function Card({ serie, onPlayClick, onMoreClick }) {
     const [isHovered, setIsHovered] = useState(false);
-    const [isMoreClicked, setIsMoreClicked] = useState(false);
+    const [showCategoryModal, setShowCategoryModal] = useState(false);
 
     return (
         <>
@@ -22,14 +22,14 @@ function Card({ serie, onPlayClick }) {
                 <p className={styles.cardTitle}>{serie.name}</p>
                 <div className={`${styles.cardLayer} ${isHovered && styles.hovered}`}>
                     <div className={styles.cardLayerContent}>
-                        <img className={styles.cardLayerImage} src="/icons/cards/more.png" alt="More" onClick={() => setIsMoreClicked(true)} />
+                        <img className={styles.cardLayerImage} src="/icons/cards/more.png" alt="More" onClick={() => setShowCategoryModal(true)} />
                         <hr className={styles.separator} />
                         <img className={styles.cardLayerImage} src="/icons/cards/play.png" alt="Play" onClick={() => onPlayClick(serie)} />
                     </div>
                 </div>
             </li>
-            {isMoreClicked && (
-                <CategoryModal serie={serie} onClose={() => setIsMoreClicked(false)} />
+            {showCategoryModal && (
+                <CategoryModal serie={serie} onClose={() => setShowCategoryModal(false)} onMoreClick={onMoreClick} />
             )}
         </>
     );
