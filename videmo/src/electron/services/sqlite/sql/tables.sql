@@ -22,9 +22,7 @@ CREATE TABLE IF NOT EXISTS Serie (
   link TEXT,
   image TEXT,
   extension_id INTEGER,
-  serie_category_id INTEGER,
   FOREIGN KEY (extension_id) REFERENCES Extension (id),
-  FOREIGN KEY (serie_category_id) REFERENCES SerieCategory (id)
   UNIQUE (name)
 );
 

@@ -22,10 +22,8 @@ function CategoryModal({ serie, onClose }) {
             .catch((error) => console.error(error));
 
         // Retrieve the categories of the serie
-        categoryApi.readCategoriesBySerieName(serie.name)
-            .then((data) => {
-                setCheckedCategories(data.map((category) => category.id))
-            })
+        categoryApi.readSerieCategoryIdsBySerieName(serie.name)
+            .then((data) => setCheckedCategories(data))
             .catch((error) => console.error(error));
     }, [categoryApi, serie.name]);
 
@@ -45,8 +43,6 @@ function CategoryModal({ serie, onClose }) {
 
     const handleAddToCategory = (checkedCategories) => {
         // Pass the checkedCategories to the API call or handle them as needed
-        console.log(checkedCategories); // Example usage
-        console.log(serie); // Example usage
         categoryApi.addSerieToCategories(serie, checkedCategories)
             .then(() => onClose())
             .catch((error) => console.error(error));

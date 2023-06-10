@@ -39,7 +39,6 @@ function Explore({
         folderManager.retrieveFolderContents(extension.link)
             .then((data) => {
                 onFolderContentsChange(data.contents); // Set folderContents to the current folder contents
-                console.log(data.basename);
                 onCurrentLevelChange(0); // Reset currentLevel to 0 when a new extension is selected
                 onShowBackButtonChange(true); // Show back button when a new extension is selected
                 onSerieDetailsChange(null); // Reset serieDetails when a new extension is selected
@@ -87,7 +86,6 @@ function Explore({
 
                 onCurrentPathChange(link);
                 onFolderContentsChange(data.contents);
-                console.log(data.basename);
                 onCurrentLevelChange(currentLevel + 1);
                 onShowSerieDetailsChange(true);
 

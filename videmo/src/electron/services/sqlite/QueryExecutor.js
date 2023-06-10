@@ -8,8 +8,9 @@ class QueryExecutor {
     async executeAndCommit(sql, params = []) {
         try {
             this.open();
-            await this.sqlQueryExecutor.executeAndCommit(sql, params);
+            const result = await this.sqlQueryExecutor.executeAndCommit(sql, params);
             this.close();
+            return result;
         } catch (err) {
             console.error('Error executing query and committing changes:', err);
             throw err;
@@ -31,7 +32,7 @@ class QueryExecutor {
     async executeAndFetchAll(sql, params = []) {
         try {
             this.open();
-            const result =  await this.sqlQueryExecutor.executeAndFetchAll(sql, params);
+            const result = await this.sqlQueryExecutor.executeAndFetchAll(sql, params);
             this.close();
             return result;
         } catch (err) {

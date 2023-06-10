@@ -86,6 +86,7 @@ app.whenReady().then(() => {
 // handle the queries to the database
 require('./api/extension-api');
 require('./api/category-api');
+require('./api/serie-category-api');
 
 // handle local file system
 require('./services/sources/local/local-file-service');

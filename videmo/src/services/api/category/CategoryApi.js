@@ -11,11 +11,11 @@ export default class CategoryApi {
     }
 
     // read categories by serie id
-    readCategoriesBySerieName(serieName) {
-        window.api.send("/read/categories/by/serie/id/", { serieName: serieName });
+    readSerieCategoryIdsBySerieName(serieName) {
+        window.api.send("/read/serie-categories/by/serie/name/", { serieName: serieName });
 
         return new Promise((resolve, reject) => {
-            window.api.receive("/read/categories/by/serie/id/", (data) => data.success ? resolve(data.categories) : reject(data.error));
+            window.api.receive("/read/serie-categories/by/serie/name/", (data) => data.success ? resolve(data.categories) : reject(data.error));
         });
     }
 
@@ -37,12 +37,12 @@ export default class CategoryApi {
         });
     }
 
-        // Add Serie to Categories
-        addSerieToCategories(serie, categoriesId = [1]) {
-            window.api.send("/add/serie/to/categories/", { serie: JSON.stringify(serie), categoriesId: categoriesId });
-    
-            return new Promise((resolve, reject) => {
-                window.api.receive("/add/serie/to/categories/", (data) => data.success ? resolve(data.category) : reject(data.error));
-            });
-        }
+    // Add Serie to Categories
+    addSerieToCategories(serie, categoriesId = [1]) {
+        window.api.send("/add/categories/to/serie", { serie: JSON.stringify(serie), categoriesId: categoriesId });
+
+        return new Promise((resolve, reject) => {
+            window.api.receive("/add/categories/to/serie", (data) => data.success ? resolve(data.category) : reject(data.error));
+        });
+    }
 }

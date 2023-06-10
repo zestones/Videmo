@@ -11,7 +11,7 @@ class SerieDAO {
         await this.queryExecutor.executeAndCommit(sql, params);
     }
 
-    async getSerieById(serieId) {   
+    async getSerieById(serieId) {
         const sql = `SELECT * FROM Serie WHERE id = ?`;
         const params = [serieId];
         return await this.queryExecutor.executeAndFetchOne(sql, params);
