@@ -137,6 +137,7 @@ function Explore({
                     <ul className={styles.cardContainer}>
                         {filteredFolderContents.map((folderContent) => (
                             <Card
+                                key={folderContent.path}
                                 serie={constructSerieObject(folderContent)}
                                 onPlayClick={handleMoreDisplay}
                             />

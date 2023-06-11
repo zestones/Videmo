@@ -6,20 +6,22 @@ import CategoryModal from '../CategoryModal/CategoryModal';
 // Styles
 import styles from './Card.module.scss';
 
-function Card({ serie, onPlayClick, onMoreClick }) {
+function Card({ serie, onPlayClick, onMoreClick, inLibrary = false }) {
     const [isHovered, setIsHovered] = useState(false);
     const [showCategoryModal, setShowCategoryModal] = useState(false);
+
+    // Function to retrieve the title of the serie based on the inLibrary prop
+    const constructTitle = () => (inLibrary && serie.basename !== serie.name) ? serie.basename + ' - ' + serie.name : serie.name;
 
     return (
         <>
             <li
-                key={serie.link}
                 className={styles.card}
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
             >
                 <img className={styles.cardImage} src={serie.image} alt={serie.name} />
-                <p className={styles.cardTitle}>{serie.name}</p>
+                <p className={styles.cardTitle}>{constructTitle()}</p>
                 <div className={`${styles.cardLayer} ${isHovered && styles.hovered}`}>
                     <div className={styles.cardLayerContent}>
                         <img className={styles.cardLayerImage} src="/icons/cards/more.png" alt="More" onClick={() => setShowCategoryModal(true)} />

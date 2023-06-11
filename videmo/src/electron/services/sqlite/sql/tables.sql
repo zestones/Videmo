@@ -15,9 +15,8 @@ CREATE TABLE IF NOT EXISTS Extension (
 -- Create the Serie table
 CREATE TABLE IF NOT EXISTS Serie (
   id INTEGER PRIMARY KEY,
-  name TEXT,
-  nb_episodes INTEGER,
-  nb_season INTEGER,
+  basename TEXT, -- The name of the serie
+  name TEXT, -- Sub name of the serie (ex: Seasons for local series)
   description TEXT,
   link TEXT,
   image TEXT,

@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
+
 
 // Api
 import CategoryApi from "../../services/api/category/CategoryApi";
@@ -17,6 +18,12 @@ function Library({ searchValue }) {
     const [categories, setCategories] = useState([]);
     const [series, setSeries] = useState([]);
 
+    // Variables and refs for the header scroll
+    const headerRef = useRef(null);
+    let isDragging = false;
+    let startX = 0;
+    let scrollLeft = 0;
+
     // Api instances
     const [categoryApi] = useState(() => new CategoryApi());
     const [serieApi] = useState(() => new SerieApi());
@@ -24,7 +31,10 @@ function Library({ searchValue }) {
     const handleSelectCategory = useCallback((category) => () => {
         setSelectedCategory(category);
         serieApi.readAllSeriesByCategory(category.id)
-            .then((series) => setSeries(series))
+            .then((series) => {
+                setSeries(series)
+                console.log(series)
+            })
             .catch((error) => console.log(error));
     }, [serieApi]);
 
@@ -44,6 +54,24 @@ function Library({ searchValue }) {
             .catch((error) => console.log(error));
     }
 
+    const handleMouseDown = (event) => {
+        isDragging = true;
+        startX = event.pageX - headerRef.current.offsetLeft;
+        scrollLeft = headerRef.current.scrollLeft;
+    };
+
+    const handleMouseMove = (event) => {
+        if (!isDragging) return;
+        event.preventDefault();
+        const x = event.pageX - headerRef.current.offsetLeft;
+        const walk = (x - startX) * 2; // Adjust the scrolling speed
+        headerRef.current.scrollLeft = scrollLeft - walk;
+    };
+
+    const handleMouseUp = () => {
+        isDragging = false;
+    };
+
     // Sort the series alphabetically
     const alphabeticallySortSeries = series.sort((a, b) => a.name.localeCompare(b.name));
 
@@ -56,7 +84,14 @@ function Library({ searchValue }) {
     return (
         <div className={styles.library}>
             <div className={styles.libraryContainer}>
-                <div className={styles.libraryHeader}>
+                <div
+                    className={styles.libraryHeader}
+                    ref={headerRef}
+                    onMouseDown={handleMouseDown}
+                    onMouseMove={handleMouseMove}
+                    onMouseUp={handleMouseUp}
+                    onMouseLeave={handleMouseUp}
+                >
                     <div className={styles.libraryHeaderButtons}>
                         {categories.map((category) => (
                             <button
@@ -74,9 +109,11 @@ function Library({ searchValue }) {
                         <div className={styles.libraryContentCategorySeries}>
                             {filteredSeries.map((serie) => (
                                 <Card
+                                    key={serie.id}
                                     serie={serie}
                                     onPlayClick={(serie) => console.log(serie)}
                                     onMoreClick={refreshSeriesOnSerieCategoryChange}
+                                    inLibrary={true}
                                 />
                             ))}
                         </div>

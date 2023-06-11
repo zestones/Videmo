@@ -6,8 +6,8 @@ class SerieDAO {
     }
 
     async createSerie(serie) {
-        const sql = `INSERT INTO Serie (name, description, image) VALUES (?, ?, ?)`;
-        const params = [serie.name, serie.description, serie.image];
+        const sql = `INSERT INTO Serie (basename, name, description, image, link, extension_id) VALUES (?, ?, ?, ?, ?, ?)`;
+        const params = [serie.basename, serie.name, serie.description, serie.image, serie.link, serie.extensionId];
         await this.queryExecutor.executeAndCommit(sql, params);
     }
 
