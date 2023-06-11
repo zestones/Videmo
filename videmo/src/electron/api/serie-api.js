@@ -12,3 +12,13 @@ ipcMain.on('/read/all/series/by/category/', (event, arg) => {
         });
 })
 
+
+// Read extensions by serie id
+ipcMain.on('/read/extension/by/serie/id/', (event, arg) => {
+    new SerieDAO().getExtensionBySerieId(arg.serieId)
+        .then((extension) => {
+            event.reply('/read/extension/by/serie/id/', {success: true, extension: extension});
+        }).catch((err) => {
+            event.reply('/read/extension/by/serie/id/', {success: false, error: err});
+        });
+})

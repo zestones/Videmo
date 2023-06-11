@@ -34,6 +34,21 @@ class SerieDAO {
         return await this.queryExecutor.executeAndFetchAll(sql, params);
     }
 
+    async getExtensionBySerieId(serieId) {
+        const sql = `
+            SELECT Extension.*
+            FROM Extension
+            INNER JOIN Serie ON Extension.id = Serie.extension_id
+            WHERE Serie.id = ?`;
+        
+        const params = [serieId];
+        const result = await this.queryExecutor.executeAndFetchOne(sql, params);
+        
+        // Convert the local value to a boolean value
+        result.local = result.local === 1;
+        return result;
+    }
+
     async getAllSeries() {
         const sql = `SELECT * FROM Serie`;
         return await this.queryExecutor.executeAndFetchAll(sql);

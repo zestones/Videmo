@@ -65,14 +65,14 @@ function Explore({
     // Function to handle "More" display for local files
     const handleMoreDisplay = (serie) => {
         if (serie.local) {
-            retrieveLevelAndFolderContents(serie.link, serie);
+            retrieveLevelAndFolderContents(serie);
         }
     };
 
     // Helper function to retrieve level and folder contents
-    const retrieveLevelAndFolderContents = (link, serie) => {
-        folderManager.retrieveLevel(selectedExtension.link, link)
-            .then((level) => retrieveFolderContentsAndHandleData(link, level, serie))
+    const retrieveLevelAndFolderContents = (serie) => {
+        folderManager.retrieveLevel(selectedExtension.link, serie.link)
+            .then((level) => retrieveFolderContentsAndHandleData(serie.link, level, serie))
             .catch((error) => console.error(error));
     };
 
@@ -80,6 +80,7 @@ function Explore({
     const retrieveFolderContentsAndHandleData = (link, level, serie) => {
         folderManager.retrieveFolderContents(link, level)
             .then((data) => {
+                // If the folder is empty, retrieve the series episodes
                 if (data.contents.length === 0) {
                     retrieveSeriesEpisodes(link);
                 }
