@@ -84,6 +84,20 @@ class FolderManager {
     }
 
     /**
+     * 
+     * @param {String} basePath 
+     * @param {Integer} level 
+     * @returns {Promise<String>} A promise that resolves with the base name of the path.
+     */
+    retrieveBaseNameByLevel(basePath, level) {
+        window.api.send("getBaseNameByLevel", { basePath, level });
+
+        return new Promise((resolve, reject) => {
+            window.api.receive("baseNameByLevel", (data) => data.success ? resolve(data.basename) : reject(data.error));
+        });
+    }
+
+    /**
      * @param {String} filePath 
      * @returns {Promise<String>} A promise that resolves with the success message.
      */

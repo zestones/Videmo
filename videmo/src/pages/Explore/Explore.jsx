@@ -88,13 +88,15 @@ function Explore({
                 onFolderContentsChange(data.contents);
                 onCurrentLevelChange(currentLevel + 1);
                 onShowSerieDetailsChange(true);
-
                 // TODO: Retrieve real serie details
                 const test = {
                     "basename": data.basename,
                     "name": serie.name,
                     "image": serie.image,
                     "local": selectedExtension.local,
+                    "extensionId": selectedExtension.id,
+                    "link": link,
+                    "level": currentLevel,
                     "description": "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Alias expedita consequuntur, labore repellat blanditiis reiciendis consequatur aliquam accusamus libero fuga dolorum porro eos esse nostrum. Nam, adipisci. Obcaecati, voluptas! Eligendi?",
                     "genres": ['Action', 'Adventure', 'Comedy']
                 };
@@ -111,6 +113,7 @@ function Explore({
             "image": folderManager.accessFileWithCustomProtocol(serie.cover),
             "local": selectedExtension.local,
             "extensionId": selectedExtension.id,
+            "level": currentLevel,
             "description": "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Alias expedita consequuntur, labore repellat blanditiis reiciendis consequatur aliquam accusamus libero fuga dolorum porro eos esse nostrum. Nam, adipisci. Obcaecati, voluptas! Eligendi?",
             "genres": ['Action', 'Adventure', 'Comedy']
         };

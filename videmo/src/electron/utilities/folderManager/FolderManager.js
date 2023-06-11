@@ -69,10 +69,9 @@ class FolderManager {
      */
     getBasenameByLevel(givenPath, level) {
         const parts = givenPath.split(path.sep);
-  
+
         // Make sure the level is within the valid range
         const normalizedLevel = Math.min(level, parts.length - 1);
-        
         return parts[parts.length - normalizedLevel];
     }
 

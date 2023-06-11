@@ -43,9 +43,16 @@ ipcMain.on('getFolderContents', (event, { folderPath, coverFolder, level }) => {
         } else {
             const folderContents = folderManager.getFolderContentsWithCovers(folderPath, contents, coverFolder, level);
             const basename = folderManager.getBasenameByLevel(folderPath, level);
-            event.reply('folderContents', { success: true, error: null, folderContents: folderContents, basename: basename});
+            event.reply('folderContents', { success: true, error: null, folderContents: folderContents, basename: basename });
         }
     });
+});
+
+
+// Register the 'getBaseNameByLevel' event listener to the ipcMain module to get the basename of a folder
+ipcMain.on('getBaseNameByLevel', (event, { basePath, level }) => {
+    const basename = folderManager.getBasenameByLevel(basePath, level);
+    event.reply('baseNameByLevel', { success: true, error: null, basename: basename });
 });
 
 
@@ -59,7 +66,7 @@ ipcMain.on('getFolderCover', (event, { folderPath, coverFolder, level }) => {
 // Register the 'openFolderDialog' event listener to the ipcMain module to open a folder dialog
 ipcMain.on("openFolderDialog", async (event) => {
     try {
-        const result = await dialog.showOpenDialog({ properties: ["openDirectory"], title: "Select a folder"});
+        const result = await dialog.showOpenDialog({ properties: ["openDirectory"], title: "Select a folder" });
 
         if (!result.canceled) {
             event.reply("folderSelected", { success: true, error: null, folderPath: result.filePaths[0] });
