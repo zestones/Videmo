@@ -47,10 +47,7 @@ CREATE TABLE IF NOT EXISTS Track (
 -- Create Episode table
 CREATE TABLE IF NOT EXISTS Episode (
   id INTEGER PRIMARY KEY,
-  link TEXT,
+  name TEXT,
   viewed INTEGER,
   bookmarked INTEGER
 );
-
--- Insert the default category
-INSERT INTO Category (name) VALUES ('Default');
