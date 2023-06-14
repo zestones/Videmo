@@ -88,7 +88,6 @@ function Explore({
                 onCurrentPathChange(link);
                 onFolderContentsChange(data.contents);
                 onCurrentLevelChange(currentLevel + 1);
-                onShowSerieDetailsChange(true);
                 // TODO: Retrieve real serie details
                 const test = {
                     "basename": data.basename,
@@ -102,6 +101,7 @@ function Explore({
                     "genres": ['Action', 'Adventure', 'Comedy']
                 };
                 onSerieDetailsChange(test);
+                onShowSerieDetailsChange(true);
             })
             .catch((error) => console.error(error));
     };
@@ -127,13 +127,7 @@ function Explore({
             ) : (
                 <div className={styles.cardsContainer}>
                     {showSerieDetails && (
-                        <DetailsContainer
-                            image={serieDetails.image}
-                            name={serieDetails.name}
-                            basename={serieDetails.basename}
-                            description={serieDetails.description}
-                            genres={serieDetails.genres}
-                        />
+                        <DetailsContainer serie={serieDetails} />
                     )}
                     <ul className={styles.cardContainer}>
                         {filteredFolderContents.map((folderContent) => (

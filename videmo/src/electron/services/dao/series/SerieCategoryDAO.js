@@ -1,6 +1,6 @@
 const QueryExecutor = require('../../sqlite/QueryExecutor');
-
 const SerieDAO = require('../series/SerieDAO');
+
 
 class SerieCategoryDAO {
     constructor() {
@@ -46,6 +46,7 @@ class SerieCategoryDAO {
     }
 
     async updateSerieCategory(serieId, categoriesId) {
+        // TODO: Delete the serie from the Serie table if it is not used in any SerieCategory row
         // Clear existing categories for the series in the SerieCategory table
         await this.deleteSerieCategoryBySerieId(serieId);
 
@@ -78,7 +79,7 @@ class SerieCategoryDAO {
         // Check if the series already exists in the Serie table
         if (retrievedSerie === undefined) {
             // Create the serie and update the SerieCategory table with the attached categories
-            this.#createSerieAndCategory(serieParsedObject, categoriesId);
+            await this.#createSerieAndCategory(serieParsedObject, categoriesId);
         } else {
             const serieId = retrievedSerie.id; // Use the retrievedSerie.id instead of making another query
             // Update the SerieCategory table with the new series and categories

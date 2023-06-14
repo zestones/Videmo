@@ -21,7 +21,7 @@ function App() {
 	const [folderManager] = useState(() => new FolderManager());
 
 	const [selectedExtension, setSelectedExtension] = useState(null);
-	const [activePage, setActivePage] = useState('Accueil');
+	const [activePage, setActivePage] = useState('Bibliotheque');
 	const [headerTitle, setHeaderTitle] = useState(activePage);
 
 	const [searchValue, setSearchValue] = useState('');
@@ -52,7 +52,6 @@ function App() {
 	};
 
 	const navItems = {
-		Accueil: 'Home Content',
 		Bibliotheque: <Library searchValue={searchValue} />,
 		Explorer: <Explore
 			searchValue={searchValue}

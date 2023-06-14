@@ -1,14 +1,23 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 // External
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart, faStar, faCalendar, faClock } from '@fortawesome/free-solid-svg-icons';
 
+// Api 
+import SerieApi from '../../../services/api/serie/SerieApi';
+
+// Components
+import CategoryModal from '../../../components/CategoryModal/CategoryModal';
+
 // Styles
 import styles from './DetailsContainer.module.scss';
 
 
-const DetailsContainer = ({ image, name, description, genres, basename = "" }) => {
+const DetailsContainer = ({ serie }) => {
+	const [showModal, setShowModal] = useState(false);
+	const [alreadyInLibrary, setAlreadyInLibrary] = useState(false);
+	const [serieApi] = useState(() => new SerieApi());
 
 	const details = [
 		{ icon: <FontAwesomeIcon icon={faStar} mask={['far', 'circle']} size="xs" />, label: '8.5/10' },
@@ -16,29 +25,48 @@ const DetailsContainer = ({ image, name, description, genres, basename = "" }) =
 		{ icon: <FontAwesomeIcon icon={faClock} mask={['far', 'circle']} size="xs" />, label: '2h 30min' },
 	];
 
+	useEffect(() => {
+		serieApi.readSerieByName(serie.basename)
+			.then((serie) => setAlreadyInLibrary(serie ? true : false))
+			.catch((error) => console.error(error));
+	}, [serieApi, serie.basename]);
 
-	// TODO: Query to check if already inside library or not
+	const refreshSerieState = () => {
+		serieApi.readSerieByName(serie.basename)
+			.then((serie) => {
+				console.log(serie);
+				if (serie) {
+					setAlreadyInLibrary(true);
+				}
+				else {
+					setAlreadyInLibrary(false);
+				}
+			})
+			.catch((error) => console.error(error));
+	}
+
+	// TODO: Query to check if already inside library or not (favorite)
 	return (
 		<div className={styles.detailsContainer}>
 			<div className={styles.serieBackground} >
-				<img className={styles.serieImage} src={image} alt="Serie" />
+				<img className={styles.serieImage} src={serie.image} alt="Serie" />
 				<div className={styles.serieFavoriteContainer}>
-					<span className={styles.serieFavoriteIcon}>
-						<FontAwesomeIcon className={styles.serieFavorite} icon={faHeart} />
+					<span className={styles.serieFavoriteIcon} onClick={() => setShowModal(true)}>
+						<FontAwesomeIcon className={`${styles.serieFavorite} ${alreadyInLibrary ? styles.active : ''}`} icon={faHeart} />
 					</span>
 					<p className={styles.serieFavoriteLabel}>Ajouter à ma liste</p>
 				</div>
 			</div>
 			<div className={styles.content}>
 				<div className={styles.mainContent}>
-					<h2 className={styles.title}>{basename}</h2>
-					{basename && basename !== name && (
-						<h4 className={styles.subtitle}>{name}</h4>
+					<h2 className={styles.title}>{serie.basename}</h2>
+					{serie.basename && serie.basename !== serie.name && (
+						<h4 className={styles.subtitle}>{serie.name}</h4>
 					)}
-					<p className={styles.description}>{description}</p>
+					<p className={styles.description}>{serie.description}</p>
 
 					<div className={styles.genres}>
-						{genres.map((genre, index) => (
+						{serie.genres.map((genre, index) => (
 							<span className={styles.genre} key={index}>
 								{genre}
 							</span>
@@ -55,6 +83,13 @@ const DetailsContainer = ({ image, name, description, genres, basename = "" }) =
 					))}
 				</div>
 			</div>
+			{showModal && (
+				<CategoryModal
+					serie={serie}
+					onClose={() => setShowModal(false)}
+					onMoreClick={refreshSerieState}
+				/>
+			)}
 		</div>
 	);
 };

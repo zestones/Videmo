@@ -15,4 +15,15 @@ export default class SerieApi {
             window.api.receive("/read/extension/by/serie/id/", (data) => data.success ? resolve(data.extension) : reject(data.error));
         });
     }
+
+    // TODO: do the check with unique constraint on a column in the database
+    // TODO: the basename is ABSOLUTELY not unique nor the name
+    // TODO: possible solution: add a unique constraint on the name AND basename AND extension_id AND link columns ?
+    readSerieByName(name) {
+        window.api.send("/read/serie/by/name/", { name: name });
+
+        return new Promise((resolve, reject) => {
+            window.api.receive("/read/serie/by/name/", (data) => data.success ? resolve(data.serie) : reject(data.error));
+        });
+    }
 }
