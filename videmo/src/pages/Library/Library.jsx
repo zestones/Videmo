@@ -218,13 +218,16 @@ function Library({ searchValue }) {
                                 />
                             ))}
 
-                            {episodesFiles.map((episode) => (
-                                <EpisodeCard
-                                    title={episode.name}
-                                    link={episode.path}
-                                    modifiedTime={episode.modifiedTime}
-                                />
-                            ))}
+                            <div className={styles.libraryContentCategorySeriesEmpty}>
+                                {episodesFiles.map((episode) => (
+                                    <EpisodeCard
+                                        key={episode.id}
+                                        title={episode.name}
+                                        link={episode.path}
+                                        modifiedTime={episode.modifiedTime}
+                                    />
+                                ))}
+                            </div>
                         </div>
                     )}
                 </div>
