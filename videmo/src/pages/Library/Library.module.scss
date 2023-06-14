@@ -1,0 +1,97 @@
+.library {
+    width: 100%;
+    height: 100%;
+
+    .libraryContainer {
+        margin: 0 auto;
+        width: 100%;
+
+        .libraryHeader {
+            display: flex;
+            align-items: center;
+
+            width: 100%;
+            height: 50px;
+
+            border-bottom: 1px solid var(--gray-5);
+            overflow-x: hidden;
+
+            .libraryHeaderButtons {
+                display: flex;
+                align-items: center;
+                justify-content: flex-start;
+
+                width: 100%;
+                height: 100%;
+
+                .libraryHeaderButton {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+
+                    width: 100%;
+                    white-space: nowrap;
+
+                    border: none;
+                    border-radius: 0;
+                    background-color: transparent;
+                    color: var(--white-color);
+
+                    margin: 0 25px;
+
+                    font-size: 14px;
+                    font-weight: bold;
+                    cursor: pointer;
+
+                    &:hover {
+                        color: var(--light-blue-5);
+                        border-bottom: 2px solid var(--light-blue-5);
+                        animation: borderLeftToRight 0.5s ease-in-out forwards;
+                    }
+
+                    &.active {
+                        color: var(--light-blue-5);
+                        border-bottom: 2px solid var(--light-blue-5);
+                        animation: borderLeftToRight 0.5s ease-in-out forwards;
+                    }
+
+                    @keyframes borderLeftToRight {
+                        0% {
+                            border-bottom: 2px solid transparent;
+                        }
+
+                        100% {
+                            border-bottom: 2px solid var(--light-blue-5);
+                        }
+                    }
+                }
+            }
+        }
+
+        .libraryContent {
+            margin: 12px auto;
+            width: 90%;
+
+            .libraryContentCategorySeries {
+                display: flex;
+                justify-content: center;
+                flex-wrap: wrap;
+            
+                margin-bottom: 7rem;
+
+                .libraryContentCategorySeriesEmpty {
+                    margin-top: 5rem;
+
+                    width: 95%;
+                    margin: 0 auto;
+
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                }
+            }
+        }
+    }
+
+}

@@ -6,8 +6,8 @@ class SerieDAO {
     }
 
     async createSerie(serie) {
-        const sql = `INSERT INTO Serie (name, description, image) VALUES (?, ?, ?)`;
-        const params = [serie.name, serie.description, serie.image];
+        const sql = `INSERT INTO Serie (basename, name, description, image, link, extension_id) VALUES (?, ?, ?, ?, ?, ?)`;
+        const params = [serie.basename, serie.name, serie.description, serie.image, serie.link, serie.extensionId];
         await this.queryExecutor.executeAndCommit(sql, params);
     }
 
@@ -21,6 +21,32 @@ class SerieDAO {
         const sql = `SELECT * FROM Serie WHERE name = ?`;
         const params = [serieName];
         return await this.queryExecutor.executeAndFetchOne(sql, params);
+    }
+
+    async getSeriesByCategoryId(categoryId) {
+        const sql = `
+            SELECT Serie.*
+            FROM Serie
+            INNER JOIN SerieCategory ON Serie.id = SerieCategory.serie_id
+            WHERE SerieCategory.category_id = ?`;
+
+        const params = [categoryId];
+        return await this.queryExecutor.executeAndFetchAll(sql, params);
+    }
+
+    async getExtensionBySerieId(serieId) {
+        const sql = `
+            SELECT Extension.*
+            FROM Extension
+            INNER JOIN Serie ON Extension.id = Serie.extension_id
+            WHERE Serie.id = ?`;
+        
+        const params = [serieId];
+        const result = await this.queryExecutor.executeAndFetchOne(sql, params);
+        
+        // Convert the local value to a boolean value
+        result.local = result.local === 1;
+        return result;
     }
 
     async getAllSeries() {

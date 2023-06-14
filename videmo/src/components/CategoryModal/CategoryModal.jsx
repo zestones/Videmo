@@ -7,11 +7,16 @@ import { faTimes } from '@fortawesome/free-solid-svg-icons';
 // Api
 import CategoryApi from "../../services/api/category/CategoryApi";
 
+// Utilities
+import FolderManager from "../../utilities/folderManager/FolderManager";
+
 // Styles
 import styles from "./CategoryModal.module.scss";
 
-function CategoryModal({ serie, onClose }) {
+function CategoryModal({ serie, onClose, onMoreClick }) {
     const [categoryApi] = useState(() => new CategoryApi());
+    const [folderManager] = useState(() => new FolderManager());
+
     const [categories, setCategories] = useState([]);
     const [checkedCategories, setCheckedCategories] = useState([]);
 
@@ -27,6 +32,14 @@ function CategoryModal({ serie, onClose }) {
             .catch((error) => console.error(error));
     }, [categoryApi, serie.name]);
 
+    useEffect(() => {
+        // retrieve the baseName of the serie
+        folderManager.retrieveBaseNameByLevel(serie.link, serie.level + 1)
+            .then((data) => serie.basename = data)
+            .catch((error) => console.error(error));
+    }, [folderManager, serie]);
+
+
     const handleCategoryChange = (e, categoryId) => {
         const isChecked = e.target.checked;
 
@@ -35,16 +48,20 @@ function CategoryModal({ serie, onClose }) {
             setCheckedCategories((prevCategories) => [...prevCategories, categoryId]);
         } else {
             // Remove the category ID from the checkedCategories state
-            setCheckedCategories((prevCategories) =>
-                prevCategories.filter((id) => id !== categoryId)
-            );
+            setCheckedCategories((prevCategories) => prevCategories.filter((id) => id !== categoryId));
         }
     };
 
-    const handleAddToCategory = (checkedCategories) => {
+    const handleAddToCategory = () => {
         // Pass the checkedCategories to the API call or handle them as needed
         categoryApi.addSerieToCategories(serie, checkedCategories)
-            .then(() => onClose())
+            .then(() => {
+                onClose()
+                // if OnMoreClick is passed as a prop, call it
+                if (onMoreClick) {
+                    onMoreClick();
+                }
+            })
             .catch((error) => console.error(error));
     };
 
@@ -73,10 +90,9 @@ function CategoryModal({ serie, onClose }) {
                     </div>
                     <div className={styles.modalCategoryActions}>
                         <button className={styles.emptyButton} onClick={onClose}>Annuler</button>
-                        <button className={styles.filledButton} onClick={() => handleAddToCategory(checkedCategories)}>
+                        <button className={styles.filledButton} onClick={handleAddToCategory}>
                             Déplacer
                         </button>
-
                     </div>
                 </div>
             </div>

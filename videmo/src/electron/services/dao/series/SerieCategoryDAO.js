@@ -70,6 +70,8 @@ class SerieCategoryDAO {
     async updateSerieCategories(serie, categoriesId) {
         const serieParsedObject = JSON.parse(serie);
 
+        // TODO: Change the UNIQUE constraint on the name of the Serie table,
+        // TODO: to a composite UNIQUE constraint on the basename and extensonID columns
         // Retrieve the serie ID
         const retrievedSerie = await this.serieDAO.getSerieByName(serieParsedObject.name);
 

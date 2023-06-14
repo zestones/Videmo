@@ -14,8 +14,8 @@ ipcMain.on('/read/serie-categories/by/serie/name/', (event, arg) => {
 
 
 // Add Serie to Category
-ipcMain.on('/add/categories/to/serie', (event, arg) => {
-    new SerieCategoryDAO()
+ipcMain.on('/add/categories/to/serie', async (event, arg) => {
+    await new SerieCategoryDAO()
         .updateSerieCategories(arg.serie, arg.categoriesId);
 
     event.reply('/add/categories/to/serie', { success: true, category: { id: arg.categoriesId } });

@@ -28,10 +28,7 @@ function EpisodeCard({ title, link, modifiedTime }) {
     };
 
     return (
-        <li
-            key={link}
-            className={styles.card}
-        >
+        <li className={styles.card} >
             <div className={styles.cardContent}>
                 <div className={styles.cardInfo}>
                     <p className={styles.cardTitle}>{title}</p>
