@@ -1,8 +1,11 @@
 const QueryExecutor = require('../../sqlite/QueryExecutor');
+const DataTypesConverter = require('../../../utilities/converter/DataTypesConverter.js');
+
 
 class SerieDAO {
     constructor() {
         this.queryExecutor = new QueryExecutor();
+        this.dataTypesConverter = new DataTypesConverter();
     }
 
     async createSerie(serie) {
@@ -40,12 +43,12 @@ class SerieDAO {
             FROM Extension
             INNER JOIN Serie ON Extension.id = Serie.extension_id
             WHERE Serie.id = ?`;
-        
+
         const params = [serieId];
         const result = await this.queryExecutor.executeAndFetchOne(sql, params);
-        
+
         // Convert the local value to a boolean value
-        result.local = result.local === 1;
+        result.local = this.dataTypesConverter.convertIntegerToBoolean(result.local);
         return result;
     }
 
