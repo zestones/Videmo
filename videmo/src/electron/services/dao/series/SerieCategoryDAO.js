@@ -45,14 +45,25 @@ class SerieCategoryDAO {
         return await this.queryExecutor.executeAndFetchAll(sql);
     }
 
+    async countSerieCategoriesBySerieId(serieId) {
+        const sql = `SELECT COUNT(*) AS count FROM SerieCategory WHERE serie_id = ?`;
+        const params = [serieId];
+        return await this.queryExecutor.executeAndFetchOne(sql, params);
+    }
+
     async updateSerieCategory(serieId, categoriesId) {
-        // TODO: Delete the serie from the Serie table if it is not used in any SerieCategory row
         // Clear existing categories for the series in the SerieCategory table
         await this.deleteSerieCategoryBySerieId(serieId);
 
         // Insert new categories for the series in the SerieCategory table
         for (const categoryId of categoriesId) {
             await this.createSerieCategory(serieId, categoryId);
+        }
+
+        // Delete the serie from the Serie table if it is not used in any SerieCategory row
+        const serieCategoryCount = await this.countSerieCategoriesBySerieId(serieId);
+        if (serieCategoryCount.count === 0) {
+            await this.serieDAO.deleteSerieById(serieId);
         }
     }
 

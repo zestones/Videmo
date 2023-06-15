@@ -25,6 +25,8 @@ const DetailsContainer = ({ serie }) => {
 		{ icon: <FontAwesomeIcon icon={faClock} mask={['far', 'circle']} size="xs" />, label: '2h 30min' },
 	];
 
+	// TODO : handle the favorite icon display for sub series (if the serie is already in the library)
+	// TODO : change readSerieByName to unique column constraint
 	useEffect(() => {
 		serieApi.readSerieByName(serie.basename)
 			.then((serie) => setAlreadyInLibrary(serie ? true : false))
@@ -33,19 +35,12 @@ const DetailsContainer = ({ serie }) => {
 
 	const refreshSerieState = () => {
 		serieApi.readSerieByName(serie.basename)
-			.then((serie) => {
-				console.log(serie);
-				if (serie) {
-					setAlreadyInLibrary(true);
-				}
-				else {
-					setAlreadyInLibrary(false);
-				}
+			.then((data) => {
+				setAlreadyInLibrary(data ? true : false)
 			})
 			.catch((error) => console.error(error));
 	}
 
-	// TODO: Query to check if already inside library or not (favorite)
 	return (
 		<div className={styles.detailsContainer}>
 			<div className={styles.serieBackground} >

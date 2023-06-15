@@ -33,6 +33,9 @@ function CategoryModal({ serie, onClose, onMoreClick }) {
     }, [categoryApi, serie.name]);
 
     useEffect(() => {
+        // Retrieve the baseName of the serie only if it's not already set
+        if (serie.basename !== null && serie.basename !== undefined) return;
+
         // retrieve the baseName of the serie
         folderManager.retrieveBaseNameByLevel(serie.link, serie.level + 1)
             .then((data) => serie.basename = data)
