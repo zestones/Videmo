@@ -7,6 +7,10 @@
     --primary-color-darker: #2c303c;
 
     --secondary-color: #E9F6FF;
+    --secondary-color-light: #ffffff;
+    --secondary-color-lighter: #ffffff;
+    --secondary-color-dark: #c8e0ff;
+    --secondary-color-darker: #a7cbff;
 
     --tertiary-color: #1f1f1f;
 

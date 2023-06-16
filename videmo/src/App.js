@@ -33,7 +33,6 @@ function App() {
 	const [serieDetails, setSerieDetails] = useState(null); // [title, image, description, gennres...]
 	const [episodesFiles, setEpisodesFiles] = useState([]);
 
-
 	const handleSearch = (value) => {
 		setSearchValue(value);
 	};
@@ -116,6 +115,8 @@ function App() {
 		}
 	};
 
+
+	// TODO: random button should work only for local extensions in Explorer page && should work for all Series in Library page
 	return (
 		<div className="App">
 			<Header>
