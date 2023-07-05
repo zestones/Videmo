@@ -26,6 +26,16 @@ class SerieDAO {
         return await this.queryExecutor.executeAndFetchOne(sql, params);
     }
 
+    async getSerieByBasenameAndNameAndLink(serieObject) {
+        const sql = `SELECT * FROM Serie WHERE basename = ? AND name = ? AND link = ?`;
+        const params = [
+            serieObject.basename,
+            serieObject.name,
+            serieObject.link,
+        ];
+        return await this.queryExecutor.executeAndFetchOne(sql, params);
+    }
+
     async getSeriesByCategoryId(categoryId) {
         const sql = `
             SELECT Serie.*

@@ -25,11 +25,11 @@ ipcMain.on('/read/extension/by/serie/id/', (event, arg) => {
 
 
 // Read serie by name
-ipcMain.on('/read/serie/by/name/', (event, arg) => {
-    new SerieDAO().getSerieByName(arg.name)
+ipcMain.on('/read/serie/by/serie-object/', (event, arg) => {
+    new SerieDAO().getSerieByBasenameAndNameAndLink(arg.serie)
         .then((serie) => {
-            event.reply('/read/serie/by/name/', { success: true, serie: serie });
+            event.reply('/read/serie/by/serie-object', { success: true, serie: serie });
         }).catch((err) => {
-            event.reply('/read/serie/by/name/', { success: false, error: err });
+            event.reply('/read/serie/by/serie-object', { success: false, error: err });
         });
 })

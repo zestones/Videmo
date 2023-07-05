@@ -16,14 +16,11 @@ export default class SerieApi {
         });
     }
 
-    // TODO: do the check with unique constraint on a column in the database
-    // TODO: the basename is ABSOLUTELY not unique nor the name
-    // TODO: possible solution: add a unique constraint on the name AND basename AND extension_id AND link columns ?
-    readSerieByName(name) {
-        window.api.send("/read/serie/by/name/", { name: name });
+    readSerieBySerieObject(serie) {
+        window.api.send("/read/serie/by/serie-object", { serie: serie });
 
         return new Promise((resolve, reject) => {
-            window.api.receive("/read/serie/by/name/", (data) => data.success ? resolve(data.serie) : reject(data.error));
+            window.api.receive("/read/serie/by/serie-object", (data) => data.success ? resolve(data.serie) : reject(data.error));
         });
     }
 }

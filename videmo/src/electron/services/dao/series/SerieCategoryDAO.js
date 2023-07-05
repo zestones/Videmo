@@ -26,14 +26,16 @@ class SerieCategoryDAO {
         return await this.queryExecutor.executeAndFetchAll(sql, params);
     }
 
-    async getSerieCategoryIdsBySerieName(serieName) {
+    async getSerieCategoryIdsBySerie(serie) {
         const sql = `
           SELECT SerieCategory.category_id
           FROM SerieCategory, Serie
           WHERE SerieCategory.serie_id = Serie.id
-          AND Serie.name = ?`;
+          AND Serie.name = ?
+          AND Serie.basename = ?
+          AND Serie.link = ?`;
 
-        const params = [serieName];
+        const params = [serie.name, serie.basename, serie.link];
         const result = await this.queryExecutor.executeAndFetchAll(sql, params);
 
         // Extract the category IDs from the result array
@@ -82,10 +84,8 @@ class SerieCategoryDAO {
     async updateSerieCategories(serie, categoriesId) {
         const serieParsedObject = JSON.parse(serie);
 
-        // TODO: Change the UNIQUE constraint on the name of the Serie table,
-        // TODO: to a composite UNIQUE constraint on the basename and extensonID columns
-        // Retrieve the serie ID
-        const retrievedSerie = await this.serieDAO.getSerieByName(serieParsedObject.name);
+        // Retrieve the serie I
+        const retrievedSerie = await this.serieDAO.getSerieByBasenameAndNameAndLink(serieParsedObject);
 
         // Check if the series already exists in the Serie table
         if (retrievedSerie === undefined) {

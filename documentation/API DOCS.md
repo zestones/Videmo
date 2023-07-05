@@ -11,7 +11,7 @@ This documentation lists all the routes available in the API, as well as the exp
 | ------------------------------------ | ------------------------------------------------------------------------------------------------------- |
 | `/read/all/series/by/category/`      | This route is used to retrieve all series by category ID.                                               |
 | `/read/extension/by/serie/id/`       | This route is used to retrieve extensions by serie ID.                                                  |
-
+| `/read/serie/by/serie-object/`       | This route is used to retrieve a serie by serie object.                                                 |
 <details>
 <summary><strong>Response Examples</strong></summary>
 
@@ -126,8 +126,8 @@ This documentation lists all the routes available in the API, as well as the exp
 
 | Route                                      | Description                                                                                                  |
 | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------ |
-| `/read/serie-categories/by/serie/name/`     | This route is used to retrieve categories by serie name.                                                      |
-| `/add/categories/to/serie`                  | This route is used to add categories to a serie.                                                              |
+| `/read/serie-categories/by/serie`          | This route is used to retrieve categories by serie, the unique constraint is on the name, basename and link column of the table.                                                      |
+| `/add/categories/to/serie`                 | This route is used to add categories to a serie.                                                              |
 
 <details>
 <summary><strong>Response Examples</strong></summary>

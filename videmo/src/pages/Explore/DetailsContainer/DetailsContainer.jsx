@@ -25,19 +25,15 @@ const DetailsContainer = ({ serie }) => {
 		{ icon: <FontAwesomeIcon icon={faClock} mask={['far', 'circle']} size="xs" />, label: '2h 30min' },
 	];
 
-	// TODO : handle the favorite icon display for sub series (if the serie is already in the library)
-	// TODO : change readSerieByName to unique column constraint
 	useEffect(() => {
-		serieApi.readSerieByName(serie.basename)
+		serieApi.readSerieBySerieObject(serie)
 			.then((serie) => setAlreadyInLibrary(serie ? true : false))
 			.catch((error) => console.error(error));
-	}, [serieApi, serie.basename]);
+	}, [serieApi, serie]);
 
 	const refreshSerieState = () => {
-		serieApi.readSerieByName(serie.basename)
-			.then((data) => {
-				setAlreadyInLibrary(data ? true : false)
-			})
+		serieApi.readSerieBySerieObject(serie)
+			.then((data) => setAlreadyInLibrary(data ? true : false))
 			.catch((error) => console.error(error));
 	}
 

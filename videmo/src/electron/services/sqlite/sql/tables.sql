@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS Serie (
   image TEXT,
   extension_id INTEGER,
   FOREIGN KEY (extension_id) REFERENCES Extension (id),
-  UNIQUE (name)
+  UNIQUE (basename, name, link)
 );
 
 -- Create SerieCategory table
