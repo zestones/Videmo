@@ -7,6 +7,7 @@ import DetailsContainer from "./DetailsContainer/DetailsContainer";
 // Components
 import Card from "../../components/Card/Card";
 import EpisodeCard from "../../components/EpisodeCard/EpisodeCard";
+import RandButton from '../../components/RandButton/RandButton';
 
 // Styles
 import styles from "./Explore.module.scss";
@@ -62,6 +63,13 @@ function Explore({
             .catch((error) => console.error(error));
     };
 
+    // Helper function to retrieve level and folder contents
+    const retrieveLevelAndFolderContents = (serie) => {
+        folderManager.retrieveLevel(selectedExtension.link, serie.link)
+            .then((level) => retrieveFolderContentsAndHandleData(serie.link, level, serie))
+            .catch((error) => console.error(error));
+    };
+
     // Function to handle "More" display for local files
     const handleMoreDisplay = (serie) => {
         if (serie.local) {
@@ -69,12 +77,11 @@ function Explore({
         }
     };
 
-    // Helper function to retrieve level and folder contents
-    const retrieveLevelAndFolderContents = (serie) => {
-        folderManager.retrieveLevel(selectedExtension.link, serie.link)
-            .then((level) => retrieveFolderContentsAndHandleData(serie.link, level, serie))
-            .catch((error) => console.error(error));
-    };
+    const onRandomClick = () => {
+        const constructedFolderContents = folderContents.map((folderContent) => constructSerieObject(folderContent));
+        const randomSerie = constructedFolderContents[Math.floor(Math.random() * constructedFolderContents.length)];
+        handleMoreDisplay(randomSerie);
+    }
 
     // Helper function to retrieve folder contents and handle the data
     const retrieveFolderContentsAndHandleData = (link, level, serie) => {
@@ -88,7 +95,6 @@ function Explore({
                 onCurrentPathChange(link);
                 onFolderContentsChange(data.contents);
                 onCurrentLevelChange(currentLevel + 1);
-                onShowSerieDetailsChange(true);
                 // TODO: Retrieve real serie details
                 const test = {
                     "basename": data.basename,
@@ -102,6 +108,7 @@ function Explore({
                     "genres": ['Action', 'Adventure', 'Comedy']
                 };
                 onSerieDetailsChange(test);
+                onShowSerieDetailsChange(true);
             })
             .catch((error) => console.error(error));
     };
@@ -126,14 +133,10 @@ function Explore({
                 <Source handleSelectedExtension={handleSelectedExtension} />
             ) : (
                 <div className={styles.cardsContainer}>
-                    {showSerieDetails && (
-                        <DetailsContainer
-                            image={serieDetails.image}
-                            name={serieDetails.name}
-                            basename={serieDetails.basename}
-                            description={serieDetails.description}
-                            genres={serieDetails.genres}
-                        />
+                    {showSerieDetails ? (
+                        <DetailsContainer serie={serieDetails} />
+                    ) : (
+                        <RandButton onClick={onRandomClick} />
                     )}
                     <ul className={styles.cardContainer}>
                         {filteredFolderContents.map((folderContent) => (

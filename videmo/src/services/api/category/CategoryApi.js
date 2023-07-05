@@ -11,11 +11,11 @@ export default class CategoryApi {
     }
 
     // read categories by serie id
-    readSerieCategoryIdsBySerieName(serieName) {
-        window.api.send("/read/serie-categories/by/serie/name/", { serieName: serieName });
+    readSerieCategoryIdsBySerie(serie) {
+        window.api.send("/read/serie-categories/by/serie", { serie: serie });
 
         return new Promise((resolve, reject) => {
-            window.api.receive("/read/serie-categories/by/serie/name/", (data) => data.success ? resolve(data.categories) : reject(data.error));
+            window.api.receive("/read/serie-categories/by/serie", (data) => data.success ? resolve(data.categories) : reject(data.error));
         });
     }
 

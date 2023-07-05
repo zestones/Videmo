@@ -47,6 +47,14 @@ function createWindow() {
         // when you should delete the corresponding element.
         mainWindow = null
     })
+
+    // Init the database and create the tables if they don't exist
+    // The tables are created using the tables.sql file from the sqlite/sql folder
+    // The database file is located inside the sqlite/sql folder
+    const SQLiteQueryExecutor = require('./services/sqlite/SQLiteQueryExecutor');
+
+    const sqliteQueryExecutor = new SQLiteQueryExecutor();
+    sqliteQueryExecutor.initializeDatabase();
 }
 
 // This method will be called when Electron has finished
@@ -82,14 +90,17 @@ app.whenReady().then(() => {
 });
 
 
-// Import the IPC main event handlers
-// handle the queries to the database
+// Import the IPC main event handlers for the renderer process (see preload.js)
+// handle the queries to the database using SQLite and the QueryExecutor class from the sqlite folder
+// handle the API requests using the API classes from the api folder
 require('./api/serie-category-api');
 require('./api/extension-api');
 require('./api/category-api');
 require('./api/serie-api');
 
-// handle local file system
+// handle local file system requests using the endpoint defined inside the local-file-service file from the sources/local folder
+// The local-file-service file is responsible for reading the local file system and returning the data to the renderer process
+// The local-file-service file uses the FolderManager class from the utilites folder to read the local file system
 require('./services/sources/local/local-file-service');
 
 // In this file you can include the rest of your app's specific main process

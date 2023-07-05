@@ -1,6 +1,6 @@
 const QueryExecutor = require('../../sqlite/QueryExecutor');
-
 const SerieDAO = require('../series/SerieDAO');
+
 
 class SerieCategoryDAO {
     constructor() {
@@ -26,14 +26,16 @@ class SerieCategoryDAO {
         return await this.queryExecutor.executeAndFetchAll(sql, params);
     }
 
-    async getSerieCategoryIdsBySerieName(serieName) {
+    async getSerieCategoryIdsBySerie(serie) {
         const sql = `
           SELECT SerieCategory.category_id
           FROM SerieCategory, Serie
           WHERE SerieCategory.serie_id = Serie.id
-          AND Serie.name = ?`;
+          AND Serie.name = ?
+          AND Serie.basename = ?
+          AND Serie.link = ?`;
 
-        const params = [serieName];
+        const params = [serie.name, serie.basename, serie.link];
         const result = await this.queryExecutor.executeAndFetchAll(sql, params);
 
         // Extract the category IDs from the result array
@@ -45,6 +47,12 @@ class SerieCategoryDAO {
         return await this.queryExecutor.executeAndFetchAll(sql);
     }
 
+    async countSerieCategoriesBySerieId(serieId) {
+        const sql = `SELECT COUNT(*) AS count FROM SerieCategory WHERE serie_id = ?`;
+        const params = [serieId];
+        return await this.queryExecutor.executeAndFetchOne(sql, params);
+    }
+
     async updateSerieCategory(serieId, categoriesId) {
         // Clear existing categories for the series in the SerieCategory table
         await this.deleteSerieCategoryBySerieId(serieId);
@@ -52,6 +60,12 @@ class SerieCategoryDAO {
         // Insert new categories for the series in the SerieCategory table
         for (const categoryId of categoriesId) {
             await this.createSerieCategory(serieId, categoryId);
+        }
+
+        // Delete the serie from the Serie table if it is not used in any SerieCategory row
+        const serieCategoryCount = await this.countSerieCategoriesBySerieId(serieId);
+        if (serieCategoryCount.count === 0) {
+            await this.serieDAO.deleteSerieById(serieId);
         }
     }
 
@@ -70,15 +84,13 @@ class SerieCategoryDAO {
     async updateSerieCategories(serie, categoriesId) {
         const serieParsedObject = JSON.parse(serie);
 
-        // TODO: Change the UNIQUE constraint on the name of the Serie table,
-        // TODO: to a composite UNIQUE constraint on the basename and extensonID columns
-        // Retrieve the serie ID
-        const retrievedSerie = await this.serieDAO.getSerieByName(serieParsedObject.name);
+        // Retrieve the serie I
+        const retrievedSerie = await this.serieDAO.getSerieByBasenameAndNameAndLink(serieParsedObject);
 
         // Check if the series already exists in the Serie table
         if (retrievedSerie === undefined) {
             // Create the serie and update the SerieCategory table with the attached categories
-            this.#createSerieAndCategory(serieParsedObject, categoriesId);
+            await this.#createSerieAndCategory(serieParsedObject, categoriesId);
         } else {
             const serieId = retrievedSerie.id; // Use the retrievedSerie.id instead of making another query
             // Update the SerieCategory table with the new series and categories

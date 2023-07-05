@@ -27,17 +27,23 @@ function CategoryModal({ serie, onClose, onMoreClick }) {
             .catch((error) => console.error(error));
 
         // Retrieve the categories of the serie
-        categoryApi.readSerieCategoryIdsBySerieName(serie.name)
+        categoryApi.readSerieCategoryIdsBySerie(serie)
             .then((data) => setCheckedCategories(data))
             .catch((error) => console.error(error));
-    }, [categoryApi, serie.name]);
+    }, [categoryApi, serie, setCheckedCategories]);
 
     useEffect(() => {
+        // The baseName is the name of the serie if it's a level 0 serie
+        if (serie.level === 0) serie.basename = serie.name;
+
+        // Retrieve the baseName of the serie only if it's not already set
+        if (serie.basename !== null && serie.basename !== undefined) return;
+
         // retrieve the baseName of the serie
         folderManager.retrieveBaseNameByLevel(serie.link, serie.level + 1)
             .then((data) => serie.basename = data)
             .catch((error) => console.error(error));
-    }, [folderManager, serie]);
+    }, [folderManager, serie.basename, serie]);
 
 
     const handleCategoryChange = (e, categoryId) => {

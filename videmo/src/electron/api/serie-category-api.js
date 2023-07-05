@@ -3,12 +3,12 @@ const { ipcMain } = require('electron');
 const SerieCategoryDAO = require('../services/dao/series/SerieCategoryDAO');
 
 // Read categories by serie id
-ipcMain.on('/read/serie-categories/by/serie/name/', (event, arg) => {
-    new SerieCategoryDAO().getSerieCategoryIdsBySerieName(arg.serieName)
+ipcMain.on('/read/serie-categories/by/serie', (event, arg) => {
+    new SerieCategoryDAO().getSerieCategoryIdsBySerie(arg.serie)
         .then((categories) => {
-            event.reply('/read/serie-categories/by/serie/name/', { success: true, categories: categories });
+            event.reply('/read/serie-categories/by/serie', { success: true, categories: categories });
         }).catch((err) => {
-            event.reply('/read/serie-categories/by/serie/name/', { success: false, error: err });
+            event.reply('/read/serie-categories/by/serie', { success: false, error: err });
         });
 })
 

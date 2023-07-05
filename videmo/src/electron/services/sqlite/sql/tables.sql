@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS Serie (
   image TEXT,
   extension_id INTEGER,
   FOREIGN KEY (extension_id) REFERENCES Extension (id),
-  UNIQUE (name)
+  UNIQUE (basename, name, link)
 );
 
 -- Create SerieCategory table
@@ -35,5 +35,19 @@ CREATE TABLE IF NOT EXISTS SerieCategory (
   UNIQUE (serie_id, category_id)
 );
 
--- Insert the default category
-INSERT INTO Category (name) VALUES ('Default');
+-- Create Track table
+CREATE TABLE IF NOT EXISTS Track (
+  id INTEGER PRIMARY KEY,
+  serie_id INTEGER,
+  episode_id INTEGER,
+  FOREIGN KEY (serie_id) REFERENCES Serie (id),
+  FOREIGN KEY (episode_id) REFERENCES Episode (id)
+);
+
+-- Create Episode table
+CREATE TABLE IF NOT EXISTS Episode (
+  id INTEGER PRIMARY KEY,
+  name TEXT,
+  viewed INTEGER,
+  bookmarked INTEGER
+);

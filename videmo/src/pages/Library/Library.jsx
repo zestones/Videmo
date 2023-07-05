@@ -199,13 +199,7 @@ function Library({ searchValue }) {
                     {selectedCategory && (
                         <div className={styles.libraryContentCategorySeries}>
                             {showSerieDetails && (
-                                <DetailsContainer
-                                    image={serieDetails.image}
-                                    name={serieDetails.name}
-                                    basename={serieDetails.basename}
-                                    description={serieDetails.description}
-                                    genres={serieDetails.genres}
-                                />
+                                <DetailsContainer serie={serieDetails} />
                             )}
 
                             {filteredSeries.map((serie) => (

@@ -21,7 +21,7 @@ function App() {
 	const [folderManager] = useState(() => new FolderManager());
 
 	const [selectedExtension, setSelectedExtension] = useState(null);
-	const [activePage, setActivePage] = useState('Accueil');
+	const [activePage, setActivePage] = useState('Bibliotheque');
 	const [headerTitle, setHeaderTitle] = useState(activePage);
 
 	const [searchValue, setSearchValue] = useState('');
@@ -32,7 +32,6 @@ function App() {
 	const [showSerieDetails, setShowSerieDetails] = useState(false);
 	const [serieDetails, setSerieDetails] = useState(null); // [title, image, description, gennres...]
 	const [episodesFiles, setEpisodesFiles] = useState([]);
-
 
 	const handleSearch = (value) => {
 		setSearchValue(value);
@@ -52,7 +51,6 @@ function App() {
 	};
 
 	const navItems = {
-		Accueil: 'Home Content',
 		Bibliotheque: <Library searchValue={searchValue} />,
 		Explorer: <Explore
 			searchValue={searchValue}
@@ -117,6 +115,8 @@ function App() {
 		}
 	};
 
+
+	// TODO: random button should work only for local extensions in Explorer page && should work for all Series in Library page
 	return (
 		<div className="App">
 			<Header>

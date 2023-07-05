@@ -1,4 +1,5 @@
 const { ipcMain } = require('electron');
+const DataTypesConverter = require('../utilities/converter/DataTypesConverter.js');
 const ExtensionsDAO = require('../services/dao/settings/ExtensionsDAO');
 
 // Add new extension
@@ -15,7 +16,7 @@ ipcMain.on('/read/all/extensions/', (event) => {
     dao.getAllExtensions()
         .then((extensions) => {
             // convert local to boolean
-            extensions.forEach((extension) => extension.local = extension.local === 1);
+            extensions.forEach((extension) => extension.local = new DataTypesConverter().convertIntegerToBoolean(extension.local));
             event.reply('/read/all/extensions/', { success: true, extensions: extensions });
         }).catch((err) => {
             event.reply('/read/all/extensions/', { success: false, error: err });

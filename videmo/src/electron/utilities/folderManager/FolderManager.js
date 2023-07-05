@@ -17,7 +17,7 @@ class FolderManager {
         const folderName = path.basename(folderPath);
         const coverImagePath = path.join(coverFolderPath, folderName);
 
-        const supportedExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
+        const supportedExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp', '.tiff', '.tif', '.jfif', '.jpe'];
 
         for (const extension of supportedExtensions) {
             const imagePath = `${coverImagePath}${extension}`;

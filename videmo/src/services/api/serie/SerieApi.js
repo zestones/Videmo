@@ -15,4 +15,12 @@ export default class SerieApi {
             window.api.receive("/read/extension/by/serie/id/", (data) => data.success ? resolve(data.extension) : reject(data.error));
         });
     }
+
+    readSerieBySerieObject(serie) {
+        window.api.send("/read/serie/by/serie-object", { serie: serie });
+
+        return new Promise((resolve, reject) => {
+            window.api.receive("/read/serie/by/serie-object", (data) => data.success ? resolve(data.serie) : reject(data.error));
+        });
+    }
 }
