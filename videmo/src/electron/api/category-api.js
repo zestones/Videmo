@@ -1,5 +1,4 @@
 const { ipcMain } = require('electron');
-const { cp } = require('original-fs');
 
 const CategoriesDAO = require('../services/dao/settings/CategoriesDAO');
 

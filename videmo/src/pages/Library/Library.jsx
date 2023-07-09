@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 
 // Utilities
 import FolderManager from "../../utilities/folderManager/folderManager";
@@ -42,6 +42,7 @@ function Library() {
         serieApi.readAllSeriesByCategory(category.id)
             .then((seriesInLibrary) => {
                 setSeriesInLibrary(seriesInLibrary);
+                setSerie(null);
             })
             .catch((error) => console.error(error));
     }, [serieApi]);
