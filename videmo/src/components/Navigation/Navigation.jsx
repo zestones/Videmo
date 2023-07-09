@@ -6,11 +6,7 @@ import NavItem from './Item/NavItem';
 // Styles
 import styles from './Navigation.module.scss';
 
-function Navigation({ navItems, onPageTitleChange, activePage }) {
-
-    const handleItemClick = (item) => {
-        onPageTitleChange(item); // Invoke the callback with the new title
-    };
+function Navigation({ navItems, activePage, onPageChange }) {
 
     const renderContent = () => {
         // Render different content based on the active item
@@ -26,7 +22,7 @@ function Navigation({ navItems, onPageTitleChange, activePage }) {
                             key={key}
                             item={key}
                             activeItem={activePage}
-                            handleItemClick={handleItemClick}
+                            handleItemClick={onPageChange}
                         />
                     ))}
                 </ul>

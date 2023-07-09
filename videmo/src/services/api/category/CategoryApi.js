@@ -19,6 +19,14 @@ export default class CategoryApi {
         });
     }
 
+    readAllSeriesInLibraryByExtension(extension) {
+        window.api.send("/read/all/series/in/library/by/extension", { extension: extension });
+
+        return new Promise((resolve, reject) => {
+            window.api.receive("/read/all/series/in/library/by/extension", (data) => data.success ? resolve(data.series) : reject(data.error));
+        });
+    }
+
     // Read all categories
     readAllCategories() {
         window.api.send("/read/all/categories/");

@@ -28,8 +28,8 @@ ipcMain.on('/read/extension/by/serie/id/', (event, arg) => {
 ipcMain.on('/read/serie/by/serie-object/', (event, arg) => {
     new SerieDAO().getSerieByBasenameAndNameAndLink(arg.serie)
         .then((serie) => {
-            event.reply('/read/serie/by/serie-object', { success: true, serie: serie });
+            event.reply('/read/serie/by/serie-object/', { success: true, serie: serie });
         }).catch((err) => {
-            event.reply('/read/serie/by/serie-object', { success: false, error: err });
+            event.reply('/read/serie/by/serie-object/', { success: false, error: err });
         });
 })

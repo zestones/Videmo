@@ -6,15 +6,17 @@ import { faTimes } from '@fortawesome/free-solid-svg-icons';
 
 // Api
 import CategoryApi from "../../services/api/category/CategoryApi";
+import ExtensionsApi from "../../services/api/extension/ExtensionApi";
 
 // Utilities
-import FolderManager from "../../utilities/folderManager/FolderManager";
+import FolderManager from "../../utilities/folderManager/folderManager";
 
 // Styles
 import styles from "./CategoryModal.module.scss";
 
 function CategoryModal({ serie, onClose, onMoreClick }) {
     const [categoryApi] = useState(() => new CategoryApi());
+    const [extensionsApi] = useState(() => new ExtensionsApi());
     const [folderManager] = useState(() => new FolderManager());
 
     const [categories, setCategories] = useState([]);
@@ -58,15 +60,29 @@ function CategoryModal({ serie, onClose, onMoreClick }) {
         }
     };
 
-    const handleAddToCategory = () => {
-        // Pass the checkedCategories to the API call or handle them as needed
-        categoryApi.addSerieToCategories(serie, checkedCategories)
-            .then(() => {
-                onClose()
-                // if OnMoreClick is passed as a prop, call it
-                if (onMoreClick) {
-                    onMoreClick();
-                }
+    const handleAddToCategory = async () => {
+        extensionsApi.readExtensionById(serie.extensionId)
+            .then((extension) => {
+                // retrieve the level of the serie
+                folderManager.retrieveLevel(extension.link, serie.link)
+                    .then((level) => {
+                        folderManager.retrieveBaseNameByLevel(serie.link, level)
+                            .then((basename) => {
+                                // Set the basename of the serie
+                                const { name, link, image, extensionId } = serie;
+                                const serieToUpdate = { name, link, basename, image, extensionId };
+                                // Pass the checkedCategories to the API call or handle them as needed
+                                categoryApi.addSerieToCategories(serieToUpdate, checkedCategories)
+                                    .then(() => {
+                                        onClose()
+                                        // if OnMoreClick is passed as a prop, call it
+                                        if (onMoreClick) onMoreClick();
+                                    })
+                                    .catch((error) => console.error(error));
+                            })
+                            .catch((error) => console.error(error));
+                    })
+                    .catch((error) => console.error(error));
             })
             .catch((error) => console.error(error));
     };

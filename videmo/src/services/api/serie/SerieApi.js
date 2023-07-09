@@ -17,10 +17,10 @@ export default class SerieApi {
     }
 
     readSerieBySerieObject(serie) {
-        window.api.send("/read/serie/by/serie-object", { serie: serie });
+        window.api.send("/read/serie/by/serie-object/", { serie: serie });
 
         return new Promise((resolve, reject) => {
-            window.api.receive("/read/serie/by/serie-object", (data) => data.success ? resolve(data.serie) : reject(data.error));
+            window.api.receive("/read/serie/by/serie-object/", (data) => data.success ? resolve(data.serie) : reject(data.error));
         });
     }
 }

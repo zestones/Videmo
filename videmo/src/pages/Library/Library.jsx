@@ -1,232 +1,196 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 
 // Utilities
-import FolderManager from "../../utilities/folderManager/FolderManager";
+import FolderManager from "../../utilities/folderManager/folderManager";
 
 // Api
-import CategoryApi from "../../services/api/category/CategoryApi";
+import AniList from "../../services/aniList/aniList";
 import SerieApi from "../../services/api/serie/SerieApi";
+import CategoryApi from "../../services/api/category/CategoryApi";
 
 // Components
 import Card from "../../components/Card/Card";
 import DetailsContainer from "../Explore/DetailsContainer/DetailsContainer";
 import EpisodeCard from "../../components/EpisodeCard/EpisodeCard";
+import Header from "../../components/Header/Header";
+import CategoryHeader from "../../components/CategoryHeader/CategoryHeader";
 
 // Styles
 import styles from "./Library.module.scss";
 
 
-function Library({ searchValue }) {
-    // States
+function Library() {
+    // States initialization
     const [selectedCategory, setSelectedCategory] = useState(null);
-    const [categories, setCategories] = useState([]);
-    const [series, setSeries] = useState([]);
+    const [seriesInLibrary, setSeriesInLibrary] = useState([]);
+    const [serie, setSerie] = useState(null);
+    const [episodes, setEpisodes] = useState([]);
 
-    const [serieExtension, setSerieExtension] = useState(null);
-    const [serieDetails, setSerieDetails] = useState(null);
-    const [showSerieDetails, setShowSerieDetails] = useState(false);
-    const [episodesFiles, setEpisodesFiles] = useState([]);
-
-    // Variables and refs for the header scroll
-    const headerRef = useRef(null);
-    let isDragging = false;
-    let startX = 0;
-    let scrollLeft = 0;
+    const [searchValue, setSearchValue] = useState("");
 
     // Api instances
-    const [categoryApi] = useState(() => new CategoryApi());
     const [serieApi] = useState(() => new SerieApi());
+    const [categoryApi] = useState(() => new CategoryApi());
+    const [aniList] = useState(() => new AniList());
 
     // Utilities instances
     const [folderManager] = useState(() => new FolderManager());
 
     const handleSelectCategory = useCallback((category) => () => {
         setSelectedCategory(category);
-        setEpisodesFiles([]);
-        setSerieDetails(null);
-        setShowSerieDetails(false);
 
         serieApi.readAllSeriesByCategory(category.id)
-            .then((series) => setSeries(series))
+            .then((seriesInLibrary) => {
+                setSeriesInLibrary(seriesInLibrary);
+            })
             .catch((error) => console.error(error));
     }, [serieApi]);
 
-    useEffect(() => {
-        categoryApi.readAllCategories()
-            .then((categories) => {
-                setCategories(categories)
-                handleSelectCategory(categories[0])();
-            })
-            .catch((error) => console.error(error));
-    }, [categoryApi, handleSelectCategory]);
-
-    // Refresh the series when the category changes
+    // Refresh the seriesInLibrary when the category changes
     const refreshSeriesOnSerieCategoryChange = () => {
         serieApi.readAllSeriesByCategory(selectedCategory.id)
-            .then((series) => setSeries(series))
+            .then((seriesInLibrary) => setSeriesInLibrary(seriesInLibrary))
             .catch((error) => console.error(error));
     }
 
-    const handleMouseDown = (event) => {
-        isDragging = true;
-        startX = event.pageX - headerRef.current.offsetLeft;
-        scrollLeft = headerRef.current.scrollLeft;
-    };
+    // Define a function to map folder contents
+    const mapFolderContents = useCallback((contents, series) => {
+        return contents.map((folderContent) => {
+            const serie = series.find((serie) => {
+                return serie.basename === folderManager.retrieveFileName(folderContent.path);
+            });
 
-    const handleMouseMove = (event) => {
-        if (!isDragging) return;
-        event.preventDefault();
+            if (serie !== undefined) {
+                folderContent.inLibrary = true;
+                folderContent.serie = serie;
+            } else {
+                folderContent.inLibrary = false;
+            }
 
-        const x = event.pageX - headerRef.current.offsetLeft;
-        const walk = (x - startX) * 2; // Adjust the scrolling speed
-        headerRef.current.scrollLeft = scrollLeft - walk;
-    };
+            return folderContent;
+        });
+    }, [folderManager]);
 
-    const handleMouseUp = () => isDragging = false;
-
-    const manageLocalSerie = (extension, serie) => {
-        if (extension.local) {
-            retrieveLevelAndFolderContents(extension, serie);
-        }
-    }
-
-    const handleMoreDisplay = (serie) => {
-        if (serieExtension === null) {
-            serieApi.readExtensionBySerieId(serie.id)
-                .then((extension) => {
-                    setSerieExtension(extension);
-                    manageLocalSerie(extension, serie);
-                }).catch((error) => console.error(error));
-        } else {
-            manageLocalSerie(serieExtension, serie);
-        }
-    }
-
-    // Helper function to retrieve level and folder contents
-    const retrieveLevelAndFolderContents = (extension, serie) => {
-        folderManager.retrieveLevel(extension.link, serie.link)
-            .then((level) => retrieveFolderContentsAndHandleData(extension, serie, level))
-            .catch((error) => console.error(error));
-    };
-
-    // Helper function to retrieve folder contents and handle the data
-    const retrieveFolderContentsAndHandleData = (extension, serie, level) => {
-        folderManager.retrieveFolderContents(serie.link, level)
+    const retrieveFolderContents = (link, level = 0, extension) => {
+        folderManager.retrieveFolderContents(link, level)
             .then((data) => {
-                // If the folder is empty, retrieve the series episodes
                 if (data.contents.length === 0) {
-                    retrieveSeriesEpisodes(serie.link);
+                    retrieveSeriesEpisodes(link);
+                    setSeriesInLibrary([]);
+                } else {
+                    // TODO : remove duplicate code
+                    categoryApi.readAllSeriesInLibraryByExtension(extension)
+                        .then((series) => {
+                            const mappedFolderContents = mapFolderContents(data.contents, series);
+                            setSeriesInLibrary(mappedFolderContents);
+                        });
+                    setEpisodes([]);
                 }
-
-                // onCurrentPathChange(serie.link);
-                retrieveDataOfFolderContents(extension, serie, data.contents);
-                // onCurrentLevelChange(currentLevel + 1);
-                setShowSerieDetails(true);
-                // TODO: Retrieve real serie details
-                const test = {
-                    "basename": data.basename,
-                    "name": serie.name,
-                    "image": serie.image,
-                    "local": extension.local,
-                    "extensionId": extension.id,
-                    "link": serie.link,
-                    "description": "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Alias expedita consequuntur, labore repellat blanditiis reiciendis consequatur aliquam accusamus libero fuga dolorum porro eos esse nostrum. Nam, adipisci. Obcaecati, voluptas! Eligendi?",
-                    "genres": ['Action', 'Adventure', 'Comedy']
-                };
-                setSerieDetails(test);
             })
             .catch((error) => console.error(error));
-    };
-
-    // Helper function to retrieve data of folder contents
-    const retrieveDataOfFolderContents = (extension, serie, contents) => {
-        const data = contents.map((content) => {
-            return {
-                name: folderManager.retrieveFileName(content.path),
-                link: content.path,
-                extensionId: extension.id,
-                local: extension.local,
-                basename: serie.basename,
-                image: folderManager.accessFileWithCustomProtocol(content.cover),
-                description: serie.description,
-                genres: serie.genres,
-            };
-        });
-
-        setSeries(data);
     };
 
     // Function to retrieve series episodes
     const retrieveSeriesEpisodes = (path) => {
         folderManager.retrieveFilesInFolder(path)
-            .then((data) => setEpisodesFiles(data))
+            .then((data) => setEpisodes(data))
             .catch((error) => console.error(error));
     };
 
-    // Sort the series alphabetically
-    const alphabeticallySortSeries = series.sort((a, b) => a.name.localeCompare(b.name));
+    // When a serie is clicked, retrieve its contents
+    // ! IMPORTANT: This works only for local sources
+    const handlePlayClick = (basename, name, link, image) => {
+        serieApi.readSerieBySerieObject({ basename: basename, name: name, link: link })
+            .then((serie) => {
+                serieApi.readExtensionBySerieId(serie.id)
+                    .then((extension) => {
 
-    // Filter the series based on the search value
-    const filteredSeriesOnSearch = alphabeticallySortSeries.filter((serie) => serie.name.toLowerCase().includes(searchValue.toLowerCase()));
+                        folderManager.retrieveLevel(extension.link, link)
+                            .then((level) => {
+                                // We search for folders
+                                // TODO : refactor this (retrieveFolderContents), multiple definition 1 usage
+                                retrieveFolderContents(link, level, extension);
+                                const searchName = basename === name ? basename : basename + " " + name;
+                                aniList.searchAnimeDetailsByName(searchName)
+                                    .then((details) => {
+                                        // TODO : do not update if no details are found
+                                        setSerie({
+                                            "name": folderManager.retrieveFileName(link),
+                                            "link": link,
+                                            "basename": basename,
+                                            "image": image,
+                                            "local": extension.local,
+                                            "extensionId": extension.id,
+                                            "description": details?.description,
+                                            "genres": details?.genres ? details.genres : [],
+                                            "startDate": aniList.formatDate(details?.startDate),
+                                            "duration": aniList.formatDuration(details?.duration),
+                                            "rating": aniList.formatRating(details?.meanScore),
+                                        });
+                                    })
+                            })
+                            .catch((error) => console.error(error));
+                    })
+                    .catch((error) => console.error(error));
+            })
+            .catch((error) => console.error(error));
+        handleSearch("");
+    };
 
-    // Filter the series based on the search value
-    const filteredSeries = searchValue === "" ? alphabeticallySortSeries : filteredSeriesOnSearch;
+    // Filter the seriesInLibrary based on the search value
+    const handleSearch = (value) => setSearchValue(value);
+    const filteredSeries = seriesInLibrary.filter((folderContent) =>
+        folderManager.retrieveFileName(folderContent.link)
+            .toLowerCase()
+            .includes(searchValue.toLowerCase())
+    );
+
 
     return (
-        <div className={styles.library}>
-            <div className={styles.libraryContainer}>
-                <div
-                    className={styles.libraryHeader}
-                    ref={headerRef}
-                    onMouseDown={handleMouseDown}
-                    onMouseMove={handleMouseMove}
-                    onMouseUp={handleMouseUp}
-                    onMouseLeave={handleMouseUp}
-                >
-                    <div className={styles.libraryHeaderButtons}>
-                        {categories.map((category) => (
-                            <button
-                                key={category.id}
-                                className={`${styles.libraryHeaderButton} ${selectedCategory?.id === category.id ? styles.active : ""}`}
-                                onClick={handleSelectCategory(category)}
-                            >
-                                {category.name}
-                            </button>
-                        ))}
-                    </div>
-                </div>
-                <div className={styles.libraryContent}>
-                    {selectedCategory && (
-                        <div className={styles.libraryContentCategorySeries}>
-                            {showSerieDetails && (
-                                <DetailsContainer serie={serieDetails} />
-                            )}
+        <>
+            <Header title="Library" onSearch={handleSearch} />
+            <div className={styles.library}>
+                <div className={styles.libraryContainer}>
+                    <CategoryHeader selectedCategory={selectedCategory} onSelectCategory={handleSelectCategory} />
 
-                            {filteredSeries.map((serie) => (
-                                <Card
-                                    key={serie.id}
-                                    serie={serie}
-                                    onPlayClick={handleMoreDisplay}
-                                    onMoreClick={refreshSeriesOnSerieCategoryChange}
-                                    inLibrary={true}
-                                />
-                            ))}
+                    <div className={styles.libraryContent}>
+                        {selectedCategory && (
 
-                            <div className={styles.libraryContentCategorySeriesEmpty}>
-                                {episodesFiles.map((episode) => (
-                                    <EpisodeCard
-                                        key={episode.id}
-                                        title={episode.name}
-                                        link={episode.path}
-                                        modifiedTime={episode.modifiedTime}
+                            <div className={styles.libraryContentCategorySeries}>
+                                {serie && (
+                                    <DetailsContainer serie={serie} />
+                                )}
+
+                                {filteredSeries.map((serie) => (
+                                    <Card
+                                        key={serie.id}
+                                        basename={serie.basename}
+                                        name={serie.name}
+                                        link={serie.link}
+                                        image={serie.image}
+                                        extensionId={serie.extensionId}
+                                        onPlayClick={handlePlayClick}
+                                        onMoreClick={refreshSeriesOnSerieCategoryChange}
+                                        inLibrary={true}
                                     />
                                 ))}
+
+                                <div className={styles.libraryContentCategorySeriesEmpty}>
+                                    {episodes.map((episode) => (
+                                        <EpisodeCard
+                                            key={episode.id}
+                                            title={episode.name}
+                                            link={episode.path}
+                                            modifiedTime={episode.modifiedTime}
+                                        />
+                                    ))}
+                                </div>
                             </div>
-                        </div>
-                    )}
+                        )}
+                    </div>
                 </div>
             </div>
-        </div>
+        </>
     );
 }
 

@@ -130,6 +130,10 @@ class FolderManager {
         return filePath.split("\\").pop().split("/").pop();
     }
 
+    retrieveParentBaseName(filePath) {
+        return filePath.split("\\").pop().split("/").pop().split(".").shift();
+    }
+
     /**
      * @param {String} filePath 
      * @returns {String} The file path with the custom protocol 'app://'

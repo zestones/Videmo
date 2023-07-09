@@ -20,9 +20,9 @@ const DetailsContainer = ({ serie }) => {
 	const [serieApi] = useState(() => new SerieApi());
 
 	const details = [
-		{ icon: <FontAwesomeIcon icon={faStar} mask={['far', 'circle']} size="xs" />, label: '8.5/10' },
-		{ icon: <FontAwesomeIcon icon={faCalendar} mask={['far', 'circle']} size="xs" />, label: '15/09/2022' },
-		{ icon: <FontAwesomeIcon icon={faClock} mask={['far', 'circle']} size="xs" />, label: '2h 30min' },
+		{ icon: <FontAwesomeIcon icon={faStar} mask={['far', 'circle']} size="xs" />, label: serie.rating },
+		{ icon: <FontAwesomeIcon icon={faCalendar} mask={['far', 'circle']} size="xs" />, label: serie.startDate },
+		{ icon: <FontAwesomeIcon icon={faClock} mask={['far', 'circle']} size="xs" />, label: serie.duration },
 	];
 
 	useEffect(() => {
@@ -51,13 +51,13 @@ const DetailsContainer = ({ serie }) => {
 			<div className={styles.content}>
 				<div className={styles.mainContent}>
 					<h2 className={styles.title}>{serie.basename}</h2>
-					{serie.basename && serie.basename !== serie.name && (
-						<h4 className={styles.subtitle}>{serie.name}</h4>
+					{serie?.basename && serie?.basename !== serie?.name && (
+						<h4 className={styles.subtitle}>{serie?.name}</h4>
 					)}
-					<p className={styles.description}>{serie.description}</p>
+					<p className={styles.description} dangerouslySetInnerHTML={{ __html: serie?.description }}></p>
 
 					<div className={styles.genres}>
-						{serie.genres.map((genre, index) => (
+						{serie?.genres?.map((genre, index) => (
 							<span className={styles.genre} key={index}>
 								{genre}
 							</span>

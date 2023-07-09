@@ -84,7 +84,7 @@ class SerieCategoryDAO {
     async updateSerieCategories(serie, categoriesId) {
         const serieParsedObject = JSON.parse(serie);
 
-        // Retrieve the serie I
+        // Retrieve the serie
         const retrievedSerie = await this.serieDAO.getSerieByBasenameAndNameAndLink(serieParsedObject);
 
         // Check if the series already exists in the Serie table

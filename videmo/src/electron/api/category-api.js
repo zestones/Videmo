@@ -1,4 +1,5 @@
 const { ipcMain } = require('electron');
+const { cp } = require('original-fs');
 
 const CategoriesDAO = require('../services/dao/settings/CategoriesDAO');
 
@@ -19,6 +20,18 @@ ipcMain.on('/read/all/categories/', (event) => {
             event.reply('/read/all/categories/', { success: true, categories: categories });
         }).catch((err) => {
             event.reply('/read/all/categories/', { success: false, error: err });
+        });
+})
+
+
+// Read all series in library by extension
+ipcMain.on('/read/all/series/in/library/by/extension', (event, arg) => {
+    const dao = new CategoriesDAO();
+    dao.getAllSeriesInLibraryByExtension(arg.extension)
+        .then((series) => {
+            event.reply('/read/all/series/in/library/by/extension', { success: true, series: series });
+        }).catch((err) => {
+            event.reply('/read/all/series/in/library/by/extension', { success: false, error: err });
         });
 })
 
