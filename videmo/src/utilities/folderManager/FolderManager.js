@@ -133,15 +133,6 @@ class FolderManager {
     retrieveParentBaseName(filePath) {
         return filePath.split("\\").pop().split("/").pop().split(".").shift();
     }
-
-    /**
-     * @param {String} filePath 
-     * @returns {String} The file path with the custom protocol 'app://'
-     */
-    accessFileWithCustomProtocol(filePath) {
-        // Construct the file path using the custom protocol 'app://'
-        return `app:///${filePath}`;
-    }
 }
 
 export default FolderManager;

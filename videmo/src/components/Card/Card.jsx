@@ -29,7 +29,7 @@ function Card({ basename, name, link, level = 0, image, extensionId, onPlayClick
                     <div className={styles.cardLayerContent}>
                         <img className={styles.cardLayerImage} src="/icons/cards/more.png" alt="More" onClick={() => setShowCategoryModal(true)} />
                         <hr className={styles.separator} />
-                        <img className={styles.cardLayerImage} src="/icons/cards/play.png" alt="Play" onClick={() => onPlayClick(basename, name, link, image)} />
+                        <img className={styles.cardLayerImage} src="/icons/cards/play.png" alt="Play" onClick={() => onPlayClick(basename, name, link, image, extensionId)} />
                     </div>
                 </div>
             </li>

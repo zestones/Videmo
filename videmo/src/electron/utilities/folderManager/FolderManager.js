@@ -54,7 +54,8 @@ class FolderManager {
             // If the entry is a directory, process it
             if (isDirectory && folder !== coverFolder) {
                 const coverImagePath = this.getCoverImagePath(fullPath, coverFolder, level);
-                folderContents.push({ cover: coverImagePath, path: fullPath });
+                const coverImage = this.accessFileWithCustomProtocol(coverImagePath);
+                folderContents.push({ image: coverImage, link: fullPath });
             }
         }
 
@@ -73,6 +74,15 @@ class FolderManager {
         // Make sure the level is within the valid range
         const normalizedLevel = Math.min(level, parts.length - 1);
         return parts[parts.length - normalizedLevel];
+    }
+
+    /**
+     * @param {String} filePath 
+     * @returns {String} The file path with the custom protocol 'app://'
+    */
+    accessFileWithCustomProtocol(filePath) {
+        // Construct the file path using the custom protocol 'app://'
+        return `app:///${filePath}`;
     }
 
     /**

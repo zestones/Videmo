@@ -19,7 +19,10 @@ function Explore() {
             {!selectedExtension ? (
                 <Source handleSelectedExtension={handleSelectedExtension} />
             ) : (
-                <SourceContent extension={selectedExtension} onExtensionReset={setSelectedExtension} />
+                <SourceContent 
+                    searchScope={selectedExtension} 
+                    calledFromExplore={true}
+                    onExtensionReset={setSelectedExtension} />
             )}
         </>
     );

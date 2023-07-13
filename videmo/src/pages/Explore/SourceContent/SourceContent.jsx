@@ -5,6 +5,8 @@ import FolderManager from "../../../utilities/folderManager/folderManager";
 
 // Api
 import CategoryApi from "../../../services/api/category/CategoryApi";
+import SerieApi from "../../../services/api/serie/SerieApi";
+import ExtensionsApi from "../../../services/api/extension/ExtensionApi";
 import AniList from "../../../services/aniList/aniList";
 
 // Components
@@ -18,10 +20,12 @@ import DetailsContainer from "../DetailsContainer/DetailsContainer";
 import styles from "./SourceContent.module.scss";
 
 
-function SourceContent({ extension, onExtensionReset }) {
+function SourceContent({ searchScope, calledFromExplore, onExtensionReset }) {
     // Utilities and services initialization
     const [folderManager] = useState(() => new FolderManager());
     const [categoryApi] = useState(() => new CategoryApi());
+    const [serieApi] = useState(() => new SerieApi());
+    const [extensionApi] = useState(() => new ExtensionsApi());
     const [aniList] = useState(() => new AniList());
 
     // State initialization
@@ -34,7 +38,7 @@ function SourceContent({ extension, onExtensionReset }) {
     const mapFolderContents = useCallback((contents, series) => {
         return contents.map((folderContent) => {
             const serie = series.find((serie) => {
-                return serie.link === folderContent.path;
+                return serie.link === folderContent.link;
             });
 
             if (serie !== undefined) {
@@ -50,38 +54,89 @@ function SourceContent({ extension, onExtensionReset }) {
 
     // Use the functions in useEffect
     useEffect(() => {
-        folderManager.retrieveFolderContents(extension.link)
-            .then((data) => {
-                categoryApi.readAllSeriesInLibraryByExtension(extension)
-                    .then((series) => {
-                        const mappedFolderContents = mapFolderContents(data.contents, series);
-                        setFolderContents(mappedFolderContents);
-                    });
-            });
-    }, [folderManager, categoryApi, extension, mapFolderContents]);
+        if (!calledFromExplore && searchScope !== null) {
+            console.log("called from library");
+            console.log("searchScope: ", searchScope);
+            setSerie(null);
+            setEpisodes([]);
+            serieApi.readAllSeriesByCategory(searchScope.id)
+                .then((seriesInLibrary) => {
+                    console.log("seriesInLibrary: ", seriesInLibrary);
+                    setFolderContents(seriesInLibrary);
+                })
+                .catch((error) => console.error(error));
+        }
+    }, [serieApi, searchScope, calledFromExplore]);
 
+    useEffect(() => {
+        if (calledFromExplore) {
+            folderManager.retrieveFolderContents(searchScope.link)
+                .then((data) => {
+                    categoryApi.readAllSeriesInLibraryByExtension(searchScope)
+                        .then((series) => {
+                            const mappedFolderContents = mapFolderContents(data.contents, series);
+                            console.log("mappedFolderContents: ", mappedFolderContents);
+                            setFolderContents(mappedFolderContents);
+                        });
+                });
+        }
+    }, [folderManager, categoryApi, searchScope, calledFromExplore, mapFolderContents]);
 
-    const refreshFolderContents = () => {
-        categoryApi.readAllSeriesInLibraryByExtension(extension)
+    const updateContentForExplore = () => {
+        categoryApi.readAllSeriesInLibraryByExtension(searchScope)
             .then((series) => {
                 const mappedFolderContents = mapFolderContents(folderContents, series);
                 setFolderContents(mappedFolderContents);
             });
     };
 
+    const updateContentForLibrary = () => {
+        serieApi.readAllSeriesByCategory(searchScope.id)
+            .then((seriesInLibrary) => setFolderContents(seriesInLibrary))
+            .catch((error) => console.error(error));
+    };
+
+    const refreshFolderContents = () => {
+        if (calledFromExplore) updateContentForExplore();
+        else updateContentForLibrary();
+    };
+
     const handleSearch = (value) => setSearchValue(value);
-    const filterFolders = folderContents.filter((folderContent) =>
-        folderManager.retrieveFileName(folderContent.path)
-            .toLowerCase()
-            .includes(searchValue.toLowerCase())
-    );
+    // const filterFolders = folderContents.filter((folderContent) =>
+    //     folderManager.retrieveFileName(folderContent.path)
+    //         .toLowerCase()
+    //         .includes(searchValue.toLowerCase())
+    // );
+
+    const handlePlayClickInLibrary = async (basename, name, link, image) => {
+        try {
+            const serie = folderContents.find((serie) => serie.link === link);
+            console.log("serie: ", serie);
+           
+            const extension = await extensionApi.readExtensionById(serie.extension_id);
+            console.log("extension: ", extension);
+            return extension.link;
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
 
     // When a serie is clicked, retrieve its contents
     // ! IMPORTANT: This works only for local sources
-    const handlePlayClick = (basename, name, link, image) => {
+    const handlePlayClick = async (basename, name, link, image) => {
+        let baseLink;
+        if (!calledFromExplore) {
+            baseLink = await handlePlayClickInLibrary(basename, name, link, image);
+            console.log("=====");
+            console.log("baseLink: ", baseLink);
+        } else {
+            baseLink = searchScope.link;
+        }
 
-        folderManager.retrieveLevel(extension.link, link)
+        folderManager.retrieveLevel(baseLink, link)
             .then((level) => {
+                console.log("level: ", level);
                 // We search for folders
                 // TODO : refactor this (retrieveFolderContents), multiple definition 1 usage
                 retrieveFolderContents(link, level);
@@ -94,8 +149,8 @@ function SourceContent({ extension, onExtensionReset }) {
                             "link": link,
                             "basename": basename,
                             "image": image,
-                            "local": extension.local,
-                            "extensionId": extension.id,
+                            "local": searchScope.local,
+                            "extensionId": searchScope.id ? searchScope.id : serie.extension_id,
                             "description": details?.description,
                             "genres": details?.genres ? details.genres : [],
                             "startDate": aniList.formatDate(details?.startDate),
@@ -117,7 +172,7 @@ function SourceContent({ extension, onExtensionReset }) {
                     setFolderContents([]);
                 } else {
                     // TODO : remove duplicate code
-                    categoryApi.readAllSeriesInLibraryByExtension(extension)
+                    categoryApi.readAllSeriesInLibraryByExtension(searchScope)
                         .then((series) => {
                             const mappedFolderContents = mapFolderContents(data.contents, series);
                             setFolderContents(mappedFolderContents);
@@ -148,7 +203,7 @@ function SourceContent({ extension, onExtensionReset }) {
         folderManager.retrieveParentPath(serie.link)
             .then((link) => {
                 // We also retrieve the parent level
-                folderManager.retrieveLevel(extension.link, link)
+                folderManager.retrieveLevel(searchScope.link, link)
                     .then((level) => {
                         // Then from the parent path, and its level, we retrieve its contents
                         retrieveFolderContents(link, level);
@@ -182,20 +237,22 @@ function SourceContent({ extension, onExtensionReset }) {
 
     return (
         <>
-            <Header title={extension.name} onSearch={handleSearch} onBack={handleBackClick} />
+            {calledFromExplore &&
+                <Header title={searchScope.name} onSearch={handleSearch} onBack={handleBackClick} />
+            }
             <div className={styles.sourceContent}>
                 {serie && (
                     <DetailsContainer serie={serie} />
                 )}
 
-                {filterFolders.map((folderContent) => (
+                {folderContents.map((folderContent) => (
                     <Card
                         key={folderContent.path}
-                        basename={serie && serie.basename !== undefined ? serie.basename : folderManager.retrieveParentBaseName(folderContent.path)}
-                        name={folderManager.retrieveFileName(folderContent.path)}
-                        link={folderContent.path}
-                        image={folderManager.accessFileWithCustomProtocol(folderContent.cover)}
-                        extensionId={extension.id}
+                        basename={serie && serie.basename !== undefined ? serie.basename : folderManager.retrieveParentBaseName(folderContent.link)}
+                        name={folderManager.retrieveFileName(folderContent.link)}
+                        link={folderContent.link}
+                        image={folderContent.image}
+                        extensionId={searchScope.id ? searchScope.id : folderContent.extension_id}
                         showInLibraryLabel={folderContent.inLibrary}
                         onPlayClick={handlePlayClick}
                         onMoreClick={refreshFolderContents}
