@@ -30,7 +30,7 @@ ipcMain.on('/read/extension/by/id/', (event, arg) => {
     dao.getExtensionById(arg.id)
         .then((extension) => {
             // convert local to boolean
-            extension.local = new DataTypesConverter().convertIntegerToBoolean(extension.local);
+            extension.local = new DataTypesConverter().convertIntegerToBoolean(extension?.local);
             event.reply('/read/extension/by/id/', { success: true, extension: extension });
         }).catch((err) => {
             event.reply('/read/extension/by/id/', { success: false, error: err });

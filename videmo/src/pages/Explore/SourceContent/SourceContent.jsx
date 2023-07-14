@@ -37,45 +37,31 @@ function SourceContent({ searchScope, calledFromExplore, onExtensionReset }) {
 
     const retrieveSeriesInLibraryByExtension = useCallback((contents) => {
         categoryApi.readAllSeriesInLibraryByExtension(searchScope)
-            .then((series) => {
-                const mappedFolderContents = folderManager.mapFolderContentsWithSeriesStatus(contents, series);
-                setFolderContents(mappedFolderContents);
-            });
+            .then((series) => setFolderContents(folderManager.mapFolderContentsWithMandatoryFields(contents, series, searchScope)))
+            .catch((error) => console.error(error));
     }, [categoryApi, folderManager, searchScope]);
 
-    // Use the functions in useEffect
-    // TODO : retrieve series extension and set it inside the object 
-    // TODO : mandatory fields are : 
-    // TODO : - name
-    // TODO : - link
-    // TODO : - basename
-    // TODO : - image
-    // TODO : - extension {
-    // TODO :     - id
-    // TODO :     - name
-    // TODO :     - link
-    // TODO : }
+    const retrieveSubSeriesInLibraryByExtension = (contents, extension_id) => {
+        categoryApi.readAllSeriesInLibraryByExtension(searchScope)
+            .then((series) => setFolderContents(folderManager.mapFolderContentsWithMandatoryFields(contents, series, { id: extension_id })))
+            .catch((error) => console.error(error));
+    };
 
     useEffect(() => {
         if (!calledFromExplore && searchScope !== null) {
             setSerie(null);
             setEpisodes([]);
             serieApi.readAllSeriesByCategory(searchScope.id)
-                .then((seriesInLibrary) => {
-                    console.log("seriesInLibrary: ", seriesInLibrary);
-                    setFolderContents(seriesInLibrary);
-                })
+                .then((seriesInLibrary) => setFolderContents(seriesInLibrary))
                 .catch((error) => console.error(error));
         }
     }, [serieApi, searchScope, calledFromExplore]);
 
-    // TODO : same as above construct the same object with the mandatory fields
     useEffect(() => {
         if (calledFromExplore) {
             folderManager.retrieveFolderContents(searchScope.link)
-                .then((data) => {
-                    console.log("seriesInExplore: ", data.contents);
-                    retrieveSeriesInLibraryByExtension(data.contents)});
+                .then((data) => retrieveSeriesInLibraryByExtension(data.contents))
+                .catch((error) => console.error(error));
         }
     }, [folderManager, categoryApi, searchScope, calledFromExplore, retrieveSeriesInLibraryByExtension]);
 
@@ -98,14 +84,11 @@ function SourceContent({ searchScope, calledFromExplore, onExtensionReset }) {
             .includes(searchValue.toLowerCase())
     );
 
-    const handlePlayClickInLibrary = async (basename, name, link, image) => {
+    const handlePlayClickInLibrary = async (link) => {
         try {
             const serie = folderContents.find((serie) => serie.link === link);
-            console.log("serie: ", serie);
 
-            // TODO : consistency, sometimes extension_id, sometimes extensionId
             const extension = await extensionApi.readExtensionById(serie.extension_id);
-            console.log("extension: ", extension);
             return extension.link;
         } catch (error) {
             console.error(error);
@@ -114,35 +97,35 @@ function SourceContent({ searchScope, calledFromExplore, onExtensionReset }) {
 
 
     // When a serie is clicked, retrieve its contents
-    const handlePlayClick = async (basename, name, link, image) => {
+    const handlePlayClick = async (details) => {
         let baseLink;
         if (!calledFromExplore) {
-            baseLink = await handlePlayClickInLibrary(basename, name, link, image);
+            baseLink = await handlePlayClickInLibrary(details.link);
         } else {
             baseLink = searchScope.link;
         }
 
-        folderManager.retrieveLevel(baseLink, link)
+        folderManager.retrieveLevel(baseLink, details.link)
             .then((level) => {
                 // We search for folders
                 // TODO : refactor this (retrieveFolderContents), multiple definition 1 usage
-                testIfNeeded(link, level); // TODO : condition check for remote sources
-                const searchName = basename === name ? basename : basename + " " + name;
+                testIfNeeded(details.link, level, details.extension_id); // TODO : condition check for remote sources
+                const searchName = details.basename === details.name ? details.basename : details.basename + " " + details.name;
                 aniList.searchAnimeDetailsByName(searchName)
-                    .then((details) => {
+                    .then((data) => {
                         // TODO : do not update if no details are found (for sub folders (undefined, NaN, etc.))
                         setSerie({
-                            "name": folderManager.retrieveFileName(link),
-                            "link": link,
-                            "basename": basename,
-                            "image": image,
+                            "name": folderManager.retrieveFileName(details.link),
+                            "link": details.link,
+                            "basename": details.basename,
+                            "image": details.image,
                             "local": searchScope.local,
-                            "extensionId": searchScope.id ? searchScope.id : serie.extension_id,
-                            "description": details?.description,
-                            "genres": details?.genres ? details.genres : [],
-                            "startDate": aniList.formatDate(details?.startDate),
-                            "duration": aniList.formatDuration(details?.duration),
-                            "rating": aniList.formatRating(details?.meanScore),
+                            "extension_id": calledFromExplore ? searchScope.id : details.extension_id,
+                            "description": data?.description,
+                            "genres": data?.genres ? data.genres : [],
+                            "startDate": aniList.formatDate(data?.startDate),
+                            "duration": aniList.formatDuration(data?.duration),
+                            "rating": aniList.formatRating(data?.meanScore),
                         });
                     })
             })
@@ -152,14 +135,14 @@ function SourceContent({ searchScope, calledFromExplore, onExtensionReset }) {
     };
 
     // TODO : check if really needed
-    const testIfNeeded = (link, level = 0) => {
+    const testIfNeeded = (link, level = 0, extension_id) => {
         folderManager.retrieveFolderContents(link, level)
             .then((data) => {
                 if (data.contents.length === 0) {
                     retrieveSeriesEpisodes(link);
                     setFolderContents([]);
                 } else {
-                    retrieveSeriesInLibraryByExtension(data.contents);
+                    retrieveSubSeriesInLibraryByExtension(data.contents, extension_id);
                     setEpisodes([]);
                 }
             })
@@ -236,14 +219,10 @@ function SourceContent({ searchScope, calledFromExplore, onExtensionReset }) {
                 {filterFolders.map((folderContent) => (
                     <Card
                         key={folderContent.path}
-                        basename={serie && serie.basename !== undefined ? serie.basename : folderManager.retrieveParentBaseName(folderContent.link)}
-                        name={folderManager.retrieveFileName(folderContent.link)}
-                        link={folderContent.link}
-                        image={folderContent.image}
-                        extensionId={searchScope.id ? searchScope.id : folderContent.extension_id}
-                        showInLibraryLabel={folderContent.inLibrary}
+                        details={folderContent}
                         onPlayClick={handlePlayClick}
                         onMoreClick={refreshFolderContents}
+                        displayLabel={calledFromExplore}
                     />
                 ))}
                 <div className={styles.episodesContainer}>

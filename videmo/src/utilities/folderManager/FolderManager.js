@@ -146,20 +146,44 @@ class FolderManager {
      */
     mapFolderContentsWithSeriesStatus(contents, series) {
         return contents.map((folderContent) => {
-            const serie = series.find((serie) => {
-                return serie.link === folderContent.link;
-            });
-
-            if (serie !== undefined) {
-                folderContent.inLibrary = true;
-                folderContent.serie = serie;
-            } else {
-                folderContent.inLibrary = false;
-            }
-
+            folderContent.inLibrary = series.some((serie) => serie.link === folderContent.link);
             return folderContent;
         });
     };
+
+    /**
+     * @param {Object} contents 
+     * @param {Interger} extensionId 
+     * @returns {Object} The contents with the extension id.
+     */
+    mapFolderContentsWithExtensionId(contents, extensionId) {
+        return contents.map((folderContent) => {
+            folderContent.extensionId = extensionId;
+            return folderContent;
+        });
+    };
+
+    /**
+     * @param {Object} contents 
+     * @returns {Object} The contents with the basename.
+     */
+    mapFolderContentsWithBasename(contents) {
+        return contents.map((folderContent) => {
+            folderContent.basename = this.retrieveFileName(folderContent.link);
+            folderContent.name = folderContent.basename;
+            return folderContent;
+        });
+    };
+
+    mapFolderContentsWithMandatoryFields(contents, series, extension) {
+        return contents.map((folderContent) => {
+            folderContent.basename = this.retrieveFileName(folderContent.link);
+            folderContent.name = folderContent.basename;
+            folderContent.inLibrary = series.some((serie) => serie.link === folderContent.link);
+            folderContent.extension_id = extension.id;
+            return folderContent;
+        });
+    }
 }
 
 

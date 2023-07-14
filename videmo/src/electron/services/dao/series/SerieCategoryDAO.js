@@ -26,16 +26,15 @@ class SerieCategoryDAO {
         return await this.queryExecutor.executeAndFetchAll(sql, params);
     }
 
+    // TODO : change method name to getSerieCategoryIdsBySerieLink
     async getSerieCategoryIdsBySerie(serie) {
         const sql = `
           SELECT SerieCategory.category_id
           FROM SerieCategory, Serie
           WHERE SerieCategory.serie_id = Serie.id
-          AND Serie.name = ?
-          AND Serie.basename = ?
           AND Serie.link = ?`;
 
-        const params = [serie.name, serie.basename, serie.link];
+        const params = [serie.link];
         const result = await this.queryExecutor.executeAndFetchAll(sql, params);
 
         // Extract the category IDs from the result array

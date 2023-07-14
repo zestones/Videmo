@@ -15,10 +15,12 @@ import FolderManager from "../../utilities/folderManager/folderManager";
 import styles from "./CategoryModal.module.scss";
 
 function CategoryModal({ serie, onClose, onMoreClick }) {
+    // Utilities and services initialization
     const [categoryApi] = useState(() => new CategoryApi());
     const [extensionsApi] = useState(() => new ExtensionsApi());
     const [folderManager] = useState(() => new FolderManager());
-
+    
+    // States initialization
     const [categories, setCategories] = useState([]);
     const [checkedCategories, setCheckedCategories] = useState([]);
 
@@ -34,20 +36,6 @@ function CategoryModal({ serie, onClose, onMoreClick }) {
             .catch((error) => console.error(error));
     }, [categoryApi, serie, setCheckedCategories]);
 
-    useEffect(() => {
-        // The baseName is the name of the serie if it's a level 0 serie
-        if (serie.level === 0) serie.basename = serie.name;
-
-        // Retrieve the baseName of the serie only if it's not already set
-        if (serie.basename !== null && serie.basename !== undefined) return;
-
-        // retrieve the baseName of the serie
-        folderManager.retrieveBaseNameByLevel(serie.link, serie.level + 1)
-            .then((data) => serie.basename = data)
-            .catch((error) => console.error(error));
-    }, [folderManager, serie.basename, serie]);
-
-
     const handleCategoryChange = (e, categoryId) => {
         const isChecked = e.target.checked;
 
@@ -61,7 +49,7 @@ function CategoryModal({ serie, onClose, onMoreClick }) {
     };
 
     const handleAddToCategory = async () => {
-        extensionsApi.readExtensionById(serie.extensionId)
+        extensionsApi.readExtensionById(serie.extension_id)
             .then((extension) => {
                 // retrieve the level of the serie
                 folderManager.retrieveLevel(extension.link, serie.link)
@@ -69,8 +57,8 @@ function CategoryModal({ serie, onClose, onMoreClick }) {
                         folderManager.retrieveBaseNameByLevel(serie.link, level)
                             .then((basename) => {
                                 // Set the basename of the serie
-                                const { name, link, image, extensionId } = serie;
-                                const serieToUpdate = { name, link, basename, image, extensionId };
+                                const { name, link, image, extension_id } = serie;
+                                const serieToUpdate = { name, link, basename, image, extension_id };
                                 // Pass the checkedCategories to the API call or handle them as needed
                                 categoryApi.addSerieToCategories(serieToUpdate, checkedCategories)
                                     .then(() => {
