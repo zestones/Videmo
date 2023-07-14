@@ -34,29 +34,30 @@ function SourceContent({ searchScope, calledFromExplore, onExtensionReset }) {
     const [serie, setSerie] = useState(null);
     const [episodes, setEpisodes] = useState([]);
 
-    // Define a function to map folder contents
-    const mapFolderContents = useCallback((contents, series) => {
-        return contents.map((folderContent) => {
-            const serie = series.find((serie) => {
-                return serie.link === folderContent.link;
+
+    const retrieveSeriesInLibraryByExtension = useCallback((contents) => {
+        categoryApi.readAllSeriesInLibraryByExtension(searchScope)
+            .then((series) => {
+                const mappedFolderContents = folderManager.mapFolderContentsWithSeriesStatus(contents, series);
+                setFolderContents(mappedFolderContents);
             });
-
-            if (serie !== undefined) {
-                folderContent.inLibrary = true;
-                folderContent.serie = serie;
-            } else {
-                folderContent.inLibrary = false;
-            }
-
-            return folderContent;
-        });
-    }, []);
+    }, [categoryApi, folderManager, searchScope]);
 
     // Use the functions in useEffect
+    // TODO : retrieve series extension and set it inside the object 
+    // TODO : mandatory fields are : 
+    // TODO : - name
+    // TODO : - link
+    // TODO : - basename
+    // TODO : - image
+    // TODO : - extension {
+    // TODO :     - id
+    // TODO :     - name
+    // TODO :     - link
+    // TODO : }
+
     useEffect(() => {
         if (!calledFromExplore && searchScope !== null) {
-            console.log("called from library");
-            console.log("searchScope: ", searchScope);
             setSerie(null);
             setEpisodes([]);
             serieApi.readAllSeriesByCategory(searchScope.id)
@@ -68,27 +69,16 @@ function SourceContent({ searchScope, calledFromExplore, onExtensionReset }) {
         }
     }, [serieApi, searchScope, calledFromExplore]);
 
+    // TODO : same as above construct the same object with the mandatory fields
     useEffect(() => {
         if (calledFromExplore) {
             folderManager.retrieveFolderContents(searchScope.link)
                 .then((data) => {
-                    categoryApi.readAllSeriesInLibraryByExtension(searchScope)
-                        .then((series) => {
-                            const mappedFolderContents = mapFolderContents(data.contents, series);
-                            console.log("mappedFolderContents: ", mappedFolderContents);
-                            setFolderContents(mappedFolderContents);
-                        });
-                });
+                    console.log("seriesInExplore: ", data.contents);
+                    retrieveSeriesInLibraryByExtension(data.contents)});
         }
-    }, [folderManager, categoryApi, searchScope, calledFromExplore, mapFolderContents]);
+    }, [folderManager, categoryApi, searchScope, calledFromExplore, retrieveSeriesInLibraryByExtension]);
 
-    const updateContentForExplore = () => {
-        categoryApi.readAllSeriesInLibraryByExtension(searchScope)
-            .then((series) => {
-                const mappedFolderContents = mapFolderContents(folderContents, series);
-                setFolderContents(mappedFolderContents);
-            });
-    };
 
     const updateContentForLibrary = () => {
         serieApi.readAllSeriesByCategory(searchScope.id)
@@ -97,22 +87,23 @@ function SourceContent({ searchScope, calledFromExplore, onExtensionReset }) {
     };
 
     const refreshFolderContents = () => {
-        if (calledFromExplore) updateContentForExplore();
+        if (calledFromExplore) retrieveSeriesInLibraryByExtension(folderContents);
         else updateContentForLibrary();
     };
 
     const handleSearch = (value) => setSearchValue(value);
-    // const filterFolders = folderContents.filter((folderContent) =>
-    //     folderManager.retrieveFileName(folderContent.path)
-    //         .toLowerCase()
-    //         .includes(searchValue.toLowerCase())
-    // );
+    const filterFolders = folderContents.filter((folderContent) =>
+        folderManager.retrieveFileName(folderContent.link)
+            .toLowerCase()
+            .includes(searchValue.toLowerCase())
+    );
 
     const handlePlayClickInLibrary = async (basename, name, link, image) => {
         try {
             const serie = folderContents.find((serie) => serie.link === link);
             console.log("serie: ", serie);
-           
+
+            // TODO : consistency, sometimes extension_id, sometimes extensionId
             const extension = await extensionApi.readExtensionById(serie.extension_id);
             console.log("extension: ", extension);
             return extension.link;
@@ -123,27 +114,23 @@ function SourceContent({ searchScope, calledFromExplore, onExtensionReset }) {
 
 
     // When a serie is clicked, retrieve its contents
-    // ! IMPORTANT: This works only for local sources
     const handlePlayClick = async (basename, name, link, image) => {
         let baseLink;
         if (!calledFromExplore) {
             baseLink = await handlePlayClickInLibrary(basename, name, link, image);
-            console.log("=====");
-            console.log("baseLink: ", baseLink);
         } else {
             baseLink = searchScope.link;
         }
 
         folderManager.retrieveLevel(baseLink, link)
             .then((level) => {
-                console.log("level: ", level);
                 // We search for folders
                 // TODO : refactor this (retrieveFolderContents), multiple definition 1 usage
-                retrieveFolderContents(link, level);
+                testIfNeeded(link, level); // TODO : condition check for remote sources
                 const searchName = basename === name ? basename : basename + " " + name;
                 aniList.searchAnimeDetailsByName(searchName)
                     .then((details) => {
-                        // TODO : do not update if no details are found
+                        // TODO : do not update if no details are found (for sub folders (undefined, NaN, etc.))
                         setSerie({
                             "name": folderManager.retrieveFileName(link),
                             "link": link,
@@ -164,19 +151,15 @@ function SourceContent({ searchScope, calledFromExplore, onExtensionReset }) {
         handleSearch("");
     };
 
-    const retrieveFolderContents = (link, level = 0) => {
+    // TODO : check if really needed
+    const testIfNeeded = (link, level = 0) => {
         folderManager.retrieveFolderContents(link, level)
             .then((data) => {
                 if (data.contents.length === 0) {
                     retrieveSeriesEpisodes(link);
                     setFolderContents([]);
                 } else {
-                    // TODO : remove duplicate code
-                    categoryApi.readAllSeriesInLibraryByExtension(searchScope)
-                        .then((series) => {
-                            const mappedFolderContents = mapFolderContents(data.contents, series);
-                            setFolderContents(mappedFolderContents);
-                        });
+                    retrieveSeriesInLibraryByExtension(data.contents);
                     setEpisodes([]);
                 }
             })
@@ -190,6 +173,8 @@ function SourceContent({ searchScope, calledFromExplore, onExtensionReset }) {
             .catch((error) => console.error(error));
     };
 
+    // TODO : define Header Coponent callback inside the parent component (Library or Explore)
+    // TODO : pass the needed parameters to the callback (serie, setSerie)
     // Handle back click
     const handleBackClick = () => {
         // If any serie is selected, we reset the selected extension
@@ -206,7 +191,7 @@ function SourceContent({ searchScope, calledFromExplore, onExtensionReset }) {
                 folderManager.retrieveLevel(searchScope.link, link)
                     .then((level) => {
                         // Then from the parent path, and its level, we retrieve its contents
-                        retrieveFolderContents(link, level);
+                        testIfNeeded(link, level);
 
                         // If we are at the root level, we unset the serie
                         if (level === 0) {
@@ -216,18 +201,20 @@ function SourceContent({ searchScope, calledFromExplore, onExtensionReset }) {
 
                         // We retrieve the parent cover
                         folderManager.retrieveFolderCover(link, level - 1)
-                            .then((cover) => setSerie((prevSerie) => ({
-                                ...prevSerie,
-                                image: folderManager.accessFileWithCustomProtocol(cover),
-                                name: folderManager.retrieveFileName(link)
-                            })))
+                            .then((cover) => {
+                                setSerie((prevSerie) => ({
+                                    ...prevSerie,
+                                    image: cover,
+                                    name: folderManager.retrieveFileName(link)
+                                }))
+                            })
                             .catch((error) => console.error(error));
 
                         folderManager.retrieveBaseNameByLevel(link, level)
                             .then((basename) => setSerie((prevSerie) => ({ ...prevSerie, basename: basename })))
                             .catch((error) => console.error(error));
 
-                        // TODO : retrieve real data from AniList API
+                        // TODO : update the data (...prevSerie) with the aniList API class
                         setSerie((prevSerie) => ({ ...prevSerie, link: link }));
                     })
                     .catch((error) => console.error(error));
@@ -238,6 +225,7 @@ function SourceContent({ searchScope, calledFromExplore, onExtensionReset }) {
     return (
         <>
             {calledFromExplore &&
+                // TODO : move the Header component to the parent component (Library or Explore)
                 <Header title={searchScope.name} onSearch={handleSearch} onBack={handleBackClick} />
             }
             <div className={styles.sourceContent}>
@@ -245,7 +233,7 @@ function SourceContent({ searchScope, calledFromExplore, onExtensionReset }) {
                     <DetailsContainer serie={serie} />
                 )}
 
-                {folderContents.map((folderContent) => (
+                {filterFolders.map((folderContent) => (
                     <Card
                         key={folderContent.path}
                         basename={serie && serie.basename !== undefined ? serie.basename : folderManager.retrieveParentBaseName(folderContent.link)}

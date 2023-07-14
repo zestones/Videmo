@@ -16,7 +16,7 @@ class FolderManager {
 
         // Listen for the response from the main Electron process
         return new Promise((resolve, reject) => {
-            window.api.receive("folderContents", (data) => data.success ? resolve({contents: data.folderContents, basename: data.basename}) : reject(data.error));
+            window.api.receive("folderContents", (data) => data.success ? resolve({ contents: data.folderContents, basename: data.basename }) : reject(data.error));
         });
     }
 
@@ -130,9 +130,37 @@ class FolderManager {
         return filePath.split("\\").pop().split("/").pop();
     }
 
+    /**
+     * @param {String} filePath 
+     * @returns {String} The parent base name of the file path.
+     */
     retrieveParentBaseName(filePath) {
         return filePath.split("\\").pop().split("/").pop().split(".").shift();
     }
+
+    /**
+     * 
+     * @param {Object} contents 
+     * @param {Object} series 
+     * @returns {Object} The contents with the series status.
+     */
+    mapFolderContentsWithSeriesStatus(contents, series) {
+        return contents.map((folderContent) => {
+            const serie = series.find((serie) => {
+                return serie.link === folderContent.link;
+            });
+
+            if (serie !== undefined) {
+                folderContent.inLibrary = true;
+                folderContent.serie = serie;
+            } else {
+                folderContent.inLibrary = false;
+            }
+
+            return folderContent;
+        });
+    };
 }
+
 
 export default FolderManager;

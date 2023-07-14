@@ -23,11 +23,11 @@ class FolderManager {
             const imagePath = `${coverImagePath}${extension}`;
 
             if (fs.existsSync(imagePath)) {
-                return imagePath;
+                return this.accessFileWithCustomProtocol(imagePath);;
             }
         }
 
-        return this.getDefaultCoverImage();
+        return this.accessFileWithCustomProtocol(this.getDefaultCoverImage());
     }
 
     /**
@@ -54,8 +54,7 @@ class FolderManager {
             // If the entry is a directory, process it
             if (isDirectory && folder !== coverFolder) {
                 const coverImagePath = this.getCoverImagePath(fullPath, coverFolder, level);
-                const coverImage = this.accessFileWithCustomProtocol(coverImagePath);
-                folderContents.push({ image: coverImage, link: fullPath });
+                folderContents.push({ image: coverImagePath, link: fullPath });
             }
         }
 
