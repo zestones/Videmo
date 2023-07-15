@@ -11,16 +11,10 @@ import AniList from "../../../services/aniList/aniList";
 
 // Components
 import Header from "../../../components/Header/Header";
-import Card from "../../../components/Card/Card";
-import EpisodeCard from "../../../components/EpisodeCard/EpisodeCard";
-import DetailsContainer from "../DetailsContainer/DetailsContainer";
+import SeriesDisplay from "../../../components/SeriesDisplay/SeriesDisplay";
 
 
-// Styles
-import styles from "./SourceContent.module.scss";
-
-
-function SourceContent({ searchScope, calledFromExplore, onExtensionReset }) {
+function SourceContent({ searchScope, calledFromExplore, onBackClick }) {
     // Utilities and services initialization
     const [folderManager] = useState(() => new FolderManager());
     const [categoryApi] = useState(() => new CategoryApi());
@@ -33,7 +27,6 @@ function SourceContent({ searchScope, calledFromExplore, onExtensionReset }) {
     const [searchValue, setSearchValue] = useState("");
     const [serie, setSerie] = useState(null);
     const [episodes, setEpisodes] = useState([]);
-
 
     // Triggered only when called from Explore is true
     const retrieveSeriesInLibraryByExtension = useCallback((contents) => {
@@ -78,7 +71,6 @@ function SourceContent({ searchScope, calledFromExplore, onExtensionReset }) {
         else updateContentForLibrary();
     };
 
-    const handleSearch = (value) => setSearchValue(value);
     const filterFolders = folderContents.filter((folderContent) =>
         folderManager.retrieveFileName(folderContent.link)
             .toLowerCase()
@@ -116,41 +108,10 @@ function SourceContent({ searchScope, calledFromExplore, onExtensionReset }) {
                     }))
             }).catch((error) => console.error(error));
 
-        handleSearch("");
+        // We reset the search value
+        setSearchValue("");
     };
 
-    // TODO : define Header Coponent callback inside the parent component (Library or Explore)
-    // TODO : pass the needed parameters to the callback (serie, setSerie)
-    const handleBackClick = async () => {
-        // If the series is null, then a click on the back button will reset the extension
-        if (!serie) return onExtensionReset(null);
-
-        try {
-            // We retrieve the parent path of the current serie and the level of the serie
-            const link = await folderManager.retrieveParentPath(serie.link);
-            const level = await folderManager.retrieveLevel(searchScope.link, link);
-            // We search for folders or files based on the extension, the level and the parent path
-            checkAndHandleFolderContentsWithExtension(link, level, searchScope.id);
-
-            // Then we update the serie with the new data
-            let serieUpdates = {};
-            if (level === 0) return setSerie(null);
-            else {
-                const cover = await folderManager.retrieveFolderCover(link, level - 1);
-                const basename = await folderManager.retrieveBaseNameByLevel(link, level);
-                const name = folderManager.retrieveFileName(link);
-                serieUpdates = { ...serieUpdates, ...{ image: cover, basename, name, link } };
-            }
-
-            const searchName = serieUpdates.basename === serieUpdates.name ? serieUpdates.basename : `${serieUpdates.basename} ${serieUpdates.name}`;
-            const data = await aniList.searchAnimeDetailsByName(searchName);
-            serieUpdates = { ...serieUpdates, ...data };
-
-            setSerie((prevSerie) => ({ ...prevSerie, ...serieUpdates }));
-        } catch (error) {
-            console.error(error);
-        }
-    };
 
     // TODO : Handle remote and local sources
     const checkAndHandleFolderContentsWithExtension = (link, level = 0, extension_id) => {
@@ -176,34 +137,30 @@ function SourceContent({ searchScope, calledFromExplore, onExtensionReset }) {
 
     return (
         <>
-            {calledFromExplore &&
-                // TODO : move the Header component to the parent component (Library or Explore)
-                <Header title={searchScope.name} onSearch={handleSearch} onBack={handleBackClick} />
-            }
-            <div className={styles.sourceContent}>
-                {serie && (
-                    <DetailsContainer serie={serie} />
-                )}
-
-                {filterFolders.map((folderContent) => (
-                    <Card
-                        key={folderContent.path}
-                        details={folderContent}
-                        onPlayClick={handlePlayClick}
-                        onMoreClick={refreshFolderContents}
-                        displayLabel={calledFromExplore}
+            {calledFromExplore ?
+                <Header
+                    title={searchScope.name}
+                    onSearch={setSearchValue}
+                    onBack={() => onBackClick(serie, setSerie, checkAndHandleFolderContentsWithExtension)}
+                    onRandom={() => folderContents.length > 0 && handlePlayClick(folderContents[Math.floor(Math.random() * folderContents.length)])}
+                />
+                :
+                <>
+                    <Header
+                        title="Bibliothèque"
+                        onSearch={setSearchValue}
                     />
-                ))}
-                <div className={styles.episodesContainer}>
-                    {episodes.map((episode) => (
-                        <EpisodeCard
-                            title={episode.name}
-                            link={episode.path}
-                            modifiedTime={episode.modifiedTime}
-                        />
-                    ))}
-                </div>
-            </div>
+                </>
+            }
+
+            <SeriesDisplay
+                folderContents={filterFolders}
+                episodes={episodes}
+                serie={serie}
+                onPlayClick={handlePlayClick}
+                onRefresh={refreshFolderContents}
+                calledFromExplore={calledFromExplore}
+            />
         </>
     );
 }

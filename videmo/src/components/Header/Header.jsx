@@ -3,9 +3,10 @@ import React from "react";
 // Components
 import SearchBar from "../SearchBar/SearchBar";
 import BackArrow from "../BackArrow/BackArrow";
+import RandomButton from "../RandButton/RandButton";
 
+// Styles
 import styles from "./Header.module.scss";
-
 
 function Header({ title, onSearch = null, onRandom = null, onFilter = null, onBack = null }) {
     return (
@@ -17,8 +18,8 @@ function Header({ title, onSearch = null, onRandom = null, onFilter = null, onBa
 
             <div className={styles.headerRight}>
                 {onSearch && <SearchBar onSearch={onSearch} />}
-                {onRandom && <button onClick={onRandom}>Random</button>}
                 {onFilter && <button onClick={onFilter}>Filter</button>}
+                {onRandom && <RandomButton onClick={onRandom} />}
             </div>
         </header>
     );
