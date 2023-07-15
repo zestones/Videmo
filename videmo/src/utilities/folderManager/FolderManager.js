@@ -175,6 +175,18 @@ class FolderManager {
         });
     };
 
+    superMapFolderContentsWithMandatoryFields(contents, series, extension, basename) {
+        if (!basename) return this.mapFolderContentsWithMandatoryFields(contents, series, extension);
+
+        return contents.map((folderContent) => {
+            folderContent.basename = basename;  
+            folderContent.name = this.retrieveFileName(folderContent.link);
+            folderContent.inLibrary = series.some((serie) => serie.link === folderContent.link);
+            folderContent.extension_id = extension.id;
+            return folderContent;
+        });
+    }
+
     mapFolderContentsWithMandatoryFields(contents, series, extension) {
         return contents.map((folderContent) => {
             folderContent.basename = this.retrieveFileName(folderContent.link);

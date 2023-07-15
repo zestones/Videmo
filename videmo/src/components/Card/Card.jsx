@@ -11,8 +11,7 @@ function Card({ key, details, onPlayClick, onMoreClick, displayLabel }) {
     const [isHovered, setIsHovered] = useState(false);
     const [showCategoryModal, setShowCategoryModal] = useState(false);
 
-    // Function to retrieve the title of the serie based on the inLibrary prop
-    const constructTitle = () => (!details.displayLabel && details.basename !== details.name) ? details.basename + ' - ' + details.name : details.name;
+    const title = (details.basename !== details.name && !displayLabel && details.inLibrary) ? `${details.basename} (${details.name})` : details.name;
 
     return (
         <>
@@ -24,7 +23,7 @@ function Card({ key, details, onPlayClick, onMoreClick, displayLabel }) {
             >
                 <img className={styles.cardImage} src={details.image} alt={details.name} />
                 {(displayLabel && details.inLibrary) && <span className={styles.inLibraryLabel}>In Library</span>}
-                <p className={styles.cardTitle}>{constructTitle()}</p>
+                <p className={styles.cardTitle}>{title}</p>
                 <div className={`${styles.cardLayer} ${isHovered && styles.hovered}`}>
                     <div className={styles.cardLayerContent}>
                         <img className={styles.cardLayerImage} src="/icons/cards/more.png" alt="More" onClick={() => setShowCategoryModal(true)} />
@@ -36,7 +35,8 @@ function Card({ key, details, onPlayClick, onMoreClick, displayLabel }) {
             {showCategoryModal && (
                 <CategoryModal
                     serie={details}
-                    onClose={() => setShowCategoryModal(false)} onMoreClick={onMoreClick}
+                    onClose={() => setShowCategoryModal(false)}
+                    onMoreClick={onMoreClick}
                 />
             )}
         </>

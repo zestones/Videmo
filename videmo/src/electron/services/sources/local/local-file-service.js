@@ -43,6 +43,7 @@ ipcMain.on('getFolderContents', (event, { folderPath, coverFolder, level }) => {
         } else {
             const folderContents = folderManager.getFolderContentsWithCovers(folderPath, contents, coverFolder, level);
             const basename = folderManager.getBasenameByLevel(folderPath, level);
+            
             event.reply('folderContents', { success: true, error: null, folderContents: folderContents, basename: basename });
         }
     });

@@ -11,11 +11,16 @@ export default class AniList {
         };
     }
 
+    /**
+     * @param {String} name : The name of the anime to search. 
+     * @returns {Object} The anime details.
+     */
     searchAnimeDetailsByName(name) {
+        console.log(`Searching anime details for ${name}...`);
         const query = `
-                query ($search: String) {
-                    Page {
-                        media (search: $search, type: ANIME) {
+            query ($search: String) {
+                Page {
+                    media (search: $search, type: ANIME) {
                         id
                         title { english }
                         coverImage { extraLarge }
@@ -40,21 +45,21 @@ export default class AniList {
             body: JSON.stringify({ query: query, variables: variables })
         };
 
+        console.log("query: ", query);
+        console.log("variables: ", variables);
+        console.log("options: ", options);
+        
         return fetch(this.url, options)
             .then(response => response.json())
             .then(data => {
                 const anime = data?.data?.Page?.media?.[0];
                 if (anime) {
-                    const { id, title, coverImage, description, startDate, duration, genres, meanScore } = anime;
                     return {
-                        id,
-                        title: title?.english,
-                        coverImage: coverImage?.extraLarge,
-                        description,
-                        startDate,
-                        duration,
-                        genres,
-                        meanScore
+                        description: anime.description,
+                        genres: anime.genres ? anime.genres : [],
+                        startDate: this.#formatDate(anime.startDate),
+                        duration: this.#formatDuration(anime.duration),
+                        rating: this.#formatRating(anime.meanScore)
                     };
                 } else {
                     return null;
@@ -63,17 +68,32 @@ export default class AniList {
             .catch(error => console.error(error));
     }
 
-    formatDate(date) {
+    /**
+     * 
+     * @param {String} date 
+     * @returns {String} The formatted date.
+     */
+    #formatDate(date) {
         return `${date?.day}/${date?.month}/${date?.year}`;
     }
 
-    formatDuration(duration) {
+    /**
+     * 
+     * @param {String} duration 
+     * @returns {String} The formatted duration.
+     */
+    #formatDuration(duration) {
         const hours = Math.floor(duration / 60);
         const minutes = duration % 60;
         return `${hours}h ${minutes}min`;
     }
 
-    formatRating(rating) {
+    /**
+     * 
+     * @param {String} rating 
+     * @returns {String} The formatted rating out of 10.
+     */
+    #formatRating(rating) {
         return `${Math.floor(rating / 10)}/10`;
-    }   
+    }
 }

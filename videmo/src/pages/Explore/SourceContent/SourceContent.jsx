@@ -35,15 +35,16 @@ function SourceContent({ searchScope, calledFromExplore, onExtensionReset }) {
     const [episodes, setEpisodes] = useState([]);
 
 
+    // Triggered only when called from Explore is true
     const retrieveSeriesInLibraryByExtension = useCallback((contents) => {
         categoryApi.readAllSeriesInLibraryByExtension(searchScope)
             .then((series) => setFolderContents(folderManager.mapFolderContentsWithMandatoryFields(contents, series, searchScope)))
             .catch((error) => console.error(error));
     }, [categoryApi, folderManager, searchScope]);
 
-    const retrieveSubSeriesInLibraryByExtension = (contents, extension_id) => {
+    const retrieveSubSeriesInLibraryByExtension = (data, extension_id) => {
         categoryApi.readAllSeriesInLibraryByExtension(searchScope)
-            .then((series) => setFolderContents(folderManager.mapFolderContentsWithMandatoryFields(contents, series, { id: extension_id })))
+            .then((series) => setFolderContents(folderManager.superMapFolderContentsWithMandatoryFields(data.contents, series, { id: extension_id }, data.basename)))
             .catch((error) => console.error(error));
     };
 
@@ -52,7 +53,7 @@ function SourceContent({ searchScope, calledFromExplore, onExtensionReset }) {
             setSerie(null);
             setEpisodes([]);
             serieApi.readAllSeriesByCategory(searchScope.id)
-                .then((seriesInLibrary) => setFolderContents(seriesInLibrary))
+                .then((seriesInLibrary) => setFolderContents(seriesInLibrary.map((serie) => ({ ...serie, inLibrary: true }))))
                 .catch((error) => console.error(error));
         }
     }, [serieApi, searchScope, calledFromExplore]);
@@ -98,51 +99,68 @@ function SourceContent({ searchScope, calledFromExplore, onExtensionReset }) {
 
     // When a serie is clicked, retrieve its contents
     const handlePlayClick = async (details) => {
-        let baseLink;
-        if (!calledFromExplore) {
-            baseLink = await handlePlayClickInLibrary(details.link);
-        } else {
-            baseLink = searchScope.link;
-        }
+        // retrieve the base link based on the called component
+        const baseLink = !calledFromExplore ? await handlePlayClickInLibrary(details.link) : searchScope.link;
 
         folderManager.retrieveLevel(baseLink, details.link)
             .then((level) => {
                 // We search for folders
-                // TODO : refactor this (retrieveFolderContents), multiple definition 1 usage
-                testIfNeeded(details.link, level, details.extension_id); // TODO : condition check for remote sources
+                checkAndHandleFolderContentsWithExtension(details.link, level, details.extension_id);
                 const searchName = details.basename === details.name ? details.basename : details.basename + " " + details.name;
                 aniList.searchAnimeDetailsByName(searchName)
-                    .then((data) => {
-                        // TODO : do not update if no details are found (for sub folders (undefined, NaN, etc.))
-                        setSerie({
-                            "name": folderManager.retrieveFileName(details.link),
-                            "link": details.link,
-                            "basename": details.basename,
-                            "image": details.image,
-                            "local": searchScope.local,
-                            "extension_id": calledFromExplore ? searchScope.id : details.extension_id,
-                            "description": data?.description,
-                            "genres": data?.genres ? data.genres : [],
-                            "startDate": aniList.formatDate(data?.startDate),
-                            "duration": aniList.formatDuration(data?.duration),
-                            "rating": aniList.formatRating(data?.meanScore),
-                        });
-                    })
-            })
-            .catch((error) => console.error(error));
+                    .then((data) => setSerie({
+                        ...details,
+                        name: folderManager.retrieveFileName(details.link),
+                        extension_id: calledFromExplore ? searchScope.id : details.extension_id,
+                        ...data
+                    }))
+            }).catch((error) => console.error(error));
 
         handleSearch("");
     };
 
-    // TODO : check if really needed
-    const testIfNeeded = (link, level = 0, extension_id) => {
+    // TODO : define Header Coponent callback inside the parent component (Library or Explore)
+    // TODO : pass the needed parameters to the callback (serie, setSerie)
+    const handleBackClick = async () => {
+        // If the series is null, then a click on the back button will reset the extension
+        if (!serie) return onExtensionReset(null);
+
+        try {
+            // We retrieve the parent path of the current serie and the level of the serie
+            const link = await folderManager.retrieveParentPath(serie.link);
+            const level = await folderManager.retrieveLevel(searchScope.link, link);
+            // We search for folders or files based on the extension, the level and the parent path
+            checkAndHandleFolderContentsWithExtension(link, level, searchScope.id);
+
+            // Then we update the serie with the new data
+            let serieUpdates = {};
+            if (level === 0) return setSerie(null);
+            else {
+                const cover = await folderManager.retrieveFolderCover(link, level - 1);
+                const basename = await folderManager.retrieveBaseNameByLevel(link, level);
+                const name = folderManager.retrieveFileName(link);
+                serieUpdates = { ...serieUpdates, ...{ image: cover, basename, name, link } };
+            }
+
+            const searchName = serieUpdates.basename === serieUpdates.name ? serieUpdates.basename : `${serieUpdates.basename} ${serieUpdates.name}`;
+            const data = await aniList.searchAnimeDetailsByName(searchName);
+            serieUpdates = { ...serieUpdates, ...data };
+
+            setSerie((prevSerie) => ({ ...prevSerie, ...serieUpdates }));
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    // TODO : Handle remote and local sources
+    const checkAndHandleFolderContentsWithExtension = (link, level = 0, extension_id) => {
         folderManager.retrieveFolderContents(link, level)
             .then((data) => {
                 if (data.contents.length === 0) {
                     retrieveSeriesEpisodes(link);
                     setFolderContents([]);
                 } else {
-                    retrieveSubSeriesInLibraryByExtension(data.contents, extension_id);
+                    retrieveSubSeriesInLibraryByExtension(data, extension_id);
                     setEpisodes([]);
                 }
             })
@@ -153,55 +171,6 @@ function SourceContent({ searchScope, calledFromExplore, onExtensionReset }) {
     const retrieveSeriesEpisodes = (path) => {
         folderManager.retrieveFilesInFolder(path)
             .then((data) => setEpisodes(data))
-            .catch((error) => console.error(error));
-    };
-
-    // TODO : define Header Coponent callback inside the parent component (Library or Explore)
-    // TODO : pass the needed parameters to the callback (serie, setSerie)
-    // Handle back click
-    const handleBackClick = () => {
-        // If any serie is selected, we reset the selected extension
-        if (!serie) {
-            onExtensionReset(null);
-            setSerie(null);
-            return;
-        }
-
-        // We start by retrieving the parent path
-        folderManager.retrieveParentPath(serie.link)
-            .then((link) => {
-                // We also retrieve the parent level
-                folderManager.retrieveLevel(searchScope.link, link)
-                    .then((level) => {
-                        // Then from the parent path, and its level, we retrieve its contents
-                        testIfNeeded(link, level);
-
-                        // If we are at the root level, we unset the serie
-                        if (level === 0) {
-                            setSerie(null);
-                            return;
-                        }
-
-                        // We retrieve the parent cover
-                        folderManager.retrieveFolderCover(link, level - 1)
-                            .then((cover) => {
-                                setSerie((prevSerie) => ({
-                                    ...prevSerie,
-                                    image: cover,
-                                    name: folderManager.retrieveFileName(link)
-                                }))
-                            })
-                            .catch((error) => console.error(error));
-
-                        folderManager.retrieveBaseNameByLevel(link, level)
-                            .then((basename) => setSerie((prevSerie) => ({ ...prevSerie, basename: basename })))
-                            .catch((error) => console.error(error));
-
-                        // TODO : update the data (...prevSerie) with the aniList API class
-                        setSerie((prevSerie) => ({ ...prevSerie, link: link }));
-                    })
-                    .catch((error) => console.error(error));
-            })
             .catch((error) => console.error(error));
     };
 

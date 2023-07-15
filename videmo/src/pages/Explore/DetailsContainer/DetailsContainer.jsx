@@ -15,8 +15,11 @@ import styles from './DetailsContainer.module.scss';
 
 
 const DetailsContainer = ({ serie }) => {
+	// State initialization
 	const [showModal, setShowModal] = useState(false);
 	const [alreadyInLibrary, setAlreadyInLibrary] = useState(false);
+	
+	// Api initialization
 	const [serieApi] = useState(() => new SerieApi());
 
 	const details = [
@@ -48,12 +51,14 @@ const DetailsContainer = ({ serie }) => {
 					<p className={styles.serieFavoriteLabel}>Ajouter à ma liste</p>
 				</div>
 			</div>
+
 			<div className={styles.content}>
 				<div className={styles.mainContent}>
 					<h2 className={styles.title}>{serie.basename}</h2>
-					{serie?.basename && serie?.basename !== serie?.name && (
-						<h4 className={styles.subtitle}>{serie?.name}</h4>
+					{serie.basename && serie.basename !== serie.name && (
+						<h4 className={styles.subtitle}>{serie.name}</h4>
 					)}
+
 					<p className={styles.description} dangerouslySetInnerHTML={{ __html: serie?.description }}></p>
 
 					<div className={styles.genres}>
