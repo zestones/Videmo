@@ -40,11 +40,7 @@ function Library() {
             .catch((error) => console.error(error));
     }, [serieApi, selectedCategory]);
 
-    const updateContentForLibrary = () => {
-        // We should check if we are at the root of the library or not
-        // If we are at the root of the library, we display the content of the library
-        // If we are not at the root of the library, we dont change the content
-        if (serie) return;
+    const retrieveAllSeriesBySelectedCategory = () => {
         serieApi.readAllSeriesByCategory(selectedCategory.id)
             .then((seriesInLibrary) => setFolderContents(seriesInLibrary))
             .catch((error) => console.error(error));
@@ -66,8 +62,8 @@ function Library() {
         try {
             const isSerieInLibrary = await serieApi.readSerieBySerieObject(serie);
             if (isSerieInLibrary) {
-                updateContentForLibrary();
                 setSerie(null);
+                retrieveAllSeriesBySelectedCategory();
             } else {
                 let serieUpdates = {};
                 const link = await folderManager.retrieveParentPath(serie.link);
@@ -147,7 +143,7 @@ function Library() {
                 <Header
                     title="Bilbliothèque"
                     onSearch={setSearchValue}
-                    onBack={onBackClick}
+                    onBack={serie ? onBackClick : null}
 
                 />
 
@@ -157,7 +153,7 @@ function Library() {
                     episodes={episodes}
                     serie={serie}
                     onPlayClick={handlePlayClick}
-                    onRefresh={updateContentForLibrary}
+                    onRefresh={!serie && retrieveAllSeriesBySelectedCategory}
                     calledFromExplore={false}
                 />
             </div>
