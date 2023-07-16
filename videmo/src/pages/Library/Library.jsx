@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 
 // Api 
 import SerieApi from "../../services/api/serie/SerieApi";
-import FolderManager from "../../utilities/folderManager/folderManager";
+import FolderManager from "../../utilities/folderManager/FolderManager";
 import CategoryApi from "../../services/api/category/CategoryApi";
 import ExtensionsApi from "../../services/api/extension/ExtensionApi";
 import AniList from "../../services/aniList/aniList";

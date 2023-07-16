@@ -9,7 +9,7 @@ import CategoryApi from "../../services/api/category/CategoryApi";
 import ExtensionsApi from "../../services/api/extension/ExtensionApi";
 
 // Utilities
-import FolderManager from "../../utilities/folderManager/folderManager";
+import FolderManager from "../../utilities/folderManager/FolderManager";
 
 // Styles
 import styles from "./CategoryModal.module.scss";

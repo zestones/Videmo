@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 
 // Services & Api
-import FolderManager from "../../utilities/folderManager/folderManager";
+import FolderManager from "../../utilities/folderManager/FolderManager";
 import CategoryApi from "../../services/api/category/CategoryApi";
 import AniList from "../../services/aniList/aniList";
 
