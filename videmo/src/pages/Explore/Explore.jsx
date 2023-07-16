@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 
 // Services & Api
 import FolderManager from "../../utilities/folderManager/folderManager";
+import CategoryApi from "../../services/api/category/CategoryApi";
 import AniList from "../../services/aniList/aniList";
 
 // Pages
@@ -11,14 +12,32 @@ import SourceContent from "./SourceContent/SourceContent";
 function Explore() {
     // State initialization
     const [selectedExtension, setSelectedExtension] = useState(null);
+    const [folderContents, setFolderContents] = useState([]);
+    const [serie, setSerie] = useState(null);
+    const [episodes, setEpisodes] = useState([]);
+    const [searchValue, setSearchValue] = useState("");
 
     // Utilities and services initialization
     const [folderManager] = useState(() => new FolderManager());
+    const [categoryApi] = useState(() => new CategoryApi());
+    
     const [aniList] = useState(() => new AniList());
 
-    const handleSelectedExtension = (extension) => setSelectedExtension(extension);
+    const retrieveSeriesInLibraryByExtension = useCallback((contents) => {
+        categoryApi.readAllSeriesInLibraryByExtension(selectedExtension)
+            .then((series) => setFolderContents(folderManager.mapFolderContentsWithMandatoryFields(contents, series, selectedExtension)))
+            .catch((error) => console.error(error));
+    }, [categoryApi, folderManager, selectedExtension]);
 
-    const handleBackClick = async (serie, setSerie, checkAndHandleFolderContentsWithExtension) => {
+    useEffect(() => {
+        if (!selectedExtension) return;
+        folderManager.retrieveFolderContents(selectedExtension.link)
+            .then((data) => retrieveSeriesInLibraryByExtension(data.contents))
+            .catch((error) => console.error(error));
+    }, [folderManager, categoryApi, selectedExtension, retrieveSeriesInLibraryByExtension]);
+    
+
+    const handleBackClick = async (checkAndHandleFolderContentsWithExtension) => {
         // If the series is null, then a click on the back button will reset the extension
         if (!serie) return setSelectedExtension(null);
 
@@ -53,7 +72,7 @@ function Explore() {
     return (
         <>
             {!selectedExtension ? (
-                <Source handleSelectedExtension={handleSelectedExtension} />
+                <Source handleSelectedExtension={setSelectedExtension} />
             ) : (
                 <>
                     <SourceContent
@@ -61,6 +80,14 @@ function Explore() {
                         calledFromExplore={true}
                         onBackClick={handleBackClick}
                         onRandomClick={() => { }}
+                        folderContents={folderContents}
+                        setFolderContents={setFolderContents}
+                        serie={serie}
+                        setSerie={setSerie}
+                        episodes={episodes}
+                        setEpisodes={setEpisodes}
+                        searchValue={searchValue}
+                        setSearchValue={setSearchValue}
                     />
                 </>
             )}

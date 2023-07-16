@@ -24,7 +24,7 @@ function CategoryHeader({ selectedCategory, onSelectCategory }) {
         .then((categories) => {
             setCategories(categories)
             // TODO : retrieve the last opened category from db and set it as selected
-            onSelectCategory(categories[0])();
+            onSelectCategory(categories[1]);
         })
         .catch((error) => console.error(error));
     }, [categoryApi, onSelectCategory]);
@@ -60,7 +60,7 @@ function CategoryHeader({ selectedCategory, onSelectCategory }) {
                     <button
                         key={category.id}
                         className={`${styles.libraryHeaderButton} ${selectedCategory?.id === category.id ? styles.active : ""}`}
-                        onClick={onSelectCategory(category)}
+                        onClick={() => onSelectCategory(category)}
                     >
                         {category.name}
                     </button>

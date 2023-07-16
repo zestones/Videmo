@@ -51,27 +51,6 @@ class FolderManager {
     }
 
     /**
-     * @param {String} path 
-     * @returns {Promise<String>} A promise that resolves with the parent path of the path.
-     */
-    retrieveParentPath(path) {
-        return this.#retrieveSplittedPath(path, 1);
-    }
-
-    /**
-     * @param {String} basePath 
-     * @param {Integer} level 
-     * @returns {Promise<String>} A promise that resolves with the splitted path.
-     */
-    #retrieveSplittedPath(basePath, level) {
-        window.api.send("getSplittedPath", { basePath, level });
-
-        return new Promise((resolve, reject) => {
-            window.api.receive("splittedPath", (data) => data.success ? resolve(data.splittedPath) : reject(data.error));
-        });
-    }
-
-    /**
      * @param {String} folderPath 
      * @returns {Promise<Array>} A promise that resolves with the files in the folder.
      */
@@ -138,6 +117,26 @@ class FolderManager {
         return filePath.split("\\").pop().split("/").pop().split(".").shift();
     }
 
+    retrieveSplittedPath(filePath, level) {
+        const separator = filePath.includes('/') ? '/' : '\\'; // Determine the separator used in the filePath
+        const pathParts = filePath.split(separator);
+
+        if (level <= 0) {
+            // If level is less than or equal to 0, return an empty string
+            return '';
+        } else if (level >= pathParts.length) {
+            // If level is greater than or equal to the number of parts in the path, return the full path
+            return filePath;
+        } else {
+            // Otherwise, return the path up to the specified level
+            return pathParts.slice(0, pathParts.length - level).join(separator);
+        }
+    }
+
+    retrieveParentPath(filePath) {
+        return this.retrieveSplittedPath(filePath, 1);
+    }
+
     /**
      * 
      * @param {Object} contents 
@@ -179,7 +178,7 @@ class FolderManager {
         if (!basename) return this.mapFolderContentsWithMandatoryFields(contents, series, extension);
 
         return contents.map((folderContent) => {
-            folderContent.basename = basename;  
+            folderContent.basename = basename;
             folderContent.name = this.retrieveFileName(folderContent.link);
             folderContent.inLibrary = series.some((serie) => serie.link === folderContent.link);
             folderContent.extension_id = extension.id;
