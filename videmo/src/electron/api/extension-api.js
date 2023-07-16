@@ -23,6 +23,21 @@ ipcMain.on('/read/all/extensions/', (event) => {
         });
 })
 
+
+// Read extension by id
+ipcMain.on('/read/extension/by/id/', (event, arg) => {
+    const dao = new ExtensionsDAO();
+    dao.getExtensionById(arg.id)
+        .then((extension) => {
+            // convert local to boolean
+            extension.local = new DataTypesConverter().convertIntegerToBoolean(extension?.local);
+            event.reply('/read/extension/by/id/', { success: true, extension: extension });
+        }).catch((err) => {
+            event.reply('/read/extension/by/id/', { success: false, error: err });
+        });
+})
+
+
 // Delete extension
 ipcMain.on('/delete/extension/', (event, arg) => {
     new ExtensionsDAO()

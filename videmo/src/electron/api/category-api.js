@@ -23,6 +23,18 @@ ipcMain.on('/read/all/categories/', (event) => {
 })
 
 
+// Read all series in library by extension
+ipcMain.on('/read/all/series/in/library/by/extension', (event, arg) => {
+    const dao = new CategoriesDAO();
+    dao.getAllSeriesInLibraryByExtension(arg.extension)
+        .then((series) => {
+            event.reply('/read/all/series/in/library/by/extension', { success: true, series: series });
+        }).catch((err) => {
+            event.reply('/read/all/series/in/library/by/extension', { success: false, error: err });
+        });
+})
+
+
 // Delete category by ID
 ipcMain.on('/delete/category/', (event, arg) => {
     new CategoriesDAO()

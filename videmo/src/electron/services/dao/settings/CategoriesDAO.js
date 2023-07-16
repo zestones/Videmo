@@ -30,6 +30,19 @@ class CategoriesDAO {
         return this.queryExecutor.executeAndFetchAll(sql);
     }
 
+    getAllSeriesInLibraryByExtension(extension) {
+        const sql = `
+            SELECT s.*
+            FROM Serie AS s
+            INNER JOIN Extension AS e ON s.extension_id = e.id
+            WHERE e.id = ?
+            ORDER BY s.basename ASC
+        `;
+
+        const params = [extension.id];
+        return this.queryExecutor.executeAndFetchAll(sql, params);
+    }
+
     // Update category by ID
     updateCategoryById(categoryId, name) {
         const sql = 'UPDATE Category SET name = ? WHERE id = ?';

@@ -1,33 +1,31 @@
 .randButton {
-    background-color: var(--secondary-color);
+    background: none;
+    border: none;
+    color: white;
 
-    border-radius: 4px;
-    color: var(--primary-color);
-    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.05);
-    
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 22px;
+    margin: 0 20px;    
     cursor: pointer;
     
-    font-size: 14px;
-    font-weight: 600;
-    padding: 5px 9px;
-    margin: 0 0 0 25px;
-    text-align: center;
-    width: 100%;
+    transition-duration: 0.4s;
 
     &:hover {
-        background-color: var(--secondary-color-dark);
-        box-shadow: 0 1px 0 rgba(255, 255, 255, 0.1);
-    }
-    &:focus {
-        outline: none;
-    }
-    &:active {
-        background-color: var(--secondary-color-dark);
-        border-color: var(--secondary-color-darker);
+        animation: pulse 2s infinite;
+        color: var(--secondary-color-darker);
     }
 
-    .randButtonText {
-        color: var(--primary-color-dark);
-        font-weight: 600;
+    @keyframes pulse {
+        0% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.1);
+        }
+        100% {
+            transform: scale(1);
+        }
     }
 }

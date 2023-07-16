@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 
 // Utilities
-import FolderManager from "../../utilities/folderManager/FolderManager";
+import FolderManager from "../../utilities/folderManager/folderManager";
 
 // Styles
 import styles from "./VideoPlayer.module.scss";

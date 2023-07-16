@@ -12,7 +12,6 @@ ipcMain.on('/read/serie-categories/by/serie', (event, arg) => {
         });
 })
 
-
 // Add Serie to Category
 ipcMain.on('/add/categories/to/serie', async (event, arg) => {
     await new SerieCategoryDAO()

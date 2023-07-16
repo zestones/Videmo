@@ -16,7 +16,7 @@ class FolderManager {
 
         // Listen for the response from the main Electron process
         return new Promise((resolve, reject) => {
-            window.api.receive("folderContents", (data) => data.success ? resolve({contents: data.folderContents, basename: data.basename}) : reject(data.error));
+            window.api.receive("folderContents", (data) => data.success ? resolve({ contents: data.folderContents, basename: data.basename }) : reject(data.error));
         });
     }
 
@@ -47,27 +47,6 @@ class FolderManager {
 
         return new Promise((resolve, reject) => {
             window.api.receive("level", (data) => data.success ? resolve(data.level) : reject(data.error));
-        });
-    }
-
-    /**
-     * @param {String} path 
-     * @returns {Promise<String>} A promise that resolves with the parent path of the path.
-     */
-    retrieveParentPath(path) {
-        return this.#retrieveSplittedPath(path, 1);
-    }
-
-    /**
-     * @param {String} basePath 
-     * @param {Integer} level 
-     * @returns {Promise<String>} A promise that resolves with the splitted path.
-     */
-    #retrieveSplittedPath(basePath, level) {
-        window.api.send("getSplittedPath", { basePath, level });
-
-        return new Promise((resolve, reject) => {
-            window.api.receive("splittedPath", (data) => data.success ? resolve(data.splittedPath) : reject(data.error));
         });
     }
 
@@ -132,12 +111,91 @@ class FolderManager {
 
     /**
      * @param {String} filePath 
-     * @returns {String} The file path with the custom protocol 'app://'
+     * @returns {String} The parent base name of the file path.
      */
-    accessFileWithCustomProtocol(filePath) {
-        // Construct the file path using the custom protocol 'app://'
-        return `app:///${filePath}`;
+    retrieveParentBaseName(filePath) {
+        return filePath.split("\\").pop().split("/").pop().split(".").shift();
+    }
+
+    retrieveSplittedPath(filePath, level) {
+        const separator = filePath.includes('/') ? '/' : '\\'; // Determine the separator used in the filePath
+        const pathParts = filePath.split(separator);
+
+        if (level <= 0) {
+            // If level is less than or equal to 0, return an empty string
+            return '';
+        } else if (level >= pathParts.length) {
+            // If level is greater than or equal to the number of parts in the path, return the full path
+            return filePath;
+        } else {
+            // Otherwise, return the path up to the specified level
+            return pathParts.slice(0, pathParts.length - level).join(separator);
+        }
+    }
+
+    retrieveParentPath(filePath) {
+        return this.retrieveSplittedPath(filePath, 1);
+    }
+
+    /**
+     * 
+     * @param {Object} contents 
+     * @param {Object} series 
+     * @returns {Object} The contents with the series status.
+     */
+    mapFolderContentsWithSeriesStatus(contents, series) {
+        return contents.map((folderContent) => {
+            folderContent.inLibrary = series.some((serie) => serie.link === folderContent.link);
+            return folderContent;
+        });
+    };
+
+    /**
+     * @param {Object} contents 
+     * @param {Interger} extensionId 
+     * @returns {Object} The contents with the extension id.
+     */
+    mapFolderContentsWithExtensionId(contents, extensionId) {
+        return contents.map((folderContent) => {
+            folderContent.extensionId = extensionId;
+            return folderContent;
+        });
+    };
+
+    /**
+     * @param {Object} contents 
+     * @returns {Object} The contents with the basename.
+     */
+    mapFolderContentsWithBasename(contents) {
+        return contents.map((folderContent) => {
+            folderContent.basename = this.retrieveFileName(folderContent.link);
+            folderContent.name = folderContent.basename;
+            return folderContent;
+        });
+    };
+
+    superMapFolderContentsWithMandatoryFields(contents, series, extension, basename) {
+        if (!basename) return this.mapFolderContentsWithMandatoryFields(contents, series, extension);
+
+        return contents.map((folderContent) => {
+            folderContent.basename = basename;
+            folderContent.name = this.retrieveFileName(folderContent.link);
+            folderContent.inLibrary = series.some((serie) => serie.link === folderContent.link);
+            folderContent.extension_id = extension.id;
+            return folderContent;
+        });
+    }
+
+    mapFolderContentsWithMandatoryFields(contents, series, extension) {
+        return contents.map((folderContent) => {
+            folderContent.basename = this.retrieveFileName(folderContent.link);
+            folderContent.name = folderContent.basename;
+            folderContent.inLibrary = series.some((serie) => serie.link === folderContent.link);
+            folderContent.extension_id = extension.id;
+            return folderContent;
+        });
     }
 }
+
 
 export default FolderManager;

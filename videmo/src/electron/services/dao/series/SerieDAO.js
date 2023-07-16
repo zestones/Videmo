@@ -10,7 +10,7 @@ class SerieDAO {
 
     async createSerie(serie) {
         const sql = `INSERT INTO Serie (basename, name, description, image, link, extension_id) VALUES (?, ?, ?, ?, ?, ?)`;
-        const params = [serie.basename, serie.name, serie.description, serie.image, serie.link, serie.extensionId];
+        const params = [serie.basename, serie.name, serie.description, serie.image, serie.link, serie.extension_id];
         await this.queryExecutor.executeAndCommit(sql, params);
     }
 
@@ -26,13 +26,10 @@ class SerieDAO {
         return await this.queryExecutor.executeAndFetchOne(sql, params);
     }
 
+    // TODO : change method name to getSerieByLink
     async getSerieByBasenameAndNameAndLink(serieObject) {
-        const sql = `SELECT * FROM Serie WHERE basename = ? AND name = ? AND link = ?`;
-        const params = [
-            serieObject.basename,
-            serieObject.name,
-            serieObject.link,
-        ];
+        const sql = `SELECT * FROM Serie WHERE link = ?`;
+        const params = [serieObject.link];
         return await this.queryExecutor.executeAndFetchOne(sql, params);
     }
 

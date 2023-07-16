@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 
 // Utilities
-import FolderManager from "../../../utilities/folderManager/FolderManager";
+import FolderManager from "../../../utilities/folderManager/folderManager";
 
 // Api
 import ExtensionApi from "../../../services/api/extension/ExtensionApi";

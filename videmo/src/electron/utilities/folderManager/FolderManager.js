@@ -23,11 +23,11 @@ class FolderManager {
             const imagePath = `${coverImagePath}${extension}`;
 
             if (fs.existsSync(imagePath)) {
-                return imagePath;
+                return this.accessFileWithCustomProtocol(imagePath);;
             }
         }
 
-        return this.getDefaultCoverImage();
+        return this.accessFileWithCustomProtocol(this.getDefaultCoverImage());
     }
 
     /**
@@ -54,7 +54,7 @@ class FolderManager {
             // If the entry is a directory, process it
             if (isDirectory && folder !== coverFolder) {
                 const coverImagePath = this.getCoverImagePath(fullPath, coverFolder, level);
-                folderContents.push({ cover: coverImagePath, path: fullPath });
+                folderContents.push({ image: coverImagePath, link: fullPath });
             }
         }
 
@@ -73,6 +73,15 @@ class FolderManager {
         // Make sure the level is within the valid range
         const normalizedLevel = Math.min(level, parts.length - 1);
         return parts[parts.length - normalizedLevel];
+    }
+
+    /**
+     * @param {String} filePath 
+     * @returns {String} The file path with the custom protocol 'app://'
+    */
+    accessFileWithCustomProtocol(filePath) {
+        // Construct the file path using the custom protocol 'app://'
+        return `app:///${filePath}`;
     }
 
     /**

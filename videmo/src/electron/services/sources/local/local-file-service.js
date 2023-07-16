@@ -7,23 +7,6 @@ const fs = require('fs');
 // Create a new instance of the FolderManager class
 const folderManager = new FolderManager();
 
-// Register the 'getSplittedPath' event listener to the ipcMain module to get the path splitted by the level
-ipcMain.on('getSplittedPath', (event, { basePath, level }) => {
-    const pathArray = basePath.split(path.sep); // Split the path by the platform-specific separator
-
-    // Check if the level is within the valid range
-    if (level < 0 || level > pathArray.length - 1) {
-        // Return the original path if the level is invalid
-        event.reply('splittedPath', { success: false, error: 'Invalid level', splittedPath: path });
-    }
-
-    const slicedPathArray = pathArray.slice(0, pathArray.length - level); // Get the sliced array based on the level
-    const splittedPath = slicedPathArray.join(path.sep); // Join the sliced array back into a path string
-    // Return the splitted path
-    event.reply('splittedPath', { success: true, error: null, splittedPath: splittedPath });
-});
-
-
 // Register the 'getLevel' event listener to the ipcMain module to get the level of the path
 ipcMain.on('getLevel', (event, { baseLink, link }) => {
     const baseSeparatorCount = (baseLink.split(path.sep).length - 1) || 0;
@@ -43,6 +26,7 @@ ipcMain.on('getFolderContents', (event, { folderPath, coverFolder, level }) => {
         } else {
             const folderContents = folderManager.getFolderContentsWithCovers(folderPath, contents, coverFolder, level);
             const basename = folderManager.getBasenameByLevel(folderPath, level);
+            
             event.reply('folderContents', { success: true, error: null, folderContents: folderContents, basename: basename });
         }
     });
