@@ -16,7 +16,6 @@ export default class AniList {
      * @returns {Object} The anime details.
      */
     searchAnimeDetailsByName(name) {
-        console.log(`Searching anime details for ${name}...`);
         const query = `
             query ($search: String) {
                 Page {
@@ -45,10 +44,6 @@ export default class AniList {
             body: JSON.stringify({ query: query, variables: variables })
         };
 
-        console.log("query: ", query);
-        console.log("variables: ", variables);
-        console.log("options: ", options);
-        
         return fetch(this.url, options)
             .then(response => response.json())
             .then(data => {

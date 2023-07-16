@@ -1,7 +1,7 @@
 import React from "react";
 
 // Components
-import DetailsContainer from "../../pages/Explore/DetailsContainer/DetailsContainer";
+import DetailsContainer from "../DetailsContainer/DetailsContainer";
 import Card from "../Card/Card";
 import EpisodeCard from "../EpisodeCard/EpisodeCard";
 

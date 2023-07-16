@@ -8,7 +8,7 @@ import ExtensionsApi from "../../services/api/extension/ExtensionApi";
 import AniList from "../../services/aniList/aniList";
 
 // Components
-import SourceContent from "../Explore/SourceContent/SourceContent";
+import SeriesDisplay from "../../components/SeriesDisplay/SeriesDisplay";
 import CategoryHeader from "../../components/CategoryHeader/CategoryHeader";
 import Header from "../../components/Header/Header";
 
@@ -40,8 +40,11 @@ function Library() {
             .catch((error) => console.error(error));
     }, [serieApi, selectedCategory]);
 
-
     const updateContentForLibrary = () => {
+        // We should check if we are at the root of the library or not
+        // If we are at the root of the library, we display the content of the library
+        // If we are not at the root of the library, we dont change the content
+        if (serie) return;
         serieApi.readAllSeriesByCategory(selectedCategory.id)
             .then((seriesInLibrary) => setFolderContents(seriesInLibrary))
             .catch((error) => console.error(error));
@@ -91,6 +94,52 @@ function Library() {
         }
     };
 
+    // When a serie is clicked, retrieve its contents
+    const handlePlayClick = async (details) => {
+        try {
+            // We retrieve the extension of the serie
+            const extension = await extensionApi.readExtensionById(details.extension_id);
+            const level = await folderManager.retrieveLevel(extension.link, details.link);
+
+            checkAndHandleFolderContentsWithExtension(details.link, level, details.extension_id);
+            const searchName = details.basename === details.name ? details.basename : details.basename + " " + details.name;
+            const data = await aniList.searchAnimeDetailsByName(searchName);
+            setSerie({
+                ...details,
+                name: folderManager.retrieveFileName(details.link),
+                extension_id: details.extension_id,
+                ...data
+            });
+            setSearchValue("");
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    // TODO : Handle remote and local sources
+    const checkAndHandleFolderContentsWithExtension = async (link, level = 0, extension_id) => {
+        try {
+            const data = await folderManager.retrieveFolderContents(link, level);
+            if (data.contents.length === 0) {
+                const data = await folderManager.retrieveFilesInFolder(link);
+                setEpisodes(data);
+                setFolderContents([]);
+            } else {
+                const series = await categoryApi.readAllSeriesInLibraryByExtension(selectedCategory);
+                console.log(series);
+                setFolderContents(folderManager.superMapFolderContentsWithMandatoryFields(data.contents, series, { id: extension_id }, data.basename));
+                setEpisodes([]);
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const filterFolders = folderContents.filter((folderContent) =>
+        folderManager.retrieveFileName(folderContent.link)
+            .toLowerCase()
+            .includes(searchValue.toLowerCase())
+    );
 
     return (
         <div className={styles.library}>
@@ -101,20 +150,15 @@ function Library() {
                     onBack={onBackClick}
 
                 />
-                <CategoryHeader selectedCategory={selectedCategory} onSelectCategory={setSelectedCategory} />
 
-                <SourceContent
-                    searchScope={selectedCategory}
-                    calledFromExplore={false}
-                    refreshFolderContents={updateContentForLibrary}
-                    folderContents={folderContents}
-                    setFolderContents={setFolderContents}
-                    serie={serie}
-                    setSerie={setSerie}
+                <CategoryHeader selectedCategory={selectedCategory} onSelectCategory={setSelectedCategory} />
+                <SeriesDisplay
+                    folderContents={filterFolders}
                     episodes={episodes}
-                    setEpisodes={setEpisodes}
-                    searchValue={searchValue}
-                    setSearchValue={setSearchValue}
+                    serie={serie}
+                    onPlayClick={handlePlayClick}
+                    onRefresh={updateContentForLibrary}
+                    calledFromExplore={false}
                 />
             </div>
         </div>

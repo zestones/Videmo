@@ -32,8 +32,12 @@ function CategoryModal({ serie, onClose, onMoreClick }) {
 
         // Retrieve the categories of the serie
         categoryApi.readSerieCategoryIdsBySerie(serie)
-            .then((data) => setCheckedCategories(data))
+            .then((data) => {
+                console.log(data);
+                setCheckedCategories(data)
+            })
             .catch((error) => console.error(error));
+            
     }, [categoryApi, serie, setCheckedCategories]);
 
     const handleCategoryChange = (e, categoryId) => {

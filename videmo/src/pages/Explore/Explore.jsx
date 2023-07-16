@@ -7,7 +7,10 @@ import AniList from "../../services/aniList/aniList";
 
 // Pages
 import Source from "./Source/Source";
-import SourceContent from "./SourceContent/SourceContent";
+
+// Components
+import SeriesDisplay from "../../components/SeriesDisplay/SeriesDisplay";
+import Header from "../../components/Header/Header";
 
 function Explore() {
     // State initialization
@@ -20,7 +23,7 @@ function Explore() {
     // Utilities and services initialization
     const [folderManager] = useState(() => new FolderManager());
     const [categoryApi] = useState(() => new CategoryApi());
-    
+
     const [aniList] = useState(() => new AniList());
 
     const retrieveSeriesInLibraryByExtension = useCallback((contents) => {
@@ -35,9 +38,8 @@ function Explore() {
             .then((data) => retrieveSeriesInLibraryByExtension(data.contents))
             .catch((error) => console.error(error));
     }, [folderManager, categoryApi, selectedExtension, retrieveSeriesInLibraryByExtension]);
-    
 
-    const handleBackClick = async (checkAndHandleFolderContentsWithExtension) => {
+    const handleBackClick = async () => {
         // If the series is null, then a click on the back button will reset the extension
         if (!serie) return setSelectedExtension(null);
 
@@ -69,25 +71,72 @@ function Explore() {
         }
     };
 
+    const refreshFolderContents = () => {
+        retrieveSeriesInLibraryByExtension(folderContents);
+    };
+
+    // When a serie is clicked, retrieve its contents
+    const handlePlayClick = async (details) => {
+        try {
+            const level = await folderManager.retrieveLevel(selectedExtension.link, details.link);
+            checkAndHandleFolderContentsWithExtension(details.link, level, details.extension_id);
+            const searchName = details.basename === details.name ? details.basename : details.basename + " " + details.name;
+            const data = await aniList.searchAnimeDetailsByName(searchName);
+            setSerie({
+                ...details,
+                name: folderManager.retrieveFileName(details.link),
+                extension_id: selectedExtension.id,
+                ...data
+            });
+            setSearchValue("");
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    // TODO : Handle remote and local sources
+    const checkAndHandleFolderContentsWithExtension = async (link, level = 0, extension_id) => {
+        try {
+            const data = await folderManager.retrieveFolderContents(link, level);
+            if (data.contents.length === 0) {
+                const data = await folderManager.retrieveFilesInFolder(link);
+                setEpisodes(data);
+                setFolderContents([]);
+            } else {
+                const series = await categoryApi.readAllSeriesInLibraryByExtension(selectedExtension);
+                setFolderContents(folderManager.superMapFolderContentsWithMandatoryFields(data.contents, series, { id: extension_id }, data.basename));
+                setEpisodes([]);
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const filterFolders = folderContents.filter((folderContent) =>
+        folderManager.retrieveFileName(folderContent.link)
+            .toLowerCase()
+            .includes(searchValue.toLowerCase())
+    );
+
     return (
         <>
             {!selectedExtension ? (
                 <Source handleSelectedExtension={setSelectedExtension} />
             ) : (
                 <>
-                    <SourceContent
-                        searchScope={selectedExtension}
-                        calledFromExplore={true}
-                        onBackClick={handleBackClick}
-                        onRandomClick={() => { }}
-                        folderContents={folderContents}
-                        setFolderContents={setFolderContents}
-                        serie={serie}
-                        setSerie={setSerie}
+                    <Header
+                        title={selectedExtension.name}
+                        onSearch={setSearchValue}
+                        onBack={handleBackClick}
+                        onRandom={() => folderContents.length > 0 && handlePlayClick(folderContents[Math.floor(Math.random() * folderContents.length)])}
+                    />
+                    <SeriesDisplay
+                        folderContents={filterFolders}
                         episodes={episodes}
-                        setEpisodes={setEpisodes}
-                        searchValue={searchValue}
-                        setSearchValue={setSearchValue}
+                        serie={serie}
+                        onPlayClick={handlePlayClick}
+                        onRefresh={refreshFolderContents}
+                        calledFromExplore={true}
                     />
                 </>
             )}

@@ -5,10 +5,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart, faStar, faCalendar, faClock } from '@fortawesome/free-solid-svg-icons';
 
 // Api 
-import SerieApi from '../../../services/api/serie/SerieApi';
+import SerieApi from '../../services/api/serie/SerieApi';
 
 // Components
-import CategoryModal from '../../../components/CategoryModal/CategoryModal';
+import CategoryModal from '../CategoryModal/CategoryModal';
 
 // Styles
 import styles from './DetailsContainer.module.scss';
