@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 
 // Api 
 import SerieApi from "../../services/api/serie/SerieApi";
@@ -30,21 +30,19 @@ function Library() {
     const [extensionApi] = useState(() => new ExtensionsApi());
     const [aniList] = useState(() => new AniList());
 
-    useEffect(() => {
-        if (!selectedCategory) return;
-
-        setSerie(null);
-        setEpisodes([]);
+    const retrieveAllSeriesBySelectedCategory = useCallback(() => {
         serieApi.readAllSeriesByCategory(selectedCategory?.id)
             .then((seriesInLibrary) => setFolderContents(seriesInLibrary.map((serie) => ({ ...serie, inLibrary: true }))))
             .catch((error) => console.error(error));
     }, [serieApi, selectedCategory]);
 
-    const retrieveAllSeriesBySelectedCategory = () => {
-        serieApi.readAllSeriesByCategory(selectedCategory.id)
-            .then((seriesInLibrary) => setFolderContents(seriesInLibrary))
-            .catch((error) => console.error(error));
-    };
+    useEffect(() => {
+        if (!selectedCategory) return;
+
+        setSerie(null);
+        setEpisodes([]);
+        retrieveAllSeriesBySelectedCategory();
+    }, [serieApi, selectedCategory, retrieveAllSeriesBySelectedCategory]);
 
     const retrieveSubSeriesInLibraryByExtension = (data, extension_id) => {
         categoryApi.readAllSeriesInLibraryByExtension(selectedCategory)
