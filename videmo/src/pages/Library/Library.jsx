@@ -50,7 +50,6 @@ function Library() {
             .catch((error) => console.error(error));
     };
 
-    // TODO : Mask the arrow when we are at the root of the library
     const onBackClick = async () => {
         // Principle : we take the link of the current serie, 
         // We check if the folder is in the database, if it is, then we are at the root of the library, if not, we are in a subfolder
@@ -73,7 +72,7 @@ function Library() {
 
                 const cover = await folderManager.retrieveFolderCover(link, level - 1);
                 const basename = await folderManager.retrieveBaseNameByLevel(link, level);
-                const name = folderManager.retrieveFileName(link);
+                const name = folderManager.retrieveBaseName(link);
                 serieUpdates = { ...serieUpdates, ...{ image: cover, basename, name, link } };
 
                 // We search for the serie on AniList to retrieve its details
@@ -100,7 +99,7 @@ function Library() {
             const data = await aniList.searchAnimeDetailsByName(searchName);
             setSerie({
                 ...details,
-                name: folderManager.retrieveFileName(details.link),
+                name: folderManager.retrieveBaseName(details.link),
                 extension_id: details.extension_id,
                 ...data
             });
@@ -130,7 +129,7 @@ function Library() {
     };
 
     const filterFolders = folderContents.filter((folderContent) =>
-        folderManager.retrieveFileName(folderContent.link)
+        folderManager.retrieveBaseName(folderContent.link)
             .toLowerCase()
             .includes(searchValue.toLowerCase())
     );

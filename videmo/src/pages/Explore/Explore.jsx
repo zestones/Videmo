@@ -56,7 +56,7 @@ function Explore() {
             else {
                 const cover = await folderManager.retrieveFolderCover(link, level - 1);
                 const basename = await folderManager.retrieveBaseNameByLevel(link, level);
-                const name = folderManager.retrieveFileName(link);
+                const name = folderManager.retrieveBaseName(link);
                 serieUpdates = { ...serieUpdates, ...{ image: cover, basename, name, link } };
             }
 
@@ -84,7 +84,7 @@ function Explore() {
             const data = await aniList.searchAnimeDetailsByName(searchName);
             setSerie({
                 ...details,
-                name: folderManager.retrieveFileName(details.link),
+                name: folderManager.retrieveBaseName(details.link),
                 extension_id: selectedExtension.id,
                 ...data
             });
@@ -113,7 +113,7 @@ function Explore() {
     };
 
     const filterFolders = folderContents.filter((folderContent) =>
-        folderManager.retrieveFileName(folderContent.link)
+        folderManager.retrieveBaseName(folderContent.link)
             .toLowerCase()
             .includes(searchValue.toLowerCase())
     );

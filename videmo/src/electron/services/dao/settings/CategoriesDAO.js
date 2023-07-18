@@ -34,6 +34,12 @@ class CategoriesDAO {
     getAllSeriesInLibraryByExtension(extension) {
         // TODO : Select all serie that has a category (means that are in library) and that has a specific extension
         // TODO : Something like this:
+        //  SELECT s.*
+        //  FROM Serie AS s
+        //  INNER JOIN SerieCategory AS sc ON s.id = sc.serie_id
+        //  INNER JOIN Extension AS e ON s.extension_id = e.id
+        //  WHERE e.id = ?
+        //  ORDER BY s.basename ASC
         const sql = `
             SELECT s.*
             FROM Serie AS s

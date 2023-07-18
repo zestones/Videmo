@@ -13,29 +13,28 @@
     background-color: rgba(0, 0, 0, 0.5);
     z-index: 9999;
 
-    &__close {
+    .videoWrapper {
         position: relative;
-        top: 30px;
-        right: 25px;
-
-        font-size: 20px;
-        color: #fff;
-        transition: color 0.3s;
-
-        height: 50%;
-
-        cursor: pointer;
-
-        &:hover {
-            color: rgb(201, 0, 0);
-        }
-    }
-
-    &__video {
-        position: relative;
-
-        width: 80%;
-        max-width: 800px;
+        width: 60%;
         height: auto;
+
+        .videoPlayer__closeContainer {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+
+            border-radius: 50%;
+
+            .videoPlayer__close {
+                font-size: 20px;
+                color: #fff;
+                transition: color 0.3s;
+                cursor: pointer;
+
+                padding: 9px;
+                background-color: rgba(32, 32, 32, 0.7);
+                border-radius: 50%;
+            }
+        }
     }
 }

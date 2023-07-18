@@ -106,7 +106,7 @@ class FolderManager {
      * @returns {String} The file name of the file path.
      */
     // TODO : rename to retrieveBaseName
-    retrieveFileName(filePath) {
+    retrieveBaseName(filePath) {
         return filePath.split("\\").pop().split("/").pop();
     }
 
@@ -118,7 +118,11 @@ class FolderManager {
         return filePath.split("\\").pop().split("/").pop().split(".").shift();
     }
 
-    // TODO : generate comments
+    /**
+     * @param {String} filePath 
+     * @param {Integer} level 
+     * @returns {String} The path up to the specified level.
+     */
     retrieveSplittedPath(filePath, level) {
         const separator = filePath.includes('/') ? '/' : '\\'; // Determine the separator used in the filePath
         const pathParts = filePath.split(separator);
@@ -135,67 +139,42 @@ class FolderManager {
         }
     }
 
-    // TODO : generate comments
+    /**
+     * @param {String} filePath 
+     * @returns {String} The parent path of the file path. 
+     */
     retrieveParentPath(filePath) {
         return this.retrieveSplittedPath(filePath, 1);
     }
 
-    // TODO : remove below methods if unused //
     /**
-     * 
      * @param {Object} contents 
      * @param {Object} series 
-     * @returns {Object} The contents with the series status.
+     * @param {Object} extension 
+     * @param {Object} basename 
+     * @returns {Object} The contents mapped with the mandatory fields.
      */
-    mapFolderContentsWithSeriesStatus(contents, series) {
-        return contents.map((folderContent) => {
-            folderContent.inLibrary = series.some((serie) => serie.link === folderContent.link);
-            return folderContent;
-        });
-    };
-
-    /**
-     * @param {Object} contents 
-     * @param {Interger} extensionId 
-     * @returns {Object} The contents with the extension id.
-     */
-    mapFolderContentsWithExtensionId(contents, extensionId) {
-        return contents.map((folderContent) => {
-            folderContent.extensionId = extensionId;
-            return folderContent;
-        });
-    };
-
-    /**
-     * @param {Object} contents 
-     * @returns {Object} The contents with the basename.
-     */
-    mapFolderContentsWithBasename(contents) {
-        return contents.map((folderContent) => {
-            folderContent.basename = this.retrieveFileName(folderContent.link);
-            folderContent.name = folderContent.basename;
-            return folderContent;
-        });
-    };
-    // TODO : remove upper methods if unused //
-
-    // TODO : generate comments
     superMapFolderContentsWithMandatoryFields(contents, series, extension, basename) {
         if (!basename) return this.mapFolderContentsWithMandatoryFields(contents, series, extension);
 
         return contents.map((folderContent) => {
             folderContent.basename = basename;
-            folderContent.name = this.retrieveFileName(folderContent.link);
+            folderContent.name = this.retrieveBaseName(folderContent.link);
             folderContent.inLibrary = series.some((serie) => serie.link === folderContent.link);
             folderContent.extension_id = extension.id;
             return folderContent;
         });
     }
 
-    // TODO : generate comments
+    /**
+     * @param {Object} contents 
+     * @param {Object} series 
+     * @param {Object} extension 
+     * @returns {Object} The contents mapped with the mandatory fields.
+     */
     mapFolderContentsWithMandatoryFields(contents, series, extension) {
         return contents.map((folderContent) => {
-            folderContent.basename = this.retrieveFileName(folderContent.link);
+            folderContent.basename = this.retrieveBaseName(folderContent.link);
             folderContent.name = folderContent.basename;
             folderContent.inLibrary = series.some((serie) => serie.link === folderContent.link);
             folderContent.extension_id = extension.id;
