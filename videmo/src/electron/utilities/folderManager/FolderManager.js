@@ -84,6 +84,14 @@ class FolderManager {
     }
 
     /**
+     * @param {String} filePath 
+     * @returns {String} The file path without the custom protocol 'app://'
+     */
+    removeCustomProtocolFromPath(filePath) {
+        return filePath.replace('app:///', '');
+    }
+
+    /**
      * @param {Date} time 
      * @returns {String} The formatted time.
      */

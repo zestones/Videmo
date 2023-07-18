@@ -94,6 +94,6 @@ ipcMain.on("getFilesInFolder", (event, { folderPath }) => {
 
 // Register the 'openFileInLocalVideoPlayer' event listener to the ipcMain module to open a file in the local video player
 ipcMain.on("openFileInLocalVideoPlayer", (event, { filePath }) => {
-    shell.openPath(filePath);
+    shell.openPath(folderManager.removeCustomProtocolFromPath(filePath));
     event.reply("fileOpened", { success: true, error: null });
 });
