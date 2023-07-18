@@ -14,6 +14,8 @@ import styles from "./VideoPlayer.module.scss";
 function VideoPlayer({ videoUrl, onShowVideoChange }) {
     const [folderManager] = useState(() => new FolderManager());
 
+    // TODO : change the video player to a custom one
+
     return (
         <div className={styles.videoPlayer}>
                 <video className={styles.videoPlayer__video} controls>

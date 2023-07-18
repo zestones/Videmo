@@ -72,6 +72,7 @@ ipcMain.on("getFilesInFolder", (event, { folderPath }) => {
             const files = [];
 
             for (const file of contents) {
+                // TODO : use accessFileWithCustomProtocol to construct the fullPath
                 const fullPath = path.join(folderPath, file);
                 const fileStats = fs.statSync(fullPath);
                 const isDirectory = fileStats.isDirectory();

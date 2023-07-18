@@ -47,6 +47,7 @@ export default class CategoryApi {
 
     // Add Serie to Categories
     addSerieToCategories(serie, categoriesId = [1]) {
+        // TODO : check if the genres is present in the serie and if not retrieve the serie genres with aniList API
         window.api.send("/add/categories/to/serie", { serie: JSON.stringify(serie), categoriesId: categoriesId });
 
         return new Promise((resolve, reject) => {
