@@ -105,6 +105,7 @@ class FolderManager {
      * @param {String} filePath 
      * @returns {String} The file name of the file path.
      */
+    // TODO : rename to retrieveBaseName
     retrieveFileName(filePath) {
         return filePath.split("\\").pop().split("/").pop();
     }
@@ -117,6 +118,7 @@ class FolderManager {
         return filePath.split("\\").pop().split("/").pop().split(".").shift();
     }
 
+    // TODO : generate comments
     retrieveSplittedPath(filePath, level) {
         const separator = filePath.includes('/') ? '/' : '\\'; // Determine the separator used in the filePath
         const pathParts = filePath.split(separator);
@@ -133,10 +135,12 @@ class FolderManager {
         }
     }
 
+    // TODO : generate comments
     retrieveParentPath(filePath) {
         return this.retrieveSplittedPath(filePath, 1);
     }
 
+    // TODO : remove below methods if unused //
     /**
      * 
      * @param {Object} contents 
@@ -173,7 +177,9 @@ class FolderManager {
             return folderContent;
         });
     };
+    // TODO : remove upper methods if unused //
 
+    // TODO : generate comments
     superMapFolderContentsWithMandatoryFields(contents, series, extension, basename) {
         if (!basename) return this.mapFolderContentsWithMandatoryFields(contents, series, extension);
 
@@ -186,6 +192,7 @@ class FolderManager {
         });
     }
 
+    // TODO : generate comments
     mapFolderContentsWithMandatoryFields(contents, series, extension) {
         return contents.map((folderContent) => {
             folderContent.basename = this.retrieveFileName(folderContent.link);

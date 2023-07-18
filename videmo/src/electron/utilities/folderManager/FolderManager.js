@@ -80,7 +80,6 @@ class FolderManager {
      * @returns {String} The file path with the custom protocol 'app://'
     */
     accessFileWithCustomProtocol(filePath) {
-        // Construct the file path using the custom protocol 'app://'
         return `app:///${filePath}`;
     }
 

@@ -30,7 +30,10 @@ class CategoriesDAO {
         return this.queryExecutor.executeAndFetchAll(sql);
     }
 
+    // TODO : move inside the SerieDAO
     getAllSeriesInLibraryByExtension(extension) {
+        // TODO : Select all serie that has a category (means that are in library) and that has a specific extension
+        // TODO : Something like this:
         const sql = `
             SELECT s.*
             FROM Serie AS s
