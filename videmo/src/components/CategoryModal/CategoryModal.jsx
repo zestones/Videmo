@@ -32,10 +32,7 @@ function CategoryModal({ serie, onClose, onMoreClick }) {
 
         // Retrieve the categories of the serie
         categoryApi.readSerieCategoryIdsBySerie(serie)
-            .then((data) => {
-                console.log(data);
-                setCheckedCategories(data)
-            })
+            .then((data) => setCheckedCategories(data))
             .catch((error) => console.error(error));
             
     }, [categoryApi, serie, setCheckedCategories]);
@@ -53,30 +50,20 @@ function CategoryModal({ serie, onClose, onMoreClick }) {
     };
 
     const handleAddToCategory = async () => {
-        extensionsApi.readExtensionById(serie.extension_id)
-            .then((extension) => {
-                // retrieve the level of the serie
-                folderManager.retrieveLevel(extension.link, serie.link)
-                    .then((level) => {
-                        folderManager.retrieveBaseNameByLevel(serie.link, level)
-                            .then((basename) => {
-                                // Set the basename of the serie
-                                const { name, link, image, extension_id } = serie;
-                                const serieToUpdate = { name, link, basename, image, extension_id };
-                                // Pass the checkedCategories to the API call or handle them as needed
-                                categoryApi.addSerieToCategories(serieToUpdate, checkedCategories)
-                                    .then(() => {
-                                        onClose()
-                                        // if OnMoreClick is passed as a prop, call it
-                                        if (onMoreClick) onMoreClick();
-                                    })
-                                    .catch((error) => console.error(error));
-                            })
-                            .catch((error) => console.error(error));
-                    })
-                    .catch((error) => console.error(error));
-            })
-            .catch((error) => console.error(error));
+        try {
+            const extension = await extensionsApi.readExtensionById(serie.extension_id);
+            const level = await folderManager.retrieveLevel(extension.link, serie.link);
+            const basename = await folderManager.retrieveBaseNameByLevel(serie.link, level);
+    
+            const { name, link, image, extension_id } = serie;
+            const serieToUpdate = { name, link, basename, image, extension_id };
+    
+            await categoryApi.addSerieToCategories(serieToUpdate, checkedCategories);
+            onClose();
+            if (onMoreClick) onMoreClick();
+        } catch (error) {
+            console.error(error);
+        }
     };
 
     return (

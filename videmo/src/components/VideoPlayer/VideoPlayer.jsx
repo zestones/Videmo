@@ -5,9 +5,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import ReactPlayer from 'react-player'
 
-// Utilities
-import FolderManager from "../../utilities/folderManager/FolderManager";
-
 // Styles
 import styles from "./VideoPlayer.module.scss";
 
@@ -30,7 +27,6 @@ function VideoPlayer({ videoUrl, onShowVideoChange }) {
                     playing // Start playing the video as soon as it is loaded
                     pip // Picture in Picture mode
                 />
-
 
                 <div className={styles.videoPlayer__closeContainer}>
                     {isPlayerHovered && (
