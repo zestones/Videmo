@@ -72,8 +72,8 @@ class SerieCategoryDAO {
         // Create the serie
         await this.serieDAO.createSerie(serieParsedObject);
 
-        // Retrieve the inserted serie
-        const insertedSerie = await this.serieDAO.getSerieByName(serieParsedObject.name);
+        // Retrieve the inserted serie (we need the id)
+        const insertedSerie = await this.serieDAO.getSerieByBasenameAndNameAndLink(serieParsedObject);
 
         // Update the SerieCategory table with the new series and categories
         await this.updateSerieCategory(insertedSerie.id, categoriesId);

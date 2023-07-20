@@ -119,7 +119,6 @@ function Library() {
                 setFolderContents([]);
             } else {
                 const series = await categoryApi.readAllSeriesInLibraryByExtension(selectedCategory);
-                console.log(series);
                 setFolderContents(folderManager.superMapFolderContentsWithMandatoryFields(data.contents, series, { id: extension_id }, data.basename));
                 setEpisodes([]);
             }
