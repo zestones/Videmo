@@ -1,10 +1,18 @@
 export default class TrackApi {
 
     addEpisodeToBookmarks = (serie, episode) => {
-        window.api.send("/add/episode/to/bookmarks", { serie: JSON.stringify(serie), episode: JSON.stringify(episode) });
+        return this.#updateSerieTrack(serie, episode);
+    }   
+
+    addEpisodeToViewed = (serie, episode) => {
+        return this.#updateSerieTrack(serie, episode);
+    }
+
+    #updateSerieTrack = (serie, episode) => {
+        window.api.send("/update/serie/track", { serie: JSON.stringify(serie), episode: JSON.stringify(episode) });
 
         return new Promise((resolve, reject) => {
-            window.api.receive("/add/episode/to/bookmarks", (data) => data.success ? resolve(data.episode) : reject(data.error));
+            window.api.receive("/update/serie/track", (data) => data.success ? resolve(data.episode) : reject(data.error));
         });
     }
 
@@ -31,7 +39,7 @@ export default class TrackApi {
         return episodes.map(episode => {
             const episodeFromDatabase = episodesFromDatabase.find(episodeFromDatabase => episodeFromDatabase.link === episode.link);
             if (episodeFromDatabase) {
-                return episodeFromDatabase;
+                return {...episodeFromDatabase, modifiedTime: episode.modifiedTime};
             }
             return episode;
         });

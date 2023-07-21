@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 // External
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBookmark, faCheck, faPlay, faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
+import { faBookmark, faCheck, faPlay, faExternalLinkAlt, faXmark } from '@fortawesome/free-solid-svg-icons';
 
 // Utilities
 import FolderManager from "../../utilities/folderManager/FolderManager";
@@ -32,8 +32,14 @@ function EpisodeCard({ serie, episode }) {
         trackApi.addEpisodeToBookmarks(serie, updatedEpisode);
     };
 
+    const handleViewedClick = () => {
+        const updatedEpisode = { ...currentEpisode, viewed: !currentEpisode.viewed };
+        setCurrentEpisode(updatedEpisode);
+        trackApi.addEpisodeToViewed(serie, updatedEpisode);
+    };
+
     return (
-        <li className={styles.card} >
+        <li className={`${styles.card} ${currentEpisode.viewed ? styles.viewed : ""} ${currentEpisode.bookmarked ? styles.bookmarked : ""}`}>
             <div className={styles.cardContent}>
                 <div className={styles.cardInfo}>
                     <p className={styles.cardTitle}>{currentEpisode.name}</p>
@@ -43,7 +49,11 @@ function EpisodeCard({ serie, episode }) {
                     <FontAwesomeIcon icon={faPlay} className={styles.cardButton} onClick={() => setShowVideoPlayer(true)} />
                     <FontAwesomeIcon icon={faExternalLinkAlt} className={styles.cardButton} onClick={() => folderManager.openFileInLocalVideoPlayer(currentEpisode.link)} />
                     <FontAwesomeIcon icon={faBookmark} className={`${styles.cardButton} ${currentEpisode.bookmarked ? styles.bookmarked : ""}`} onClick={handleBookmarkClick} />
-                    <FontAwesomeIcon icon={faCheck} className={styles.cardButton} />
+                    {!currentEpisode.viewed ? (
+                        <FontAwesomeIcon icon={faCheck} className={styles.cardButton} onClick={handleViewedClick} />
+                    ) : (
+                        <FontAwesomeIcon icon={faXmark} className={styles.cardButton} onClick={handleViewedClick} />
+                    )}
                 </div>
             </div>
             {showVideoPlayer && (

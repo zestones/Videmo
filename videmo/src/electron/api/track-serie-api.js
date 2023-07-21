@@ -4,12 +4,12 @@ const SerieTrackDAO = require('../services/dao/series/SerieTrackDAO');
 const SerieEpisodeDAO = require('../services/dao/series/SerieEpisodeDAO');
 const DataTypesConverter = require('../utilities/converter/DataTypesConverter.js');
 
-// Add episode to bookmark
-ipcMain.on('/add/episode/to/bookmarks', async (event, arg) => {
+// update serie track
+ipcMain.on('/update/serie/track', async (event, arg) => {
     await new SerieTrackDAO()
         .updateSerieTrack(arg.serie, arg.episode);
 
-    event.reply('/add/episode/to/bookmarks', { success: true, episode: arg.episode });
+    event.reply('/update/serie/track', { success: true, episode: arg.episode });
 })
 
 // Read episode by link
