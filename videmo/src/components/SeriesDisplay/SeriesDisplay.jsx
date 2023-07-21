@@ -1,14 +1,18 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 // Components
 import DetailsContainer from "../DetailsContainer/DetailsContainer";
 import Card from "../Card/Card";
 import EpisodeCard from "../EpisodeCard/EpisodeCard";
 
+// Services
+import TrackApi from "../../services/api/track/TrackApi";
+
 // Styles
 import styles from "./SeriesDisplay.module.scss";
 
 function SeriesDisplay({ serie, folderContents, episodes, onPlayClick, onRefresh, calledFromExplore }) {
+
     return (
         <div className={styles.sourceContent}>
             {serie && (
@@ -26,11 +30,7 @@ function SeriesDisplay({ serie, folderContents, episodes, onPlayClick, onRefresh
             ))}
             <div className={styles.episodesContainer}>
                 {episodes.map((episode) => (
-                    <EpisodeCard
-                        title={episode.name}
-                        link={episode.path}
-                        modifiedTime={episode.modifiedTime}
-                    />
+                    <EpisodeCard serie={serie} episode={episode} />
                 ))}
             </div>
         </div>

@@ -97,6 +97,7 @@ require('./api/serie-category-api');
 require('./api/extension-api');
 require('./api/category-api');
 require('./api/serie-api');
+require('./api/track-serie-api');
 
 // handle local file system requests using the endpoint defined inside the local-file-service file from the sources/local folder
 // The local-file-service file is responsible for reading the local file system and returning the data to the renderer process

@@ -6,6 +6,7 @@ import FolderManager from "../../utilities/folderManager/FolderManager";
 import CategoryApi from "../../services/api/category/CategoryApi";
 import ExtensionsApi from "../../services/api/extension/ExtensionApi";
 import AniList from "../../services/aniList/aniList";
+import TrackApi from "../../services/api/track/TrackApi";
 
 // Components
 import SeriesDisplay from "../../components/SeriesDisplay/SeriesDisplay";
@@ -25,6 +26,7 @@ function Library() {
 
     // Api initialization
     const [serieApi] = useState(() => new SerieApi());
+    const [trackApi] = useState(() => new TrackApi());
     const [folderManager] = useState(() => new FolderManager());
     const [categoryApi] = useState(() => new CategoryApi());
     const [extensionApi] = useState(() => new ExtensionsApi());
@@ -115,7 +117,8 @@ function Library() {
             const data = await folderManager.retrieveFolderContents(link, level);
             if (data.contents.length === 0) {
                 const data = await folderManager.retrieveFilesInFolder(link);
-                setEpisodes(data);
+                const retrievedEpisodes = await trackApi.readAllEpisodesBySerieLink(link);
+                setEpisodes(trackApi.mapSerieEpisodeWithDatabaseEpisode(data, retrievedEpisodes));
                 setFolderContents([]);
             } else {
                 const series = await categoryApi.readAllSeriesInLibraryByExtension(selectedCategory);

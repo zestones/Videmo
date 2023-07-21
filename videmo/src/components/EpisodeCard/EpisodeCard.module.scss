@@ -64,6 +64,11 @@
                     transform: scale(1.1);
                 }
             }
+
+            .bookmarked {
+                color: var(--light-blue-6);
+                box-shadow: 0 0 6px var(--light-blue-6);
+            }
         }
     }
 

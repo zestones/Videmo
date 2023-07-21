@@ -61,6 +61,7 @@ class SerieCategoryDAO {
             await this.createSerieCategory(serieId, categoryId);
         }
 
+        // TODO : maybe remove this part when the serieTracking api will be implemented
         // Delete the serie from the Serie table if it is not used in any SerieCategory row
         const serieCategoryCount = await this.countSerieCategoriesBySerieId(serieId);
         if (serieCategoryCount.count === 0) {
@@ -86,9 +87,9 @@ class SerieCategoryDAO {
         // Retrieve the serie
         const retrievedSerie = await this.serieDAO.getSerieByBasenameAndNameAndLink(serieParsedObject);
 
-        // Check if the series already exists in the Serie table
+        // Check if the does not exist in the Serie table
         if (retrievedSerie === undefined) {
-            // Create the serie and update the SerieCategory table with the attached categories
+            // We create the serie and update the SerieCategory table with the attached categories
             await this.#createSerieAndCategory(serieParsedObject, categoriesId);
         } else {
             const serieId = retrievedSerie.id; // Use the retrievedSerie.id instead of making another query

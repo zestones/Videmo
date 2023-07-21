@@ -80,7 +80,7 @@ ipcMain.on("getFilesInFolder", (event, { folderPath }) => {
                 if (!isDirectory) {
                     files.push({
                         name: file,
-                        path: folderManager.accessFileWithCustomProtocol(fullPath),
+                        link: folderManager.accessFileWithCustomProtocol(fullPath),
                         modifiedTime: formattedTime,
                     });
                 }
