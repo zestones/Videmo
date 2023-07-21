@@ -30,7 +30,7 @@ const DetailsContainer = ({ serie }) => {
 
 	useEffect(() => {
 		serieApi.readSerieBySerieObject(serie)
-			.then((serie) => setAlreadyInLibrary(serie ? true : false))
+			.then((serie) => setAlreadyInLibrary(serie?.inLibrary ? true : false))
 			.catch((error) => console.error(error));
 	}, [serieApi, serie]);
 

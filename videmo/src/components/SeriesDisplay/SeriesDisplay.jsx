@@ -1,12 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 
 // Components
 import DetailsContainer from "../DetailsContainer/DetailsContainer";
 import Card from "../Card/Card";
 import EpisodeCard from "../EpisodeCard/EpisodeCard";
-
-// Services
-import TrackApi from "../../services/api/track/TrackApi";
 
 // Styles
 import styles from "./SeriesDisplay.module.scss";

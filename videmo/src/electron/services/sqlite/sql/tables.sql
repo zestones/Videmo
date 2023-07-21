@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS Serie (
   description TEXT,
   link TEXT,
   image TEXT,
+  inLibrary INTEGER,
   extension_id INTEGER,
   FOREIGN KEY (extension_id) REFERENCES Extension (id),
   UNIQUE (basename, name, link)

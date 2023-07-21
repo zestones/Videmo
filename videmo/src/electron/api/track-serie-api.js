@@ -21,7 +21,6 @@ ipcMain.on('/read/episode/by/link', async (event, arg) => {
                 retrievedEpisode.viewed = dataTypesConverter.convertIntegerToBoolean(retrievedEpisode.viewed);
                 retrievedEpisode.bookmarked = dataTypesConverter.convertIntegerToBoolean(retrievedEpisode.bookmarked);
             }
-            console.log('retrievedEpisode', retrievedEpisode);
             event.reply('/read/episode/by/link', { success: true, episode: retrievedEpisode });
         })
         .catch(error => event.reply('/read/episode/by/link', { success: false, error }));

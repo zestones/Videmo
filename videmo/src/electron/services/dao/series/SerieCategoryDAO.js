@@ -55,13 +55,13 @@ class SerieCategoryDAO {
     async updateSerieCategory(serieId, categoriesId) {
         // Clear existing categories for the series in the SerieCategory table
         await this.deleteSerieCategoryBySerieId(serieId);
+        await this.serieDAO.updateSerieInLibrary(serieId, 1);
 
         // Insert new categories for the series in the SerieCategory table
         for (const categoryId of categoriesId) {
             await this.createSerieCategory(serieId, categoryId);
         }
 
-        // TODO : maybe remove this part when the serieTracking api will be implemented
         // Delete the serie from the Serie table if it is not used in any SerieCategory row
         const serieCategoryCount = await this.countSerieCategoriesBySerieId(serieId);
         if (serieCategoryCount.count === 0) {
@@ -71,7 +71,7 @@ class SerieCategoryDAO {
 
     async #createSerieAndCategory(serieParsedObject, categoriesId) {
         // Create the serie
-        await this.serieDAO.createSerie(serieParsedObject);
+        await this.serieDAO.createSerie({ ...serieParsedObject, inLibrary: 1 });
 
         // Retrieve the inserted serie (we need the id)
         const insertedSerie = await this.serieDAO.getSerieByBasenameAndNameAndLink(serieParsedObject);
