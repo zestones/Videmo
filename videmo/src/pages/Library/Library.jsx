@@ -59,8 +59,8 @@ function Library() {
         // If we are at the root of the library, we display the content of the library
         // We do this until we are at the root of the library
         try {
-            const isSerieInLibrary = await serieApi.readSerieBySerieObject(serie);
-            if (isSerieInLibrary) {
+            const retrievedSerie = await serieApi.readSerieBySerieObject(serie);
+            if (retrievedSerie.inLibrary) {
                 setSerie(null);
                 retrieveAllSeriesBySelectedCategory();
             } else {
