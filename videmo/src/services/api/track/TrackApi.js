@@ -8,6 +8,10 @@ export default class TrackApi {
         return this.#updateSerieTrack(serie, episode);
     }
 
+    updatePlayedTime = (serie, episode) => {
+        return this.#updateSerieTrack(serie, episode);
+    }
+
     #updateSerieTrack = (serie, episode) => {
         window.api.send("/update/serie/track", { serie: JSON.stringify(serie), episode: JSON.stringify(episode) });
 

@@ -33,9 +33,28 @@ function EpisodeCard({ serie, episode }) {
     };
 
     const handleViewedClick = () => {
-        const updatedEpisode = { ...currentEpisode, viewed: !currentEpisode.viewed };
+        const updatedEpisode = { ...currentEpisode, viewed: !currentEpisode.viewed, played_time: 0 };
         setCurrentEpisode(updatedEpisode);
         trackApi.addEpisodeToViewed(serie, updatedEpisode);
+    };
+
+    const handleCloseVideoPlayer = (playedTime, finished) => {
+        setShowVideoPlayer(false);
+        if (finished) return handleViewedClick();
+
+        const updatedEpisode = { ...currentEpisode, played_time: playedTime };
+        trackApi.updatePlayedTime(serie, updatedEpisode);
+        setCurrentEpisode(updatedEpisode);
+    };
+
+    const convertPlayedTime = () => {
+        const hours = Math.floor(currentEpisode.played_time / 3600);
+        const minutes = Math.floor((currentEpisode.played_time - (hours * 3600)) / 60);
+        const seconds = Math.floor(currentEpisode.played_time - (hours * 3600) - (minutes * 60));
+
+        const displayTime = `${hours ? hours + "h" : ""} ${minutes ? minutes + "m" : ""} ${seconds ? seconds + "s" : ""}`;
+        if (displayTime.trim(' ') === "") return "";
+        return `• ${displayTime}`;
     };
 
     return (
@@ -43,7 +62,10 @@ function EpisodeCard({ serie, episode }) {
             <div className={styles.cardContent}>
                 <div className={styles.cardInfo}>
                     <p className={styles.cardTitle}>{currentEpisode.name}</p>
-                    <p className={styles.cardModifiedTime}>{currentEpisode.modifiedTime}</p>
+                    <div className={styles.cardDescriptionContainer}>
+                        <p className={styles.cardModifiedTime}>{currentEpisode.modifiedTime}</p>
+                        <p className={styles.cardPlayedTime}>{convertPlayedTime()}</p>
+                    </div>
                 </div>
                 <div className={styles.cardButtonsContainer}>
                     <FontAwesomeIcon icon={faPlay} className={styles.cardButton} onClick={() => setShowVideoPlayer(true)} />
@@ -57,7 +79,8 @@ function EpisodeCard({ serie, episode }) {
                 </div>
             </div>
             {showVideoPlayer && (
-                <VideoPlayer videoUrl={currentEpisode.link} onShowVideoChange={setShowVideoPlayer} />
+                <VideoPlayer link={currentEpisode.link} startTime={!currentEpisode.played_time ? 0 : currentEpisode.played_time}
+                    onCloseVideoPlayer={handleCloseVideoPlayer} />
             )}
         </li>
     );

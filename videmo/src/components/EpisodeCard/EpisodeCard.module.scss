@@ -51,9 +51,23 @@
                 white-space: nowrap;
             }
 
-            .cardModifiedTime {
-                font-size: 0.8rem;
-                margin-left: 1rem;
+            .cardDescriptionContainer {
+                display: flex;
+                justify-content: left;
+                align-items: flex-end;
+                padding: 5px;
+
+                .cardModifiedTime {
+                    font-size: 0.8rem;
+                    margin-bottom: 0;
+                    margin-right: 0.5rem;
+                }
+
+                .cardPlayedTime {
+                    color: var(--gray-7);
+                    font-size: 0.9rem;
+                    margin-bottom: 0;
+                }
             }
         }
 
