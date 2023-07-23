@@ -2,6 +2,9 @@
   "name": "videmo",
   "version": "0.1.0",
   "private": true,
+  "homepage": "./",
+  "description": "A simple video platform for managing and watching series",
+  "author": "zestones",
   "dependencies": {
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
@@ -9,6 +12,7 @@
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
+    "electron-log": "^4.4.8",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-player": "^2.12.0",
@@ -17,13 +21,28 @@
     "sqlite3": "^5.1.6",
     "web-vitals": "^2.1.4"
   },
-  "main": "src/electron/main.js",
+  "main": "public/electron.js",
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "electron": "electron ."
+    "react": "react-scripts start",
+    "react-build": "react-scripts build",
+    "build": "set NODE_ENV=production&& npm run react-build && npm run electron-build",
+    "react-test": "react-scripts test",
+    "react-eject": "react-scripts eject",
+    "electron": "set NODE_ENV=development&& electron .",
+    "electron-build": "electron-builder --win --x64",
+    "postinstall": "electron-builder install-app-deps"
+  },
+  "build": {
+    "files": [
+      "public/",
+      "dist/",
+      "src/electron",
+      "build/",
+      "node_modules/"
+    ],
+    "extraResources": [
+      "public/videmo.db"
+    ]
   },
   "eslintConfig": {
     "extends": [
@@ -44,6 +63,8 @@
     ]
   },
   "devDependencies": {
-    "electron": "^24.4.0"
+    "@babel/plugin-proposal-private-property-in-object": "^7.16.7",
+    "electron": "^24.4.0",
+    "electron-builder": "^24.6.2"
   }
 }

@@ -34,7 +34,11 @@ class FolderManager {
      * @returns {String} The path of default cover image.
      */
     getDefaultCoverImage() {
-        return path.join(__dirname, '..', '..', '..', '..', 'public', 'images', 'default_cover.jpeg');
+        if (process.env.NODE_ENV === 'development') {
+            return path.join(__dirname, '..', '..', '..', 'public', 'images', 'default_cover.jpeg');
+        }
+
+        return path.join(__dirname, '..', '..', '..', '..', '..', 'build', 'public', 'images', 'default_cover.jpeg');
     }
 
     /**
