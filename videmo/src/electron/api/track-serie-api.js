@@ -2,14 +2,22 @@ const { ipcMain } = require('electron');
 
 const SerieTrackDAO = require('../services/dao/series/SerieTrackDAO');
 const SerieEpisodeDAO = require('../services/dao/series/SerieEpisodeDAO');
+const SerieHistoryDAO = require('../services/dao/series/SerieHistoryDAO');
 const DataTypesConverter = require('../utilities/converter/DataTypesConverter.js');
 
 // update serie track
 ipcMain.on('/update/serie/track', async (event, arg) => {
-    await new SerieTrackDAO()
-        .updateSerieTrack(arg.serie, arg.episode);
+    await new SerieTrackDAO().updateSerieTrack(arg.serie, arg.episode);
 
     event.reply('/update/serie/track', { success: true, episode: arg.episode });
+})
+
+// update serie track and history
+ipcMain.on('/update/serie/track/and/history', async (event, arg) => {
+    // And then we update the history
+    await new SerieHistoryDAO().updateSerieTrackAndHistory(arg.serie, arg.episode, arg.timestamp);
+
+    event.reply('/update/serie/track/and/history', { success: true, episode: arg.episode });
 })
 
 // Read episode by link

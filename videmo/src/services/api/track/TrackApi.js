@@ -8,11 +8,15 @@ export default class TrackApi {
         return this.#updateSerieTrack(serie, episode);
     }
 
-    updatePlayedTime = (serie, episode) => {
-        return this.#updateSerieTrack(serie, episode);
+    updatePlayedTime = (serie, episode, timestamp) => {
+        window.api.send("/update/serie/track/and/history", { serie: JSON.stringify(serie), episode: JSON.stringify(episode), timestamp: timestamp });
+
+        return new Promise((resolve, reject) => {
+            window.api.receive("/update/serie/track/and/history", (data) => data.success ? resolve(data.episode) : reject(data.error));
+        });
     }
 
-    #updateSerieTrack = (serie, episode) => {
+    #updateSerieTrack = (serie, episode, timestamp) => {
         window.api.send("/update/serie/track", { serie: JSON.stringify(serie), episode: JSON.stringify(episode) });
 
         return new Promise((resolve, reject) => {

@@ -26,7 +26,7 @@ function EpisodeCard({ serie, episode }) {
     const [trackApi] = useState(() => new TrackApi());
 
     // State initialization
-    const [showVideoPlayer, setShowVideoPlayer] = useState(false);
+    const [openVideoPlayer, setOpenVideoPlayer] = useState(false);
     const [currentEpisode, setCurrentEpisode] = useState(episode);
 
     const handleBookmarkClick = () => {
@@ -42,11 +42,11 @@ function EpisodeCard({ serie, episode }) {
     };
 
     const handleCloseVideoPlayer = (playedTime, finished) => {
-        setShowVideoPlayer(false);
+        setOpenVideoPlayer(false);
         if (finished) return handleViewedClick();
 
         const updatedEpisode = { ...currentEpisode, played_time: playedTime };
-        trackApi.updatePlayedTime(serie, updatedEpisode);
+        trackApi.updatePlayedTime(serie, updatedEpisode, new Date().getTime());
         setCurrentEpisode(updatedEpisode);
     };
 
@@ -71,7 +71,7 @@ function EpisodeCard({ serie, episode }) {
                     </div>
                 </div>
                 <div className={styles.cardButtonsContainer}>
-                    <PlayArrowIcon className={styles.cardButton} onClick={() => setShowVideoPlayer(true)} />
+                    <PlayArrowIcon className={styles.cardButton} onClick={() => setOpenVideoPlayer(true)} />
                     <OpenInNewIcon className={styles.cardButton} onClick={() => folderManager.openFileInLocalVideoPlayer(currentEpisode.link)} />
                     <BookmarkIcon className={`${styles.cardButton} ${currentEpisode.bookmarked ? styles.bookmarked : ""}`} onClick={handleBookmarkClick} />
                     {!currentEpisode.viewed ? (
@@ -81,7 +81,7 @@ function EpisodeCard({ serie, episode }) {
                     )}
                 </div>
             </div>
-            {showVideoPlayer && (
+            {openVideoPlayer && (
                 <VideoPlayer link={currentEpisode.link} startTime={!currentEpisode.played_time ? 0 : currentEpisode.played_time}
                     onCloseVideoPlayer={handleCloseVideoPlayer} />
             )}

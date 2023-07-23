@@ -44,8 +44,8 @@ class DataTypesConverter {
         return value ? 1 : 0;
     }
 
-    formatDateTime(date, format = 'YYYY-MM-DD HH:mm:ss') {
-        return date.format(format);
+    convertTimestampToDate(timestamp) {
+        return new Date(timestamp);
     }
 }
 
