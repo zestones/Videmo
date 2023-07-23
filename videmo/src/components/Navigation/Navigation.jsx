@@ -1,4 +1,4 @@
-import React from 'react';
+import { useEffect, useState } from 'react';
 
 // Components
 import NavItem from './Item/NavItem';
@@ -6,31 +6,36 @@ import NavItem from './Item/NavItem';
 // Styles
 import styles from './Navigation.module.scss';
 
+
 function Navigation({ navItems, activePage, onPageChange }) {
 
-    const renderContent = () => {
-        // Render different content based on the active item
-        return navItems[activePage] || null;
-    };
+    const [dynamicComponent, setDynamicComponent] = useState(null);
+
+    useEffect(() => {
+        // Get the active page object
+        const activePageObject = navItems[activePage];
+
+        // Get the active page component
+        setDynamicComponent(activePageObject.component);
+    }, [activePage, navItems]);
 
     return (
         <>
             <nav className={styles.nav}>
                 <ul className={styles.navList}>
-                    {Object.entries(navItems).map(([key, _]) => (
+                    {Object.keys(navItems).map((key) => (
                         <NavItem
-                            key={key}
-                            item={key}
+                            entry={key}
+                            item={navItems[key]}
                             activeItem={activePage}
-                            handleItemClick={onPageChange}
+                            onPageChange={onPageChange}
                         />
                     ))}
                 </ul>
             </nav>
-            <div className={styles.content}>{renderContent()}</div>
+            <div className={styles.content}>{dynamicComponent}</div>
         </>
     );
 }
-
 
 export default Navigation;

@@ -1,8 +1,7 @@
 import React, { useState, useRef } from "react";
 
 // External
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTimes } from '@fortawesome/free-solid-svg-icons';
+import CloseIcon from '@mui/icons-material/Close';
 import ReactPlayer from 'react-player'
 
 // Styles
@@ -55,7 +54,7 @@ function VideoPlayer({ link, startTime, onCloseVideoPlayer }) {
                 <div className={styles.videoPlayer__closeContainer}>
                     {isPlayerHovered && (
                         <div className={styles.videoPlayer__close} onClick={() => onCloseVideoPlayer(playedTime)}>
-                            <FontAwesomeIcon icon={faTimes} />
+                            <CloseIcon />
                         </div>
                     )}
                 </div>

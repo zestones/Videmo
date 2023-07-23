@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 // External
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTimes } from '@fortawesome/free-solid-svg-icons';
+import CloseIcon from '@mui/icons-material/Close';
 
 // Api
 import CategoryApi from "../../services/api/category/CategoryApi";
@@ -71,7 +70,7 @@ function CategoryModal({ serie, onClose, onMoreClick }) {
             <div className={styles.modalContent}>
                 <div className={styles.modalHeader}>
                     <h2 className={styles.modalTitle}>Déplacer vers une catégorie</h2>
-                    <FontAwesomeIcon icon={faTimes} className={styles.modalClose} onClick={onClose} />
+                    <CloseIcon className={styles.modalClose} onClick={onClose} />
                 </div>
                 <div className={styles.modalBody}>
                     <div className={styles.modalCategories}>

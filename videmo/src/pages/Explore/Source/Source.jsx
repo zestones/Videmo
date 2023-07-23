@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
 
+// External
+import FolderIcon from '@mui/icons-material/Folder';
+
 // Services
 import ExtensionApi from "../../../services/api/extension/ExtensionApi";
 
@@ -44,9 +47,9 @@ function Source({ handleSelectedExtension }) {
                         key={extension.id}
                         className={styles.extension}
                         onClick={() => handleSelectedExtension(extension)}>
-                        <div className={styles.extensionIcon} >
-                            <img src="/icons/local-source.png" alt="Local source" />
-                        </div>
+                        <div className={styles.extensionIcon}>
+                            <FolderIcon className={styles.localSource} />
+                            </div>
                         <p className={styles.extensionName}>
                             {extension.name}
                         </p>

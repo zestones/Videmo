@@ -6,8 +6,8 @@
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    font-size: 22px;
-    margin: 0 20px;    
+    margin: 0 7px;
+
     cursor: pointer;
     
     transition-duration: 0.4s;
@@ -27,5 +27,11 @@
         100% {
             transform: scale(1);
         }
+    }
+
+    .randButtonIcon {
+        display: flex;
+        align-items: center;
+        font-size: 1.7rem;
     }
 }

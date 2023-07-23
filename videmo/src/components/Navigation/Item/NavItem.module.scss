@@ -6,6 +6,10 @@
     height: 100%;
     width: 100%;
 
+    .navIcon {
+        font-size: 2rem;
+    }
+
     .navIconContainer.active {
         display: flex;
         justify-content: center;
@@ -18,10 +22,6 @@
 
         background-color: rgba(217, 217, 217, 0.21);
         border-radius: 32px;
-
-        .navIcon {
-            font-size: 1.5rem;
-        }
     }
 
     .navIconContainer {

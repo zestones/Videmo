@@ -1,8 +1,11 @@
 import React, { useState } from "react";
 
 // External
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBookmark, faCheck, faPlay, faExternalLinkAlt, faXmark } from '@fortawesome/free-solid-svg-icons';
+import BookmarkIcon from '@mui/icons-material/Bookmark';
+import DoneAllIcon from '@mui/icons-material/DoneAll';
+import RemoveDoneIcon from '@mui/icons-material/RemoveDone';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 
 // Utilities
 import FolderManager from "../../utilities/folderManager/FolderManager";
@@ -68,13 +71,13 @@ function EpisodeCard({ serie, episode }) {
                     </div>
                 </div>
                 <div className={styles.cardButtonsContainer}>
-                    <FontAwesomeIcon icon={faPlay} className={styles.cardButton} onClick={() => setShowVideoPlayer(true)} />
-                    <FontAwesomeIcon icon={faExternalLinkAlt} className={styles.cardButton} onClick={() => folderManager.openFileInLocalVideoPlayer(currentEpisode.link)} />
-                    <FontAwesomeIcon icon={faBookmark} className={`${styles.cardButton} ${currentEpisode.bookmarked ? styles.bookmarked : ""}`} onClick={handleBookmarkClick} />
+                    <PlayArrowIcon className={styles.cardButton} onClick={() => setShowVideoPlayer(true)} />
+                    <OpenInNewIcon className={styles.cardButton} onClick={() => folderManager.openFileInLocalVideoPlayer(currentEpisode.link)} />
+                    <BookmarkIcon className={`${styles.cardButton} ${currentEpisode.bookmarked ? styles.bookmarked : ""}`} onClick={handleBookmarkClick} />
                     {!currentEpisode.viewed ? (
-                        <FontAwesomeIcon icon={faCheck} className={styles.cardButton} onClick={handleViewedClick} />
+                        <DoneAllIcon className={styles.cardButton} onClick={handleViewedClick} />
                     ) : (
-                        <FontAwesomeIcon icon={faXmark} className={styles.cardButton} onClick={handleViewedClick} />
+                        <RemoveDoneIcon className={styles.cardButton} onClick={handleViewedClick} />
                     )}
                 </div>
             </div>
