@@ -19,6 +19,7 @@
         height: auto;
 
         .videoPlayer__closeContainer {
+            z-index: 99999999999999;
             position: absolute;
             top: 6px;
             right: 6px;
@@ -27,13 +28,48 @@
 
             .videoPlayer__close {
                 font-size: 20px;
-                color: #fff;
+                color: var(--color-white);
                 transition: color 0.3s;
                 cursor: pointer;
 
                 padding: 9px;
                 background-color: rgba(32, 32, 32, 0.7);
                 border-radius: 50%;
+            }
+        }
+
+        .videoPlayer__skipButton {
+            position: absolute;
+            top: 50%;
+            right: 16px;
+
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+
+            font-size: 14px;
+            color: var(--color-white);
+            transition: color 0.3s;
+            cursor: pointer;
+
+            padding: 9px;
+            background-color: rgba(32, 32, 32, 0.7);
+            display: flex;
+            align-items: center;
+
+            .videoPlayer__skipButtonIcon {
+                &:hover {
+                    animation: slide 0.5s ease-in-out infinite alternate;
+
+                    @keyframes slide {
+                        0% {
+                            transform: translateX(0);
+                        }
+
+                        100% {
+                            transform: translateX(5px);
+                        }
+                    }
+                }
             }
         }
     }

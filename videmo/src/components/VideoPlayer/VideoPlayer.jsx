@@ -2,6 +2,8 @@ import React, { useState, useRef } from "react";
 
 // External
 import CloseIcon from '@mui/icons-material/Close';
+import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArrowRight';
+
 import ReactPlayer from 'react-player'
 
 // Styles
@@ -31,6 +33,12 @@ function VideoPlayer({ link, startTime, onCloseVideoPlayer }) {
         }
     };
 
+    const handleSkipForward = () => {
+        // Skip forward 1 minute and 30 seconds (90 seconds)
+        const newTime = Math.min(playerRef.current.getDuration(), playedTime + 90);
+        playerRef.current.seekTo(newTime);
+    };
+
     return (
         <div className={styles.videoPlayer}>
             <div
@@ -50,14 +58,18 @@ function VideoPlayer({ link, startTime, onCloseVideoPlayer }) {
                     onEnded={() => onCloseVideoPlayer(playedTime, true)} // Update the played time in the database when the video is finished
                     onReady={handlePlayerReady} // Set the start time to the episode played time
                 />
-
-                <div className={styles.videoPlayer__closeContainer}>
-                    {isPlayerHovered && (
-                        <div className={styles.videoPlayer__close} onClick={() => onCloseVideoPlayer(playedTime)}>
-                            <CloseIcon />
+                {isPlayerHovered && (
+                    <>
+                        <div className={styles.videoPlayer__closeContainer}>
+                            <div className={styles.videoPlayer__close} onClick={() => onCloseVideoPlayer(playedTime)}>
+                                <CloseIcon />
+                            </div>
                         </div>
-                    )}
-                </div>
+                        <div className={styles.videoPlayer__skipButton} onClick={handleSkipForward}>
+                            Passer <KeyboardDoubleArrowRightIcon className={styles.videoPlayer__skipButtonIcon} />
+                        </div>
+                    </>
+                )}
             </div>
         </div>
     );
