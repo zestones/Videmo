@@ -60,7 +60,7 @@ function Library() {
         // We do this until we are at the root of the library
         try {
             const retrievedSerie = await serieApi.readSerieBySerieObject(serie);
-            if (retrievedSerie.inLibrary) {
+            if (retrievedSerie?.inLibrary) {
                 setSerie(null);
                 retrieveAllSeriesBySelectedCategory();
             } else {
@@ -143,7 +143,7 @@ function Library() {
                     title="Bilbliothèque"
                     onSearch={setSearchValue}
                     onBack={serie ? onBackClick : null}
-
+                    onRandom={() => folderContents.length > 0 && handlePlayClick(folderContents[Math.floor(Math.random() * folderContents.length)])}
                 />
 
                 <CategoryHeader selectedCategory={selectedCategory} onSelectCategory={setSelectedCategory} />
