@@ -11,9 +11,9 @@ class SerieHistoryDAO {
         this.serieEpisodeDAO = new SerieEpisodeDAO();
     }
 
-    updateSerieTrackAndHistory(serie, episode, timestamp) {
+    async updateSerieTrackAndHistory(serie, episode, timestamp) {
         // We start by updating the serie track
-        this.serieTrackDAO.updateSerieTrack(serie, episode);
+        await this.serieTrackDAO.updateSerieTrack(serie, episode);
 
         // And then we update the history
         return this.#manageSerieHistory(JSON.parse(episode), timestamp);
@@ -76,7 +76,8 @@ class SerieHistoryDAO {
                     INNER JOIN Track ON Episode.id = Track.episode_id
                     INNER JOIN Serie ON Track.serie_id = Serie.id
                     INNER JOIN Extension ON Serie.extension_id = Extension.id
-                    GROUP BY History.id`;
+                    GROUP BY History.id
+                    ORDER BY History.timestamp DESC`;
 
 
         const result = await this.queryExecutor.executeAndFetchAll(query);
