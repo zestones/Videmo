@@ -9,6 +9,7 @@ import VideoPlayer from "../../components/VideoPlayer/VideoPlayer";
 
 // Services
 import HistoryApi from "../../services/api/track/HistoryApi";
+import TrackApi from "../../services/api/track/TrackApi";
 
 // Styles
 import styles from "./History.module.scss";
@@ -17,11 +18,12 @@ import styles from "./History.module.scss";
 function History() {
     // Services initialization
     const [historyApi] = useState(() => new HistoryApi());
+    const [trackApi] = useState(() => new TrackApi());
 
     // State initialization
     const [history, setHistory] = useState([]);
     const [searchValue, setSearchValue] = useState("");
-    const [selectedSerie, setSelectedSerie] = useState(null); // To store the selected serie for display
+    const [selectedEntry, setelectedEntry] = useState(null); // To store the selected entry
 
 
     useEffect(() => {
@@ -31,14 +33,48 @@ function History() {
             .catch((error) => console.log(error));
     }, [historyApi]);
 
+
     // Handle click on serie name to show VideoPlayer
     const handleSerieNameClick = (serie) => {
-        setSelectedSerie(serie);
+        setelectedEntry(serie);
     };
 
     // Handle click on serie image to show SerieDisplay
     const handleSerieImageClick = (serie) => {
-        setSelectedSerie(serie);
+        setelectedEntry(serie);
+    };
+
+    // TODO : define as utils function
+    const constructTitle = (serie) => (serie.basename !== serie.name) ? `${serie.basename} (${serie.name})` : serie.basename;
+
+    const filterHistory = history.filter((entry) => {
+        const serieName = constructTitle(entry.serie);
+        return serieName.toLowerCase().includes(searchValue.toLowerCase());
+    });
+
+    const handleDeleteEpisodeHistory = (episode) => () => {
+        historyApi.deleteEpisodeHistory(episode.id)
+            .then(() => setHistory(history.filter((entry) => entry.episode.id !== episode.id)))
+            .catch((error) => console.log(error));
+    };
+
+    const handleCloseVideoPlayer = (playedTime, episodeFinished) => {
+        setelectedEntry(null);
+        if (episodeFinished) {
+            const updatedEpisode = { ...selectedEntry.episode, viewed: !selectedEntry.serie.currentEpisode.viewed, played_time: 0 };
+            trackApi.addEpisodeToViewed(updatedEpisode, updatedEpisode);
+        }
+
+        const updatedEpisode = { ...selectedEntry.episode, played_time: playedTime };
+        trackApi.updatePlayedTime(selectedEntry.serie, updatedEpisode, new Date().getTime());
+
+        // We create a new an updated history array, with the updated entry at the top of the array
+        const updatedHistory = [
+            { ...selectedEntry, episode: updatedEpisode, history: { ...selectedEntry.history, timestamp: new Date().getTime() } },
+            ...history.filter((entry) => entry.episode.id !== updatedEpisode.id)
+        ];
+
+        setHistory(updatedHistory);
     };
 
 
@@ -67,25 +103,6 @@ function History() {
             });
         }
     };
-
-
-    // TODO : define as utils function
-    const constructTitle = (serie) => (serie.basename !== serie.name) ? `${serie.basename} (${serie.name})` : serie.basename;
-
-    const filterHistory = history.filter((entry) => {
-        const serieName = constructTitle(entry.serie);
-        return serieName.toLowerCase().includes(searchValue.toLowerCase());
-    });
-
-    const handleDeleteEpisodeHistory = (episode) => () => {
-        historyApi.deleteEpisodeHistory(episode.id)
-            .then(() => {
-                // Remove the episode from the history
-                setHistory(history.filter((entry) => entry.episode.id !== episode.id));
-            })
-            .catch((error) => console.log(error));
-    };
-
 
     return (
         <div className={styles.history}>
@@ -124,13 +141,13 @@ function History() {
                 })}
             </div>
 
-            {selectedSerie && (
+            {selectedEntry && (
                 <div>
-                    {/* Render VideoPlayer or SerieDisplay based on the selectedSerie */}
+                    {/* Render VideoPlayer or SerieDisplay based on the selectedEntry */}
                     {/* Pass the necessary props, e.g., link, startTime, onCloseVideoPlayer */}
                     {/* You can also add a close button or handle closing in a similar way */}
-                    <VideoPlayer link={selectedSerie.episode.link} startTime={selectedSerie.episode.played_time} onCloseVideoPlayer={() => setSelectedSerie(null)} />
-                    {/* <SerieDisplay serie={selectedSerie} onCloseSerieDisplay={() => setSelectedSerie(null)} /> */}
+                    <VideoPlayer link={selectedEntry.episode.link} startTime={selectedEntry.episode.played_time} onCloseVideoPlayer={handleCloseVideoPlayer} />
+                    {/* <SerieDisplay serie={selectedEntry} onCloseSerieDisplay={() => setelectedEntry(null)} /> */}
                 </div>
             )}
         </div>
