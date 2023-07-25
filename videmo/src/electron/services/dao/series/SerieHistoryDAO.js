@@ -128,6 +128,11 @@ class SerieHistoryDAO {
         return await this.queryExecutor.executeAndCommit(query, params);
     }
 
+    async deleteAllSerieHistory() {
+        const query = `DELETE FROM History`;
+        return await this.queryExecutor.executeAndCommit(query);
+    }
+
 }
 
 module.exports = SerieHistoryDAO;

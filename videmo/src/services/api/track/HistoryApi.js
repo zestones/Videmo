@@ -15,4 +15,12 @@ export default class HistoryApi {
             window.api.receive("/delete/episode/history", (data) => data.success ? resolve(data.history) : reject(data.error));
         });
     }
+
+    deleteAllHistory = () => {
+        window.api.send("/delete/all/history");
+
+        return new Promise((resolve, reject) => {
+            window.api.receive("/delete/all/history", (data) => data.success ? resolve(data.history) : reject(data.error));
+        });
+    }
 }

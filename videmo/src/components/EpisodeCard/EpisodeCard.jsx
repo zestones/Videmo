@@ -38,6 +38,7 @@ function EpisodeCard({ serie, episode }) {
     const handleViewedClick = () => {
         const updatedEpisode = { ...currentEpisode, viewed: !currentEpisode.viewed, played_time: 0 };
         setCurrentEpisode(updatedEpisode);
+        // TODO : add episode to history
         trackApi.addEpisodeToViewed(serie, updatedEpisode);
     };
 
@@ -50,6 +51,7 @@ function EpisodeCard({ serie, episode }) {
         setCurrentEpisode(updatedEpisode);
     };
 
+    // TODO : move this to utilities class
     const convertPlayedTime = () => {
         const hours = Math.floor(currentEpisode.played_time / 3600);
         const minutes = Math.floor((currentEpisode.played_time - (hours * 3600)) / 60);

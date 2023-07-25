@@ -134,6 +134,7 @@ function History() {
                 title="Historique"
                 onBack={selectedEntry && showSerieDisplay ? handleBackClick : null}
                 onSearch={setSearchValue}
+                onDelete={() => historyApi.deleteAllHistory().then(() => setHistory([]))}
             />
 
             {!showSerieDisplay ? (

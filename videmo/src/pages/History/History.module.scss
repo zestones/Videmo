@@ -79,10 +79,12 @@
                 margin-right: 35px;
                 font-size: 1.9rem;
 
+                color: var(--red-1);
                 transition: all 0.2s ease-in-out;
 
                 &:hover {
                     transform: scale(1.2);
+                    color: var(--red-6);
                 }
 
                 cursor: pointer;

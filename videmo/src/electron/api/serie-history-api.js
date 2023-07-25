@@ -13,11 +13,19 @@ ipcMain.on('/read/all/episode/and/serie/history', async (event) => {
 })
 
 // Delete episode history
-
 ipcMain.on('/delete/episode/history', async (event, episodeId) => {
     new SerieHistoryDAO().deleteSerieHistoryByEpisodeId(episodeId)
         .then((retrievedHistory) => {
             event.reply('/delete/episode/history', { success: true, history: retrievedHistory });
         })
         .catch(error => event.reply('/delete/episode/history', { success: false, error }));
+})
+
+// Delete all history
+ipcMain.on('/delete/all/history', async (event) => {
+    new SerieHistoryDAO().deleteAllSerieHistory()
+        .then((retrievedHistory) => {
+            event.reply('/delete/all/history', { success: true, history: retrievedHistory });
+        })
+        .catch(error => event.reply('/delete/all/history', { success: false, error }));
 })
