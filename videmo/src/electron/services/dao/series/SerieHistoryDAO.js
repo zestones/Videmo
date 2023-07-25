@@ -121,6 +121,13 @@ class SerieHistoryDAO {
         });
     }
 
+    async deleteSerieHistoryByEpisodeId(episodeId) {
+        const query = `DELETE FROM History WHERE episode_id = ?`;
+        const params = [episodeId];
+
+        return await this.queryExecutor.executeAndCommit(query, params);
+    }
+
 }
 
 module.exports = SerieHistoryDAO;

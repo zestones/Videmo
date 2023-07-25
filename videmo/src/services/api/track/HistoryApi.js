@@ -8,4 +8,11 @@ export default class HistoryApi {
         });
     }  
 
+    deleteEpisodeHistory = (episodeId) => {
+        window.api.send("/delete/episode/history", episodeId);
+
+        return new Promise((resolve, reject) => {
+            window.api.receive("/delete/episode/history", (data) => data.success ? resolve(data.history) : reject(data.error));
+        });
+    }
 }

@@ -27,14 +27,8 @@ function History() {
     useEffect(() => {
         // Fetch the history
         historyApi.retrieveAllEpisodeAndSerieHistory()
-            .then((data) => {
-                setHistory(data);
-                console.log(data);
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-
+            .then((data) => setHistory(data))
+            .catch((error) => console.log(error));
     }, [historyApi]);
 
     // Handle click on serie name to show VideoPlayer
@@ -83,6 +77,15 @@ function History() {
         return serieName.toLowerCase().includes(searchValue.toLowerCase());
     });
 
+    const handleDeleteEpisodeHistory = (episode) => () => {
+        historyApi.deleteEpisodeHistory(episode.id)
+            .then(() => {
+                // Remove the episode from the history
+                setHistory(history.filter((entry) => entry.episode.id !== episode.id));
+            })
+            .catch((error) => console.log(error));
+    };
+
 
     return (
         <div className={styles.history}>
@@ -114,7 +117,7 @@ function History() {
                                     </h2>
                                     <p className={styles.episodeName}> {entry.episode.name} </p>
                                 </div>
-                                <DeleteOutlineIcon className={styles.deleteIcon} />
+                                <DeleteOutlineIcon className={styles.deleteIcon} onClick={handleDeleteEpisodeHistory(entry.episode)} />
                             </div>
                         </>
                     );
