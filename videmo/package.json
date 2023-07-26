@@ -42,7 +42,17 @@
     ],
     "extraResources": [
       "public/videmo.db"
-    ]
+    ],
+    "productName": "Videmo",
+    "win": {
+      "target": "nsis"
+    },
+    "nsis": {
+      "perMachine": true,
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true
+    }
   },
   "eslintConfig": {
     "extends": [
