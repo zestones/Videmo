@@ -12,10 +12,9 @@ class FolderManager {
     getCoverImagePath(folderPath, coverFolder, level) {
         const pathArray = folderPath.split(path.sep);
         const slicedPathArray = pathArray.slice(0, pathArray.length - level);
-
-        const coverFolderPath = path.join(...slicedPathArray, coverFolder);
+        const coverFolderPath = slicedPathArray.join(path.sep) + path.sep + coverFolder; // Join the elements back with path.sep
         const folderName = path.basename(folderPath);
-        const coverImagePath = path.join(coverFolderPath, folderName);
+        let coverImagePath = path.join(coverFolderPath, folderName);
 
         const supportedExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp', '.tiff', '.tif', '.jfif', '.jpe'];
 
@@ -35,10 +34,10 @@ class FolderManager {
      */
     getDefaultCoverImage() {
         if (process.env.NODE_ENV === 'development') {
-            return path.join(__dirname, '..', '..', '..', 'public', 'images', 'default_cover.jpeg');
+            return path.join(__dirname, '..', '..', '..', '..', 'public', 'images', 'default_cover.jpeg');
         }
 
-        return path.join(__dirname, '..', '..', '..', '..', '..', 'build', 'public', 'images', 'default_cover.jpeg');
+        return path.join(__dirname, '..', '..', '..', '..', 'build', 'public', 'images', 'default_cover.jpeg');
     }
 
     /**
