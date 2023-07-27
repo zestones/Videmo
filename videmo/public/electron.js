@@ -25,7 +25,7 @@ function createWindow() {
         height: 800,
         // frame: false, // Hide the default window frame
         webPreferences: {
-            preload: path.join(__dirname, 'preload.js'), // use a preload script
+            preload: path.join(__dirname, '..', 'src', 'electron', 'preload.js'), // use a preload script
             nodeIntegration: false,
             contextIsolation: true
         }
@@ -34,11 +34,16 @@ function createWindow() {
     // Remove the default menu
     Menu.setApplicationMenu(null);
 
-    // and load the index.html of the app.
-    mainWindow.loadURL('http://localhost:3000');
+    if (process.env.NODE_ENV === 'development') {
+        // Open the DevTools.
+        mainWindow.webContents.openDevTools();
 
-    // Open the DevTools.
-    mainWindow.webContents.openDevTools();
+        // and load the index.html of the app.
+        mainWindow.loadURL('http://localhost:3000');
+    } else {
+        // and load the index.html of the app.
+        mainWindow.loadFile(path.join(__dirname, '..', 'build', 'index.html'));
+    }
 
     // Emitted when the window is closed.
     mainWindow.on('closed', function () {
@@ -51,7 +56,7 @@ function createWindow() {
     // Init the database and create the tables if they don't exist
     // The tables are created using the tables.sql file from the sqlite/sql folder
     // The database file is located inside the sqlite/sql folder
-    const SQLiteQueryExecutor = require('./services/sqlite/SQLiteQueryExecutor');
+    const SQLiteQueryExecutor = require(path.resolve(__dirname, '..', 'src', 'electron', 'services', 'sqlite', 'SQLiteQueryExecutor.js'))
 
     const sqliteQueryExecutor = new SQLiteQueryExecutor();
     sqliteQueryExecutor.initializeDatabase();
@@ -93,15 +98,17 @@ app.whenReady().then(() => {
 // Import the IPC main event handlers for the renderer process (see preload.js)
 // handle the queries to the database using SQLite and the QueryExecutor class from the sqlite folder
 // handle the API requests using the API classes from the api folder
-require('./api/serie-category-api');
-require('./api/extension-api');
-require('./api/category-api');
-require('./api/serie-api');
+require(path.resolve(__dirname, '..', 'src', 'electron', 'api', 'serie-category-api'));
+require(path.resolve(__dirname, '..', 'src', 'electron', 'api', 'extension-api'));
+require(path.resolve(__dirname, '..', 'src', 'electron', 'api', 'category-api'));
+require(path.resolve(__dirname, '..', 'src', 'electron', 'api', 'serie-api'));
+require(path.resolve(__dirname, '..', 'src', 'electron', 'api', 'track-serie-api'));
+require(path.resolve(__dirname, '..', 'src', 'electron', 'api', 'serie-history-api'));
 
 // handle local file system requests using the endpoint defined inside the local-file-service file from the sources/local folder
 // The local-file-service file is responsible for reading the local file system and returning the data to the renderer process
 // The local-file-service file uses the FolderManager class from the utilites folder to read the local file system
-require('./services/sources/local/local-file-service');
+require(path.resolve(__dirname, '..', 'src', 'electron', 'services', 'sources', 'local', 'local-file-service'));
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.

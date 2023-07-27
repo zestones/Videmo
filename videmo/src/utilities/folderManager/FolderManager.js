@@ -160,7 +160,7 @@ class FolderManager {
         return contents.map((folderContent) => {
             folderContent.basename = basename;
             folderContent.name = this.retrieveBaseName(folderContent.link);
-            folderContent.inLibrary = series.some((serie) => serie.link === folderContent.link);
+            folderContent.inLibrary = series.some((serie) => serie.link === folderContent.link && serie.inLibrary);
             folderContent.extension_id = extension.id;
             return folderContent;
         });
@@ -176,7 +176,7 @@ class FolderManager {
         return contents.map((folderContent) => {
             folderContent.basename = this.retrieveBaseName(folderContent.link);
             folderContent.name = folderContent.basename;
-            folderContent.inLibrary = series.some((serie) => serie.link === folderContent.link);
+            folderContent.inLibrary = series.some((serie) => serie.link === folderContent.link && serie.inLibrary);
             folderContent.extension_id = extension.id;
             return folderContent;
         });

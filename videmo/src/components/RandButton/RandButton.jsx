@@ -4,15 +4,14 @@ import React from "react";
 import styles from "./RandButton.module.scss";
 
 // External
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faRandom } from "@fortawesome/free-solid-svg-icons";
+import ShuffleIcon from '@mui/icons-material/Shuffle';
 
 
 function RandButton({ onClick }) {
 
     return (
         <button className={styles.randButton} onClick={onClick}>
-            <FontAwesomeIcon icon={faRandom} />
+            <ShuffleIcon className={styles.randButtonIcon} />
         </button>
     );
 }

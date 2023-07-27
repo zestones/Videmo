@@ -1,7 +1,6 @@
 const QueryExecutor = require('../../sqlite/QueryExecutor');
 const DataTypesConverter = require('../../../utilities/converter/DataTypesConverter.js');
 
-
 class SerieDAO {
     constructor() {
         this.queryExecutor = new QueryExecutor();
@@ -9,9 +8,8 @@ class SerieDAO {
     }
 
     async createSerie(serie) {
-        // TODO : insert serie genres
-        const sql = `INSERT INTO Serie (basename, name, description, image, link, extension_id) VALUES (?, ?, ?, ?, ?, ?)`;
-        const params = [serie.basename, serie.name, serie.description, serie.image, serie.link, serie.extension_id];
+        const sql = `INSERT INTO Serie (basename, name, description, image, link, extension_id, inLibrary) VALUES (?, ?, ?, ?, ?, ?, ?)`;
+        const params = [serie.basename, serie.name, serie.description, serie.image, serie.link, serie.extension_id, serie.inLibrary];
         await this.queryExecutor.executeAndCommit(sql, params);
     }
 
@@ -32,6 +30,12 @@ class SerieDAO {
         const sql = `SELECT * FROM Serie WHERE link = ?`;
         const params = [serieObject.link];
         return await this.queryExecutor.executeAndFetchOne(sql, params);
+    }
+
+    async updateSerieInLibrary(serieId, inLibrary) {
+        const sql = `UPDATE Serie SET inLibrary = ? WHERE id = ?`;
+        const params = [inLibrary, serieId];
+        await this.queryExecutor.executeAndCommit(sql, params);
     }
 
     async getSeriesByCategoryId(categoryId) {

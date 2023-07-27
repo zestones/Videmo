@@ -13,6 +13,16 @@
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
     transition: all 0.3s ease-in-out;
 
+    &.viewed {
+        background-color: rgb(0, 0, 0, 0.3);
+        box-shadow: none;
+        color: var(--gray-7);
+    }
+
+    &.bookmarked {
+        box-shadow: 0 0 6px var(--light-blue-6);
+    }
+
 
     &:first-child {
         margin-top: 3rem;
@@ -21,6 +31,7 @@
     .cardContent {
         display: flex;
         max-height: 100%;
+        padding: 9px 0;
 
         .cardInfo {
             display: flex;
@@ -40,10 +51,23 @@
                 white-space: nowrap;
             }
 
-            .cardModifiedTime {
-                font-size: 0.8rem;
-                color: #777;
-                margin-left: 1rem;
+            .cardDescriptionContainer {
+                display: flex;
+                justify-content: left;
+                align-items: flex-end;
+                padding: 5px;
+
+                .cardModifiedTime {
+                    font-size: 0.8rem;
+                    margin-bottom: 0;
+                    margin-right: 0.5rem;
+                }
+
+                .cardPlayedTime {
+                    color: var(--gray-7);
+                    font-size: 0.9rem;
+                    margin-bottom: 0;
+                }
             }
         }
 
@@ -59,13 +83,16 @@
                 cursor: pointer;
                 margin-left: 1rem;
                 transition: all 0.3s ease-in-out;
+                font-size: 1.3rem;
 
                 &:hover {
-                    transform: scale(1.1);
+                    transform: scale(1.2);
                 }
+            }
+
+            .bookmarked {
+                color: var(--light-blue-6);
             }
         }
     }
-
-
 }

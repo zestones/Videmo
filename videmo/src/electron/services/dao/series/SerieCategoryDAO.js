@@ -55,6 +55,7 @@ class SerieCategoryDAO {
     async updateSerieCategory(serieId, categoriesId) {
         // Clear existing categories for the series in the SerieCategory table
         await this.deleteSerieCategoryBySerieId(serieId);
+        await this.serieDAO.updateSerieInLibrary(serieId, 1);
 
         // Insert new categories for the series in the SerieCategory table
         for (const categoryId of categoriesId) {
@@ -70,7 +71,7 @@ class SerieCategoryDAO {
 
     async #createSerieAndCategory(serieParsedObject, categoriesId) {
         // Create the serie
-        await this.serieDAO.createSerie(serieParsedObject);
+        await this.serieDAO.createSerie({ ...serieParsedObject, inLibrary: 1 });
 
         // Retrieve the inserted serie (we need the id)
         const insertedSerie = await this.serieDAO.getSerieByBasenameAndNameAndLink(serieParsedObject);
@@ -86,9 +87,9 @@ class SerieCategoryDAO {
         // Retrieve the serie
         const retrievedSerie = await this.serieDAO.getSerieByBasenameAndNameAndLink(serieParsedObject);
 
-        // Check if the series already exists in the Serie table
+        // Check if the does not exist in the Serie table
         if (retrievedSerie === undefined) {
-            // Create the serie and update the SerieCategory table with the attached categories
+            // We create the serie and update the SerieCategory table with the attached categories
             await this.#createSerieAndCategory(serieParsedObject, categoriesId);
         } else {
             const serieId = retrievedSerie.id; // Use the retrievedSerie.id instead of making another query

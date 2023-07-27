@@ -1,10 +1,39 @@
+const { app } = require('electron');
 const sqlite3 = require('sqlite3');
 const path = require('path');
 const fs = require('fs');
 
 class SQLiteQueryExecutor {
     constructor() {
-        this.database = path.join(__dirname, 'sql', 'videmo.db');
+        this.database = this.#retrieveDatabasePath();
+        this.#createProductionDatabase();
+    }
+    /**
+     * Retrieves the path to the SQLite database file depending on the environment. (development or production)
+     * @returns {string} The path to the SQLite database file.
+     */
+    #retrieveDatabasePath() {
+        if (process.env.NODE_ENV === 'development') {
+            return path.join(__dirname, 'sql', 'videmo.db');
+        }
+
+        let appPath = app.getAppPath();
+        if (app.isPackaged) {
+            appPath = appPath.replace('\\app.asar', '');
+        }
+        return path.join(appPath, 'public/videmo.db');
+    }
+
+    /**
+     * TODO - Remove this method when the application is ready for production.
+     * Creates the production database if it doesn't exist.
+     */
+    async #createProductionDatabase() {
+        this.production_database = path.join(__dirname, '..', '..', '..', '..', 'public', 'videmo.db');
+        if (!fs.existsSync(this.production_database)) {
+            await this.#createDatabase(this.production_database);
+            await this.#fillDatabase(this.production_database);
+        }
     }
 
     /**
@@ -21,7 +50,6 @@ class SQLiteQueryExecutor {
 
         this.db = new sqlite3.Database(this.database);
     }
-
 
     /**
      * Creates the database by executing the SQL statements from the tables.sql file.

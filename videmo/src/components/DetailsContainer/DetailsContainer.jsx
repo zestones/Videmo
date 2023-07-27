@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 
 // External
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHeart, faStar, faCalendar, faClock } from '@fortawesome/free-solid-svg-icons';
-
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import StarIcon from '@mui/icons-material/Star';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import WatchLaterIcon from '@mui/icons-material/WatchLater';
 // Api 
 import SerieApi from '../../services/api/serie/SerieApi';
 
@@ -18,19 +19,19 @@ const DetailsContainer = ({ serie }) => {
 	// State initialization
 	const [showModal, setShowModal] = useState(false);
 	const [alreadyInLibrary, setAlreadyInLibrary] = useState(false);
-	
+
 	// Api initialization
 	const [serieApi] = useState(() => new SerieApi());
 
 	const details = [
-		{ icon: <FontAwesomeIcon icon={faStar} mask={['far', 'circle']} size="xs" />, label: serie.rating },
-		{ icon: <FontAwesomeIcon icon={faCalendar} mask={['far', 'circle']} size="xs" />, label: serie.startDate },
-		{ icon: <FontAwesomeIcon icon={faClock} mask={['far', 'circle']} size="xs" />, label: serie.duration },
+		{ icon: <StarIcon />, label: serie.rating },
+		{ icon: <CalendarTodayIcon />, label: serie.startDate },
+		{ icon: <WatchLaterIcon />, label: serie.duration },
 	];
 
 	useEffect(() => {
 		serieApi.readSerieBySerieObject(serie)
-			.then((serie) => setAlreadyInLibrary(serie ? true : false))
+			.then((serie) => setAlreadyInLibrary(serie?.inLibrary ? true : false))
 			.catch((error) => console.error(error));
 	}, [serieApi, serie]);
 
@@ -46,7 +47,7 @@ const DetailsContainer = ({ serie }) => {
 				<img className={styles.serieImage} src={serie.image} alt="Serie" />
 				<div className={styles.serieFavoriteContainer}>
 					<span className={styles.serieFavoriteIcon} onClick={() => setShowModal(true)}>
-						<FontAwesomeIcon className={`${styles.serieFavorite} ${alreadyInLibrary ? styles.active : ''}`} icon={faHeart} />
+						<FavoriteIcon className={`${styles.serieFavorite} ${alreadyInLibrary ? styles.active : ''}`} />
 					</span>
 					<p className={styles.serieFavoriteLabel}>Ajouter à ma liste</p>
 				</div>

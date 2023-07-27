@@ -1,5 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
+
+// External
+import SearchIcon from '@mui/icons-material/Search';
+
+// Styles
 import styles from "./SearchBar.module.scss";
+
 
 function SearchBar({ onSearch }) {
     const [isSearchActive, setIsSearchActive] = useState(false);
@@ -40,12 +46,7 @@ function SearchBar({ onSearch }) {
                     onBlur={handleSearchInputBlur}
                 />
             )}
-            <img
-                className={styles.searchIcon}
-                src="/icons/search.png"
-                alt="search"
-                onClick={handleSearchIconClick}
-            />
+            <SearchIcon className={styles.searchIcon} onClick={handleSearchIconClick} />
         </div>
     );
 }

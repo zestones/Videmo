@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
 
+// External
+import ControlPointIcon from '@mui/icons-material/ControlPoint';
+import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
+
 // Components
 import CategoryModal from '../CategoryModal/CategoryModal';
 
@@ -26,9 +30,9 @@ function Card({ key, details, onPlayClick, onMoreClick, displayLabel }) {
                 <p className={styles.cardTitle}>{title}</p>
                 <div className={`${styles.cardLayer} ${isHovered && styles.hovered}`}>
                     <div className={styles.cardLayerContent}>
-                        <img className={styles.cardLayerImage} src="/icons/cards/more.png" alt="More" onClick={() => setShowCategoryModal(true)} />
+                        <ControlPointIcon className={styles.cardLayerImage} onClick={() => setShowCategoryModal(true)} />
                         <hr className={styles.separator} />
-                        <img className={styles.cardLayerImage} src="/icons/cards/play.png" alt="Play" onClick={() => onPlayClick(details)} />
+                        <PlayCircleOutlineIcon className={styles.cardLayerImage} onClick={() => onPlayClick(details)} />
                     </div>
                 </div>
             </li>

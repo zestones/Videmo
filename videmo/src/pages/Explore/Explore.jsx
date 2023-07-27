@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import FolderManager from "../../utilities/folderManager/FolderManager";
 import CategoryApi from "../../services/api/category/CategoryApi";
 import AniList from "../../services/aniList/aniList";
+import TrackApi from "../../services/api/track/TrackApi";
 
 // Pages
 import Source from "./Source/Source";
@@ -23,7 +24,7 @@ function Explore() {
     // Utilities and services initialization
     const [folderManager] = useState(() => new FolderManager());
     const [categoryApi] = useState(() => new CategoryApi());
-
+    const [trackApi] = useState(() => new TrackApi());
     const [aniList] = useState(() => new AniList());
 
     const retrieveSeriesInLibraryByExtension = useCallback((contents) => {
@@ -100,7 +101,8 @@ function Explore() {
             const data = await folderManager.retrieveFolderContents(link, level);
             if (data.contents.length === 0) {
                 const data = await folderManager.retrieveFilesInFolder(link);
-                setEpisodes(data);
+                const retrievedEpisodes = await trackApi.readAllEpisodesBySerieLink(link);
+                setEpisodes(trackApi.mapSerieEpisodeWithDatabaseEpisode(data, retrievedEpisodes));
                 setFolderContents([]);
             } else {
                 const series = await categoryApi.readAllSeriesInLibraryByExtension(selectedExtension);

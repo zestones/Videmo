@@ -12,10 +12,9 @@ class FolderManager {
     getCoverImagePath(folderPath, coverFolder, level) {
         const pathArray = folderPath.split(path.sep);
         const slicedPathArray = pathArray.slice(0, pathArray.length - level);
-
-        const coverFolderPath = path.join(...slicedPathArray, coverFolder);
+        const coverFolderPath = slicedPathArray.join(path.sep) + path.sep + coverFolder; // Join the elements back with path.sep
         const folderName = path.basename(folderPath);
-        const coverImagePath = path.join(coverFolderPath, folderName);
+        let coverImagePath = path.join(coverFolderPath, folderName);
 
         const supportedExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp', '.tiff', '.tif', '.jfif', '.jpe'];
 
@@ -34,7 +33,11 @@ class FolderManager {
      * @returns {String} The path of default cover image.
      */
     getDefaultCoverImage() {
-        return path.join(__dirname, '..', '..', '..', '..', 'public', 'images', 'default_cover.jpeg');
+        if (process.env.NODE_ENV === 'development') {
+            return path.join(__dirname, '..', '..', '..', '..', 'public', 'images', 'default_cover.jpeg');
+        }
+
+        return path.join(__dirname, '..', '..', '..', '..', 'build', 'public', 'images', 'default_cover.jpeg');
     }
 
     /**
@@ -99,10 +102,8 @@ class FolderManager {
         const year = time.getFullYear();
         const month = String(time.getMonth() + 1).padStart(2, '0');
         const day = String(time.getDate()).padStart(2, '0');
-        const hours = String(time.getHours()).padStart(2, '0');
-        const minutes = String(time.getMinutes()).padStart(2, '0');
 
-        return `${year}/${month}/${day} - ${hours}h${minutes}`;
+        return `${day}/${month}/${year}`;
     }
 }
 

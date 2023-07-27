@@ -80,7 +80,9 @@ export default class AniList {
     #formatDuration(duration) {
         const hours = Math.floor(duration / 60);
         const minutes = duration % 60;
-        return `${hours}h ${minutes}min`;
+        const seconds = duration % 1;
+        
+        return `${hours ? hours + "h" : ""} ${minutes ? minutes + "min" : ""} ${seconds ? seconds + "s" : ""}`;
     }
 
     /**

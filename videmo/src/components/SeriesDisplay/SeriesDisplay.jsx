@@ -9,6 +9,7 @@ import EpisodeCard from "../EpisodeCard/EpisodeCard";
 import styles from "./SeriesDisplay.module.scss";
 
 function SeriesDisplay({ serie, folderContents, episodes, onPlayClick, onRefresh, calledFromExplore }) {
+
     return (
         <div className={styles.sourceContent}>
             {serie && (
@@ -26,11 +27,7 @@ function SeriesDisplay({ serie, folderContents, episodes, onPlayClick, onRefresh
             ))}
             <div className={styles.episodesContainer}>
                 {episodes.map((episode) => (
-                    <EpisodeCard
-                        title={episode.name}
-                        link={episode.path}
-                        modifiedTime={episode.modifiedTime}
-                    />
+                    <EpisodeCard serie={serie} episode={episode} />
                 ))}
             </div>
         </div>

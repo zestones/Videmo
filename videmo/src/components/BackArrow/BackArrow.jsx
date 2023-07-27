@@ -1,6 +1,7 @@
 import React from "react";
 
-// Components
+// External
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 // Styles
 import styles from "./BackArrow.module.scss";
@@ -9,11 +10,7 @@ function BackArrow({ handleClick }) {
 
     return (
         <div className={styles.backArrow} onClick={handleClick}>
-            <img
-                className={styles.backArrowIcon}
-                src="/icons/header/left-arrow.png"
-                alt="Back arrow"
-            />
+            <ArrowBackIcon className={styles.backArrowIcon} />
         </div>
     );
 }
