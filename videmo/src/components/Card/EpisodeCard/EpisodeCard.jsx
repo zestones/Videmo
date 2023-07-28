@@ -8,13 +8,13 @@ import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 
 // Utilities
-import FolderManager from "../../utilities/folderManager/FolderManager";
+import FolderManager from "../../../utilities/folderManager/FolderManager";
 
 // Services
-import TrackApi from "../../services/api/track/TrackApi";
+import TrackApi from "../../../services/api/track/TrackApi";
 
 // Components
-import VideoPlayer from "../VideoPlayer/VideoPlayer";
+import VideoPlayer from "../../VideoPlayer/VideoPlayer";
 
 // Styles
 import styles from "./EpisodeCard.module.scss";
@@ -38,7 +38,6 @@ function EpisodeCard({ serie, episode }) {
     const handleViewedClick = () => {
         const updatedEpisode = { ...currentEpisode, viewed: !currentEpisode.viewed, played_time: 0 };
         setCurrentEpisode(updatedEpisode);
-        // TODO : add episode to history
         trackApi.addEpisodeToViewed(serie, updatedEpisode);
     };
 

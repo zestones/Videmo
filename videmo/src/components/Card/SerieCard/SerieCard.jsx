@@ -4,30 +4,31 @@ import React, { useState } from 'react';
 import ControlPointIcon from '@mui/icons-material/ControlPoint';
 import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
 
+// Services
+import Utils from '../../../utilities/utils/Utils';
+
 // Components
-import CategoryModal from '../CategoryModal/CategoryModal';
+import CategoryModal from '../../CategoryModal/CategoryModal';
 
 // Styles
-import styles from './Card.module.scss';
+import styles from './SerieCard.module.scss';
 
-function Card({ key, details, onPlayClick, onMoreClick, displayLabel }) {
+function Card({ details, onPlayClick, onMoreClick, displayLabel }) {
     // State initialization
     const [isHovered, setIsHovered] = useState(false);
     const [showCategoryModal, setShowCategoryModal] = useState(false);
-
-    const title = (details.basename !== details.name && !displayLabel && details.inLibrary) ? `${details.basename} (${details.name})` : details.name;
+    const [utils] = useState(() => new Utils());
 
     return (
         <>
             <li
-                key={key}
                 className={styles.card}
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
             >
                 <img className={styles.cardImage} src={details.image} alt={details.name} />
                 {(displayLabel && details.inLibrary) && <span className={styles.inLibraryLabel}>In Library</span>}
-                <p className={styles.cardTitle}>{title}</p>
+                <p className={styles.cardTitle}>{utils.constructTitle(details)}</p>
                 <div className={`${styles.cardLayer} ${isHovered && styles.hovered}`}>
                     <div className={styles.cardLayerContent}>
                         <ControlPointIcon className={styles.cardLayerImage} onClick={() => setShowCategoryModal(true)} />

@@ -25,6 +25,7 @@ function Navigation({ navItems, activePage, onPageChange }) {
                 <ul className={styles.navList}>
                     {Object.keys(navItems).map((key) => (
                         <NavItem
+                            key={key}
                             entry={key}
                             item={navItems[key]}
                             activeItem={activePage}

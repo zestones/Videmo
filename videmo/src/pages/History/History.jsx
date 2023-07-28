@@ -1,17 +1,16 @@
 import React, { useState, useEffect } from "react";
 
-// External
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-
 // Components
 import Header from "../../components/Header/Header";
 import VideoPlayer from "../../components/VideoPlayer/VideoPlayer";
 import SerieDisplay from "../../components/SeriesDisplay/SeriesDisplay";
+import HistoryCard from "../../components/Card/HistoryCard/HistoryCard";
 
 // Services
 import HistoryApi from "../../services/api/track/HistoryApi";
 import TrackApi from "../../services/api/track/TrackApi";
 import FolderManager from "../../utilities/folderManager/FolderManager";
+import Utils from "../../utilities/utils/Utils";
 
 // Styles
 import styles from "./History.module.scss";
@@ -22,6 +21,7 @@ function History() {
     const [historyApi] = useState(() => new HistoryApi());
     const [trackApi] = useState(() => new TrackApi());
     const [folderManager] = useState(() => new FolderManager());
+    const [utils] = useState(() => new Utils());
 
     // State initialization
     const [history, setHistory] = useState([]);
@@ -60,15 +60,12 @@ function History() {
         }
     };
 
-    // TODO : define as utils function
-    const constructTitle = (serie) => (serie.basename !== serie.name) ? `${serie.basename} (${serie.name})` : serie.basename;
-
     const filterHistory = history.filter((entry) => {
-        const serieName = constructTitle(entry.serie);
+        const serieName = utils.constructTitle(entry.serie);
         return serieName.toLowerCase().includes(searchValue.toLowerCase());
     });
 
-    const handleDeleteEpisodeHistory = (episode) => () => {
+    const handleDeleteEpisodeHistory = (episode) => {
         historyApi.deleteEpisodeHistory(episode.id)
             .then(() => setHistory(history.filter((entry) => entry.episode.id !== episode.id)))
             .catch((error) => console.log(error));
@@ -95,33 +92,6 @@ function History() {
         setHistory(updatedHistory);
     };
 
-
-    // TODO : move the helper function to process the date label inside a utils file
-    const getDateLabel = (timestamp) => {
-        const now = new Date();
-        const entryDate = new Date(timestamp);
-
-        if (
-            entryDate.getDate() === now.getDate() &&
-            entryDate.getMonth() === now.getMonth() &&
-            entryDate.getFullYear() === now.getFullYear()
-        ) {
-            return 'Aujourd\'hui';
-        } else if (
-            entryDate.getDate() === now.getDate() - 1 &&
-            entryDate.getMonth() === now.getMonth() &&
-            entryDate.getFullYear() === now.getFullYear()
-        ) {
-            return 'Hier';
-        } else {
-            return entryDate.toLocaleDateString('fr-FR', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-            });
-        }
-    };
-
     const handleBackClick = () => {
         setShowSerieDisplay(false);
         setelectedEntry(null);
@@ -141,30 +111,22 @@ function History() {
                 <>
                     <div className={styles.content}>
                         {filterHistory.map((entry, index) => {
-                            const currentDateLabel = getDateLabel(entry.history.timestamp);
+                            const currentDateLabel = utils.getDateFromTimestamp(entry.history.timestamp);
                             const prevEntry = index > 0 ? filterHistory[index - 1] : null;
-                            const prevDateLabel = prevEntry ? getDateLabel(prevEntry.history.timestamp) : null;
+                            const prevDateLabel = prevEntry ? utils.getDateFromTimestamp(prevEntry.history.timestamp) : null;
                             const isNewDateLabel = currentDateLabel !== prevDateLabel;
 
                             return (
-                                <>
-                                    {isNewDateLabel && <p className={styles.dateLabel}>{currentDateLabel}</p>}
-                                    <div className={styles.historyCard} key={entry.episode.id}>
-                                        <img
-                                            className={styles.cover}
-                                            src={entry.serie.image}
-                                            alt={entry.serie.name}
-                                            onClick={() => handleSerieImageClick(entry)}
-                                        />
-                                        <div className={styles.info}>
-                                            <h2 className={styles.title} onClick={() => handleSerieNameClick(entry)}>
-                                                {constructTitle(entry.serie)}
-                                            </h2>
-                                            <p className={styles.episodeName}> {entry.episode.name} </p>
-                                        </div>
-                                        <DeleteOutlineIcon className={styles.deleteIcon} onClick={handleDeleteEpisodeHistory(entry.episode)} />
-                                    </div>
-                                </>
+                                <HistoryCard
+                                    key={entry.episode.id}
+                                    entry={entry}
+                                    isNewDateLabel={isNewDateLabel}
+                                    currentDateLabel={currentDateLabel}
+                                    handleSerieImageClick={handleSerieImageClick}
+                                    handleSerieNameClick={handleSerieNameClick}
+                                    handleDeleteEpisodeHistory={handleDeleteEpisodeHistory}
+                                    serieTime={utils.getTimeFromTimestamp(entry.history.timestamp)}
+                                />
                             );
                         })}
                     </div>

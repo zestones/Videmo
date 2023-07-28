@@ -2,8 +2,8 @@ import React from "react";
 
 // Components
 import DetailsContainer from "../DetailsContainer/DetailsContainer";
-import Card from "../Card/Card";
-import EpisodeCard from "../EpisodeCard/EpisodeCard";
+import SerieCard from "../Card/SerieCard/SerieCard";
+import EpisodeCard from "../Card/EpisodeCard/EpisodeCard";
 
 // Styles
 import styles from "./SeriesDisplay.module.scss";
@@ -17,8 +17,8 @@ function SeriesDisplay({ serie, folderContents, episodes, onPlayClick, onRefresh
             )}
 
             {folderContents.map((folderContent) => (
-                <Card
-                    key={folderContent.path}
+                <SerieCard
+                    key={folderContent.link}
                     details={folderContent}
                     onPlayClick={onPlayClick}
                     onMoreClick={onRefresh}
@@ -27,7 +27,7 @@ function SeriesDisplay({ serie, folderContents, episodes, onPlayClick, onRefresh
             ))}
             <div className={styles.episodesContainer}>
                 {episodes.map((episode) => (
-                    <EpisodeCard serie={serie} episode={episode} />
+                    <EpisodeCard key={episode.link} serie={serie} episode={episode} />
                 ))}
             </div>
         </div>
