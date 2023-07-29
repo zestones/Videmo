@@ -27,7 +27,7 @@ jobs:
         uses: samuelmeuli/action-electron-builder@v1
         with:
           github_token: ${{ secrets.GH_TOKEN }}
-          release: true # Set to true to create a draft release
+          release: always # Set to "always" to create a release on every push
           package_root: ./videmo # Specify the correct directory where package.json is located
           build_script_name: build # Set to the npm script that builds your app
           skip_build: false # Set to true if you don't want to rebuild the app before creating a release
