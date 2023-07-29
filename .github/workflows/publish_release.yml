@@ -20,16 +20,19 @@ jobs:
         with:
           node-version: "18"
 
+      - name: Enable Multiarch and Install Wine
+        run: |
+          sudo dpkg --add-architecture i386
+          sudo apt-get update
+          sudo apt-get install -y wine32
+
       - name: Install dependencies
         run: npm install
 
-      - name: Install Wine
-        run: sudo apt-get update && sudo apt-get install -y wine
-
       - name: Build application
-        run: npm run build
+        run: npm run react-build
 
       - name: Publish Release
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
-        run: npm run publish
+        run: wine32 npm run electron-builder --win --x64 --publish always
