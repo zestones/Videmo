@@ -39,7 +39,8 @@
       {
         "provider": "github",
         "owner": "zestones",
-        "repo": "videmo"
+        "repo": "videmo",
+        "token": "${GITHUB_TOKEN}"
       }
     ],
     "files": [
