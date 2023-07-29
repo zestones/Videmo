@@ -35,11 +35,12 @@
     "publish": "electron-builder --win --x64 --publish always"
   },
   "build": {
-    "publish": [{
+    "publish": {
       "provider": "github",
       "owner": "zestones",
-      "repo": "videmo"
-    }],
+      "repo": "videmo",
+      "releaseType": "release"
+    },
     "files": [
       "public/",
       "dist/",
