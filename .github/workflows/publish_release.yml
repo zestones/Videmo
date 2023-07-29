@@ -20,13 +20,22 @@ jobs:
         with:
           node-version: "18"
 
+      - name: Install wine, xvfb, and other dependencies
+        run: |
+          sudo dpkg --add-architecture i386
+          sudo apt-get update
+          sudo apt-get install -y wine xvfb
+
       - name: Install dependencies
         run: npm install
 
       - name: Build application
         run: npm run react-build
 
+      - name: Start xvfb (virtual display)
+        run: Xvfb :99 -screen 0 1024x768x24 >/dev/null 2>&1 &
+
       - name: Publish Release
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
-        run: npm run publish
+        run: npm run electron-builder --win --x64 --publish always
