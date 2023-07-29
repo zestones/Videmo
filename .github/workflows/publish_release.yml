@@ -8,21 +8,9 @@ on:
     branches:
       - 20-github-action-workflow # TODO: Change this to main
 
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
-
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  release:
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      matrix:
-        os: [windows-latest] # could add linux and macos here
-
-    defaults:
-      run:
-        working-directory: ./videmo
+  build-and-publish:
+    runs-on: windows-latest
 
     steps:
       - name: Checkout repository
@@ -31,17 +19,17 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: "18"
+          node-version: '18'
 
-      - name: Build/release Electron app
-        uses: samuelmeuli/action-electron-builder@v1
-        with:
-          package_root: ./videmo # Specify the correct directory where package.json is located
-          # GitHub token, automatically provided to the action
-          # (No need to define this secret in the repo settings)
-          github_token: ${{ secrets.github_token }}
-          args: "-p always"
+      - name: Install dependencies
+        run: npm install
 
-          # If the commit is tagged with a version (e.g. "v1.0.0"),
-          # release the app after building
-          release: ${{ startsWith(github.ref, 'refs/tags/v') }}
+      - name: Build app
+        run: npm run build
+
+      - name: Publish app
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          npm install electron-builder -g
+          electron-builder --win --x64
