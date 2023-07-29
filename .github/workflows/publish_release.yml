@@ -27,9 +27,12 @@ jobs:
         run: npm run react-build
 
       - name: Build/release Electron app
-        working-directory: ./videmo  # Set the working directory to the "videmo" subdirectory
         uses: samuelmeuli/action-electron-builder@v1
         with:
-          # GitHub token, automatically provided to the action
-          # (No need to define this secret in the repo settings)
           github_token: ${{ secrets.GH_TOKEN }}
+          release: false
+          package_root: ./videmo # Specify the correct directory where package.json is located
+          build_script_name: build
+          skip_build: false
+          use_vue_cli: false
+          max_attempts: 1
