@@ -39,7 +39,8 @@
       "provider": "github",
       "owner": "zestones",
       "repo": "videmo",
-      "releaseType": "release"
+      "releaseType": "release",
+      "tag": "0.1.0"
     },
     "files": [
       "public/",

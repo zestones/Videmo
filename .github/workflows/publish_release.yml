@@ -36,4 +36,4 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           npm install electron-builder -g
-          electron-builder --win --x64
+          electron-builder --win --x64 --publish always
