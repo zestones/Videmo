@@ -9,7 +9,6 @@ const path = require('path');
 // The update is done using the update-electron-app package
 require('update-electron-app')({
     repo: 'https://github.com/zestones/Videmo',
-    updateInterval: '1 hour',
     logger: require(path.resolve(__dirname, '..', 'src', 'electron', 'utilities', 'logger', 'logger'))
 })
 

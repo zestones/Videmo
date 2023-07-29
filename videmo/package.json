@@ -38,8 +38,7 @@
     "publish": {
       "provider": "github",
       "owner": "zestones",
-      "repo": "videmo",
-      "releaseType": "release"
+      "repo": "videmo"
     },
     "files": [
       "public/",

@@ -1,12 +1,10 @@
 
 name: Build/release
 
-# Controls when the action will run.
 on:
-  # Triggers the workflow on push or pull request events but only for the master branch
   push:
     branches:
-      - 20-github-action-workflow # TODO: Change this to main
+      - main
 
 defaults:
   run:
