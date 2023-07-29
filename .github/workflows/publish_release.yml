@@ -8,6 +8,10 @@ on:
     branches:
       - 20-github-action-workflow # TODO: Change this to main
 
+defaults:
+  run:
+    working-directory: ./videmo
+
 jobs:
   build-and-publish:
     runs-on: windows-latest
