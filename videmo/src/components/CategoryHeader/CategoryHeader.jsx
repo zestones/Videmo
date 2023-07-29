@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 
 // Api
 import CategoryApi from "../../services/api/category/CategoryApi";
@@ -6,28 +6,48 @@ import CategoryApi from "../../services/api/category/CategoryApi";
 // Styles
 import styles from "./CategoryHeader.module.scss";
 
+
 function CategoryHeader({ selectedCategory, onSelectCategory }) {
-    // Variables and refs for the header scroll
     const headerRef = useRef(null);
     let isDragging = false;
     let startX = 0;
     let scrollLeft = 0;
 
-    // Api instances
     const [categoryApi] = useState(() => new CategoryApi());
-
-    // States initialization
     const [categories, setCategories] = useState([]);
+    const activeCategoryRef = useRef(null);
+
+    // Define a callback ref to update the activeCategoryRef
+    const updateActiveCategoryRef = useCallback((node) => {
+        if (node) {
+            activeCategoryRef.current = node;
+            activeCategoryRef.current.scrollIntoView({
+                behavior: "smooth",
+                block: "center",
+                inline: "center",
+            });
+        }
+    }, []);
 
     useEffect(() => {
         categoryApi.readAllCategories()
-        .then((categories) => {
-            setCategories(categories)
-            // TODO : retrieve the last opened category from db and set it as selected
-            onSelectCategory(categories[1]);
-        })
-        .catch((error) => console.error(error));
-    }, [categoryApi, onSelectCategory]);
+            .then((categories) => setCategories(categories))
+            .catch((error) => console.error(error));
+    }, [categoryApi]);
+
+    useEffect(() => {
+        categoryApi.readLastOpenedCategory()
+            .then((lastOpenedCategory) => onSelectCategory(lastOpenedCategory || categories[0]))
+            .catch((error) => console.error(error));
+
+    }, [onSelectCategory, categoryApi, categories]);
+
+    const handleSelectCategory = (category) => {
+        onSelectCategory(category);
+        categoryApi
+            .updateLastOpenedCategory(category.id)
+            .catch((error) => console.error(error));
+    };
 
     const handleMouseDown = (event) => {
         isDragging = true;
@@ -44,7 +64,7 @@ function CategoryHeader({ selectedCategory, onSelectCategory }) {
         headerRef.current.scrollLeft = scrollLeft - walk;
     };
 
-    const handleMouseUp = () => isDragging = false;
+    const handleMouseUp = () => (isDragging = false);
 
     return (
         <div
@@ -59,8 +79,12 @@ function CategoryHeader({ selectedCategory, onSelectCategory }) {
                 {categories.map((category) => (
                     <button
                         key={category.id}
+                        ref={selectedCategory?.id === category.id
+                            ? updateActiveCategoryRef
+                            : null
+                        }
                         className={`${styles.libraryHeaderButton} ${selectedCategory?.id === category.id ? styles.active : ""}`}
-                        onClick={() => onSelectCategory(category)}
+                        onClick={() => handleSelectCategory(category)}
                     >
                         {category.name}
                     </button>
@@ -69,6 +93,5 @@ function CategoryHeader({ selectedCategory, onSelectCategory }) {
         </div>
     );
 }
-
 
 export default CategoryHeader;

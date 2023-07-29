@@ -26,6 +26,19 @@ class SerieCategoryDAO {
         return await this.queryExecutor.executeAndFetchAll(sql, params);
     }
 
+    async updateLastOpenedCategory(id) {
+        const sql = `UPDATE LastOpenedCategory SET category_id = ? WHERE id = 1`;
+        const params = [id];
+        return await this.queryExecutor.executeAndCommit(sql, params);
+    }
+
+    async getLastOpenedCategory() {
+        const sql = `SELECT * FROM LastOpenedCategory 
+        INNER JOIN Category ON LastOpenedCategory.category_id = Category.id
+        WHERE LastOpenedCategory.id = 1`;
+        return await this.queryExecutor.executeAndFetchOne(sql);
+    }
+
     // TODO : change method name to getSerieCategoryIdsBySerieLink
     async getSerieCategoryIdsBySerie(serie) {
         const sql = `

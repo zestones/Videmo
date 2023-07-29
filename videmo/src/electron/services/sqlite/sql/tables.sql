@@ -85,3 +85,9 @@ CREATE TABLE IF NOT EXISTS History (
   timestamp DATETIME,
   FOREIGN KEY (episode_id) REFERENCES Episode (id)
 );
+
+-- Insert the default category
+INSERT INTO Category (name) VALUES ('Default');
+
+-- Insert the default last opened category
+INSERT INTO LastOpenedCategory (category_id) VALUES (1);

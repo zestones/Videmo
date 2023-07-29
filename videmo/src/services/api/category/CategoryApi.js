@@ -54,4 +54,21 @@ export default class CategoryApi {
             window.api.receive("/add/categories/to/serie", (data) => data.success ? resolve(data.category) : reject(data.error));
         });
     }
+
+    // Read last opened category
+    readLastOpenedCategory() {
+        window.api.send("/read/last/opened/category");
+
+        return new Promise((resolve, reject) => {
+            window.api.receive("/read/last/opened/category", (data) => data.success ? resolve(data.category) : reject(data.error));
+        });
+    }
+
+    updateLastOpenedCategory(categoryId) {
+        window.api.send("/update/last/opened/category", { id: categoryId });
+
+        return new Promise((resolve, reject) => {
+            window.api.receive("/update/last/opened/category", (data) => data.success ? resolve(data.category) : reject(data.error));
+        });
+    }
 }
