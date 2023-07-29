@@ -32,7 +32,7 @@
     "electron": "set NODE_ENV=development&& electron .",
     "electron-build": "electron-builder --win --x64",
     "postinstall": "electron-builder install-app-deps",
-    "publish": "electron-builder --win --x64 --publish always"
+    "publish": "GH_TOKEN=$GH_TOKEN npm run build && electron-builder --publish always"
   },
   "build": {
     "publish": {
