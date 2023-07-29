@@ -19,6 +19,7 @@
     "react-scripts": "5.0.1",
     "sass": "^1.62.1",
     "sqlite3": "^5.1.6",
+    "update-electron-app": "^2.0.1",
     "web-vitals": "^2.1.4"
   },
   "main": "public/electron.js",
@@ -30,9 +31,15 @@
     "react-eject": "react-scripts eject",
     "electron": "set NODE_ENV=development&& electron .",
     "electron-build": "electron-builder --win --x64",
-    "postinstall": "electron-builder install-app-deps"
+    "postinstall": "electron-builder install-app-deps",
+    "publish": "npm run build && electron-builder --publish always"
   },
   "build": {
+    "publish": {
+      "provider": "github",
+      "owner": "zestones",
+      "repo": "videmo"
+    },
     "files": [
       "public/",
       "dist/",

@@ -5,6 +5,13 @@ const electron = require('electron');
 const Menu = electron.Menu;
 const path = require('path');
 
+// Update the electron app automatically when a new version is available on GitHub releases
+// The update is done using the update-electron-app package
+require('update-electron-app')({
+    repo: 'https://github.com/zestones/Videmo',
+    logger: require(path.resolve(__dirname, '..', 'src', 'electron', 'utilities', 'logger', 'logger'))
+})
+
 // Module to control application life.
 const app = electron.app;
 // Module to create native browser window.
