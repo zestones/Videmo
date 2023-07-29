@@ -1,7 +1,3 @@
-
--- Insert the default category
-INSERT INTO Category (name) VALUES ('Default');
-
 -- Insert other categories
 INSERT INTO Category (name) VALUES ('PLAN TO WATCH');
 INSERT INTO Category (name) VALUES ('COMPLETED');
