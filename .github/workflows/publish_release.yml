@@ -23,5 +23,13 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Build and Publish Release
-        run: GH_TOKEN=${{ secrets.GH_TOKEN }} npm run publish
+      - name: Build/release Electron app
+        uses: samuelmeuli/action-electron-builder@v1.6.0
+        with:
+          github_token: ${{ secrets.GH_TOKEN }}
+          release: true
+          package_root: ./videmo # Specify the correct directory where package.json is located
+          build_script_name: build # Set to the npm script that builds your app
+          skip_build: false # Set to true if you don't want to rebuild the app before creating a release
+          use_vue_cli: false # Set to true if you use vue-cli-plugin-electron-builder
+          max_attempts: 1 # Optional. Defaults to 3
