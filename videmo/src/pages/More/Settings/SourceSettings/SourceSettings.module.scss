@@ -95,34 +95,26 @@
     border-radius: 4px;
     background-color: var(--primary-color-light);
 
+    &:hover {
+        cursor: pointer;
+        background-color: var(--primary-color-darker);
+    }
+
     .addIcon {
         width: 30px;
         height: 30px;
+
         border-radius: 50%;
-        background-color: var(--primary-color-light);
-        transition: all 0.3s ease-in-out;
 
         margin-right: 20px;
         padding: 10px;
-
-        &:hover {
-            transform: scale(1.1);
-            cursor: pointer;
-            background-color: var(--primary-color-darker);
-        }
     }
 
     .addSource {
         font-size: 18px;
-        color: var(--gray-1);
         font-weight: bold;
-        margin-right: 20px;
-        transition: all 0.3s ease-in-out;
+        color: var(--gray-1);
 
-        &:hover {
-            color: var(--blue-1);
-            transform: scale(1.1);
-            cursor: pointer;
-        }
+        margin-right: 20px;
     }
 }

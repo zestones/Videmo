@@ -63,8 +63,9 @@ function SourceSettings() {
             </ul>
 
             <hr className={styles.separator} />
-            <div className={styles.dropdownFooter}>
-                <CreateNewFolderOutlinedIcon className={styles.addIcon} onClick={selectLocalSourceFolder} />
+
+            <div className={styles.dropdownFooter} onClick={selectLocalSourceFolder}>
+                <CreateNewFolderOutlinedIcon className={styles.addIcon} />
                 <p className={styles.addSource}>Ajouter un dossier</p>
             </div>
         </>
