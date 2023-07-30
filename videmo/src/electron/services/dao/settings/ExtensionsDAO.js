@@ -1,8 +1,10 @@
 const QueryExecutor = require('../../sqlite/QueryExecutor');
+const DataTypesConverter = require('../../../utilities/converter/DataTypesConverter');
 
 class ExtensionsDAO {
     constructor() {
         this.queryExecutor = new QueryExecutor();
+        this.dataTypesConverter = new DataTypesConverter();
     }
 
     // Create a new extension
@@ -29,9 +31,12 @@ class ExtensionsDAO {
     }
 
     // Update extension by ID
-    async updateExtensionById(extensionId, link, name, type_id) {
-        const sql = 'UPDATE Extension SET link = ?, name = ?, type_id = ? WHERE id = ?';
-        const params = [link, name, type_id, extensionId];
+    async updateExtension(extension) {
+        const parsedExtension = JSON.parse(extension);
+        parsedExtension.local = this.dataTypesConverter.convertBooleanToInteger(parsedExtension.local);
+
+        const sql = 'UPDATE Extension SET link = ?, name = ?, local = ? WHERE id = ?';
+        const params = [parsedExtension.link, parsedExtension.name, parsedExtension.local, parsedExtension.id];
         
         this.queryExecutor.executeAndCommit(sql, params);
     }

@@ -39,7 +39,7 @@ function Source({ handleSelectedExtension }) {
 
     return (
         <>
-            <Header title="Explore" onSearch={handleSearch} />
+            <Header title="Explorer" onSearch={handleSearch} />
             <div className={styles.container}>
                 <h3>Source local</h3>
                 {filterExtensions.map((extension) => (
