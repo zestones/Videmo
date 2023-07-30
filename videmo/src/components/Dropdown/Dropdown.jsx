@@ -18,7 +18,7 @@ const Dropdown = ({ title, content }) => {
         <div className={`${styles.dropdown} ${isOpen ? styles.open : ''}`}>
             <div className={styles.dropdownHeader} onClick={handleToggleDropdown}>
                 <h2>{title}</h2>
-                <KeyboardArrowDownIcon className={styles.openIcon} onClick={handleToggleDropdown} />
+                <KeyboardArrowDownIcon className={styles.openIcon} onClick={() => handleToggleDropdown} />
             </div>
             <div className={styles.dropdownContent}>
                 {content}
