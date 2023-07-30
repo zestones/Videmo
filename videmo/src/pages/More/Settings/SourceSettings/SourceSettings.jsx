@@ -21,8 +21,7 @@ function SourceSettings() {
 
     // State initialization
     const [extensions, setExtensions] = useState([]);
-    const [editingId, setEditingId] = useState(null);
-    const [editingName, setEditingName] = useState("");
+    const [editingExtension, setEditingExtension] = useState(null);
 
     useEffect(() => {
         // Get the list of extensions from the database
@@ -50,19 +49,37 @@ function SourceSettings() {
             }).catch((error) => console.error(error));
     };
 
-    const handleEditExtensionName = (id) => {
+    const updateEditedExtension = (id) => {
         // Update the extension name with the new name
         const updatedExtensions = extensions.map((extension) =>
-            extension.id === id ? { ...extension, name: editingName } : extension
+            extension.id === id ? { ...extension, name: editingExtension.name } : extension
         );
+
+        extensionApi.updateExtension(editingExtension)
+            .catch((error) => console.error(error));
+
         setExtensions(updatedExtensions);
-        setEditingId(null);
-        setEditingName("");
+        setEditingExtension(null);
     };
 
-    const editExtensionName = (id, name) => {
-        setEditingId(id);
-        setEditingName(name);
+    const editExtension = (extension) => {
+        setEditingExtension(extension);
+    };
+
+    const updateExtensionPath = (id) => {
+        // Open the dialog window to select a folder
+        folderManager.openDialogWindow()
+            .then((path) => {
+                // Update the extension path with the new path
+                const updatedExtensions = extensions.map((extension) =>
+                    extension.id === id ? { ...extension, link: path } : extension
+                );
+                
+                extensionApi.updateExtension(updatedExtensions.find((extension) => extension.id === id))
+                    .catch((error) => console.error(error));
+                    
+                setExtensions(updatedExtensions);
+            }).catch((error) => console.error(error));
     };
 
     return (
@@ -71,28 +88,28 @@ function SourceSettings() {
                 {extensions.map((extension, index) => (
                     <li key={index} className={styles.sourceItem}>
                         <div className={styles.sourceInfos}>
-                            {editingId === extension.id ? ( // If in edit mode, show the input field
+                            {editingExtension?.id === extension.id ? ( 
                                 <input
                                     type="text"
                                     className={styles.editInput}
-                                    value={editingName}
-                                    onChange={(e) => setEditingName(e.target.value)}
-                                    onKeyDown={(e) => e.key === "Enter" && handleEditExtensionName(extension.id)}
+                                    value={editingExtension.name}
+                                    onChange={(e) => setEditingExtension({ ...editingExtension, name: e.target.value })}
+                                    onKeyDown={(e) => e.key === "Enter" && updateEditedExtension(extension.id)}
                                     autoFocus // Automatically focus on the input when in edit mode
                                 />
                             ) : (
-                                <p className={styles.sourceName}>{extension.name}</p> // Show the name if not in edit mode
+                                <p className={styles.sourceName}>{extension.name}</p>
                             )}
-                            <p className={styles.sourcePath}>{extension.link}</p>
+                            <p className={styles.sourcePath} onClick={() => updateExtensionPath(extension.id)}>{extension.link}</p>
                         </div>
                         <div className={styles.sourceEdit}>
-                            {editingId !== extension.id ? (
+                            {editingExtension?.id !== extension.id ? (
                                 <EditOutlinedIcon
                                     className={styles.editIcon}
-                                    onClick={() => editExtensionName(extension.id, extension.name)} // Enable edit mode
+                                    onClick={() => editExtension(extension)} // Enable edit mode
                                 />
                             ) : (
-                                <CheckCircleIcon className={styles.editIcon} onClick={() => handleEditExtensionName(extension.id)} />
+                                <CheckCircleIcon className={styles.editIcon} onClick={() => updateEditedExtension(extension.id)} />
                             )}
                             <DeleteForeverIcon
                                 className={styles.deleteIcon}
