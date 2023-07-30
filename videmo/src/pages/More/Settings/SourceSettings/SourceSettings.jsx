@@ -12,6 +12,7 @@ import FolderManager from "../../../../utilities/folderManager/FolderManager";
 // Styles
 import styles from "./SourceSettings.module.scss";
 
+
 function SourceSettings() {
     // Services initialization
     const [extensionApi] = useState(() => new ExtensionsApi());
