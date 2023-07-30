@@ -1,0 +1,128 @@
+.sourceList {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    margin-bottom: 10px;
+
+    margin: 10px 30px;
+
+    .sourceItem {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        margin-bottom: 10px;
+
+        .sourceInfos {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: center;
+
+            .sourceName {
+                font-size: 18px;
+                color: var(--gray-1);
+                margin-bottom: 5px;
+                font-weight: bold;
+            }
+
+            .sourcePath {
+                margin-top: 5px;
+                margin-left: 15px;
+                font-size: 14px;
+                color: var(--blue-1);
+                font-weight: bold;
+                cursor: pointer;
+            }
+        }
+
+        .sourceEdit {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            .editIcon {
+                width: 30px;
+                height: 30px;
+                border-radius: 50%;
+                background-color: var(--primary-color-light);
+                transition: all 0.3s ease-in-out;
+
+                margin-right: 20px;
+                padding: 10px;
+
+                &:hover {
+                    transform: scale(1.1);
+                    cursor: pointer;
+                    background-color: var(--primary-color-darker);
+                    color: var(--blue-1);
+                }
+            }
+
+            .deleteIcon {
+                width: 30px;
+                height: 30px;
+                border-radius: 50%;
+                background-color: var(--primary-color-light);
+                transition: all 0.3s ease-in-out;
+
+                margin-right: 20px;
+                padding: 10px;
+
+                &:hover {
+                    transform: scale(1.1);
+                    cursor: pointer;
+                    background-color: var(--primary-color-darker);
+                    color: var(--red-3);
+                }
+            }
+        }
+    }
+}
+
+
+.openIcon {
+    transition: all 0.3s ease-in-out;
+    transform: rotate(180deg);
+}
+
+.dropdownFooter {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 4px;
+    background-color: var(--primary-color-light);
+
+    .addIcon {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background-color: var(--primary-color-light);
+        transition: all 0.3s ease-in-out;
+
+        margin-right: 20px;
+        padding: 10px;
+
+        &:hover {
+            transform: scale(1.1);
+            cursor: pointer;
+            background-color: var(--primary-color-darker);
+        }
+    }
+
+    .addSource {
+        font-size: 18px;
+        color: var(--gray-1);
+        font-weight: bold;
+        margin-right: 20px;
+        transition: all 0.3s ease-in-out;
+
+        &:hover {
+            color: var(--blue-1);
+            transform: scale(1.1);
+            cursor: pointer;
+        }
+    }
+}
