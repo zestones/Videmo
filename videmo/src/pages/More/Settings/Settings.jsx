@@ -1,5 +1,11 @@
 import React, { useState, useEffect, useMemo } from "react";
 
+// External
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import CreateNewFolderOutlinedIcon from '@mui/icons-material/CreateNewFolderOutlined';
+
 // Utilities
 import FolderManager from "../../../utilities/folderManager/FolderManager";
 
@@ -9,6 +15,7 @@ import CategoryApi from "../../../services/api/category/CategoryApi";
 
 // Styles
 import styles from "./Settings.module.scss";
+import Header from "../../../components/Header/Header";
 
 
 function Settings() {
@@ -62,23 +69,44 @@ function Settings() {
             .catch((error) => console.error(error));
     };
 
+    const [isOpen, setIsOpen] = useState(false);
+
+    const handleToggleDropdown = () => {
+        setIsOpen((prevIsOpen) => !prevIsOpen);
+    };
+
     return (
         <div className={styles.settings}>
-            <h1>Settings</h1>
-            <div>
-                <h2>List of local source folders</h2>
-                <button onClick={selectLocalSourceFolder}>Select Folder</button>
-                <ul>
-                    {extensions &&
-                        extensions.map((extension) => (
-                            <li key={extension.id}>
-                                <p>{extension.name}</p>
-                                <button onClick={() => handleDeleteExtension(extension.id)}>Delete</button>
+            <Header title="Paramètres" />
+            <div className={`${styles.dropdown} ${isOpen ? styles.open : ''}`}>
+                <div className={styles.dropdownHeader} onClick={handleToggleDropdown}>
+                    <h2>Source local</h2>
+                    <KeyboardArrowDownIcon className={styles.openIcon} onClick={() => handleToggleDropdown} />
+                </div>
+                <div className={styles.dropdownContent}>
+                    <ul className={styles.sourceList}>
+                        {extensions?.map((extension) => (
+                            <li key={extension.id} className={styles.sourceItem}>
+                                <div className={styles.sourceInfos}>
+                                    <p className={styles.sourceName}>{extension.name}</p>
+                                    <p className={styles.sourcePath}>{extension.link}</p>
+                                </div>
+                                <div className={styles.sourceEdit}>
+                                    <EditOutlinedIcon className={styles.editIcon} />
+                                    <DeleteForeverIcon className={styles.deleteIcon} onClick={() => handleDeleteExtension(extension.id)} />
+                                </div>
                             </li>
                         ))}
-                </ul>
+                    </ul>
 
-                <h2>List of categories</h2>
+                    <hr className={styles.separator} />
+                    <div className={styles.dropdownFooter}>
+                        <CreateNewFolderOutlinedIcon className={styles.addIcon} onClick={selectLocalSourceFolder} />
+                        <p className={styles.addSource}>Ajouter un dossier</p>
+                    </div>
+                </div>
+
+                {/* <h2>List of categories</h2>
                 <ul>
                     {categories &&
                         categories.map((category) => (
@@ -92,7 +120,7 @@ function Settings() {
                 <form onSubmit={handleCreateCategory}>
                     <input type="text" placeholder="Category name" />
                     <button type="submit">Create</button>
-                </form>
+                </form> */}
             </div>
         </div>
     );
