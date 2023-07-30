@@ -16,11 +16,11 @@ function Settings() {
         <div className={styles.settings}>
             <Header title="Paramètres" />
             <Dropdown
-                title="Manage local sources"
+                title="Gérer les sources locales"
                 content={<SourceSettings />}
             />
             <Dropdown
-                title="Manage categories"
+                title="Gérer les catégories"
                 content={<CategorySettings />}
             />
         </div>
