@@ -36,6 +36,14 @@ export default class CategoryApi {
         });
     }
 
+    updateCategory(category) {
+        window.api.send("/update/category/", { category: JSON.stringify(category) });
+
+        return new Promise((resolve, reject) => {
+            window.api.receive("/update/category/", (data) => data.success ? resolve(data.category) : reject(data.error));
+        });
+    }
+
     // Delete category by ID
     deleteCategory(id) {
         window.api.send("/delete/category/", { id: id });

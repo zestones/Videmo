@@ -37,6 +37,16 @@ export default class ExtensionsApi {
         });
     }
 
+    updateExtension(extension) {
+        // Send the request to the main Electron process
+        window.api.send("/update/extension/", { extension: JSON.stringify(extension) });
+
+        // Listen for the response from the main Electron process
+        return new Promise((resolve, reject) => {
+            window.api.receive("/update/extension/", (data) => data.success ? resolve(data.extension) : reject(data.error));
+        });
+    }
+
     deleteExtension(id) {
         // Send the request to the main Electron process
         window.api.send("/delete/extension/", { id: id });

@@ -13,7 +13,6 @@ class CategoriesDAO {
         const params = [name];
 
         this.queryExecutor.executeAndCommit(sql, params);
-        return this;
     }
 
     // Read category by ID
@@ -53,9 +52,11 @@ class CategoriesDAO {
     }
 
     // Update category by ID
-    updateCategoryById(categoryId, name) {
+    updateCategory(category) {
+        const parsedCategory = JSON.parse(category);
+
         const sql = 'UPDATE Category SET name = ? WHERE id = ?';
-        const params = [name, categoryId];
+        const params = [parsedCategory.name, parsedCategory.id];
 
         this.queryExecutor.executeAndCommit(sql, params);
     }

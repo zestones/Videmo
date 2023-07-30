@@ -37,6 +37,13 @@ ipcMain.on('/read/extension/by/id/', (event, arg) => {
         });
 })
 
+// Update extension
+ipcMain.on('/update/extension/', (event, arg) => {
+    new ExtensionsDAO()
+        .updateExtension(arg.extension);
+
+    event.reply('/update/extension/', { success: true, extension: arg.extension });
+})
 
 // Delete extension
 ipcMain.on('/delete/extension/', (event, arg) => {

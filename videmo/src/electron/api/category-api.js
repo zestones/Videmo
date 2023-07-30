@@ -22,6 +22,13 @@ ipcMain.on('/read/all/categories/', (event) => {
         });
 })
 
+// Update category
+ipcMain.on('/update/category/', (event, arg) => {
+    new CategoriesDAO()
+        .updateCategory(arg.category);
+
+    event.reply('/update/category/', { success: true, category: arg.category });
+})
 
 // Read all series in library by extension
 ipcMain.on('/read/all/series/in/library/by/extension', (event, arg) => {
