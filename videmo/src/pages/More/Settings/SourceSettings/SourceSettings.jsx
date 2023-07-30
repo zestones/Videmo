@@ -44,7 +44,7 @@ function SourceSettings() {
                 // Create a new extension with the selected folder path 
                 extensionApi.createExtension(path, folderManager.retrieveBaseName(path))
                     // Update the array of extensions by adding the new extension
-                    .then((link) => setExtensions([...extensions, link]))
+                    .then((link) => setExtensions([...extensions, { id: null, name: folderManager.retrieveBaseName(path), link: path }]))
                     .catch((error) => console.error(error));
             }).catch((error) => console.error(error));
     };
@@ -74,10 +74,10 @@ function SourceSettings() {
                 const updatedExtensions = extensions.map((extension) =>
                     extension.id === id ? { ...extension, link: path } : extension
                 );
-                
+
                 extensionApi.updateExtension(updatedExtensions.find((extension) => extension.id === id))
                     .catch((error) => console.error(error));
-                    
+
                 setExtensions(updatedExtensions);
             }).catch((error) => console.error(error));
     };
@@ -88,7 +88,8 @@ function SourceSettings() {
                 {extensions.map((extension, index) => (
                     <li key={index} className={styles.sourceItem}>
                         <div className={styles.sourceInfos}>
-                            {editingExtension?.id === extension.id ? ( 
+                            {editingExtension?.id === extension.id ? (
+                                console.log(editingExtension),
                                 <input
                                     type="text"
                                     className={styles.editInput}
