@@ -9,6 +9,7 @@ import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 
 // Utilities
 import FolderManager from "../../../utilities/folderManager/FolderManager";
+import Utils from "../../../utilities/utils/Utils";
 
 // Services
 import TrackApi from "../../../services/api/track/TrackApi";
@@ -24,6 +25,7 @@ function EpisodeCard({ serie, episode }) {
     // Services initialization
     const [folderManager] = useState(() => new FolderManager());
     const [trackApi] = useState(() => new TrackApi());
+    const [utils] = useState(() => new Utils());
 
     // State initialization
     const [openVideoPlayer, setOpenVideoPlayer] = useState(false);
@@ -40,26 +42,24 @@ function EpisodeCard({ serie, episode }) {
         setCurrentEpisode(updatedEpisode);
         trackApi.addEpisodeToViewed(serie, updatedEpisode);
     };
-
+    
     const handleCloseVideoPlayer = (playedTime, finished) => {
         setOpenVideoPlayer(false);
         if (finished) return handleViewedClick();
+        updateCurrentEpisode(playedTime);
+    };
 
-        const updatedEpisode = { ...currentEpisode, played_time: playedTime };
+    const updateCurrentEpisode = (playedTime = 0, viewed = false) => {
+        const updatedEpisode = { ...currentEpisode, played_time: playedTime, viewed: viewed };
         trackApi.updatePlayedTime(serie, updatedEpisode, new Date().getTime());
         setCurrentEpisode(updatedEpisode);
     };
-
-    // TODO : move this to utilities class
-    const convertPlayedTime = () => {
-        const hours = Math.floor(currentEpisode.played_time / 3600);
-        const minutes = Math.floor((currentEpisode.played_time - (hours * 3600)) / 60);
-        const seconds = Math.floor(currentEpisode.played_time - (hours * 3600) - (minutes * 60));
-
-        const displayTime = `${hours ? hours + "h" : ""} ${minutes ? minutes + "m" : ""} ${seconds ? seconds + "s" : ""}`;
-        if (displayTime.trim(' ') === "") return "";
-        return `• ${displayTime}`;
+    
+    const handleOpenLocalVideoPlayer = () => {
+        folderManager.openFileInLocalVideoPlayer(currentEpisode.link);
+        updateCurrentEpisode(currentEpisode.played_time, false);
     };
+    
 
     return (
         <li className={`${styles.card} ${currentEpisode.viewed ? styles.viewed : ""} ${currentEpisode.bookmarked ? styles.bookmarked : ""}`}>
@@ -68,12 +68,12 @@ function EpisodeCard({ serie, episode }) {
                     <p className={styles.cardTitle}>{currentEpisode.name}</p>
                     <div className={styles.cardDescriptionContainer}>
                         <p className={styles.cardModifiedTime}>{currentEpisode.modifiedTime}</p>
-                        <p className={styles.cardPlayedTime}>{convertPlayedTime()}</p>
+                        <p className={styles.cardPlayedTime}>{utils.convertPlayedTime(currentEpisode.played_time)}</p>
                     </div>
                 </div>
                 <div className={styles.cardButtonsContainer}>
                     <PlayArrowIcon className={styles.cardButton} onClick={() => setOpenVideoPlayer(true)} />
-                    <OpenInNewIcon className={styles.cardButton} onClick={() => folderManager.openFileInLocalVideoPlayer(currentEpisode.link)} />
+                    <OpenInNewIcon className={styles.cardButton} onClick={handleOpenLocalVideoPlayer} />
                     <BookmarkIcon className={`${styles.cardButton} ${currentEpisode.bookmarked ? styles.bookmarked : ""}`} onClick={handleBookmarkClick} />
                     {!currentEpisode.viewed ? (
                         <DoneAllIcon className={styles.cardButton} onClick={handleViewedClick} />
