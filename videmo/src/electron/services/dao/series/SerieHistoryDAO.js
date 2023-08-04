@@ -79,9 +79,7 @@ class SerieHistoryDAO {
                     GROUP BY History.id
                     ORDER BY History.timestamp DESC`;
 
-
         const result = await this.queryExecutor.executeAndFetchAll(query);
-
         return this.#organizeObject(result);
     }
 
@@ -132,7 +130,6 @@ class SerieHistoryDAO {
         const query = `DELETE FROM History`;
         return await this.queryExecutor.executeAndCommit(query);
     }
-
 }
 
 module.exports = SerieHistoryDAO;

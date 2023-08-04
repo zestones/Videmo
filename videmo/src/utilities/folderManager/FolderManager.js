@@ -97,7 +97,7 @@ class FolderManager {
 
         // Create a promise to handle the response from window.api.receive
         return new Promise((resolve, reject) => {
-            window.api.receive("folderSelected", (data) => data.success ? resolve(data.folderPath) : reject(data.error));
+            window.api.receive("openFolderDialog", (data) => data.success ? resolve(data.folderPath) : reject(data.error));
         });
     }
 

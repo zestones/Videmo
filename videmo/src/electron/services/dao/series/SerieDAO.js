@@ -19,17 +19,24 @@ class SerieDAO {
         return await this.queryExecutor.executeAndFetchOne(sql, params);
     }
 
-    async getSerieByBaseName(basename) {
-        const sql = `SELECT * FROM Serie WHERE basename = ?`;
-        const params = [basename];
+    async getSerieByLink(link) {
+        const sql = `SELECT * FROM Serie WHERE link = ?`;
+        const params = [link];
         return await this.queryExecutor.executeAndFetchOne(sql, params);
     }
 
-    // TODO : change method name to getSerieByLink
-    async getSerieByBasenameAndNameAndLink(serieObject) {
-        const sql = `SELECT * FROM Serie WHERE link = ?`;
-        const params = [serieObject.link];
-        return await this.queryExecutor.executeAndFetchOne(sql, params);
+    async getAllSeriesInLibraryByExtension(extension) {
+        const sql = `
+            SELECT s.*
+            FROM Serie AS s
+            INNER JOIN Extension AS e ON s.extension_id = e.id
+            WHERE e.id = ?
+            AND s.inLibrary = 1
+            ORDER BY s.basename ASC
+        `;
+
+        const params = [extension.id];
+        return await this.queryExecutor.executeAndFetchAll(sql, params);
     }
 
     async updateSerieInLibrary(serieId, inLibrary) {
@@ -49,21 +56,6 @@ class SerieDAO {
         return await this.queryExecutor.executeAndFetchAll(sql, params);
     }
 
-    async getExtensionBySerieId(serieId) {
-        const sql = `
-            SELECT Extension.*
-            FROM Extension
-            INNER JOIN Serie ON Extension.id = Serie.extension_id
-            WHERE Serie.id = ?`;
-
-        const params = [serieId];
-        const result = await this.queryExecutor.executeAndFetchOne(sql, params);
-
-        // Convert the local value to a boolean value
-        result.local = this.dataTypesConverter.convertIntegerToBoolean(result.local);
-        return result;
-    }
-
     async getAllSeries() {
         const sql = `SELECT * FROM Serie`;
         return await this.queryExecutor.executeAndFetchAll(sql);
@@ -72,12 +64,6 @@ class SerieDAO {
     async deleteSerieById(serieId) {
         const sql = `DELETE FROM Serie WHERE id = ?`;
         const params = [serieId];
-        await this.queryExecutor.executeAndCommit(sql, params);
-    }
-
-    async deleteSerieByName(serieName) {
-        const sql = `DELETE FROM Serie WHERE name = ?`;
-        const params = [serieName];
         await this.queryExecutor.executeAndCommit(sql, params);
     }
 }

@@ -14,7 +14,6 @@ import styles from './Notification.module.scss';
 
 function Notification({ type, message, onClose }) {
 
-
     useEffect(() => {
         const timer = setTimeout(() => {
             onClose(null);

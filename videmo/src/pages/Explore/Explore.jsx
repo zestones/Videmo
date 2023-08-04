@@ -12,6 +12,7 @@ import Source from "./Source/Source";
 // Components
 import SeriesDisplay from "../../components/SeriesDisplay/SeriesDisplay";
 import Header from "../../components/Header/Header";
+import Notification from "../../components/Notification/Notification";
 
 function Explore() {
     // State initialization
@@ -20,6 +21,7 @@ function Explore() {
     const [serie, setSerie] = useState(null);
     const [episodes, setEpisodes] = useState([]);
     const [searchValue, setSearchValue] = useState("");
+    const [error, setError] = useState(null);
 
     // Utilities and services initialization
     const [folderManager] = useState(() => new FolderManager());
@@ -30,14 +32,14 @@ function Explore() {
     const retrieveSeriesInLibraryByExtension = useCallback((contents) => {
         categoryApi.readAllSeriesInLibraryByExtension(selectedExtension)
             .then((series) => setFolderContents(folderManager.mapFolderContentsWithMandatoryFields(contents, series, selectedExtension)))
-            .catch((error) => console.error(error));
+            .catch((error) => setError({ message: error.message, type: "error" }));
     }, [categoryApi, folderManager, selectedExtension]);
 
     useEffect(() => {
         if (!selectedExtension) return;
         folderManager.retrieveFolderContents(selectedExtension.link)
             .then((data) => retrieveSeriesInLibraryByExtension(data.contents))
-            .catch((error) => console.error(error));
+            .catch((error) => setError({ message: error.message, type: "error" }));
     }, [folderManager, categoryApi, selectedExtension, retrieveSeriesInLibraryByExtension]);
 
     const handleBackClick = async () => {
@@ -49,7 +51,7 @@ function Explore() {
             const link = await folderManager.retrieveParentPath(serie.link);
             const level = await folderManager.retrieveLevel(selectedExtension.link, link);
             // We search for folders or files based on the extension, the level and the parent path
-            checkAndHandleFolderContentsWithExtension(link, level, selectedExtension.id);
+            checkAndHandleFolderContentsWithExtension(link, selectedExtension.id, level);
 
             // Then we update the serie with the new data
             let serieUpdates = {};
@@ -68,6 +70,7 @@ function Explore() {
 
             setSerie((prevSerie) => ({ ...prevSerie, ...serieUpdates }));
         } catch (error) {
+            setError({ message: error.message, type: "error" });
             console.error(error);
         }
     };
@@ -80,7 +83,7 @@ function Explore() {
     const handlePlayClick = async (details) => {
         try {
             const level = await folderManager.retrieveLevel(selectedExtension.link, details.link);
-            checkAndHandleFolderContentsWithExtension(details.link, level, details.extension_id);
+            checkAndHandleFolderContentsWithExtension(details.link, details.extension_id, level);
             const searchName = details.basename === details.name ? details.basename : details.basename + " " + details.name;
             const data = await aniList.searchAnimeDetailsByName(searchName);
             setSerie({
@@ -91,12 +94,13 @@ function Explore() {
             });
             setSearchValue("");
         } catch (error) {
+            setError({ message: error.message, type: "error" })
             console.error(error);
         }
     };
 
     // TODO : Handle remote and local sources
-    const checkAndHandleFolderContentsWithExtension = async (link, level = 0, extension_id) => {
+    const checkAndHandleFolderContentsWithExtension = async (link, extension_id, level = 0) => {
         try {
             const data = await folderManager.retrieveFolderContents(link, level);
             if (data.contents.length === 0) {
@@ -110,6 +114,7 @@ function Explore() {
                 setEpisodes([]);
             }
         } catch (error) {
+            setError({ message: error.message, type: "error" })
             console.error(error);
         }
     };
@@ -122,6 +127,7 @@ function Explore() {
 
     return (
         <>
+            {error && <Notification message={error.message} type={error.type} onClose={setError} />}
             {!selectedExtension ? (
                 <Source handleSelectedExtension={setSelectedExtension} />
             ) : (

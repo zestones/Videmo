@@ -16,49 +16,27 @@ class CategoriesDAO {
     }
 
     // Read all categories
-    getAllCategories() {
+    async getAllCategories() {
         const sql = 'SELECT * FROM Category';
-        return this.queryExecutor.executeAndFetchAll(sql);
-    }
-
-    // TODO : move inside the SerieDAO
-    getAllSeriesInLibraryByExtension(extension) {
-        // TODO : Select all serie that has a category (means that are in library) and that has a specific extension
-        // TODO : Something like this:
-        //  SELECT s.*
-        //  FROM Serie AS s
-        //  INNER JOIN SerieCategory AS sc ON s.id = sc.serie_id
-        //  INNER JOIN Extension AS e ON s.extension_id = e.id
-        //  WHERE e.id = ?
-        //  ORDER BY s.basename ASC
-        const sql = `
-            SELECT s.*
-            FROM Serie AS s
-            INNER JOIN Extension AS e ON s.extension_id = e.id
-            WHERE e.id = ?
-            ORDER BY s.basename ASC
-        `;
-
-        const params = [extension.id];
-        return this.queryExecutor.executeAndFetchAll(sql, params);
+        return await this.queryExecutor.executeAndFetchAll(sql);
     }
 
     // Update category by ID
-    updateCategory(category) {
+    async updateCategory(category) {
         const parsedCategory = JSON.parse(category);
 
         const sql = 'UPDATE Category SET name = ? WHERE id = ?';
         const params = [parsedCategory.name, parsedCategory.id];
 
-        this.queryExecutor.executeAndCommit(sql, params);
+        await this.queryExecutor.executeAndCommit(sql, params);
     }
 
     // Delete category by ID
-    deleteCategoryById(categoryId) {
+    async deleteCategoryById(categoryId) {
         const sql = 'DELETE FROM Category WHERE id = ?';
         const params = [categoryId];
 
-        this.queryExecutor.executeAndCommit(sql, params);
+        await this.queryExecutor.executeAndCommit(sql, params);
     }
 }
 

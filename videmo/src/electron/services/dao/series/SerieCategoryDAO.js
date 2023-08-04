@@ -40,14 +40,14 @@ class SerieCategoryDAO {
     }
 
     // TODO : change method name to getSerieCategoryIdsBySerieLink
-    async getSerieCategoryIdsBySerie(serie) {
+    async getSerieCategoryIdsBySerieLink(link) {
         const sql = `
           SELECT SerieCategory.category_id
           FROM SerieCategory, Serie
           WHERE SerieCategory.serie_id = Serie.id
           AND Serie.link = ?`;
 
-        const params = [serie.link];
+        const params = [link];
         const result = await this.queryExecutor.executeAndFetchAll(sql, params);
 
         // Extract the category IDs from the result array
@@ -87,7 +87,7 @@ class SerieCategoryDAO {
         await this.serieDAO.createSerie({ ...serieParsedObject, inLibrary: 1 });
 
         // Retrieve the inserted serie (we need the id)
-        const insertedSerie = await this.serieDAO.getSerieByBasenameAndNameAndLink(serieParsedObject);
+        const insertedSerie = await this.serieDAO.getSerieByLink(serieParsedObject.link);
 
         // Update the SerieCategory table with the new series and categories
         await this.updateSerieCategory(insertedSerie.id, categoriesId);
@@ -96,9 +96,8 @@ class SerieCategoryDAO {
     // Update series categories
     async updateSerieCategories(serie, categoriesId) {
         const serieParsedObject = JSON.parse(serie);
-
         // Retrieve the serie
-        const retrievedSerie = await this.serieDAO.getSerieByBasenameAndNameAndLink(serieParsedObject);
+        const retrievedSerie = await this.serieDAO.getSerieByLink(serieParsedObject.link);
 
         // Check if the does not exist in the Serie table
         if (retrievedSerie === undefined) {

@@ -8,26 +8,35 @@ class ExtensionsDAO {
     }
 
     // Create a new extension
-    createExtension(link, name, local) {
+    async createExtension(link, name, local) {
+        const retrievedExtension = await this.getExtensionByLink(link);
+        if (retrievedExtension) throw new Error('Local source already exists !'); 
+
         const sql = 'INSERT INTO Extension (link, name, local) VALUES (?, ?, ?)';
-        const params = [link, name, local ? 1 : 0];
+        const params = [link, name, this.dataTypesConverter.convertBooleanToInteger(local)];
         
-        this.queryExecutor.executeAndCommit(sql, params);
-        return this;
+        await this.queryExecutor.executeAndCommit(sql, params);
     }
 
     // Read extension by ID
-    getExtensionById(extensionId) {
+    async getExtensionById(extensionId) {
         const sql = 'SELECT * FROM Extension WHERE id = ?';
         const params = [extensionId];
 
-        return this.queryExecutor.executeAndFetchOne(sql, params);
+        return await this.queryExecutor.executeAndFetchOne(sql, params);
+    }
+
+    async getExtensionByLink(link) {
+        const sql = 'SELECT * FROM Extension WHERE link = ?';
+        const params = [link];
+
+        return await this.queryExecutor.executeAndFetchOne(sql, params);
     }
 
     // Read all extensions
-    getAllExtensions() {
+    async getAllExtensions() {
         const sql = 'SELECT * FROM Extension';
-        return this.queryExecutor.executeAndFetchAll(sql);
+        return await this.queryExecutor.executeAndFetchAll(sql);
     }
 
     // Update extension by ID
@@ -38,15 +47,15 @@ class ExtensionsDAO {
         const sql = 'UPDATE Extension SET link = ?, name = ?, local = ? WHERE id = ?';
         const params = [parsedExtension.link, parsedExtension.name, parsedExtension.local, parsedExtension.id];
         
-        this.queryExecutor.executeAndCommit(sql, params);
+        await this.queryExecutor.executeAndCommit(sql, params);
     }
 
     // Delete extension by ID
-    deleteExtensionById(extensionId) {
+    async deleteExtensionById(extensionId) {
         const sql = 'DELETE FROM Extension WHERE id = ?';
         const params = [extensionId];
 
-        this.queryExecutor.executeAndCommit(sql, params);
+        await this.queryExecutor.executeAndCommit(sql, params);
     }
 }
 

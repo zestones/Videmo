@@ -4,28 +4,22 @@ const SerieHistoryDAO = require('../services/dao/series/SerieHistoryDAO');
 
 
 // Read serie and episode history
-ipcMain.on('/read/all/episode/and/serie/history', async (event) => {
+ipcMain.on('/read/all/episode/and/serie/history/', async (event) => {
     new SerieHistoryDAO().readAllEpisodeAndSerieFromHistory()
-        .then((retrievedHistory) => {
-            event.reply('/read/all/episode/and/serie/history', { success: true, history: retrievedHistory });
-        })
-        .catch(error => event.reply('/read/all/episode/and/serie/history', { success: false, error }));
+        .then((retrievedHistory) => event.reply('/read/all/episode/and/serie/history/', { success: true, history: retrievedHistory }))
+        .catch(error => event.reply('/read/all/episode/and/serie/history/', { success: false, error }));
 })
 
 // Delete episode history
-ipcMain.on('/delete/episode/history', async (event, episodeId) => {
+ipcMain.on('/delete/episode/history/', async (event, episodeId) => {
     new SerieHistoryDAO().deleteSerieHistoryByEpisodeId(episodeId)
-        .then((retrievedHistory) => {
-            event.reply('/delete/episode/history', { success: true, history: retrievedHistory });
-        })
-        .catch(error => event.reply('/delete/episode/history', { success: false, error }));
+        .then((retrievedHistory) => event.reply('/delete/episode/history/', { success: true, history: retrievedHistory }))
+        .catch(error => event.reply('/delete/episode/history/', { success: false, error }));
 })
 
 // Delete all history
-ipcMain.on('/delete/all/history', async (event) => {
+ipcMain.on('/delete/all/history/', async (event) => {
     new SerieHistoryDAO().deleteAllSerieHistory()
-        .then((retrievedHistory) => {
-            event.reply('/delete/all/history', { success: true, history: retrievedHistory });
-        })
-        .catch(error => event.reply('/delete/all/history', { success: false, error }));
+        .then((retrievedHistory) => event.reply('/delete/all/history/', { success: true, history: retrievedHistory }))
+        .catch(error => event.reply('/delete/all/history/', { success: false, error }));
 })

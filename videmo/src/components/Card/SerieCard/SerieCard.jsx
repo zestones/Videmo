@@ -9,18 +9,27 @@ import Utils from '../../../utilities/utils/Utils';
 
 // Components
 import CategoryModal from '../../CategoryModal/CategoryModal';
+import Notification from '../../Notification/Notification';
 
 // Styles
 import styles from './SerieCard.module.scss';
 
-function Card({ details, onPlayClick, onMoreClick, displayLabel }) {
+
+function SerieCard({ details, onPlayClick, onMoreClick, displayLabel }) {
     // State initialization
     const [isHovered, setIsHovered] = useState(false);
     const [showCategoryModal, setShowCategoryModal] = useState(false);
     const [utils] = useState(() => new Utils());
+    const [error, setError] = useState(null);
+
+    const handleCloseModal = (notification) => {
+        setShowCategoryModal(false);
+        setError(notification);
+	}
 
     return (
         <>
+            {error && <Notification message={error.message} type={error.type} onClose={setError} />}
             <li
                 className={styles.card}
                 onMouseEnter={() => setIsHovered(true)}
@@ -40,7 +49,7 @@ function Card({ details, onPlayClick, onMoreClick, displayLabel }) {
             {showCategoryModal && (
                 <CategoryModal
                     serie={details}
-                    onClose={() => setShowCategoryModal(false)}
+                    onClose={handleCloseModal}
                     onMoreClick={onMoreClick}
                 />
             )}
@@ -48,4 +57,4 @@ function Card({ details, onPlayClick, onMoreClick, displayLabel }) {
     );
 }
 
-export default Card;
+export default SerieCard;

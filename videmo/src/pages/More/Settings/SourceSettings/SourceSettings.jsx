@@ -6,6 +6,9 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import CreateNewFolderOutlinedIcon from '@mui/icons-material/CreateNewFolderOutlined';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
+// Components
+import Notification from "../../../../components/Notification/Notification";
+
 // Services
 import ExtensionsApi from "../../../../services/api/extension/ExtensionApi";
 import FolderManager from "../../../../utilities/folderManager/FolderManager";
@@ -22,19 +25,20 @@ function SourceSettings() {
     // State initialization
     const [extensions, setExtensions] = useState([]);
     const [editingExtension, setEditingExtension] = useState(null);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         // Get the list of extensions from the database
         extensionApi.readExtension()
             .then((data) => setExtensions(data))
-            .catch((error) => console.error(error));
+            .catch((error) => setError({ message: error.message, type: "error" }));
     }, [extensionApi]);
 
     const handleDeleteExtension = (id) => {
         extensionApi.deleteExtension(id)
             // Update the array of extensions by removing the deleted extension
             .then(() => setExtensions(extensions.filter((extension) => extension.id !== id)))
-            .catch((error) => console.error(error));
+            .catch((error) => setError({ message: error.message, type: "error" }));
     };
 
     const selectLocalSourceFolder = () => {
@@ -44,9 +48,9 @@ function SourceSettings() {
                 // Create a new extension with the selected folder path 
                 extensionApi.createExtension(path, folderManager.retrieveBaseName(path))
                     // Update the array of extensions by adding the new extension
-                    .then((link) => setExtensions([...extensions, { id: null, name: folderManager.retrieveBaseName(path), link: path }]))
-                    .catch((error) => console.error(error));
-            }).catch((error) => console.error(error));
+                    .then((_) => setExtensions([...extensions, { id: null, name: folderManager.retrieveBaseName(path), link: path }]))
+                    .catch((error) => setError({ message: error.message, type: "error" }));
+            }).catch((error) => setError({ message: error.message, type: "error" }));
     };
 
     const updateEditedExtension = (id) => {
@@ -56,7 +60,7 @@ function SourceSettings() {
         );
 
         extensionApi.updateExtension(editingExtension)
-            .catch((error) => console.error(error));
+            .catch((error) => setError({ message: error.message, type: "error" }));
 
         setExtensions(updatedExtensions);
         setEditingExtension(null);
@@ -76,20 +80,20 @@ function SourceSettings() {
                 );
 
                 extensionApi.updateExtension(updatedExtensions.find((extension) => extension.id === id))
-                    .catch((error) => console.error(error));
+                    .catch((error) => setError({ message: error.message, type: "error" }));
 
                 setExtensions(updatedExtensions);
-            }).catch((error) => console.error(error));
+            }).catch((error) => setError({ message: error.message, type: "error" }));
     };
 
     return (
         <>
+            {error && <Notification message={error.message} type={error.type} onClose={setError} />}
             <ul className={styles.sourceList}>
                 {extensions.map((extension, index) => (
                     <li key={index} className={styles.sourceItem}>
                         <div className={styles.sourceInfos}>
                             {editingExtension?.id === extension.id ? (
-                                console.log(editingExtension),
                                 <input
                                     type="text"
                                     className={styles.editInput}
