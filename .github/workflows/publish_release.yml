@@ -1,5 +1,5 @@
 
-name: Build/release
+name: Publish release
 
 on:
   push:
@@ -11,7 +11,7 @@ defaults:
     working-directory: ./videmo
 
 jobs:
-  build-and-publish:
+  publish:
     runs-on: windows-latest
 
     steps:
