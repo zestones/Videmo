@@ -12,11 +12,11 @@ class FolderManager {
         const coverFolder = FolderManager.DEFAULT_COVER_FOLDER_NAME
 
         // Send the folder path to the main Electron process
-        window.api.send("getFolderContents", { folderPath, coverFolder, level });
+        window.api.send("retrieveFolderContents", { folderPath, coverFolder, level });
 
         // Listen for the response from the main Electron process
         return new Promise((resolve, reject) => {
-            window.api.receive("folderContents", (data) => data.success ? resolve({ contents: data.folderContents, basename: data.basename }) : reject(data.error));
+            window.api.receive("retrieveFolderContents", (data) => data.success ? resolve({ contents: data.folderContents, basename: data.basename }) : reject(data.error));
         });
     }
 
@@ -29,11 +29,11 @@ class FolderManager {
         const coverFolder = FolderManager.DEFAULT_COVER_FOLDER_NAME
 
         // Send the folder path to the main Electron process
-        window.api.send("getFolderCover", { folderPath, coverFolder, level });
+        window.api.send("retrieveFoderCover", { folderPath, coverFolder, level });
 
         // Listen for the response from the main Electron process
         return new Promise((resolve, reject) => {
-            window.api.receive("folderCover", (data) => data.success ? resolve(data.cover) : reject(data.error));
+            window.api.receive("retrieveFoderCover", (data) => data.success ? resolve(data.cover) : reject(data.error));
         });
     }
 
@@ -43,10 +43,10 @@ class FolderManager {
      * @returns {Promise<String>} A promise that resolves with the level of the link.
      */
     retrieveLevel(baseLink, link) {
-        window.api.send("getLevel", { baseLink, link });
+        window.api.send("retrieveLevel", { baseLink, link });
 
         return new Promise((resolve, reject) => {
-            window.api.receive("level", (data) => data.success ? resolve(data.level) : reject(data.error));
+            window.api.receive("retrieveLevel", (data) => data.success ? resolve(data.level) : reject(data.error));
         });
     }
 
@@ -55,10 +55,10 @@ class FolderManager {
      * @returns {Promise<Array>} A promise that resolves with the files in the folder.
      */
     retrieveFilesInFolder(folderPath) {
-        window.api.send("getFilesInFolder", { folderPath });
+        window.api.send("retrieveFilesInFolder", { folderPath });
 
         return new Promise((resolve, reject) => {
-            window.api.receive("filesInFolder", (data) => data.success ? resolve(data.files) : reject(data.error));
+            window.api.receive("retrieveFilesInFolder", (data) => data.success ? resolve(data.files) : reject(data.error));
         });
     }
 
@@ -69,10 +69,10 @@ class FolderManager {
      * @returns {Promise<String>} A promise that resolves with the base name of the path.
      */
     retrieveBaseNameByLevel(basePath, level) {
-        window.api.send("getBaseNameByLevel", { basePath, level });
+        window.api.send("retrieveBaseNameByLevel", { basePath, level });
 
         return new Promise((resolve, reject) => {
-            window.api.receive("baseNameByLevel", (data) => data.success ? resolve(data.basename) : reject(data.error));
+            window.api.receive("retrieveBaseNameByLevel", (data) => data.success ? resolve(data.basename) : reject(data.error));
         });
     }
 
@@ -84,7 +84,7 @@ class FolderManager {
         window.api.send("openFileInLocalVideoPlayer", { filePath });
 
         return new Promise((resolve, reject) => {
-            window.api.receive("fileOpened", (data) => data.success ? resolve(data.success) : reject(data.error));
+            window.api.receive("openFileInLocalVideoPlayer", (data) => data.success ? resolve(data.success) : reject(data.error));
         });
     }
 

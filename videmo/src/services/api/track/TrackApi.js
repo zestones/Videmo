@@ -42,8 +42,6 @@ export default class TrackApi {
     }
 
     mapSerieEpisodeWithDatabaseEpisode(episodes, episodesFromDatabase) {
-        // i want here to "filter" the episodes array by replacing the episodes with the episodes from database
-
         return episodes.map(episode => {
             const episodeFromDatabase = episodesFromDatabase.find(episodeFromDatabase => episodeFromDatabase.link === episode.link);
             if (episodeFromDatabase) {

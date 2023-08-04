@@ -5,9 +5,12 @@ const CategoriesDAO = require('../services/dao/settings/CategoriesDAO');
 // Add new category
 ipcMain.on('/create/category/', (event, arg) => {
     new CategoriesDAO()
-        .createCategory(arg.name);
-
-    event.reply('/create/category/', { success: true, category: { name: arg.name } });
+        .createCategory(arg.name)
+        .then(() => {
+            event.reply('/create/category/', { success: true, category: { name: arg.name } });
+        }).catch((err) => {
+            event.reply('/create/category/', { success: false, error: err });
+        });
 })
 
 

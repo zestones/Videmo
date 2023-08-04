@@ -8,19 +8,11 @@ class CategoriesDAO {
     }
 
     // Create a new category
-    createCategory(name) {
+    async createCategory(name) {
         const sql = 'INSERT INTO Category (name) VALUES (?)';
         const params = [name];
 
-        this.queryExecutor.executeAndCommit(sql, params);
-    }
-
-    // Read category by ID
-    getCategoryById(categoryId) {
-        const sql = 'SELECT * FROM Category WHERE id = ?';
-        const params = [categoryId];
-
-        return this.queryExecutor.executeAndFetchOne(sql, params);
+        await this.queryExecutor.executeAndCommit(sql, params);
     }
 
     // Read all categories
