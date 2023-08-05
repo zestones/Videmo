@@ -21,6 +21,24 @@ class SerieEpisodeDAO {
         await this.queryExecutor.executeAndCommit(sql, params);
     }
 
+    // Get an episode by its link
+    async getEpisodeByLink(link) {
+        const sql = `SELECT * FROM Episode WHERE link = ?`;
+        const params = [link];
+
+        return await this.queryExecutor.executeAndFetchOne(sql, params);
+    }
+
+    // Get all episodes by a serie
+    async getAllEpisodesBySerieLink(link) {
+        const sql = `SELECT Episode.* FROM Episode
+                    INNER JOIN Track ON Episode.id = Track.episode_id
+                    INNER JOIN Serie ON Serie.id = Track.serie_id
+                    WHERE Serie.link = ?`;
+        const params = [link];
+        return await this.queryExecutor.executeAndFetchAll(sql, params);
+    }
+
     // Update an episode in the Episode table
     async updateEpisode(episode) {
         const sql = `UPDATE Episode SET viewed = ?, bookmarked = ?, played_time = ? WHERE id = ?`;
@@ -34,23 +52,6 @@ class SerieEpisodeDAO {
         await this.queryExecutor.executeAndCommit(sql, params);
     }
 
-    // Get an episode by its link
-    async getEpisodeByLink(link) {
-        const sql = `SELECT * FROM Episode WHERE link = ?`;
-        const params = [link];
-
-        return await this.queryExecutor.executeAndFetchOne(sql, params);
-    }
-
-    // Get all episodes by a serie
-    async readAllEpisodesBySerieLink(link) {
-        const sql = `SELECT Episode.* FROM Episode
-                    INNER JOIN Track ON Episode.id = Track.episode_id
-                    INNER JOIN Serie ON Serie.id = Track.serie_id
-                    WHERE Serie.link = ?`;
-        const params = [link];
-        return await this.queryExecutor.executeAndFetchAll(sql, params);
-    }
 }
 
 
