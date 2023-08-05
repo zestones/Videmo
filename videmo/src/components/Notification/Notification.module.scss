@@ -1,0 +1,61 @@
+.alert {
+    position: fixed;
+    top: 25px;
+    right: 25px;
+
+    width: 65%;
+    max-width: 350px;
+    min-width: 300px;
+
+    z-index: 9999;
+    padding: 0.5rem 1rem;
+    
+    background-color: #fff;
+    border-bottom: 1px solid #ddd;
+    
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    
+    display: flex;
+    align-items: center;
+
+    transition: all 0.3s ease-in-out;
+    animation: popUp 0.3s ease-in-out;
+
+    @keyframes popUp {
+        0% {
+            transform: scale(0.5);
+            opacity: 0;
+        }
+        75% {
+            transform: scale(1.05);
+        }
+        100% {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+
+    .title {
+        font-size: 1rem;
+        font-weight: 600;
+    }
+    .message {  
+        font-size: 0.8rem;
+        font-weight: 400;
+    }
+
+    .closeButton {
+        margin-left: auto;
+        cursor: pointer;
+
+        // I want the button on the top right corner of the alert
+        position: absolute;
+        top: 7px;
+        right: 7px;
+        
+        .closeIcon {
+            color: var(--red-3);
+        }
+    }
+
+}

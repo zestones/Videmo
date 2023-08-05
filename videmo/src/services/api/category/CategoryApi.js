@@ -11,11 +11,11 @@ export default class CategoryApi {
     }
 
     // read categories by serie id
-    readSerieCategoryIdsBySerie(serie) {
-        window.api.send("/read/serie-categories/by/serie", { serie: serie });
+    readSerieCategoryIdsBySerieLink(link) {
+        window.api.send("/read/serie-categories/by/serie/link/", { link: link });
 
         return new Promise((resolve, reject) => {
-            window.api.receive("/read/serie-categories/by/serie", (data) => data.success ? resolve(data.categories) : reject(data.error));
+            window.api.receive("/read/serie-categories/by/serie/link/", (data) => data.success ? resolve(data.categories) : reject(data.error));
         });
     }
 
@@ -56,27 +56,27 @@ export default class CategoryApi {
     // Add Serie to Categories
     addSerieToCategories(serie, categoriesId = [1]) {
         // TODO : check if the genres is present in the serie and if not retrieve the serie genres with aniList API
-        window.api.send("/add/categories/to/serie", { serie: JSON.stringify(serie), categoriesId: categoriesId });
+        window.api.send("/add/categories/to/serie/", { serie: JSON.stringify(serie), categoriesId: categoriesId });
 
         return new Promise((resolve, reject) => {
-            window.api.receive("/add/categories/to/serie", (data) => data.success ? resolve(data.category) : reject(data.error));
+            window.api.receive("/add/categories/to/serie/", (data) => data.success ? resolve(data.categories) : reject(data.error));
         });
     }
 
     // Read last opened category
     readLastOpenedCategory() {
-        window.api.send("/read/last/opened/category");
+        window.api.send("/read/last/opened/category/");
 
         return new Promise((resolve, reject) => {
-            window.api.receive("/read/last/opened/category", (data) => data.success ? resolve(data.category) : reject(data.error));
+            window.api.receive("/read/last/opened/category/", (data) => data.success ? resolve(data.category) : reject(data.error));
         });
     }
 
     updateLastOpenedCategory(categoryId) {
-        window.api.send("/update/last/opened/category", { id: categoryId });
+        window.api.send("/update/last/opened/category/", { id: categoryId });
 
         return new Promise((resolve, reject) => {
-            window.api.receive("/update/last/opened/category", (data) => data.success ? resolve(data.category) : reject(data.error));
+            window.api.receive("/update/last/opened/category/", (data) => data.success ? resolve(data.category) : reject(data.error));
         });
     }
 }

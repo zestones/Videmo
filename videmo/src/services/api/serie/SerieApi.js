@@ -8,19 +8,11 @@ export default class SerieApi {
         });
     }
 
-    readExtensionBySerieId(serieId) {
-        window.api.send("/read/extension/by/serie/id/", { serieId: serieId });
+    readSerieBySerieObject(link) {
+        window.api.send("/read/serie/by/serie-link/", { link: link });
 
         return new Promise((resolve, reject) => {
-            window.api.receive("/read/extension/by/serie/id/", (data) => data.success ? resolve(data.extension) : reject(data.error));
-        });
-    }
-
-    readSerieBySerieObject(serie) {
-        window.api.send("/read/serie/by/serie-object/", { serie: serie });
-
-        return new Promise((resolve, reject) => {
-            window.api.receive("/read/serie/by/serie-object/", (data) => data.success ? resolve(data.serie) : reject(data.error));
+            window.api.receive("/read/serie/by/serie-link/", (data) => data.success ? resolve(data.serie) : reject(data.error));
         });
     }
 }

@@ -25,7 +25,8 @@ class SQLiteQueryExecutor {
     }
 
     /**
-     * TODO - Remove this method when the application is ready for production.
+     * TODO - Remove this method when the application is ready for production
+     * TODO - Instead of creating the database inside the build, create it in the user's app data folder for example
      * Creates the production database if it doesn't exist.
      */
     async #createProductionDatabase() {

@@ -2,12 +2,7 @@ export default class ExtensionsApi {
 
     // Create a new extension
     createExtension(link = "", name = "", local = true) {
-        if (link === "" || name === "") {
-            console.error("Link and name are required");
-            return;
-        }
-
-        // TODO: Check if extension already exists
+        // Send the request to the main Electron process
         window.api.send("/create/extension/", { link: link, name: name, local: local });
 
         // Listen for the response from the main Electron process

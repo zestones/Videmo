@@ -12,6 +12,7 @@ import TrackApi from "../../services/api/track/TrackApi";
 import SeriesDisplay from "../../components/SeriesDisplay/SeriesDisplay";
 import CategoryHeader from "../../components/CategoryHeader/CategoryHeader";
 import Header from "../../components/Header/Header";
+import Notification from "../../components/Notification/Notification";
 
 // Styles
 import styles from "./Library.module.scss";
@@ -23,6 +24,7 @@ function Library() {
     const [episodes, setEpisodes] = useState([]);
     const [folderContents, setFolderContents] = useState([]);
     const [searchValue, setSearchValue] = useState("");
+    const [error, setError] = useState(null);
 
     // Api initialization
     const [serieApi] = useState(() => new SerieApi());
@@ -35,7 +37,7 @@ function Library() {
     const retrieveAllSeriesBySelectedCategory = useCallback(() => {
         serieApi.readAllSeriesByCategory(selectedCategory?.id)
             .then((seriesInLibrary) => setFolderContents(seriesInLibrary.map((serie) => ({ ...serie, inLibrary: true }))))
-            .catch((error) => console.error(error));
+            .catch((error) => setError({ message: error.message, type: "error" }));
     }, [serieApi, selectedCategory]);
 
     useEffect(() => {
@@ -49,7 +51,7 @@ function Library() {
     const retrieveSubSeriesInLibraryByExtension = (data, extension_id) => {
         categoryApi.readAllSeriesInLibraryByExtension(selectedCategory)
             .then((series) => setFolderContents(folderManager.superMapFolderContentsWithMandatoryFields(data.contents, series, { id: extension_id }, data.basename)))
-            .catch((error) => console.error(error));
+            .catch((error) => setError({ message: error.message, type: "error" }));
     };
 
     const onBackClick = async () => {
@@ -59,7 +61,7 @@ function Library() {
         // If we are at the root of the library, we display the content of the library
         // We do this until we are at the root of the library
         try {
-            const retrievedSerie = await serieApi.readSerieBySerieObject(serie);
+            const retrievedSerie = await serieApi.readSerieBySerieObject(serie.link);
             if (retrievedSerie?.inLibrary) {
                 setSerie(null);
                 retrieveAllSeriesBySelectedCategory();
@@ -85,6 +87,7 @@ function Library() {
             }
             setEpisodes([]);
         } catch (error) {
+            setError({ message: error.message, type: "error" })
             console.error(error);
         }
     };
@@ -96,7 +99,7 @@ function Library() {
             const extension = await extensionApi.readExtensionById(details.extension_id);
             const level = await folderManager.retrieveLevel(extension.link, details.link);
 
-            checkAndHandleFolderContentsWithExtension(details.link, level, details.extension_id);
+            checkAndHandleFolderContentsWithExtension(details.link, details.extension_id, level);
             const searchName = details.basename === details.name ? details.basename : details.basename + " " + details.name;
             const data = await aniList.searchAnimeDetailsByName(searchName);
             setSerie({
@@ -107,12 +110,13 @@ function Library() {
             });
             setSearchValue("");
         } catch (error) {
+            setError({ message: error.message, type: "error" })
             console.error(error);
         }
     };
 
     // TODO : Handle remote and local sources
-    const checkAndHandleFolderContentsWithExtension = async (link, level = 0, extension_id) => {
+    const checkAndHandleFolderContentsWithExtension = async (link, extension_id, level = 0) => {
         try {
             const data = await folderManager.retrieveFolderContents(link, level);
             if (data.contents.length === 0) {
@@ -126,6 +130,7 @@ function Library() {
                 setEpisodes([]);
             }
         } catch (error) {
+            setError({ message: error.message, type: "error" })
             console.error(error);
         }
     };
@@ -138,6 +143,7 @@ function Library() {
 
     return (
         <div className={styles.library}>
+            {error && <Notification message={error.message} type={error.type} onClose={setError} />}
             <div className={styles.libraryContainer}>
                 <Header
                     title="Bilbliothèque"
