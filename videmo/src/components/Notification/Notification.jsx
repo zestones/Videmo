@@ -63,7 +63,7 @@ function Notification({ type, message, onClose }) {
 };
 
 Notification.propTypes = {
-    type: PropTypes.oneOf(['error', 'danger', 'success']).isRequired,
+    type: PropTypes.oneOf(['error', 'warning', 'success']).isRequired,
     message: PropTypes.string.isRequired,
 };
 

@@ -15,7 +15,7 @@ const Dropdown = ({ title, content }) => {
     };
 
     return (
-        <div className={`${styles.dropdown} ${isOpen ? styles.open : ''}`}>
+        <div role="group" className={`${styles.dropdown} ${isOpen ? styles.open : ''}`}>
             <div className={styles.dropdownHeader} onClick={handleToggleDropdown}>
                 <h2>{title}</h2>
                 <KeyboardArrowDownIcon className={styles.openIcon} onClick={() => handleToggleDropdown} />
