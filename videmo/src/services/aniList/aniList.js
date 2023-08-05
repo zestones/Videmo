@@ -52,9 +52,9 @@ export default class AniList {
                     return {
                         description: anime.description,
                         genres: anime.genres ? anime.genres : [],
-                        startDate: this.#formatDate(anime.startDate),
-                        duration: this.#formatDuration(anime.duration),
-                        rating: this.#formatRating(anime.meanScore)
+                        startDate: this.formatDate(anime.startDate),
+                        duration: this.formatDuration(anime.duration),
+                        rating: this.formatRating(anime.meanScore)
                     };
                 } else {
                     return null;
@@ -68,29 +68,32 @@ export default class AniList {
      * @param {String} date 
      * @returns {String} The formatted date.
      */
-    #formatDate(date) {
+    formatDate(date) {
         return `${date?.day}/${date?.month}/${date?.year}`;
     }
 
     /**
-     * 
-     * @param {String} duration 
+     * @param {String} duration - The duration in minutes.
      * @returns {String} The formatted duration.
      */
-    #formatDuration(duration) {
+    formatDuration(duration) {
         const hours = Math.floor(duration / 60);
-        const minutes = duration % 60;
-        const seconds = duration % 1;
-        
-        return `${hours ? hours + "h" : ""} ${minutes ? minutes + "min" : ""} ${seconds ? seconds + "s" : ""}`;
+        const minutes = Math.floor(duration % 60);
+        const seconds = Math.floor((duration * 60) % 60);
+
+        const formattedHours = String(hours).padStart(2, "0");
+        const formattedMinutes = String(minutes).padStart(2, "0");
+        const formattedSeconds = String(seconds).padStart(2, "0");
+
+        return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
     }
 
     /**
-     * 
      * @param {String} rating 
-     * @returns {String} The formatted rating out of 10.
+     * @returns {String} The formatted rating out of 10. 
+     * - With 1 decimal place. if last digit is 0, it is removed.
      */
-    #formatRating(rating) {
-        return `${Math.floor(rating / 10)}/10`;
+    formatRating(rating) {
+        return `${(rating / 10).toFixed(1).replace(/\.0$/, "")}/10`;
     }
 }

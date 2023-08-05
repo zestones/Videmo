@@ -8,6 +8,7 @@ class SQLiteQueryExecutor {
         this.database = this.#retrieveDatabasePath();
         this.#createProductionDatabase();
     }
+    
     /**
      * Retrieves the path to the SQLite database file depending on the environment. (development or production)
      * @returns {string} The path to the SQLite database file.
