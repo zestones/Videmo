@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 
 // External
 import CloseIcon from '@mui/icons-material/Close';
@@ -8,7 +8,6 @@ import ReactPlayer from 'react-player'
 
 // Styles
 import styles from "./VideoPlayer.module.scss";
-import { useEffect } from "react";
 
 
 function VideoPlayer({ link, startTime, onCloseVideoPlayer }) {

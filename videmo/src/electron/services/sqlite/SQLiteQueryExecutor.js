@@ -217,7 +217,6 @@ class SQLiteQueryExecutor {
                     stmt.run(params, function (err) {
                         if (err) {
                             this.db.run('ROLLBACK', () => reject(err));
-                            return;
                         }
                     });
                 });
