@@ -105,7 +105,6 @@ class FolderManager {
      * @param {String} filePath 
      * @returns {String} The file name of the file path.
      */
-    // TODO : rename to retrieveBaseName
     retrieveBaseName(filePath) {
         return filePath.split("\\").pop().split("/").pop();
     }

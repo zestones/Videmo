@@ -5,7 +5,7 @@ const SerieHistoryDAO = require('../services/dao/series/SerieHistoryDAO');
 
 // Read serie and episode history
 ipcMain.on('/read/all/episode/and/serie/history/', async (event) => {
-    new SerieHistoryDAO().readAllEpisodeAndSerieFromHistory()
+    new SerieHistoryDAO().getAllEpisodeAndSerieFromHistory()
         .then((retrievedHistory) => event.reply('/read/all/episode/and/serie/history/', { success: true, history: retrievedHistory }))
         .catch(error => event.reply('/read/all/episode/and/serie/history/', { success: false, error }));
 })

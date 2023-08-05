@@ -37,7 +37,7 @@ ipcMain.on('/read/episode/by/link/', async (event, arg) => {
 
 // Read episode by serie id and episode id
 ipcMain.on('/read/all/episodes/by/serie/link/', async (event, arg) => {
-    new SerieEpisodeDAO().readAllEpisodesBySerieLink(arg)
+    new SerieEpisodeDAO().getAllEpisodesBySerieLink(arg)
         .then((retrievedEpisodes) => {
             const dataTypesConverter = new DataTypesConverter();
             retrievedEpisodes.forEach(episode => {
