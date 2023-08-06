@@ -23,14 +23,16 @@
   "main": "public/electron.js",
   "scripts": {
     "react": "react-scripts start",
-    "react-build": "react-scripts build",
-    "build": "set NODE_ENV=production&& npm run react-build && npm run electron-build",
-    "react-test": "react-scripts test tests",
-    "react-eject": "react-scripts eject",
     "electron": "set NODE_ENV=development&& electron .",
+    "test": "set NODE_ENV=test&&react-scripts test -i --watchAll && npm run cleanup",
+    "test-coverage": "set NODE_ENV=test&&react-scripts test -i --watchAll --coverage && npm run cleanup",
+    "react-eject": "react-scripts eject",
+    "react-build": "react-scripts build",
     "electron-build": "electron-builder --win --x64",
+    "build": "set NODE_ENV=production&& npm run react-build && npm run electron-build",
     "postinstall": "electron-builder install-app-deps",
     "publish": "npm run build && electron-builder --publish always",
+    "cleanup": "node scripts/cleanup.js",
     "debug": "node --inspect-brk ./node_modules/jest/bin/jest -i"
   },
   "build": {

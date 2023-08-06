@@ -4,13 +4,9 @@ const path = require('path');
 const fs = require('fs');
 
 class SQLiteQueryExecutor {
-    constructor(param) {
-        if (param === 'test') {
-            this.database = ':memory:';
-        } else {
-            this.database = this.#retrieveDatabasePath();
-            this.#createProductionDatabase();
-        }
+    constructor() {
+        this.database = this.#retrieveDatabasePath();
+        this.#createProductionDatabase();
     }
 
     /**
@@ -20,6 +16,10 @@ class SQLiteQueryExecutor {
     #retrieveDatabasePath() {
         if (process.env.NODE_ENV === 'development') {
             return path.join(__dirname, 'sql', 'videmo.db');
+        }
+
+        if (process.env.NODE_ENV === 'test') {
+            return path.join(__dirname, 'sql', 'videmo.test.db');
         }
 
         let appPath = app.getAppPath();

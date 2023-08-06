@@ -5,13 +5,16 @@ describe('SQLiteQueryExecutor', () => {
 
     beforeAll(async () => {
         // Set up an in-memory SQLite database
-        queryExecutor = new SQLiteQueryExecutor('test');
+        queryExecutor = new SQLiteQueryExecutor();
 
         // Initialize the database by creating tables and inserting data
         await queryExecutor.open();
     });
 
     afterAll(async () => {
+        await queryExecutor.executeAndCommit(`DELETE FROM Test`);
+		await queryExecutor.executeAndCommit('DROP TABLE IF EXISTS Test;');
+
         // Close the database connection
         await queryExecutor.close();
     });
@@ -22,7 +25,7 @@ describe('SQLiteQueryExecutor', () => {
     });
 
     it('should create a table', async () => {
-        const sql = `CREATE TABLE Test (
+        const sql = `CREATE TABLE IF NOT EXISTS Test (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL
         )`;
