@@ -30,7 +30,8 @@
     "electron": "set NODE_ENV=development&& electron .",
     "electron-build": "electron-builder --win --x64",
     "postinstall": "electron-builder install-app-deps",
-    "publish": "npm run build && electron-builder --publish always"
+    "publish": "npm run build && electron-builder --publish always",
+    "debug": "node --inspect-brk ./node_modules/jest/bin/jest -i"
   },
   "build": {
     "publish": {

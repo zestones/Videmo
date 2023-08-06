@@ -4,11 +4,15 @@ const path = require('path');
 const fs = require('fs');
 
 class SQLiteQueryExecutor {
-    constructor() {
-        this.database = this.#retrieveDatabasePath();
-        this.#createProductionDatabase();
+    constructor(param) {
+        if (param === 'test') {
+            this.database = ':memory:';
+        } else {
+            this.database = this.#retrieveDatabasePath();
+            this.#createProductionDatabase();
+        }
     }
-    
+
     /**
      * Retrieves the path to the SQLite database file depending on the environment. (development or production)
      * @returns {string} The path to the SQLite database file.
@@ -122,7 +126,7 @@ class SQLiteQueryExecutor {
         return new Promise((resolve, reject) => {
             this.db.serialize(() => {
                 this.db.run('BEGIN TRANSACTION');
-                this.db.run(sql, params, (err) => {  // Use an arrow function here
+                this.db.run(sql, params, (err) => {
                     if (err) {
                         this.db.run('ROLLBACK');
                         reject(err);
