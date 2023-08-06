@@ -38,10 +38,6 @@ function Notification({ type, message, onClose }) {
             title = 'Success! Everything is fine.';
             break;
         default:
-            icon = <ErrorIcon fontSize="large" />;
-            title = 'An error occurred!';
-            message =
-                'The type of alert is not defined. Hence, the default type is used. Please check that you are using the correct type of alert.';
             break;
     }
 

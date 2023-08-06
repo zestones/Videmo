@@ -323,6 +323,29 @@ describe('QueryExecutor database queries', () => {
 		expect(result[2].id).toBe(3);
 		expect(result[2].name).toBe('Third');
 	});
+
+	it('should fail to execute many and commit the changes', async () => {
+		// Create a spy for the mock SQLiteQueryExecutor's close method
+		const spy = jest.spyOn(mockSQLiteQueryExecutor, 'executeManyAndCommit');
+		const ERROR_MESSAGE = 'Error executing many and committing the changes';
+
+		// Mock the executeManyAndCommit method to throw an error
+		spy.mockImplementation(() => { throw new Error(ERROR_MESSAGE) });
+
+		const sql = `INSERT INTO Test (name) VALUES (?);`;
+		const params = [['First'], ['Second'], ['Third']];
+
+		// Execute the query
+		const error = await getError(async () => await queryExecutor.executeManyAndCommit(sql, params));
+
+		// Verify that the executeManyAndCommit method was called
+		expect(spy).toHaveBeenCalled();
+
+		// Verify that the error was thrown
+		expect(error).not.toBeInstanceOf(NoErrorThrownError);
+		expect(error).toBeTruthy();
+		expect(error.message).toBe(ERROR_MESSAGE);
+	});
 });
 
 

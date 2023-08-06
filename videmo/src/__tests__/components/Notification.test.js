@@ -47,7 +47,6 @@ test('Success notification should render with correct content', () => {
     expect(closeButton).toBeInTheDocument();
 });
 
-
 test('Notification should auto-close after 5 seconds', () => {
     jest.useFakeTimers();
 
@@ -64,4 +63,3 @@ test('Notification should auto-close after 5 seconds', () => {
     // After 5 seconds, the onClose function should be called
     expect(onClose).toHaveBeenCalledTimes(1);
 });
-
