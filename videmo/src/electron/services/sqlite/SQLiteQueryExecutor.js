@@ -116,6 +116,22 @@ class SQLiteQueryExecutor {
         }
     }
 
+    executeFile(filePath) {
+        const insertDataQuery = fs.readFileSync(filePath, 'utf8');
+        
+        return new Promise((resolve, reject) => {
+            this.db.exec(insertDataQuery, (err) => {
+                if (err) {
+                    console.error('Error inserting data:', err);
+                    reject(err);
+                } else {
+                    resolve();
+                }
+            });
+        });
+    }
+
+
     /**
      * Executes a query and commits the changes to the database.
      * @param {string} sql - The SQL query to execute.
