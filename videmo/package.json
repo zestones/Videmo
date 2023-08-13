@@ -25,7 +25,7 @@
     "react": "react-scripts start",
     "electron": "set NODE_ENV=development&& electron .",
     "test": "set NODE_ENV=test&&react-scripts test -i --watchAll && npm run cleanup",
-    "test-coverage": "set NODE_ENV=test&&react-scripts test -i --watchAll --coverage && npm run cleanup",
+    "test-coverage": "set NODE_ENV=test&&react-scripts test -i --watchAll=false --coverage && npm run cleanup",
     "react-eject": "react-scripts eject",
     "react-build": "react-scripts build",
     "electron-build": "electron-builder --win --x64",
