@@ -65,6 +65,18 @@ class QueryExecutor {
         }
     }
 
+    async executeFile(filePath) {
+        try {
+            this.open();
+            const result = await this.sqlQueryExecutor.executeFile(filePath);
+            this.close();
+            return result;
+        } catch (err) {
+            console.error('Error executing query from file:', err);
+            throw err;
+        }
+    }
+
     async open() {
         try {
             await this.sqlQueryExecutor.open();

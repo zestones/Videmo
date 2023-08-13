@@ -8,6 +8,7 @@ class SQLiteQueryExecutor {
         this.database = this.#retrieveDatabasePath();
         this.#createProductionDatabase();
     }
+
     /**
      * Retrieves the path to the SQLite database file depending on the environment. (development or production)
      * @returns {string} The path to the SQLite database file.
@@ -15,6 +16,10 @@ class SQLiteQueryExecutor {
     #retrieveDatabasePath() {
         if (process.env.NODE_ENV === 'development') {
             return path.join(__dirname, 'sql', 'videmo.db');
+        }
+
+        if (process.env.NODE_ENV === 'test') {
+            return path.join(__dirname, 'sql', 'videmo.test.db');
         }
 
         let appPath = app.getAppPath();
@@ -111,6 +116,22 @@ class SQLiteQueryExecutor {
         }
     }
 
+    executeFile(filePath) {
+        const insertDataQuery = fs.readFileSync(filePath, 'utf8');
+        
+        return new Promise((resolve, reject) => {
+            this.db.exec(insertDataQuery, (err) => {
+                if (err) {
+                    console.error('Error inserting data:', err);
+                    reject(err);
+                } else {
+                    resolve();
+                }
+            });
+        });
+    }
+
+
     /**
      * Executes a query and commits the changes to the database.
      * @param {string} sql - The SQL query to execute.
@@ -121,7 +142,7 @@ class SQLiteQueryExecutor {
         return new Promise((resolve, reject) => {
             this.db.serialize(() => {
                 this.db.run('BEGIN TRANSACTION');
-                this.db.run(sql, params, (err) => {  // Use an arrow function here
+                this.db.run(sql, params, (err) => {
                     if (err) {
                         this.db.run('ROLLBACK');
                         reject(err);

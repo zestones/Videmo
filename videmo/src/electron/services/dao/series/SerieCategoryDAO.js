@@ -65,7 +65,7 @@ class SerieCategoryDAO {
         return await this.queryExecutor.executeAndFetchAll(sql);
     }
 
-    async updateSerieCategory(serieId, categoriesId) {
+    async #updateSerieCategory(serieId, categoriesId) {
         // Clear existing categories for the series in the SerieCategory table
         await this.deleteSerieCategoryBySerieId(serieId);
         await this.serieDAO.updateSerieInLibrary(serieId, 1);
@@ -91,7 +91,7 @@ class SerieCategoryDAO {
         const insertedSerie = await this.serieDAO.getSerieByLink(serieParsedObject.link);
 
         // Update the SerieCategory table with the new series and categories
-        await this.updateSerieCategory(insertedSerie.id, categoriesId);
+        await this.#updateSerieCategory(insertedSerie.id, categoriesId);
     }
 
     // Count serie categories by serie ID
@@ -114,7 +114,7 @@ class SerieCategoryDAO {
         } else {
             const serieId = retrievedSerie.id; // Use the retrievedSerie.id instead of making another query
             // Update the SerieCategory table with the new series and categories
-            await this.updateSerieCategory(serieId, categoriesId);
+            await this.#updateSerieCategory(serieId, categoriesId);
         }
     }
     
