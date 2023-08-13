@@ -11,18 +11,26 @@ describe('SerieCategoryDAO', () => {
 
     const tables = path.join(__dirname, '../../../../../electron/services/sqlite/sql/tables.sql');
     const drop_tables = path.join(__dirname, '../../../../../electron/services/sqlite/sql/drop_tables.sql');
+    const delete_data = path.join(__dirname, '../../../../../electron/services/sqlite/sql/delete_data.sql');
 
     beforeAll(async () => {
+        mockQueryExecutor = new QueryExecutor();
+        
+        // Create the SerieCategory table
+        await mockQueryExecutor.executeFile(tables);
+    });
+
+    beforeEach(() => {
         mockQueryExecutor = new QueryExecutor();
         serieDAO = new SerieDAO();
         serieCategoryDAO = new SerieCategoryDAO();
 
-        serieDAO.queryExecutor = mockQueryExecutor;
-        serieCategoryDAO.queryExecutor = mockQueryExecutor;
         serieCategoryDAO.serieDAO = serieDAO;
+    });
 
-        // Create the SerieCategory table
-        await mockQueryExecutor.executeFile(tables);
+    afterEach(async () => {
+        // Clear the database
+        await mockQueryExecutor.executeFile(delete_data);
     });
 
     afterAll(async () => {
@@ -44,9 +52,6 @@ describe('SerieCategoryDAO', () => {
         // Assert
         expect(result.serie_id).toBe(serieId);
         expect(result.category_id).toBe(categoryId);
-
-        // Clean up
-        await mockQueryExecutor.executeAndCommit(`DELETE FROM SerieCategory WHERE serie_id = ? AND category_id = ?`, params);
     });
 
     it('should get a serie category by ID', async () => {
@@ -63,9 +68,6 @@ describe('SerieCategoryDAO', () => {
         // Assert
         expect(result.serie_id).toBe(serieId);
         expect(result.category_id).toBe(categoryId);
-
-        // Clean up
-        await mockQueryExecutor.executeAndCommit(`DELETE FROM SerieCategory WHERE serie_id = ? AND category_id = ?`, [serieId, categoryId]);
     });
 
     it('should get a serie category by serie ID', async () => {
@@ -82,9 +84,6 @@ describe('SerieCategoryDAO', () => {
         // Assert
         expect(result[0].serie_id).toBe(serieId);
         expect(result[0].category_id).toBe(categoryId);
-
-        // Clean up
-        await mockQueryExecutor.executeAndCommit(`DELETE FROM SerieCategory WHERE serie_id = ? AND category_id = ?`, [serieId, categoryId]);
     });
 
     it('should update the last opened category tab', async () => {
@@ -99,9 +98,6 @@ describe('SerieCategoryDAO', () => {
 
         // Assert
         expect(result.category_id).toBe(categoryId);
-
-        // Clean up
-        await mockQueryExecutor.executeAndCommit(`UPDATE LastOpenedCategory SET category_id = 1 WHERE category_id = ?`, params);
     });
 
     it('should get the last opened category tab', async () => {
@@ -119,9 +115,6 @@ describe('SerieCategoryDAO', () => {
 
         // Assert
         expect(result.category_id).toBe(categoryId);
-
-        // Clean up
-        await mockQueryExecutor.executeAndCommit(`UPDATE LastOpenedCategory SET category_id = 1 WHERE category_id = ?`, [categoryId]);
     });
 
     it('should get the serie category IDs by serie link', async () => {
@@ -144,10 +137,6 @@ describe('SerieCategoryDAO', () => {
 
         // Assert
         expect(result).toEqual([categoryId]);
-
-        // Clean up
-        await mockQueryExecutor.executeAndCommit(`DELETE FROM SerieCategory WHERE serie_id = ? AND category_id = ?`, insertSerieCategoryParams);
-        await mockQueryExecutor.executeAndCommit(`DELETE FROM Serie WHERE id = ?`, [serieId]);
     });
 
     it('should get all the serie categories', async () => {
@@ -180,7 +169,6 @@ describe('SerieCategoryDAO', () => {
         // Act
         await serieCategoryDAO.updateSerieCategories(JSON.stringify(serie), newCategoryIds);
         const sql = `SELECT * FROM SerieCategory`;
-        const params = [serieId];
         const result = await mockQueryExecutor.executeAndFetchAll(sql);
 
         // Assert
@@ -189,9 +177,6 @@ describe('SerieCategoryDAO', () => {
             expect(element.serie_id).toBe(serieId);
             expect(newCategoryIds).toContain(element.category_id);
         }); 
-
-        // Clean up
-        await mockQueryExecutor.executeAndCommit(`DELETE FROM SerieCategory WHERE serie_id = ?`, params);
     });
 
     it('should delete a serie category by serie id', async () => {

@@ -4,22 +4,28 @@ const DataTypesConverter = require('../../../../../electron/utilities/converter/
 
 const path = require('path');
 
+
 describe('SerieDAO', () => {
     let mockQueryExecutor;
     let serieDAO;
 
     const tables = path.join(__dirname, '../../../../../electron/services/sqlite/sql/tables.sql');
     const drop_tables = path.join(__dirname, '../../../../../electron/services/sqlite/sql/drop_tables.sql');
+    const delete_data = path.join(__dirname, '../../../../../electron/services/sqlite/sql/delete_data.sql');
 
     beforeAll(async () => {
         mockQueryExecutor = new QueryExecutor();
         serieDAO = new SerieDAO();
-
+        
         serieDAO.queryExecutor = mockQueryExecutor;
         serieDAO.dataTypesConverter = new DataTypesConverter();
 
-        // Create the Serie table
         await mockQueryExecutor.executeFile(tables);
+    });
+
+    afterEach(async () => {
+        // Clear the database
+        await mockQueryExecutor.executeFile(delete_data);
     });
 
     afterAll(async () => {
@@ -53,9 +59,6 @@ describe('SerieDAO', () => {
         expect(result.link).toBe(serie.link);
         expect(result.extension_id).toBe(serie.extension_id);
         expect(result.inLibrary).toBe(serie.inLibrary);
-
-        // Clean up
-        await mockQueryExecutor.executeAndCommit(`DELETE FROM Serie WHERE basename = ?`, params);
     });
 
     it('should get all series', async () => {
@@ -94,10 +97,6 @@ describe('SerieDAO', () => {
         expect(result.length).toBe(2);
         expect(result[0]).toEqual(serie1);
         expect(result[1]).toEqual(serie2);
-
-        // Clean up
-        await mockQueryExecutor.executeAndCommit(`DELETE FROM Serie WHERE link = ?`, [serie1.link]);
-        await mockQueryExecutor.executeAndCommit(`DELETE FROM Serie WHERE link = ?`, [serie2.link]);
     });
 
     it('should get a serie by id', async () => {
@@ -123,9 +122,6 @@ describe('SerieDAO', () => {
 
         // Assert
         expect(result).toEqual(serie);
-
-        // Clean up
-        await mockQueryExecutor.executeAndCommit(`DELETE FROM Serie WHERE link = ?`, [serie.link]);
     });
 
     it('should get a serie by link', async () => {
@@ -151,9 +147,6 @@ describe('SerieDAO', () => {
 
         // Assert
         expect(result).toEqual(serie);
-
-        // Clean up
-        await mockQueryExecutor.executeAndCommit(`DELETE FROM Serie WHERE link = ?`, [serie.link]);
     });
 
     it('should get all series inside library by extension id', async () => {
@@ -207,12 +200,6 @@ describe('SerieDAO', () => {
         expect(result.length).toBe(2);
         expect(result[0]).toEqual(serie1);
         expect(result[1]).toEqual(serie2);
-
-        // Clean up
-        await mockQueryExecutor.executeAndCommit(`DELETE FROM Serie WHERE link = ?`, [serie1.link]);
-        await mockQueryExecutor.executeAndCommit(`DELETE FROM Serie WHERE link = ?`, [serie2.link]);
-        await mockQueryExecutor.executeAndCommit(`DELETE FROM Serie WHERE link = ?`, [serie3.link]);
-        await mockQueryExecutor.executeAndCommit(`DELETE FROM Extension WHERE id = ?`, [extension.id]);
     });
 
     it('should get all series by category id', async () => {
@@ -270,13 +257,6 @@ describe('SerieDAO', () => {
         expect(result.length).toBe(2);
         expect(result[0]).toEqual(serie1);
         expect(result[1]).toEqual(serie2);
-
-        // Clean up
-        await mockQueryExecutor.executeAndCommit(`DELETE FROM Serie WHERE link = ?`, [serie1.link]);
-        await mockQueryExecutor.executeAndCommit(`DELETE FROM Serie WHERE link = ?`, [serie2.link]);
-        await mockQueryExecutor.executeAndCommit(`DELETE FROM Serie WHERE link = ?`, [serie3.link]);
-        await mockQueryExecutor.executeAndCommit(`DELETE FROM Category WHERE id = ?`, [category.id]);   
-        await mockQueryExecutor.executeAndCommit(`DELETE FROM SerieCategory WHERE category_id = ?`, [category.id]);
     });
 
     it('should update library status of a serie', async () => {
@@ -300,9 +280,6 @@ describe('SerieDAO', () => {
         // Assert
         const result = await mockQueryExecutor.executeAndFetchAll(`SELECT inLibrary FROM Serie WHERE link = ?`, [serie.link]);
         expect(result[0].inLibrary).toEqual(1); // 1 = true
-
-        // Clean up
-        await mockQueryExecutor.executeAndCommit(`DELETE FROM Serie WHERE link = ?`, [serie.link]);
     });
 
     it('should delete a serie', async () => {
@@ -326,8 +303,5 @@ describe('SerieDAO', () => {
         // Assert
         const result = await mockQueryExecutor.executeAndFetchAll(`SELECT * FROM Serie WHERE link = ?`, [serie.link]);
         expect(result.length).toEqual(0);
-
-        // Clean up
-        await mockQueryExecutor.executeAndCommit(`DELETE FROM Serie WHERE link = ?`, [serie.link]);
     });
 });

@@ -89,9 +89,6 @@ describe('QueryExecutor database queries', () => {
 
 	beforeEach(async () => {
 		mockSQLiteQueryExecutor = new SQLiteQueryExecutor();
-		await mockSQLiteQueryExecutor.open();
-
-		// Create an instance of the QueryExecutor with the mock SQLiteQueryExecutor
 		queryExecutor = new QueryExecutor();
 		queryExecutor.sqlQueryExecutor = mockSQLiteQueryExecutor;
 
