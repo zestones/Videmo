@@ -14,6 +14,10 @@ import SeriesDisplay from "../../components/SeriesDisplay/SeriesDisplay";
 import Header from "../../components/Header/Header";
 import Notification from "../../components/Notification/Notification";
 
+// Styles
+import styles from "./Explore.module.scss";
+
+
 function Explore() {
     // State initialization
     const [selectedExtension, setSelectedExtension] = useState(null);
@@ -126,7 +130,7 @@ function Explore() {
     );
 
     return (
-        <>
+        <div className={styles.explore}>
             {error && <Notification message={error.message} type={error.type} onClose={setError} />}
             {!selectedExtension ? (
                 <Source handleSelectedExtension={setSelectedExtension} />
@@ -148,7 +152,7 @@ function Explore() {
                     />
                 </>
             )}
-        </>
+        </div>
     );
 }
 

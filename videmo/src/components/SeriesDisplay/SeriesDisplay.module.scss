@@ -1,13 +1,13 @@
-.sourceContent {
-    margin: 12px auto;
-    width: 90%;
 
-    margin-bottom: 7rem;
+.sourceContent {
+    margin: 0;
+    width: 100%;
+    padding: 5px;
 
     display: flex;
-    justify-content: center;
     flex-wrap: wrap;
-
+    justify-content: center;
+    
     .episodesContainer {
         margin-top: 12px;
         width: 100%;

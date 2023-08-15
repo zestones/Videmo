@@ -3,11 +3,25 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 100%;
+
+    height: 80%;
     width: 100%;
+
+    padding: 0.8rem 0;
+
+    transition: background-color 0.2s ease-in-out;
 
     .navIcon {
         font-size: 2rem;
+    }
+
+    &.active {
+        color: var(--light-blue-5);
+    }
+    
+    &:hover {
+        background-color: var(--primary-color-light);
+        cursor: pointer;
     }
 
     .navIconContainer.active {
@@ -16,18 +30,7 @@
         align-items: center;
         height: 100%;
 
-        width: 50%;
-        max-width: 150px;
-        min-width: 100px;
-
-        background-color: rgba(217, 217, 217, 0.21);
-        border-radius: 32px;
-    }
-
-    .navIconContainer {
-        .navIcon:hover {
-            cursor: pointer;
-        }
+        width: 100%;
     }
 
     .navLabel {
