@@ -86,7 +86,7 @@ describe('SerieEpisodeDAO', () => {
         // Arrange
         const episode1 = {
             name: 'Episode 1',
-            link: 'https://www.google.com',
+            link: 'https://episode-1.com',
             viewed: false,
             bookmarked: false,
             played_time: 1265136
@@ -94,7 +94,7 @@ describe('SerieEpisodeDAO', () => {
 
         const episode2 = {
             name: 'Episode 2',
-            link: 'https://www.google.com',
+            link: 'https://episode-2.com',
             viewed: false,
             bookmarked: false,
             played_time: 0
@@ -106,7 +106,7 @@ describe('SerieEpisodeDAO', () => {
             name: 'Serie',
             description: 'Description',
             image: 'image.png',
-            link: 'serie',
+            link: 'https:serie-1.com',
             extension_id: 1,
             inLibrary: 1
         };
