@@ -7,7 +7,7 @@
     height: 80%;
     width: 100%;
 
-    padding: 0.5rem 0;
+    padding: 0.8rem 0;
 
     transition: background-color 0.2s ease-in-out;
 
@@ -16,7 +16,7 @@
     }
 
     &.active {
-        background-color: var(--primary-color-lighter);
+        color: var(--light-blue-5);
     }
     
     &:hover {

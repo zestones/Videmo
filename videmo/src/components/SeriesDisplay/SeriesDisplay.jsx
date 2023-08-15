@@ -25,6 +25,7 @@ function SeriesDisplay({ serie, folderContents, episodes, onPlayClick, onRefresh
                     displayLabel={calledFromExplore}
                 />
             ))}
+
             <div className={styles.episodesContainer}>
                 {episodes.map((episode) => (
                     <EpisodeCard key={episode.link} serie={serie} episode={episode} />

@@ -38,6 +38,7 @@ function SerieCard({ details, onPlayClick, onMoreClick, displayLabel }) {
                 <img className={styles.cardImage} src={details.image} alt={details.name} />
                 {(displayLabel && details.inLibrary) && <span className={styles.inLibraryLabel}>In Library</span>}
                 <p className={styles.cardTitle}>{utils.constructTitle(details)}</p>
+                
                 <div className={`${styles.cardLayer} ${isHovered && styles.hovered}`}>
                     <div className={styles.cardLayerContent}>
                         <ControlPointIcon className={styles.cardLayerImage} onClick={() => setShowCategoryModal(true)} />
@@ -46,6 +47,7 @@ function SerieCard({ details, onPlayClick, onMoreClick, displayLabel }) {
                     </div>
                 </div>
             </li>
+
             {showCategoryModal && (
                 <CategoryModal
                     serie={details}

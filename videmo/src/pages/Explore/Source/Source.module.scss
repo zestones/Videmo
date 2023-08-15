@@ -1,9 +1,6 @@
-.container {
-    margin: 12px auto;
+.container {  
+    margin: 0 auto;
     width: 90%;
-    
-    margin-top: calc(var(--header-height) + 30px);
-    margin-bottom: 20px;
 
     border-radius: 10px;
     background-color: var(--primary-color-light);
