@@ -1,5 +1,6 @@
 const { ipcMain, dialog, shell } = require('electron');
 const FolderManager = require('../../../utilities/folderManager/FolderManager');
+const BackupDAO = require('../../dao/settings/BackupDAO');
 
 const path = require('path');
 const fs = require('fs');
@@ -26,7 +27,7 @@ ipcMain.on('retrieveFolderContents', (event, { folderPath, coverFolder, level })
         } else {
             const folderContents = folderManager.getFolderContentsWithCovers(folderPath, contents, coverFolder, level);
             const basename = folderManager.getBasenameByLevel(folderPath, level);
-            
+
             event.reply('retrieveFolderContents', { success: true, error: null, folderContents: folderContents, basename: basename });
         }
     });
@@ -62,6 +63,28 @@ ipcMain.on("openFolderDialog", async (event) => {
     }
 });
 
+// Register the 'createBackupFile' event listener to the ipcMain module to create a backup file
+ipcMain.on("createBackupFile", async (event) => {
+    new BackupDAO().generateBackup()
+            .then(() => event.reply("createBackupFile", { success: true, error: null }))
+            .catch((error) => event.reply("createBackupFile", { success: false, error: error.message }));
+});
+
+// Register the 'restoreBackupFile' event listener to the ipcMain module to restore a backup file
+ipcMain.on("restoreBackupFile", async (event) => {
+    // Open a dialog to select the backup file
+    const result = await dialog.showOpenDialog({ properties: ["openFile"], title: "Select a backup file" });
+    if (result.canceled) {
+        event.reply("restoreBackupFile", { success: false, error: "No backup file selected" });
+        return;
+    }
+
+    // Get the path of the backup file
+    const filePath = result.filePaths[0];
+    new BackupDAO().restoreBackup(filePath)
+            .then(() => event.reply("restoreBackupFile", { success: true, error: null }))
+            .catch((error) => event.reply("restoreBackupFile", { success: false, error: error.message }));
+});
 
 // Register the 'retrieveFilesInFolder' event listener to the ipcMain module to get the files in a folder
 ipcMain.on("retrieveFilesInFolder", (event, { folderPath }) => {

@@ -19,6 +19,11 @@ class SerieTrackDAO {
         await this.queryExecutor.executeAndCommit(sql, params);
     }
 
+    async getAllTracks() {
+        const sql = `SELECT * FROM Track`;
+        return await this.queryExecutor.executeAndFetchAll(sql);
+    }
+
     // Get tracks by serie id and episode id
     async getSerieTrackBySerieIdAndEpisodeId(serieId, episodeId) {
         const sql = `SELECT * FROM Track WHERE serie_id = ? AND episode_id = ?`;

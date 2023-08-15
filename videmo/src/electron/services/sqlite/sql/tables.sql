@@ -3,7 +3,8 @@ CREATE TABLE IF NOT EXISTS Extension (
   id INTEGER PRIMARY KEY,
   link TEXT,
   name TEXT,
-  local INTEGER
+  local INTEGER,
+  UNIQUE (link)
 );
 
 -- Create the Serie table
@@ -17,7 +18,7 @@ CREATE TABLE IF NOT EXISTS Serie (
   inLibrary INTEGER,
   extension_id INTEGER,
   FOREIGN KEY (extension_id) REFERENCES Extension (id),
-  UNIQUE (basename, name, link)
+  UNIQUE (link)
 );
 
 -- Create the SerieGenre table
@@ -33,7 +34,8 @@ CREATE TABLE IF NOT EXISTS SerieGenre (
 -- Create the Genre table
 CREATE TABLE IF NOT EXISTS Genre (
   id INTEGER PRIMARY KEY,
-  name TEXT
+  name TEXT,
+  UNIQUE (name)
 );
 
 -- Create SerieCategory table
@@ -49,7 +51,8 @@ CREATE TABLE IF NOT EXISTS SerieCategory (
 -- Create the Category table
 CREATE TABLE IF NOT EXISTS Category (
   id INTEGER PRIMARY KEY,
-  name TEXT
+  name TEXT,
+  UNIQUE (name)
 );
 
 -- Create the LastOpenedCategory table
@@ -65,7 +68,8 @@ CREATE TABLE IF NOT EXISTS Track (
   serie_id INTEGER,
   episode_id INTEGER,
   FOREIGN KEY (serie_id) REFERENCES Serie (id),
-  FOREIGN KEY (episode_id) REFERENCES Episode (id)
+  FOREIGN KEY (episode_id) REFERENCES Episode (id),
+  UNIQUE (serie_id, episode_id)
 );
 
 -- Create Episode table
@@ -75,7 +79,8 @@ CREATE TABLE IF NOT EXISTS Episode (
   link TEXT,
   viewed INTEGER,
   bookmarked INTEGER,
-  played_time DATETIME
+  played_time DATETIME,
+  UNIQUE (link)
 );
 
 -- Create the History table
@@ -83,7 +88,8 @@ CREATE TABLE IF NOT EXISTS History (
   id INTEGER PRIMARY KEY,
   episode_id INTEGER,
   timestamp DATETIME,
-  FOREIGN KEY (episode_id) REFERENCES Episode (id)
+  FOREIGN KEY (episode_id) REFERENCES Episode (id),
+  UNIQUE (episode_id, timestamp)
 );
 
 -- Insert the default category

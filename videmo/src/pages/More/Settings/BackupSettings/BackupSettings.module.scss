@@ -1,0 +1,48 @@
+.container {
+    display: flex;
+    flex-direction: column;
+}
+
+.backup,
+.restore {
+    border-radius: 2px;
+    padding: 16px;
+
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    color: var(--text-color);
+
+    &:hover {
+        background-color: var(--gray-1);
+        color: var(--gray-7);
+    }
+
+    .title {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 6px;
+    }
+
+    .description {
+        color: var(--text-color);
+        font-size: 14px;
+        margin-bottom: 12px;
+    }
+
+    .action {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #007bff;
+        font-size: 16px;
+        font-weight: 500;
+    }
+
+    .icon {
+        font-size: 20px;
+    }
+
+    .actionText {
+        display: inline-block;
+    }
+}

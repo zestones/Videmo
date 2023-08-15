@@ -3,6 +3,7 @@
 
     --primary-color-light: #4a4e5a;
     --primary-color-lighter: #5f636f;
+    --primary-color-lightest: #757a87;
     --primary-color-dark: #303644;
     --primary-color-darker: #2c303c;
     --primary-color-darkest: #282c34;
@@ -42,6 +43,7 @@
     --light-blue-6: #4c6fd5;
     --light-blue-7: #3450a1;
     --light-blue-8: #6FC3E2;
+    --light-blue: #007bff;
 
     --red-1: #ff6b6b;
     --red-2: #ff5252;
