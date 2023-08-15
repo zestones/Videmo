@@ -21,6 +21,11 @@ class SerieEpisodeDAO {
         await this.queryExecutor.executeAndCommit(sql, params);
     }
 
+    async getAllEpisodes() {
+        const sql = `SELECT * FROM Episode`;
+        return await this.queryExecutor.executeAndFetchAll(sql);
+    }
+
     // Get an episode by its link
     async getEpisodeByLink(link) {
         const sql = `SELECT * FROM Episode WHERE link = ?`;

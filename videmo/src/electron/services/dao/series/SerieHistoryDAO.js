@@ -19,6 +19,12 @@ class SerieHistoryDAO {
         return await this.queryExecutor.executeAndCommit(query, params);
     }
 
+    // Get all history
+    async getAllHistory() {
+        const query = `SELECT * FROM History`;
+        return await this.queryExecutor.executeAndFetchAll(query);
+    }
+    
     // Read serie history by episode id
     async getSerieHistoryByEpisodeId(episodeId) {
         const query = `SELECT * FROM History WHERE episode_id = ?`;

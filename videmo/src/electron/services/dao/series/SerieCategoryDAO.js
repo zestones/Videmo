@@ -75,10 +75,10 @@ class SerieCategoryDAO {
             await this.createSerieCategory(serieId, categoryId);
         }
 
-        // Delete the serie from the Serie table if it is not used in any SerieCategory row
+        // Update the Serie 'inLibrary' column if the series has no categories
         const serieCategoryCount = await this.#countSerieCategoriesBySerieId(serieId);
         if (serieCategoryCount.count === 0) {
-            await this.serieDAO.deleteSerieById(serieId);
+            await this.serieDAO.updateSerieInLibrary(serieId, 0);
         }
     }
 

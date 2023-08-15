@@ -102,6 +102,32 @@ class FolderManager {
     }
 
     /**
+     * @returns {Promise<String>} A promise that resolves with the selected file path.
+     */
+    createBackup() {
+        // Send a message to the main process to create a backup file
+        window.api.send("createBackupFile");
+
+        // Create a promise to handle the response from window.api.receive
+        return new Promise((resolve, reject) => {
+            window.api.receive("createBackupFile", (data) => data.success ? resolve(data.success) : reject(data.error));
+        });
+    }
+
+    /**
+     * @returns {Promise<String>} A promise that resolves with the success message.
+     */
+    restoreBackup() {
+        // Send a message to the main process to restore a backup file
+        window.api.send("restoreBackupFile");
+
+        // Create a promise to handle the response from window.api.receive
+        return new Promise((resolve, reject) => {
+            window.api.receive("restoreBackupFile", (data) => data.success ? resolve(data.success) : reject(data.error));
+        });
+    }
+
+    /**
      * @param {String} filePath 
      * @returns {String} The file name of the file path.
      */
