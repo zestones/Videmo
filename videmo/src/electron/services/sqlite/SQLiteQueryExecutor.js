@@ -22,6 +22,7 @@ class SQLiteQueryExecutor {
             return path.join(__dirname, 'sql', 'videmo.test.db');
         }
 
+        // TODO - Move this inside a script that runs when the application is packaged
         let appPath = app.getAppPath();
         if (app.isPackaged) {
             appPath = appPath.replace('\\app.asar', '');
@@ -58,6 +59,7 @@ class SQLiteQueryExecutor {
     }
 
     /**
+     * TODO - Remove this method and use the executeFile method instead
      * Creates the database by executing the SQL statements from the tables.sql file.
      * @param {string} dbFilePath - The path to the SQLite database file.
      * @returns {Promise<void>} A promise that resolves when the database is created.
@@ -87,6 +89,7 @@ class SQLiteQueryExecutor {
     }
 
     /**
+     * TODO - Remove this method and use the executeFile method instead
      * Fills the database with data by executing the SQL statements from the data.sql file.
      * @param {String} dbFilePath - The path to the SQLite database file.
      * @returns {Promise<void>} A promise that resolves when the database is filled with data.
