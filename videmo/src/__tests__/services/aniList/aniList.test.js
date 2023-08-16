@@ -70,7 +70,7 @@ describe("AniList", () => {
         });
 
         const aniList = new AniList();
-        const animeDetails = await aniList.searchAnimeDetailsByName(animeName);
+        const animeDetails = aniList.searchAnimeDetailsByName(animeName);
 
         expect(animeDetails).toEqual({
             description: "A great anime",
@@ -92,7 +92,7 @@ describe("AniList", () => {
         });
 
         const aniList = new AniList();
-        const animeDetails = await aniList.searchAnimeDetailsByName(nonExistentAnime);
+        const animeDetails = aniList.searchAnimeDetailsByName(nonExistentAnime);
 
         expect(animeDetails).toBeNull();
     });
