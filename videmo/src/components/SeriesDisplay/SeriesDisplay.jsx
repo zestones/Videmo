@@ -86,7 +86,7 @@ function SeriesDisplay({ serie, folderContents, episodes, onPlayClick, onRefresh
                     <EpisodeCard key={episode.link} serie={serie} episode={episode} setEpisodes={setEpisodes} />
                 ))}
 
-                {(episodes.length !== 0 && episodes.find((episode) => episodes.viewed || episode.viewed === false)) && (
+                {(episodes.length !== 0 && episodes.find((episode) => episode.viewed === undefined || episode.viewed === false)) && (
                     <button className={styles.resumeButton} onClick={handleResumeEpisode}>
                         <PlayArrowIcon />
                         <span>{episodes.find((episode) => (episode.viewed || episode.played_time)) ? "Resume" : "Play"}</span>
