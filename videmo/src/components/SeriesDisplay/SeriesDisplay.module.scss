@@ -2,11 +2,14 @@
 .sourceContent {
     margin: 0;
     width: 100%;
-    padding: 5px;
 
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+    .seriesContainer {
+        margin-top: 12px;
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
     
     .episodesContainer {
         margin-top: 12px;

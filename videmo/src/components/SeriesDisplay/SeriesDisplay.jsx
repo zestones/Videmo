@@ -16,16 +16,18 @@ function SeriesDisplay({ serie, folderContents, episodes, onPlayClick, onRefresh
                 <DetailsContainer serie={serie} />
             )}
 
-            {folderContents.map((folderContent) => (
-                <SerieCard
-                    key={folderContent.link}
-                    details={folderContent}
-                    onPlayClick={onPlayClick}
-                    onMoreClick={onRefresh}
-                    displayLabel={calledFromExplore}
-                />
-            ))}
-
+            <div className={styles.seriesContainer}>
+                {folderContents.map((folderContent) => (
+                    <SerieCard
+                        key={folderContent.link}
+                        details={folderContent}
+                        onPlayClick={onPlayClick}
+                        onMoreClick={onRefresh}
+                        displayLabel={calledFromExplore}
+                    />
+                ))}
+            </div>
+            
             <div className={styles.episodesContainer}>
                 {episodes.map((episode) => (
                     <EpisodeCard key={episode.link} serie={serie} episode={episode} />
