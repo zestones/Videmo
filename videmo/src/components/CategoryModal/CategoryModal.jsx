@@ -60,7 +60,6 @@ function CategoryModal({ serie, onClose, onMoreClick }) {
 
             const { name, link, image, extension_id } = serie;
             const serieToUpdate = { name, link, basename, image, extension_id };
-
             await categoryApi.addSerieToCategories(serieToUpdate, checkedCategories);
             onClose({ message: "La série a été déplacée avec succès", type: "success" });
             if (onMoreClick) onMoreClick();

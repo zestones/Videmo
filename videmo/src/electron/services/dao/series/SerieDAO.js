@@ -55,7 +55,8 @@ class SerieDAO {
             SELECT Serie.*
             FROM Serie
             INNER JOIN SerieCategory ON Serie.id = SerieCategory.serie_id
-            WHERE SerieCategory.category_id = ?`;
+            WHERE SerieCategory.category_id = ?
+            ORDER BY Serie.basename ASC`;
 
         const params = [categoryId];
         return await this.queryExecutor.executeAndFetchAll(sql, params);
