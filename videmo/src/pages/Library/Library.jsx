@@ -160,6 +160,7 @@ function Library() {
                     onPlayClick={handlePlayClick}
                     onRefresh={!serie && retrieveAllSeriesBySelectedCategory}
                     calledFromExplore={false}
+                    setEpisodes={setEpisodes}
                 />
             </div>
         </div>

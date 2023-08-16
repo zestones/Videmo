@@ -149,6 +149,7 @@ function Explore() {
                         onPlayClick={handlePlayClick}
                         onRefresh={refreshFolderContents}
                         calledFromExplore={true}
+                        setEpisodes={setEpisodes}
                     />
                 </>
             )}

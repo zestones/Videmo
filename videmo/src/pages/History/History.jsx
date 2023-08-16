@@ -140,6 +140,7 @@ function History() {
                     episodes={episodes}
                     calledFromExplore={true}
                     folderContents={[]}
+                    setEpisodes={setEpisodes}
                 />
             )}
         </div>
