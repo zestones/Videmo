@@ -29,10 +29,11 @@
     "react-eject": "react-scripts eject",
     "react-build": "react-scripts build",
     "electron-build": "electron-builder --win --x64",
-    "build": "set NODE_ENV=production&& npm run react-build && npm run electron-build",
+    "build": "set NODE_ENV=production&& npm run init-database && npm run react-build && npm run electron-build",
     "postinstall": "electron-builder install-app-deps",
     "publish": "npm run build && electron-builder --publish always",
     "cleanup": "node scripts/cleanup.js",
+    "init-database": "node scripts/database-prod.js",
     "debug": "node --inspect-brk ./node_modules/jest/bin/jest -i"
   },
   "build": {
