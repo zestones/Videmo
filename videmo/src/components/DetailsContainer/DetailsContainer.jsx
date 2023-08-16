@@ -38,8 +38,9 @@ const DetailsContainer = ({ serie }) => {
 	}, [serieApi, serie]);
 
 	const refreshSerieState = () => {
+		console.log('refreshSerieState');
 		serieApi.readSerieBySerieObject(serie.link)
-			.then((data) => setAlreadyInLibrary(!!data))
+			.then((serie) => setAlreadyInLibrary(!!serie.inLibrary))
 			.catch((error) => setError({ message: error.message, type: 'error' }));
 	}
 
