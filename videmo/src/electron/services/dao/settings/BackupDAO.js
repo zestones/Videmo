@@ -116,8 +116,8 @@ class BackupDAO {
 
     #generateInsertHistoriesStatements(histories) {
         return histories.map(history => `
-            INSERT OR IGNORE INTO History (id, episode_id)
-            VALUES (${history.id}, ${history.episode_id});
+            INSERT OR IGNORE INTO History (id, episode_id, timestamp)
+            VALUES (${history.id}, ${history.episode_id}, ${history.timestamp});
         `).join('');
     }
 
