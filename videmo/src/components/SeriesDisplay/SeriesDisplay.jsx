@@ -11,7 +11,7 @@ import VideoPlayer from "../VideoPlayer/VideoPlayer";
 
 // Services
 import TrackApi from "../../services/api/track/TrackApi";
-import FolderManager from "../../utilities/folderManager/FolderManager";
+// import FolderManager from "../../utilities/folderManager/FolderManager";
 
 // Styles
 import styles from "./SeriesDisplay.module.scss";
@@ -19,7 +19,7 @@ import styles from "./SeriesDisplay.module.scss";
 function SeriesDisplay({ serie, folderContents, episodes, onPlayClick, onRefresh, calledFromExplore, setEpisodes }) {
     // Services initialization
     const [trackApi] = useState(() => new TrackApi());
-    const [folderManager] = useState(() => new FolderManager());
+    // const [folderManager] = useState(() => new FolderManager());
 
     // State initialization
     const [openVideoPlayer, setOpenVideoPlayer] = useState(false);
