@@ -1,18 +1,64 @@
+
 .sourceContent {
-    margin: 12px auto;
-    width: 90%;
+    margin: 0;
+    width: 100%;
 
-    margin-bottom: 7rem;
-
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-
-    .episodesContainer {
+    .seriesContainer {
         margin-top: 12px;
         width: 100%;
+        
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
+    }
+    
+    .episodesContainer {
+        margin: 22px 8px;
+
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        
+        .resumeButton {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            z-index: 1;
+
+            padding: 12px 20px;
+            border-radius: 25px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background-color: var(--light-blue);
+            color: #fff;
+
+            font-weight: bold;
+            box-shadow: 0 0 5px var(--light-blue-hover);
+            transition: background-color 0.2s ease-in-out;
+
+            &:hover {
+                background-color: var(--light-blue-hover);
+            }
+
+            // Add animation on click
+            &:active {  
+                animation: click 0.2s ease-in-out;
+                
+                @keyframes click {
+                    0% {
+                        transform: scale(1);
+                    }
+                    50% {
+                        transform: scale(0.9);
+                    }
+                    100% {
+                        transform: scale(1);
+                    }
+                }
+            }
+        }
     }
 }

@@ -26,7 +26,7 @@ function History() {
     // State initialization
     const [history, setHistory] = useState([]);
     const [searchValue, setSearchValue] = useState("");
-    const [selectedEntry, setelectedEntry] = useState(null); // To store the selected entry
+    const [selectedEntry, setSelectedEntry] = useState(null); // To store the selected entry
     const [showSerieDisplay, setShowSerieDisplay] = useState(false); // To show the serie display
     const [showVideoPlayer, setShowVideoPlayer] = useState(false); // To show the video player
     const [episodes, setEpisodes] = useState([]); // To store the episodes of the selected serie
@@ -36,13 +36,13 @@ function History() {
         // Fetch the history
         historyApi.retrieveAllEpisodeAndSerieHistory()
             .then((data) => setHistory(data))
-            .catch((error) => console.log(error));
+            .catch((error) => console.error(error));
     }, [historyApi, showSerieDisplay]);
 
 
     // Handle click on serie name to show VideoPlayer
     const handleSerieNameClick = (serie) => {
-        setelectedEntry(serie);
+        setSelectedEntry(serie);
         setShowVideoPlayer(true);
     };
 
@@ -53,7 +53,7 @@ function History() {
             const retrievedEpisodes = await trackApi.readAllEpisodesBySerieLink(entry.serie.link);
             setEpisodes(trackApi.mapSerieEpisodeWithDatabaseEpisode(data, retrievedEpisodes));
 
-            setelectedEntry(entry);
+            setSelectedEntry(entry);
             setShowSerieDisplay(true);
         } catch (error) {
             console.log(error);
@@ -72,7 +72,7 @@ function History() {
     };
 
     const handleCloseVideoPlayer = (playedTime, episodeFinished) => {
-        setelectedEntry(null);
+        setSelectedEntry(null);
         setShowVideoPlayer(false);
 
         if (episodeFinished) {
@@ -94,7 +94,7 @@ function History() {
 
     const handleBackClick = () => {
         setShowSerieDisplay(false);
-        setelectedEntry(null);
+        setSelectedEntry(null);
         setEpisodes([]);
     };
 
@@ -136,10 +136,11 @@ function History() {
                 </>
             ) : (
                 <SerieDisplay
-                    serie={selectedEntry.serie}
+                    serie={{ ...selectedEntry.serie, extension_id: selectedEntry.extension.id }}
                     episodes={episodes}
                     calledFromExplore={true}
                     folderContents={[]}
+                    setEpisodes={setEpisodes}
                 />
             )}
         </div>

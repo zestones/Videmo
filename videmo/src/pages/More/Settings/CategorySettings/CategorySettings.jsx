@@ -4,6 +4,7 @@ import React, { useState, useEffect, } from "react";
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import Notification from "../../../../components/Notification/Notification";
 
 // Api
 import ExtensionApi from "../../../../services/api/extension/ExtensionApi";
@@ -22,13 +23,14 @@ function CategorySettings() {
     const [categories, setCategories] = useState([]);
     const [newCategoryName, setNewCategoryName] = useState("");
     const [editingCategory, setEditingCategory] = useState(null);
+    const [error, setError] = useState(null);
 
 
     useEffect(() => {
         // Get the list of categories from the database
         categoryApi.readAllCategories()
             .then((data) => setCategories(data))
-            .catch((error) => console.error(error));
+            .catch((error) => setError({ message: error.message, type: "error" }));
     }, [extensionApi, categoryApi]);
 
 
@@ -39,7 +41,7 @@ function CategorySettings() {
             // Create a new category with the name entered by the user
             categoryApi.createCategory(newCategoryName)
                 .then((name) => setCategories([...categories, { ...name, id: name }]))
-                .catch((error) => console.error(error));
+                .catch((error) => setError({ message: error.message, type: "error" }));
         }
     };
 
@@ -47,7 +49,7 @@ function CategorySettings() {
         // Delete the category with the given id
         categoryApi.deleteCategory(categoryId)
             .then(() => setCategories(categories.filter((category) => category.id !== categoryId)))
-            .catch((error) => console.error(error));
+            .catch((error) => setError({ message: error.message, type: "error" }));
     };
 
     const handleUpdateCategory = (categoryId) => {
@@ -58,13 +60,14 @@ function CategorySettings() {
 
         categoryApi.updateCategory(updatedCategories.find((category) => category.id === categoryId))
             .then(() => setCategories(updatedCategories))
-            .catch((error) => console.error(error));
+            .catch((error) => setError({ message: error.message, type: "error" }));
 
         setEditingCategory(null);
     };
 
     return (
         <>
+            {error && <Notification type={error.type} message={error.message} onClose={setError} />}
             <ul className={styles.categoryList}>
                 {categories?.map((category, index) => (
                     <li key={index} className={styles.categoryItem}>

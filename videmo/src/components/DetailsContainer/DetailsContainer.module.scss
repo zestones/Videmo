@@ -7,11 +7,12 @@
     margin: 0 auto;
 
     padding: 20px;
+    margin-top: 20px;
 
     border-radius: 10px;
-    border: 1px solid var(--primary-color-darker);
+    border: 1px solid var(--primary-color);
 
-    box-shadow: 0 0 10px var(--primary-color-darker);
+    box-shadow: 0 0 10px var(--primary-color);
 
     .serieBackground {
         display: flex;

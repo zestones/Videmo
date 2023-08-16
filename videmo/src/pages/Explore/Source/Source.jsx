@@ -7,7 +7,7 @@ import FolderIcon from '@mui/icons-material/Folder';
 import ExtensionApi from "../../../services/api/extension/ExtensionApi";
 
 // Utilities
-import SortManager from '../../../utilities/sortManager/sortManager';
+import SortManager from '../../../utilities/sortManager/SortManager';
 
 // Components
 import Header from "../../../components/Header/Header";

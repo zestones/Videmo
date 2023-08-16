@@ -9,18 +9,27 @@ import Utils from '../../../utilities/utils/Utils';
 
 // Components
 import CategoryModal from '../../CategoryModal/CategoryModal';
+import Notification from '../../Notification/Notification';
 
 // Styles
 import styles from './SerieCard.module.scss';
 
-function Card({ details, onPlayClick, onMoreClick, displayLabel }) {
+
+function SerieCard({ details, onPlayClick, onMoreClick, displayLabel }) {
     // State initialization
     const [isHovered, setIsHovered] = useState(false);
     const [showCategoryModal, setShowCategoryModal] = useState(false);
     const [utils] = useState(() => new Utils());
+    const [error, setError] = useState(null);
+
+    const handleCloseModal = (notification) => {
+        setShowCategoryModal(false);
+        setError(notification);
+	}
 
     return (
         <>
+            {error && <Notification message={error.message} type={error.type} onClose={setError} />}
             <li
                 className={styles.card}
                 onMouseEnter={() => setIsHovered(true)}
@@ -29,6 +38,7 @@ function Card({ details, onPlayClick, onMoreClick, displayLabel }) {
                 <img className={styles.cardImage} src={details.image} alt={details.name} />
                 {(displayLabel && details.inLibrary) && <span className={styles.inLibraryLabel}>In Library</span>}
                 <p className={styles.cardTitle}>{utils.constructTitle(details)}</p>
+                
                 <div className={`${styles.cardLayer} ${isHovered && styles.hovered}`}>
                     <div className={styles.cardLayerContent}>
                         <ControlPointIcon className={styles.cardLayerImage} onClick={() => setShowCategoryModal(true)} />
@@ -37,10 +47,11 @@ function Card({ details, onPlayClick, onMoreClick, displayLabel }) {
                     </div>
                 </div>
             </li>
+
             {showCategoryModal && (
                 <CategoryModal
                     serie={details}
-                    onClose={() => setShowCategoryModal(false)}
+                    onClose={handleCloseModal}
                     onMoreClick={onMoreClick}
                 />
             )}
@@ -48,4 +59,4 @@ function Card({ details, onPlayClick, onMoreClick, displayLabel }) {
     );
 }
 
-export default Card;
+export default SerieCard;

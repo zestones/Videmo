@@ -1,30 +1,29 @@
+// Variables
+$navigation-width: 65px;
+
 .nav {
-    width: 100%;
-    height: 75px;
-
+    width: $navigation-width;
+    height: 100%;
+    
     position: fixed;
-    bottom: 0;
+    z-index: 99;
+    
+    top: var(--header-height);
     left: 0;
-    z-index: 9999;
 
-    background-color: var(--primary-color-dark);
+    background-color: var(--primary-color);
     color: var(--white-color);
-
-    border-radius: 25px 25px 0 0;
-    filter: drop-shadow(0px -4px 4px rgba(0, 0, 0, 0.25));
 
     .navList {
         display: flex;
-        justify-content: space-around;
         align-items: center;
-        height: 100%;
-        padding: 7px;
-    }
-
-    .content {
-        display: flex;
         flex-direction: column;
-        align-items: center;
-        justify-content: center;
+        height: auto;
+
+        margin-top: 20px;
     }
+}
+
+.content {
+    margin-left: $navigation-width;
 }

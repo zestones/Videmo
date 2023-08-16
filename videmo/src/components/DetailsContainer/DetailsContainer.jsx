@@ -10,6 +10,7 @@ import SerieApi from '../../services/api/serie/SerieApi';
 
 // Components
 import CategoryModal from '../CategoryModal/CategoryModal';
+import Notification from '../Notification/Notification';
 
 // Styles
 import styles from './DetailsContainer.module.scss';
@@ -19,6 +20,7 @@ const DetailsContainer = ({ serie }) => {
 	// State initialization
 	const [showModal, setShowModal] = useState(false);
 	const [alreadyInLibrary, setAlreadyInLibrary] = useState(false);
+	const [error, setError] = useState(null);
 
 	// Api initialization
 	const [serieApi] = useState(() => new SerieApi());
@@ -30,19 +32,26 @@ const DetailsContainer = ({ serie }) => {
 	];
 
 	useEffect(() => {
-		serieApi.readSerieBySerieObject(serie)
-			.then((serie) => setAlreadyInLibrary(serie?.inLibrary ? true : false))
-			.catch((error) => console.error(error));
+		serieApi.readSerieBySerieObject(serie.link)
+			.then((serie) => setAlreadyInLibrary(!!serie?.inLibrary))
+			.catch((error) => setError({ message: error.message, type: 'error' }));
 	}, [serieApi, serie]);
 
 	const refreshSerieState = () => {
-		serieApi.readSerieBySerieObject(serie)
-			.then((data) => setAlreadyInLibrary(data ? true : false))
-			.catch((error) => console.error(error));
+		console.log('refreshSerieState');
+		serieApi.readSerieBySerieObject(serie.link)
+			.then((serie) => setAlreadyInLibrary(!!serie.inLibrary))
+			.catch((error) => setError({ message: error.message, type: 'error' }));
+	}
+
+	const handleCloseModal = (notification) => {
+		setShowModal(false);
+		setError(notification);
 	}
 
 	return (
 		<div className={styles.detailsContainer}>
+			{error && <Notification message={error.message} type={error.type} onClose={setError} />}
 			<div className={styles.serieBackground} >
 				<img className={styles.serieImage} src={serie.image} alt="Serie" />
 				<div className={styles.serieFavoriteContainer}>
@@ -83,7 +92,7 @@ const DetailsContainer = ({ serie }) => {
 			{showModal && (
 				<CategoryModal
 					serie={serie}
-					onClose={() => setShowModal(false)}
+					onClose={handleCloseModal}
 					onMoreClick={refreshSerieState}
 				/>
 			)}

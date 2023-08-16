@@ -1,5 +1,5 @@
 
-class sortManager {
+class SortManager {
 
     filterArrayByString(searchString, stringArray) {
         return stringArray.filter((element) => this.filterString(searchString, element));
@@ -10,4 +10,4 @@ class sortManager {
     }
 }
 
-export default sortManager;
+export default SortManager;

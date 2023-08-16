@@ -5,31 +5,22 @@ const SerieDAO = require('../services/dao/series/SerieDAO');
 // Read all series by category id
 ipcMain.on('/read/all/series/by/category/', (event, arg) => {
     new SerieDAO().getSeriesByCategoryId(arg.categoryId)
-        .then((series) => {
-            event.reply('/read/all/series/by/category/', { success: true, series: series });
-        }).catch((err) => {
-            event.reply('/read/all/series/by/category/', { success: false, error: err });
-        });
+        .then((series) => event.reply('/read/all/series/by/category/', { success: true, series: series }))
+        .catch((err) => event.reply('/read/all/series/by/category/', { success: false, error: err }));
 })
 
 
-// Read extensions by serie id
-ipcMain.on('/read/extension/by/serie/id/', (event, arg) => {
-    new SerieDAO().getExtensionBySerieId(arg.serieId)
-        .then((extension) => {
-            event.reply('/read/extension/by/serie/id/', { success: true, extension: extension });
-        }).catch((err) => {
-            event.reply('/read/extension/by/serie/id/', { success: false, error: err });
-        });
+// Read all series in library by extension
+ipcMain.on('/read/all/series/in/library/by/extension', (event, arg) => {
+    new SerieDAO().getAllSeriesInLibraryByExtension(arg.extension)
+        .then((series) =>  event.reply('/read/all/series/in/library/by/extension', { success: true, series: series }))
+        .catch((err) => event.reply('/read/all/series/in/library/by/extension', { success: false, error: err }));
 })
 
 
 // Read serie by name
-ipcMain.on('/read/serie/by/serie-object/', (event, arg) => {
-    new SerieDAO().getSerieByBasenameAndNameAndLink(arg.serie)
-        .then((serie) => {
-            event.reply('/read/serie/by/serie-object/', { success: true, serie: serie });
-        }).catch((err) => {
-            event.reply('/read/serie/by/serie-object/', { success: false, error: err });
-        });
+ipcMain.on('/read/serie/by/serie-link/', (event, arg) => {
+    new SerieDAO().getSerieByLink(arg.link)
+        .then((serie) => event.reply('/read/serie/by/serie-link/', { success: true, serie: serie }))
+        .catch((err) => event.reply('/read/serie/by/serie-link/', { success: false, error: err }));
 })

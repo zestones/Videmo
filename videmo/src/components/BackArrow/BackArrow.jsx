@@ -9,7 +9,7 @@ import styles from "./BackArrow.module.scss";
 function BackArrow({ handleClick }) {
 
     return (
-        <div className={styles.backArrow} onClick={handleClick}>
+        <div role="button" className={styles.backArrow} onClick={handleClick}>
             <ArrowBackIcon className={styles.backArrowIcon} />
         </div>
     );

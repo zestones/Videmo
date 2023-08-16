@@ -11,31 +11,6 @@ class SerieHistoryDAO {
         this.serieEpisodeDAO = new SerieEpisodeDAO();
     }
 
-    async updateSerieTrackAndHistory(serie, episode, timestamp) {
-        // We start by updating the serie track
-        await this.serieTrackDAO.updateSerieTrack(serie, episode);
-
-        // And then we update the history
-        return this.#manageSerieHistory(JSON.parse(episode), timestamp);
-    }
-
-    // Manage serie history (create or update)
-    async #manageSerieHistory(episode, timestamp) {
-        const retrievedEpisode = await this.serieEpisodeDAO.getEpisodeByLink(episode.link);
-        const retrievedHistory = await this.readSerieHistoryByEpisodeId(retrievedEpisode.id);
-
-        if (retrievedHistory) return await this.updateSerieHistory(retrievedEpisode, timestamp);
-        else return await this.createSerieHistory(retrievedEpisode, timestamp);
-    }
-
-    // Update serie history
-    async updateSerieHistory(episode, timestamp) {
-        const query = `UPDATE History SET timestamp = ? WHERE episode_id = ?`;
-        const params = [timestamp, episode.id];
-
-        return await this.queryExecutor.executeAndCommit(query, params);
-    }
-
     // Create serie history
     async createSerieHistory(episode, date) {
         const query = `INSERT INTO History (episode_id, timestamp) VALUES (${episode.id}, ?)`;
@@ -44,15 +19,22 @@ class SerieHistoryDAO {
         return await this.queryExecutor.executeAndCommit(query, params);
     }
 
+    // Get all history
+    async getAllHistory() {
+        const query = `SELECT * FROM History`;
+        return await this.queryExecutor.executeAndFetchAll(query);
+    }
+    
     // Read serie history by episode id
-    async readSerieHistoryByEpisodeId(episodeId) {
+    async getSerieHistoryByEpisodeId(episodeId) {
         const query = `SELECT * FROM History WHERE episode_id = ?`;
         const params = [episodeId];
 
         return await this.queryExecutor.executeAndFetchOne(query, params);
     }
 
-    async readAllEpisodeAndSerieFromHistory() {
+    // Read all episodes and series from history
+    async getAllEpisodeAndSerieFromHistory() {
         const query = `SELECT 
                     Serie.id AS serie_id,
                     Serie.basename AS serie_basename,
@@ -61,6 +43,7 @@ class SerieHistoryDAO {
                     Serie.link AS serie_link,
                     Serie.image AS serie_image,
                     Serie.inLibrary AS serie_inLibrary,
+                    Extension.id AS extension_id,
                     Extension.link AS extension_link,
                     Extension.name AS extension_name,
                     Extension.local AS extension_local,
@@ -79,16 +62,15 @@ class SerieHistoryDAO {
                     GROUP BY History.id
                     ORDER BY History.timestamp DESC`;
 
-
         const result = await this.queryExecutor.executeAndFetchAll(query);
-
         return this.#organizeObject(result);
     }
 
+    // Organize the retrieved data
     #organizeObject(result) {
         return result.map((item) => {
             const { serie_id, serie_basename, serie_name, serie_description, serie_link, serie_image, serie_inLibrary,
-                extension_link, extension_name, extension_local,
+                extension_id, extension_link, extension_name, extension_local,
                 episode_id, episode_name, episode_link, episode_viewed, episode_bookmarked, episode_played_time,
                 history_timestamp } = item;
             return {
@@ -110,6 +92,7 @@ class SerieHistoryDAO {
                     played_time: episode_played_time,
                 },
                 extension: {
+                    id: extension_id,
                     link: extension_link,
                     name: extension_name,
                     local: this.dataTypesConverter.convertIntegerToBoolean(extension_local),
@@ -121,6 +104,33 @@ class SerieHistoryDAO {
         });
     }
 
+    // Update serie track and history
+    async updateSerieTrackAndHistory(serie, episode, timestamp) {
+        // We start by updating the serie track
+        await this.serieTrackDAO.updateSerieTrack(serie, episode);
+
+        // And then we update the history
+        return this.#manageSerieHistory(JSON.parse(episode), timestamp);
+    }
+
+    // Manage serie history (create or update)
+    async #manageSerieHistory(episode, timestamp) {
+        const retrievedEpisode = await this.serieEpisodeDAO.getEpisodeByLink(episode.link);
+        const retrievedHistory = await this.getSerieHistoryByEpisodeId(retrievedEpisode.id);
+
+        if (retrievedHistory) return await this.updateSerieHistory(retrievedEpisode, timestamp);
+        else return await this.createSerieHistory(retrievedEpisode, timestamp);
+    }
+
+    // Update serie history
+    async updateSerieHistory(episode, timestamp) {
+        const query = `UPDATE History SET timestamp = ? WHERE episode_id = ?`;
+        const params = [timestamp, episode.id];
+
+        return await this.queryExecutor.executeAndCommit(query, params);
+    }
+
+    // Delete serie history by episode id
     async deleteSerieHistoryByEpisodeId(episodeId) {
         const query = `DELETE FROM History WHERE episode_id = ?`;
         const params = [episodeId];
@@ -128,11 +138,11 @@ class SerieHistoryDAO {
         return await this.queryExecutor.executeAndCommit(query, params);
     }
 
+    // Delete all serie history
     async deleteAllSerieHistory() {
         const query = `DELETE FROM History`;
         return await this.queryExecutor.executeAndCommit(query);
     }
-
 }
 
 module.exports = SerieHistoryDAO;

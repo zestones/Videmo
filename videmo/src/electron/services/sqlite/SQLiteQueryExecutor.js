@@ -6,8 +6,10 @@ const fs = require('fs');
 class SQLiteQueryExecutor {
     constructor() {
         this.database = this.#retrieveDatabasePath();
-        this.#createProductionDatabase();
+        this.create_tables_sql = path.join(__dirname, 'sql', 'tables.sql');
+        this.fill_data_sql = path.join(__dirname, 'sql', 'data.sql');
     }
+
     /**
      * Retrieves the path to the SQLite database file depending on the environment. (development or production)
      * @returns {string} The path to the SQLite database file.
@@ -15,6 +17,10 @@ class SQLiteQueryExecutor {
     #retrieveDatabasePath() {
         if (process.env.NODE_ENV === 'development') {
             return path.join(__dirname, 'sql', 'videmo.db');
+        }
+
+        if (process.env.NODE_ENV === 'test') {
+            return path.join(__dirname, 'sql', 'videmo.test.db');
         }
 
         let appPath = app.getAppPath();
@@ -25,89 +31,40 @@ class SQLiteQueryExecutor {
     }
 
     /**
-     * TODO - Remove this method when the application is ready for production.
-     * Creates the production database if it doesn't exist.
-     */
-    async #createProductionDatabase() {
-        this.production_database = path.join(__dirname, '..', '..', '..', '..', 'public', 'videmo.db');
-        if (!fs.existsSync(this.production_database)) {
-            await this.#createDatabase(this.production_database);
-            await this.#fillDatabase(this.production_database);
-        }
-    }
-
-    /**
      * Initializes the database by creating it if it doesn't exist.
      * @param {string} dbFilePath - The path to the SQLite database file.
      * @returns {Promise<void>} A promise that resolves when the database is initialized.
      * @private
     */
     async initializeDatabase() {
+        
         if (!fs.existsSync(this.database)) {
-            await this.#createDatabase(this.database);
-            await this.#fillDatabase(this.database);
+            this.db = new sqlite3.Database(this.database);
+            
+            await this.executeFile(this.create_tables_sql);
+            await this.executeFile(this.fill_data_sql);
         }
 
-        this.db = new sqlite3.Database(this.database);
     }
 
     /**
-     * Creates the database by executing the SQL statements from the tables.sql file.
-     * @param {string} dbFilePath - The path to the SQLite database file.
-     * @returns {Promise<void>} A promise that resolves when the database is created.
-     * @private
-    */
-    async #createDatabase(dbFilePath) {
-        const tablesFilePath = path.join(__dirname, 'sql', 'tables.sql');
-
-        try {
-            const createTablesQuery = fs.readFileSync(tablesFilePath, 'utf8');
-            const db = new sqlite3.Database(dbFilePath);
-
-            return new Promise((resolve, reject) => {
-                db.exec(createTablesQuery, (err) => {
-                    if (err) {
-                        console.error('Error creating tables:', err);
-                        reject(err);
-                    } else {
-                        resolve();
-                    }
-                });
-            });
-        } catch (error) {
-            console.error('Error loading or executing SQL file:', error);
-            throw error;
-        }
-    }
-
-    /**
-     * Fills the database with data by executing the SQL statements from the data.sql file.
-     * @param {String} dbFilePath - The path to the SQLite database file.
+     * Reads the contents of a file and executes the SQL statements from it.
+     * @param {string} filePath 
      * @returns {Promise<void>} A promise that resolves when the database is filled with data.
-     * @private 
      */
-    async #fillDatabase(dbFilePath) {
-        const dataFilePath = path.join(__dirname, 'sql', 'data.sql');
-        try {
-            const insertDataQuery = fs.readFileSync(dataFilePath, 'utf8');
-            const db = new sqlite3.Database(dbFilePath);
+    executeFile(filePath) {
+        const insertDataQuery = fs.readFileSync(filePath, 'utf8');
 
-            return new Promise((resolve, reject) => {
-                db.exec(insertDataQuery, (err) => {
-                    if (err) {
-                        console.error('Error inserting data:', err);
-                        reject(err);
-                    } else {
-                        resolve();
-                    }
-                });
+        return new Promise((resolve, reject) => {
+            this.db.exec(insertDataQuery, (err) => {
+                if (err) {
+                    console.error('Error inserting data:', err);
+                    reject(err);
+                } else {
+                    resolve();
+                }
             });
-
-            // Do not close the database connection here
-        } catch (error) {
-            console.error('Error loading or executing SQL file:', error);
-            throw error;
-        }
+        });
     }
 
     /**
@@ -120,7 +77,7 @@ class SQLiteQueryExecutor {
         return new Promise((resolve, reject) => {
             this.db.serialize(() => {
                 this.db.run('BEGIN TRANSACTION');
-                this.db.run(sql, params, (err) => {  // Use an arrow function here
+                this.db.run(sql, params, (err) => {
                     if (err) {
                         this.db.run('ROLLBACK');
                         reject(err);
@@ -216,7 +173,6 @@ class SQLiteQueryExecutor {
                     stmt.run(params, function (err) {
                         if (err) {
                             this.db.run('ROLLBACK', () => reject(err));
-                            return;
                         }
                     });
                 });

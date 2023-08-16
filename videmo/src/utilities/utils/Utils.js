@@ -36,4 +36,14 @@ export default class Utils {
             minute: '2-digit',
         });
     };
+
+    convertPlayedTime(playedTime) {
+        const hours = Math.floor(playedTime / 3600);
+        const minutes = Math.floor((playedTime - (hours * 3600)) / 60);
+        const seconds = Math.floor(playedTime - (hours * 3600) - (minutes * 60));
+
+        const displayTime = `${hours ? hours + "h" : ""} ${minutes ? minutes + "m" : ""} ${seconds ? seconds + "s" : ""}`;
+        if (displayTime.trim(' ') === "") return "";
+        return `• ${displayTime}`;
+    };
 }

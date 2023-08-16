@@ -127,7 +127,7 @@ This documentation lists all the routes available in the API, as well as the exp
 | Route                                      | Description                                                                                                  |
 | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------ |
 | `/read/serie-categories/by/serie`          | This route is used to retrieve categories by serie, the unique constraint is on the name, basename and link column of the table.                                                      |
-| `/add/categories/to/serie`                 | This route is used to add categories to a serie.                                                              |
+| `/add/categories/to/serie/`                 | This route is used to add categories to a serie.                                                              |
 
 <details>
 <summary><strong>Response Examples</strong></summary>
