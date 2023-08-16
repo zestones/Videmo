@@ -92,7 +92,7 @@ ipcMain.on("retrieveFilesInFolder", (event, { folderPath }) => {
         if (err) {
             event.reply("retrieveFilesInFolder", { success: false, error: err.message, files: [] });
         } else {
-            const files = [];
+            let files = [];
 
             for (const file of contents) {
                 const fullPath = path.join(folderPath, file);
@@ -109,6 +109,7 @@ ipcMain.on("retrieveFilesInFolder", (event, { folderPath }) => {
                 }
             }
 
+            files = files.reverse();
             event.reply("retrieveFilesInFolder", { success: true, error: null, files });
         }
     });
