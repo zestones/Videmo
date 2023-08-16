@@ -37,10 +37,11 @@ function SeriesDisplay({ serie, folderContents, episodes, onPlayClick, onRefresh
         }
     };
 
-    const handleOpenLocalVideoPlayer = () => {
-        folderManager.openFileInLocalVideoPlayer(resumeEpisode.link);
-        updateCurrentEpisode(resumeEpisode.played_time, false);
-    };
+    // TODO - Uncomment when #15 is done
+    // const handleOpenLocalVideoPlayer = () => {
+    //     folderManager.openFileInLocalVideoPlayer(resumeEpisode.link);
+    //     updateCurrentEpisode(resumeEpisode.played_time, false);
+    // };
 
     const setEpisodesAsViewed = () => {
         const updatedEpisode = { ...resumeEpisode, viewed: !resumeEpisode.viewed, played_time: 0 };
