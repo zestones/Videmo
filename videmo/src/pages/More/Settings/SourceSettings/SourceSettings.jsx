@@ -23,9 +23,9 @@ function SourceSettings() {
     // State initialization
     const [extensions, setExtensions] = useState([]);
     const [editingExtension, setEditingExtension] = useState(null);
-    const { showNotification, hideNotification } = useNotification();
-    const [loading, setLoading] = useState(false);
 
+    // Initialize the notification hook
+    const { showNotification, hideNotification } = useNotification();
 
     useEffect(() => {
         // Get the list of extensions from the database
@@ -45,20 +45,15 @@ function SourceSettings() {
         try {
             // Open the dialog window to select a folder
             const path = await folderManager.openDialogWindow();
-            setLoading(true);
             showNotification("loading", "Chargement en cours...", false);
 
-            console.log("loading...");
             // Create a new extension with the selected folder path
             await extensionApi.createExtension(path, folderManager.retrieveBaseName(path));
-            console.log("done");
             hideNotification();
             
             setExtensions([...extensions, { id: null, name: folderManager.retrieveBaseName(path), link: path }]);
-            setLoading(false);
         } catch (error) {
             showNotification("error", error.message);
-            setLoading(false);
         }
     };
 

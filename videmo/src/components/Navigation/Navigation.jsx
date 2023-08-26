@@ -42,6 +42,7 @@ function Navigation({ navItems, activePage, onPageChange }) {
                     <Notification
                         type={notification.type}
                         message={notification.message}
+                        closable={notification.closable}
                         onClose={hideNotification}
                     />
                 )}
