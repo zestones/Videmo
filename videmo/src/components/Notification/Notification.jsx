@@ -16,7 +16,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import styles from './Notification.module.scss';
 
 
-function Notification({ type, message, onClose, closable = true }) {
+function Notification({ type, message, closable, onClose }) {
 
     useEffect(() => {
         if (!closable) return;

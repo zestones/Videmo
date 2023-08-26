@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
+import { useNotification } from '../../components/Notification/NotificationProvider';
 
 // Components
 import NavItem from './Item/NavItem';
+import Notification from '../Notification/Notification';
 
 // Styles
 import styles from './Navigation.module.scss';
@@ -10,6 +12,7 @@ import styles from './Navigation.module.scss';
 function Navigation({ navItems, activePage, onPageChange }) {
 
     const [dynamicComponent, setDynamicComponent] = useState(null);
+    const { notification, hideNotification } = useNotification();
 
     useEffect(() => {
         // Get the active page object
@@ -34,7 +37,16 @@ function Navigation({ navItems, activePage, onPageChange }) {
                     ))}
                 </ul>
             </nav>
-            <div className={styles.content}>{dynamicComponent}</div>
+            <div className={styles.content}>
+                {notification && (
+                    <Notification
+                        type={notification.type}
+                        message={notification.message}
+                        onClose={hideNotification}
+                    />
+                )}
+                {dynamicComponent}
+            </div>
         </>
     );
 }
