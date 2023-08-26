@@ -9,6 +9,7 @@ import Notification from "../Notification/Notification";
 // Api
 import CategoryApi from "../../services/api/category/CategoryApi";
 import ExtensionsApi from "../../services/api/extension/ExtensionApi";
+import LocalFileScrapper from "../../services/sources/local/LocalFileScrapper";
 
 // Utilities
 import FolderManager from "../../utilities/folderManager/FolderManager";
@@ -21,6 +22,7 @@ function CategoryModal({ serie, onClose, onMoreClick }) {
     const [categoryApi] = useState(() => new CategoryApi());
     const [extensionsApi] = useState(() => new ExtensionsApi());
     const [folderManager] = useState(() => new FolderManager());
+    const [localFileScrapper] = useState(() => new LocalFileScrapper());
 
     // States initialization
     const [categories, setCategories] = useState([]);
@@ -44,10 +46,8 @@ function CategoryModal({ serie, onClose, onMoreClick }) {
         const isChecked = e.target.checked;
 
         if (isChecked) {
-            // Add the category ID to the checkedCategories state
             setCheckedCategories((prevCategories) => [...prevCategories, categoryId]);
         } else {
-            // Remove the category ID from the checkedCategories state
             setCheckedCategories((prevCategories) => prevCategories.filter((id) => id !== categoryId));
         }
     };
@@ -60,8 +60,15 @@ function CategoryModal({ serie, onClose, onMoreClick }) {
 
             const { name, link, image, extension_id } = serie;
             const serieToUpdate = { name, link, basename, image, extension_id };
+            
+            // TODO : we only need the serie link and extension id to scrap the series
+            await localFileScrapper.scrapSerie(serieToUpdate);
+            
+            // TODO : we only need the serie link to update it 
             await categoryApi.addSerieToCategories(serieToUpdate, checkedCategories);
+            
             onClose({ message: "La série a été déplacée avec succès", type: "success" });
+            console.log("======= FINISHED");
             if (onMoreClick) onMoreClick();
         } catch (error) {
             setError({ message: error.message, type: "error" })

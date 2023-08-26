@@ -26,6 +26,7 @@ function SourceSettings() {
     const [extensions, setExtensions] = useState([]);
     const [editingExtension, setEditingExtension] = useState(null);
     const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         // Get the list of extensions from the database
@@ -41,16 +42,23 @@ function SourceSettings() {
             .catch((error) => setError({ message: error.message, type: "error" }));
     };
 
-    const selectLocalSourceFolder = () => {
-        // Open the dialog window to select a folder
-        folderManager.openDialogWindow()
-            .then((path) => {
-                // Create a new extension with the selected folder path 
-                extensionApi.createExtension(path, folderManager.retrieveBaseName(path))
-                    // Update the array of extensions by adding the new extension
-                    .then((_) => setExtensions([...extensions, { id: null, name: folderManager.retrieveBaseName(path), link: path }]))
-                    .catch((error) => setError({ message: error.message, type: "error" }));
-            }).catch((error) => setError({ message: error.message, type: "error" }));
+    const selectLocalSourceFolder = async () => {
+        try {
+            // Open the dialog window to select a folder
+            const path = await folderManager.openDialogWindow();
+            setLoading(true);
+
+            console.log("loading...");
+            // Create a new extension with the selected folder path
+            await extensionApi.createExtension(path, folderManager.retrieveBaseName(path));
+            console.log("done");
+            
+            setExtensions([...extensions, { id: null, name: folderManager.retrieveBaseName(path), link: path }]);
+            setLoading(false);
+        } catch (error) {
+            setError({ message: error.message, type: "error" });
+            setLoading(false);
+        }
     };
 
     const updateEditedExtension = (id) => {
@@ -66,9 +74,7 @@ function SourceSettings() {
         setEditingExtension(null);
     };
 
-    const editExtension = (extension) => {
-        setEditingExtension(extension);
-    };
+    const editExtension = (extension) => setEditingExtension(extension);
 
     const updateExtensionPath = (id) => {
         // Open the dialog window to select a folder
@@ -88,10 +94,11 @@ function SourceSettings() {
 
     return (
         <>
+            {loading ? <Notification message="Loading series inside the folder..." type="loading" closable={false} /> : null}
             {error && <Notification message={error.message} type={error.type} onClose={setError} />}
             <ul className={styles.sourceList}>
-                {extensions.map((extension, index) => (
-                    <li key={index} className={styles.sourceItem}>
+                {extensions.map((extension, _) => (
+                    <li key={extension.link} className={styles.sourceItem}>
                         <div className={styles.sourceInfos}>
                             {editingExtension?.id === extension.id ? (
                                 <input

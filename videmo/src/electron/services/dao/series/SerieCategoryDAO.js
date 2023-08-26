@@ -1,7 +1,6 @@
 const QueryExecutor = require('../../sqlite/QueryExecutor');
 const SerieDAO = require('../series/SerieDAO');
 
-
 class SerieCategoryDAO {
     constructor() {
         this.queryExecutor = new QueryExecutor();
@@ -102,6 +101,11 @@ class SerieCategoryDAO {
     }
 
     // Update series categories
+    // TODO : change the logic to update the SerieCategory table
+    // We should first search for the serie in the Serie table, 
+    // if it does not exist, we search for the serie in the LinkedSerie table
+    // Then we update the SerieCategory table with the new series and categories
+    // ! IMPORTANT : the serie SHOULD already exist in the Serie or LinkedSerie table 
     async updateSerieCategories(serie, categoriesId) {
         const serieParsedObject = JSON.parse(serie);
         // Retrieve the serie

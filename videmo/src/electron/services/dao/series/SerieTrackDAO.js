@@ -76,6 +76,12 @@ class SerieTrackDAO {
         const params = [serieId, episodeId];
         await this.queryExecutor.executeAndCommit(sql, params);
     }
+
+    async deleteSerieTrackByEpisodeId(episodeId) {
+        const sql = `DELETE FROM Track WHERE episode_id = ?`;
+        const params = [episodeId];
+        await this.queryExecutor.executeAndCommit(sql, params);
+    }
 }
 
 module.exports = SerieTrackDAO;

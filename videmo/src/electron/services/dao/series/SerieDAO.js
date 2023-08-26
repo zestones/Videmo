@@ -9,9 +9,11 @@ class SerieDAO {
 
     // Create a new serie
     async createSerie(serie) {
-        const sql = `INSERT INTO Serie (basename, name, description, image, link, extension_id, inLibrary) VALUES (?, ?, ?, ?, ?, ?, ?)`;
-        const params = [serie.basename, serie.name, serie.description, serie.image, serie.link, serie.extension_id, serie.inLibrary];
+        const sql = `INSERT INTO Serie (basename, name, description, image, link, extension_id, parent_id, inLibrary) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+        const params = [serie.basename, serie.name, serie.description, serie.image, serie.link, serie.extension_id, serie.parent_id, serie.inLibrary];
         await this.queryExecutor.executeAndCommit(sql, params);
+
+        return await this.getSerieByLink(serie.link);
     }
 
     // Read all series
@@ -32,6 +34,13 @@ class SerieDAO {
         const sql = `SELECT * FROM Serie WHERE link = ?`;
         const params = [link];
         return await this.queryExecutor.executeAndFetchOne(sql, params);
+    }
+
+    // Read serie children
+    async getSerieChildren(serieId) {
+        const sql = `SELECT * FROM Serie WHERE parent_id = ?`;
+        const params = [serieId];
+        return await this.queryExecutor.executeAndFetchAll(sql, params);
     }
 
     // Read all series in library by extension

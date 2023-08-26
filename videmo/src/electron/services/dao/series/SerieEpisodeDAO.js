@@ -10,15 +10,17 @@ class SerieEpisodeDAO {
 
     // Insert a new episode in the Episode table
     async createEpisode(episode) {
-        const sql = `INSERT INTO Episode (name, link, viewed, bookmarked, played_time) VALUES (?, ?, ?, ?, ?)`;
+        const sql = `INSERT INTO Episode (name, link, viewed, bookmarked, played_time, hash) VALUES (?, ?, ?, ?, ?, ?)`;
         const params = [
             episode.name,
             episode.link,
             this.dataTypesConverter.convertBooleanToInteger(episode.viewed),
             this.dataTypesConverter.convertBooleanToInteger(episode.bookmarked),
-            episode.played_time
+            episode.played_time,
+            episode.hash
         ];
         await this.queryExecutor.executeAndCommit(sql, params);
+        return await this.getEpisodeByLink(episode.link);
     }
 
     async getAllEpisodes() {
@@ -57,6 +59,11 @@ class SerieEpisodeDAO {
         await this.queryExecutor.executeAndCommit(sql, params);
     }
 
+    async deleteEpisodeById(id) {
+        const sql = `DELETE FROM Episode WHERE id = ?`;
+        const params = [id];
+        await this.queryExecutor.executeAndCommit(sql, params);
+    }
 }
 
 

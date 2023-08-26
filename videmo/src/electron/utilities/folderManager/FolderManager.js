@@ -105,6 +105,44 @@ class FolderManager {
 
         return `${day}/${month}/${year}`;
     }
+
+    retrieveLevel(baseLink, link) {
+        const baseSeparatorCount = (baseLink.split(path.sep).length - 1) || 0;
+        const linkSeparatorCount = (link.split(path.sep).length - 1) || 0;
+
+        return linkSeparatorCount - baseSeparatorCount;
+    }
+
+    retrieveFolders(baseLink) {
+        const contents = fs.readdirSync(baseLink);
+        const folders = [];
+
+        for (const folder of contents) {
+            const fullPath = path.join(baseLink, folder);
+            const isDirectory = fs.statSync(fullPath).isDirectory();
+
+            if (isDirectory) {
+                folders.push(folder);
+            }
+        }
+
+        return folders;
+    }
+
+    isVideoFile(filename) {
+        const supportedExtensions = ['.mp4', '.mkv', '.avi', '.flv', '.wmv', '.mov',
+            '.webm', '.m4v', '.mpg', '.mpeg', '.m2v', '.3gp', '.3g2', '.mxf', '.ts', '.mts',
+            '.m2ts', '.vob', '.divx', '.xvid', '.rm', '.rmvb', '.asf', '.ogv', '.f4v', '.h264',
+            '.h265', '.hevc', '.hls', '.m3u8', '.iso'];
+
+        for (const extension of supportedExtensions) {
+            if (filename.endsWith(extension)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }
 
 module.exports = FolderManager;

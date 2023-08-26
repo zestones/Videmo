@@ -1,6 +1,7 @@
 class FolderManager {
 
     // Constants
+    // TODO : Move this inside a config table in the database
     static DEFAULT_COVER_FOLDER_NAME = "Cover";
 
     /**

@@ -1,22 +1,36 @@
 const { ipcMain } = require('electron');
 const DataTypesConverter = require('../utilities/converter/DataTypesConverter.js');
 const ExtensionsDAO = require('../services/dao/settings/ExtensionsDAO');
+const LocalFileScrapper = require('../services/sources/local/local-file-scrapper');
+
 
 // Add new extension
-ipcMain.on('/create/extension/', (event, arg) => {
-    new ExtensionsDAO().createExtension(arg.link, arg.name, arg.local)
-        .then(() => event.reply('/create/extension/', { success: true, extension: { link: arg.link, name: arg.name, local: arg.local } }))
-        .catch((err) => event.reply('/create/extension/', { success: false, error: err }));
+ipcMain.on('/create/extension/', async (event, arg) => {
+    const extensionDAO = new ExtensionsDAO();
+    const scrapper = new LocalFileScrapper(arg.link);
+
+    const retrievedExtension = await extensionDAO.getExtensionByLink(arg.link);
+
+    if (retrievedExtension !== undefined && !retrievedExtension.is_active) {
+        await scrapper.scrap();
+        await extensionDAO.updateExtensionIsActive(retrievedExtension.id, true);
+        event.reply('/create/extension/', { success: true, extension: { link: arg.link, name: arg.name, local: arg.local } })
+    } else {
+        new ExtensionsDAO().createExtension(arg.link, arg.name, arg.local, false)
+            .then(async (extension) => {
+                // Scrap all the tree structure and insert it into the database
+                await scrapper.scrap();
+                await extensionDAO.updateExtensionIsActive(extension.id, true);
+                event.reply('/create/extension/', { success: true, extension: { link: arg.link, name: arg.name, local: arg.local } })
+            })
+            .catch((err) => event.reply('/create/extension/', { success: false, error: err }));
+    }
 })
 
 // Read all extensions
 ipcMain.on('/read/all/extensions/', (event) => {
-    new ExtensionsDAO().getAllExtensions()
-        .then((extensions) => {
-            // convert local to boolean
-            extensions.forEach((extension) => extension.local = new DataTypesConverter().convertIntegerToBoolean(extension.local));
-            event.reply('/read/all/extensions/', { success: true, extensions: extensions });
-        })
+    new ExtensionsDAO().getAllActiveExtensions()
+        .then((extensions) => event.reply('/read/all/extensions/', { success: true, extensions: extensions }))
         .catch((err) => event.reply('/read/all/extensions/', { success: false, error: err }));
 })
 
@@ -40,7 +54,7 @@ ipcMain.on('/update/extension/', (event, arg) => {
 
 // Delete extension
 ipcMain.on('/delete/extension/', (event, arg) => {
-    new ExtensionsDAO().deleteExtensionById(arg.id)
+    new ExtensionsDAO().updateExtensionIsActive(arg.id, false)
         .then(() => event.reply('/delete/extension/', { success: true, extension: { id: arg.id } }))
         .catch((err) => event.reply('/delete/extension/', { success: false, error: err }));
 })

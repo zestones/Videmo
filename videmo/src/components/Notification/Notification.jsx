@@ -1,5 +1,7 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
+
+// External
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import ErrorIcon from '@mui/icons-material/Error';
@@ -7,19 +9,22 @@ import WarningIcon from '@mui/icons-material/Warning';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
+import CircularProgress from '@mui/material/CircularProgress';
+
 
 // Styles
 import styles from './Notification.module.scss';
 
 
-function Notification({ type, message, onClose }) {
+function Notification({ type, message, onClose, closable = true }) {
 
     useEffect(() => {
+        if (!closable) return;
         const timer = setTimeout(() => {
             onClose(null);
         }, 5000);
         return () => clearTimeout(timer);
-    }, [onClose]);
+    }, [onClose, closable]);
 
 
     let icon = null;
@@ -37,6 +42,11 @@ function Notification({ type, message, onClose }) {
             icon = <CheckCircleIcon fontSize="large" />;
             title = 'Success! Everything is fine.';
             break;
+        case 'loading':
+            icon = <CircularProgress size={24} />;
+            title = 'Loading...';
+            type = 'info';
+            break;
         default:
             break;
     }
@@ -49,17 +59,17 @@ function Notification({ type, message, onClose }) {
                 aria-label="close"
                 color="inherit"
                 size="small"
-                onClick={() => onClose(null)}
+                onClick={() => closable && onClose(null)}
                 className={styles.closeButton}
             >
-                <CloseIcon className={styles.closeIcon} fontSize="inherit" color="inherit" />
+                {closable && <CloseIcon className={styles.closeIcon} fontSize="inherit" color="inherit" />}
             </IconButton>
         </Alert>
     );
 };
 
 Notification.propTypes = {
-    type: PropTypes.oneOf(['error', 'warning', 'success']).isRequired,
+    type: PropTypes.oneOf(['error', 'warning', 'success', 'loading']).isRequired,
     message: PropTypes.string.isRequired,
 };
 

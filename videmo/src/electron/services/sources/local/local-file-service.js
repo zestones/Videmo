@@ -10,11 +10,8 @@ const folderManager = new FolderManager();
 
 // Register the 'retrieveLevel' event listener to the ipcMain module to get the level of the path
 ipcMain.on('retrieveLevel', (event, { baseLink, link }) => {
-    const baseSeparatorCount = (baseLink.split(path.sep).length - 1) || 0;
-    const linkSeparatorCount = (link.split(path.sep).length - 1) || 0;
 
-    const level = linkSeparatorCount - baseSeparatorCount;
-
+    const level = folderManager.retrieveLevel(baseLink, link);
     event.reply('retrieveLevel', { success: true, error: null, level: level });
 });
 
