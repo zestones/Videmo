@@ -16,7 +16,7 @@ import TrackApi from "../../services/api/track/TrackApi";
 // Styles
 import styles from "./SeriesDisplay.module.scss";
 
-function SeriesDisplay({ serie, folderContents, episodes, onPlayClick, onRefresh, calledFromExplore, setEpisodes }) {
+function SeriesDisplay({ serie, extension, linkedSeries, episodes, onPlayClick, onRefresh, calledFromExplore, setEpisodes }) {
     // Services initialization
     const [trackApi] = useState(() => new TrackApi());
     // const [folderManager] = useState(() => new FolderManager());
@@ -66,14 +66,15 @@ function SeriesDisplay({ serie, folderContents, episodes, onPlayClick, onRefresh
     return (
         <div className={styles.sourceContent}>
             {serie && (
-                <DetailsContainer serie={serie} />
+                <DetailsContainer serie={serie} extension={extension} />
             )}
-
+    
             <div className={styles.seriesContainer}>
-                {folderContents.map((folderContent) => (
+                {linkedSeries.map((linkedSerie) => (
                     <SerieCard
-                        key={folderContent.link}
-                        details={folderContent}
+                        key={linkedSerie.link}
+                        details={linkedSerie}
+                        extension={extension}
                         onPlayClick={onPlayClick}
                         onMoreClick={onRefresh}
                         displayLabel={calledFromExplore}

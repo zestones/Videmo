@@ -41,6 +41,14 @@ export default class TrackApi {
         });
     }
 
+    readAllEpisodesBySerieId = (id) => {
+        window.api.send("/read/all/episodes/by/serie/id/", id);
+
+        return new Promise((resolve, reject) => {
+            window.api.receive("/read/all/episodes/by/serie/id/", (data) => data.success ? resolve(data.episodes) : reject(data.error));
+        });
+    }
+
     mapSerieEpisodeWithDatabaseEpisode(episodes, episodesFromDatabase) {
         return episodes.map(episode => {
             const episodeFromDatabase = episodesFromDatabase.find(episodeFromDatabase => episodeFromDatabase.link === episode.link);

@@ -48,3 +48,10 @@ ipcMain.on('/read/all/episodes/by/serie/link/', async (event, arg) => {
         })
         .catch(error => event.reply('/read/all/episodes/by/serie/link/', { success: false, error }));
 })
+
+// Read all episodes by serie id
+ipcMain.on('/read/all/episodes/by/serie/id/', async (event, arg) => {
+    new SerieEpisodeDAO().getAllEpisodesBySerieId(arg)
+        .then((retrievedEpisodes) => event.reply('/read/all/episodes/by/serie/id/', { success: true, episodes: retrievedEpisodes }))
+        .catch(error => event.reply('/read/all/episodes/by/serie/id/', { success: false, error }));
+})

@@ -26,7 +26,11 @@ class SerieDAO {
     async getSerieById(serieId) {
         const sql = `SELECT * FROM Serie WHERE id = ?`;
         const params = [serieId];
-        return await this.queryExecutor.executeAndFetchOne(sql, params);
+
+        const result = await this.queryExecutor.executeAndFetchOne(sql, params);
+        console.log(result);
+        result.inLibrary = this.dataTypesConverter.convertIntegerToBoolean(result.inLibrary);
+        return result;
     }
 
     // Read serie by link
@@ -41,6 +45,18 @@ class SerieDAO {
         const sql = `SELECT * FROM Serie WHERE parent_id = ?`;
         const params = [serieId];
         return await this.queryExecutor.executeAndFetchAll(sql, params);
+    }
+
+    // Read all series by parent ID
+    async getSeriesByParentId(parentId) {
+        const sql = `SELECT * FROM Serie WHERE parent_id = ?`;
+        const params = [parentId];
+
+        const result = await this.queryExecutor.executeAndFetchAll(sql, params);
+        return result.map(serie => {
+            serie.inLibrary = this.dataTypesConverter.convertIntegerToBoolean(serie.inLibrary);
+            return serie;
+        });
     }
 
     // Read all series in library by extension

@@ -36,7 +36,7 @@ class SerieEpisodeDAO {
         return await this.queryExecutor.executeAndFetchOne(sql, params);
     }
 
-    // Get all episodes by a serie
+    // Get all episodes by a serie link
     async getAllEpisodesBySerieLink(link) {
         const sql = `SELECT Episode.* FROM Episode
                     INNER JOIN Track ON Episode.id = Track.episode_id
@@ -44,6 +44,22 @@ class SerieEpisodeDAO {
                     WHERE Serie.link = ?`;
         const params = [link];
         return await this.queryExecutor.executeAndFetchAll(sql, params);
+    }
+
+    // Get all episodes by a serie id
+    async getAllEpisodesBySerieId(serieId) {
+        const sql = `SELECT Episode.* FROM Episode
+                    INNER JOIN Track ON Episode.id = Track.episode_id
+                    INNER JOIN Serie ON Serie.id = Track.serie_id
+                    WHERE Serie.id = ?`;
+        const params = [serieId];
+
+        const result = await this.queryExecutor.executeAndFetchAll(sql, params);
+        return result.map(episode => {
+            episode.viewed = this.dataTypesConverter.convertIntegerToBoolean(episode.viewed);
+            episode.bookmarked = this.dataTypesConverter.convertIntegerToBoolean(episode.bookmarked);
+            return episode;
+        });
     }
 
     // Update an episode in the Episode table

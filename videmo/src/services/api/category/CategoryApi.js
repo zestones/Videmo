@@ -54,9 +54,9 @@ export default class CategoryApi {
     }
 
     // Add Serie to Categories
-    addSerieToCategories(serie, categoriesId = [1]) {
+    addSerieToCategories(serieLink, extensionLink, categoriesId = [1]) {
         // TODO : check if the genres is present in the serie and if not retrieve the serie genres with aniList API
-        window.api.send("/add/categories/to/serie/", { serie: JSON.stringify(serie), categoriesId: categoriesId });
+        window.api.send("/add/categories/to/serie/", { serieLink: serieLink, extensionLink: extensionLink, categoriesId: categoriesId });
 
         return new Promise((resolve, reject) => {
             window.api.receive("/add/categories/to/serie/", (data) => data.success ? resolve(data.categories) : reject(data.error));

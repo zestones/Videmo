@@ -1,6 +1,9 @@
 const { ipcMain } = require('electron');
 
+const LocalFileScrapper = require('../services/sources/local/local-file-scrapper');
+
 const SerieCategoryDAO = require('../services/dao/series/SerieCategoryDAO');
+const SerieDAO = require('../services/dao/series/SerieDAO');
 
 // Read categories by serie id
 ipcMain.on('/read/serie-categories/by/serie/link/', (event, arg) => {
@@ -11,7 +14,12 @@ ipcMain.on('/read/serie-categories/by/serie/link/', (event, arg) => {
 
 // Add Serie to Category
 ipcMain.on('/add/categories/to/serie/', async (event, arg) => {
-    await new SerieCategoryDAO().updateSerieCategories(arg.serie, arg.categoriesId)
+    
+    const scrapper = new LocalFileScrapper(arg.extensionLink, arg.serieLink);
+    await scrapper.scrap();
+
+    const serie = await new SerieDAO().getSerieByLink(arg.serieLink);
+    await new SerieCategoryDAO().updateSerieCategories(serie, arg.categoriesId)
         .then((categories) => event.reply('/add/categories/to/serie/', { success: true, categories: categories }))
         .catch((err) => event.reply('/add/categories/to/serie/', { success: false, error: err }));
 })

@@ -81,18 +81,6 @@ class SerieCategoryDAO {
         }
     }
 
-    // Create a new serie and update the SerieCategory table with the attached categories
-    async #createSerieAndCategory(serieParsedObject, categoriesId) {
-        // Create the serie
-        await this.serieDAO.createSerie({ ...serieParsedObject, inLibrary: 1 });
-
-        // Retrieve the inserted serie (we need the id)
-        const insertedSerie = await this.serieDAO.getSerieByLink(serieParsedObject.link);
-
-        // Update the SerieCategory table with the new series and categories
-        await this.#updateSerieCategory(insertedSerie.id, categoriesId);
-    }
-
     // Count serie categories by serie ID
     async #countSerieCategoriesBySerieId(serieId) {
         const sql = `SELECT COUNT(*) AS count FROM SerieCategory WHERE serie_id = ?`;
@@ -105,23 +93,12 @@ class SerieCategoryDAO {
     // We should first search for the serie in the Serie table, 
     // if it does not exist, we search for the serie in the LinkedSerie table
     // Then we update the SerieCategory table with the new series and categories
-    // ! IMPORTANT : the serie SHOULD already exist in the Serie or LinkedSerie table 
+    // ! IMPORTANT : the serie SHOULD already exist in the Serie table
     async updateSerieCategories(serie, categoriesId) {
-        const serieParsedObject = JSON.parse(serie);
-        // Retrieve the serie
-        const retrievedSerie = await this.serieDAO.getSerieByLink(serieParsedObject.link);
-
-        // Check if the does not exist in the Serie table
-        if (retrievedSerie === undefined) {
-            // We create the serie and update the SerieCategory table with the attached categories
-            await this.#createSerieAndCategory(serieParsedObject, categoriesId);
-        } else {
-            const serieId = retrievedSerie.id; // Use the retrievedSerie.id instead of making another query
-            // Update the SerieCategory table with the new series and categories
-            await this.#updateSerieCategory(serieId, categoriesId);
-        }
+        // Update the SerieCategory table with the new series and categories
+        await this.#updateSerieCategory(serie.id, categoriesId);
     }
-    
+
     // Delete serie categories by serie ID
     async deleteSerieCategoryBySerieId(serieId) {
         const sql = `DELETE FROM SerieCategory WHERE serie_id = ?`;

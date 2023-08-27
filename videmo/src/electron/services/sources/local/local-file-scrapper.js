@@ -65,38 +65,30 @@ class LocalFileScrapper {
     }
 
     async #scrapSerie() {
-        const serie = await this.serieDAO.getSerieByLink(this.serieLink);
+        const extension = await this.extensionsDAO.getExtensionByLink(this.extensionLink);
 
-        const level = this.folderManager.retrieveLevel(this.extensionLink, this.serieLink);
-        const basename = this.folderManager.getBasenameByLevel(this.serieLink, level);
+        const baseLink = this.extensionLink + path.sep + this.serieLink.split(path.sep)[this.extensionLink.split(path.sep).length];
+        const serie = await this.serieDAO.getSerieByLink(baseLink);
 
-        const baseLink = this.extensionLink + path.sep + basename;
+        const localTree = this.tree.retrieveLocalTree(baseLink);
 
         if (serie === undefined) {
-            this.#scrapEntireSeries(baseLink, serie.extension_id);
+            await this.tree.insertTree(localTree, this.extensionLink);
         } else {
-            this.#scrapMissingPartOfTheSeries(baseLink, basename, serie.extension_id, serie.id);
+            const databaseTree = await this.tree.retrieveDatabaseTree(baseLink);
+            const localTreeWithoutCovers = this.tree.removeDirectoryFromTree(localTree, 'Cover');
+            const differences = this.tree.compareTrees(databaseTree, localTreeWithoutCovers);
+            
+            this.tree.saveTreeToFile(databaseTree, './databaseTree.json');
+            this.tree.saveTreeToFile(differences, './differences.json');
+
+            if (differences.length !== 0) {
+                for (const diff of differences) {
+                    await this.tree.updateTree(diff, this.extensionLink, extension.id);
+                }
+            }
         }
-    }
 
-    async #scrapEntireSeries(baseLink, extensionId) {
-        console.log('Scraping the entire serie');
-
-        const tree = this.tree.retrieveLocalTree(baseLink);
-        this.tree.saveTreeToFile(tree, './tree.json');
-
-        // Insert the tree in the database
-        await this.tree.insertTree(tree, baseLink, extensionId);
-    }
-
-    async #scrapMissingPartOfTheSeries(baseLink, basename, parentId) {
-        // Only scrap the missing part of the tree
-        console.log('Scraping the missing part of the tree');
-
-        // Difference between the tree in the database and the tree on the disk
-        const databaseTree = this.tree.retrieveDatabaseTree(baseLink);
-
-        this.folderManager.saveTreeToFile(databaseTree, './databaseTree.json');
     }
 }
 

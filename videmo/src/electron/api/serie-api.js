@@ -24,3 +24,17 @@ ipcMain.on('/read/serie/by/serie-link/', (event, arg) => {
         .then((serie) => event.reply('/read/serie/by/serie-link/', { success: true, serie: serie }))
         .catch((err) => event.reply('/read/serie/by/serie-link/', { success: false, error: err }));
 })
+
+// Read all series by parent id
+ipcMain.on('/read/all/series/by/parent-id/', (event, arg) => {
+    new SerieDAO().getSeriesByParentId(arg.parentId)
+        .then((series) => event.reply('/read/all/series/by/parent-id/', { success: true, series: series }))
+        .catch((err) => event.reply('/read/all/series/by/parent-id/', { success: false, error: err }));
+})
+
+// Read serie by id
+ipcMain.on('/read/serie/by/id/', (event, arg) => {
+    new SerieDAO().getSerieById(arg.id)
+        .then((serie) => event.reply('/read/serie/by/id/', { success: true, serie: serie }))
+        .catch((err) => event.reply('/read/serie/by/id/', { success: false, error: err }));
+})

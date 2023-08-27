@@ -8,21 +8,13 @@ import Notification from "../Notification/Notification";
 
 // Api
 import CategoryApi from "../../services/api/category/CategoryApi";
-import ExtensionsApi from "../../services/api/extension/ExtensionApi";
-import LocalFileScrapper from "../../services/sources/local/LocalFileScrapper";
-
-// Utilities
-import FolderManager from "../../utilities/folderManager/FolderManager";
 
 // Styles
 import styles from "./CategoryModal.module.scss";
 
-function CategoryModal({ serie, onClose, onMoreClick }) {
+function CategoryModal({ serie, extension, onClose, onMoreClick }) {
     // Utilities and services initialization
     const [categoryApi] = useState(() => new CategoryApi());
-    const [extensionsApi] = useState(() => new ExtensionsApi());
-    const [folderManager] = useState(() => new FolderManager());
-    const [localFileScrapper] = useState(() => new LocalFileScrapper());
 
     // States initialization
     const [categories, setCategories] = useState([]);
@@ -54,21 +46,11 @@ function CategoryModal({ serie, onClose, onMoreClick }) {
 
     const handleAddToCategory = async () => {
         try {
-            const extension = await extensionsApi.readExtensionById(serie.extension_id);
-            const level = await folderManager.retrieveLevel(extension.link, serie.link);
-            const basename = await folderManager.retrieveBaseNameByLevel(serie.link, level);
-
-            const { name, link, image, extension_id } = serie;
-            const serieToUpdate = { name, link, basename, image, extension_id };
-            
-            // TODO : we only need the serie link and extension id to scrap the series
-            await localFileScrapper.scrapSerie(serieToUpdate);
-            
             // TODO : we only need the serie link to update it 
-            await categoryApi.addSerieToCategories(serieToUpdate, checkedCategories);
-            
+            console.log(extension.link);
+            await categoryApi.addSerieToCategories(serie.link, extension.link, checkedCategories);
+
             onClose({ message: "La série a été déplacée avec succès", type: "success" });
-            console.log("======= FINISHED");
             if (onMoreClick) onMoreClick();
         } catch (error) {
             setError({ message: error.message, type: "error" })

@@ -143,9 +143,10 @@ function Explore() {
                         onRandom={() => folderContents.length > 0 && handlePlayClick(folderContents[Math.floor(Math.random() * folderContents.length)])}
                     />
                     <SeriesDisplay
-                        folderContents={filterFolders}
+                        linkedSeries={filterFolders}
                         episodes={episodes}
                         serie={serie}
+                        extension={selectedExtension}
                         onPlayClick={handlePlayClick}
                         onRefresh={refreshFolderContents}
                         calledFromExplore={true}

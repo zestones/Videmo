@@ -138,8 +138,10 @@ function History() {
                 <SerieDisplay
                     serie={{ ...selectedEntry.serie, extension_id: selectedEntry.extension.id }}
                     episodes={episodes}
+                    // TODO : check if selectedEntry.extension works
+                    extension={selectedEntry.extension}
                     calledFromExplore={true}
-                    folderContents={[]}
+                    linkedSeries={[]}
                     setEpisodes={setEpisodes}
                 />
             )}

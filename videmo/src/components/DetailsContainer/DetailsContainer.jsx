@@ -16,7 +16,7 @@ import Notification from '../Notification/Notification';
 import styles from './DetailsContainer.module.scss';
 
 
-const DetailsContainer = ({ serie }) => {
+const DetailsContainer = ({ serie, extension }) => {
 	// State initialization
 	const [showModal, setShowModal] = useState(false);
 	const [alreadyInLibrary, setAlreadyInLibrary] = useState(false);
@@ -52,7 +52,7 @@ const DetailsContainer = ({ serie }) => {
 		<div className={styles.detailsContainer}>
 			{error && <Notification message={error.message} type={error.type} onClose={setError} />}
 			<div className={styles.serieBackground} >
-				<img className={styles.serieImage} src={serie.image} alt="Serie" />
+				<img className={styles.serieImage} src={serie.image} alt={serie.basename} />
 				<div className={styles.serieFavoriteContainer}>
 					<span className={styles.serieFavoriteIcon} onClick={() => setShowModal(true)}>
 						<FavoriteIcon className={`${styles.serieFavorite} ${alreadyInLibrary ? styles.active : ''}`} />
@@ -91,6 +91,7 @@ const DetailsContainer = ({ serie }) => {
 			{showModal && (
 				<CategoryModal
 					serie={serie}
+					extension={extension}
 					onClose={handleCloseModal}
 					onMoreClick={refreshSerieState}
 				/>

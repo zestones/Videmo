@@ -15,17 +15,23 @@ import Notification from '../../Notification/Notification';
 import styles from './SerieCard.module.scss';
 
 
-function SerieCard({ details, onPlayClick, onMoreClick, displayLabel }) {
+function SerieCard({ details, extension, onPlayClick, onMoreClick, displayLabel }) {
     // State initialization
     const [isHovered, setIsHovered] = useState(false);
     const [showCategoryModal, setShowCategoryModal] = useState(false);
     const [utils] = useState(() => new Utils());
     const [error, setError] = useState(null);
+    const [imageLoaded, setImageLoaded] = useState(false); // State to track image loading
+
 
     const handleCloseModal = (notification) => {
         setShowCategoryModal(false);
         setError(notification);
-	}
+    }
+
+    const handleImageLoad = () => {
+        setImageLoaded(true);
+    };
 
     return (
         <>
@@ -35,10 +41,17 @@ function SerieCard({ details, onPlayClick, onMoreClick, displayLabel }) {
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
             >
-                <img className={styles.cardImage} src={details.image} alt={details.name} />
+                {!imageLoaded && <div className={styles.loadingEffect}></div>}
                 {(displayLabel && details.inLibrary) && <span className={styles.inLibraryLabel}>In Library</span>}
-                <p className={styles.cardTitle}>{utils.constructTitle(details)}</p>
+                <img
+                    className={`${styles.cardImage} ${imageLoaded ? styles.imageLoaded : ''}`}
+                    src={details.image}
+                    alt={details.name}
+                    onLoad={handleImageLoad}
+                />
                 
+                <p className={styles.cardTitle}>{utils.constructTitle(details)}</p>
+
                 <div className={`${styles.cardLayer} ${isHovered && styles.hovered}`}>
                     <div className={styles.cardLayerContent}>
                         <ControlPointIcon className={styles.cardLayerImage} onClick={() => setShowCategoryModal(true)} />
@@ -51,6 +64,7 @@ function SerieCard({ details, onPlayClick, onMoreClick, displayLabel }) {
             {showCategoryModal && (
                 <CategoryModal
                     serie={details}
+                    extension={extension}
                     onClose={handleCloseModal}
                     onMoreClick={onMoreClick}
                 />
