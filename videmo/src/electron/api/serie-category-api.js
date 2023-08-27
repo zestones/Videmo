@@ -14,9 +14,12 @@ ipcMain.on('/read/serie-categories/by/serie/link/', (event, arg) => {
 
 // Add Serie to Category
 ipcMain.on('/add/categories/to/serie/', async (event, arg) => {
-    
-    const scrapper = new LocalFileScrapper(arg.extensionLink, arg.serieLink);
-    await scrapper.scrap();
+
+    // We scrap the serie if needed (if we are inside the explorer page)
+    if (arg.shouldUpdateSeries) {
+        const scrapper = new LocalFileScrapper(arg.extensionLink, arg.serieLink);
+        await scrapper.scrap();
+    }
 
     const serie = await new SerieDAO().getSerieByLink(arg.serieLink);
     await new SerieCategoryDAO().updateSerieCategories(serie, arg.categoriesId)

@@ -1,66 +1,65 @@
 import React, { useState, useEffect } from "react";
+import { useNotification } from "../../components/Notification/NotificationProvider";
 
 // External
 import CloseIcon from '@mui/icons-material/Close';
 
-// Components
-import Notification from "../Notification/Notification";
-
 // Api
 import CategoryApi from "../../services/api/category/CategoryApi";
+import ExtensionsApi from "../../services/api/extension/ExtensionApi";
 
 // Styles
 import styles from "./CategoryModal.module.scss";
 
-function CategoryModal({ serie, extension, onClose, onMoreClick }) {
+function CategoryModal({ serie, onClose, onMoreClick, shouldUpdateSeries = false }) {
     // Utilities and services initialization
     const [categoryApi] = useState(() => new CategoryApi());
+    const [extensionApi] = useState(() => new ExtensionsApi());
 
     // States initialization
     const [categories, setCategories] = useState([]);
     const [checkedCategories, setCheckedCategories] = useState([]);
-    const [error, setError] = useState(null);
+
+    // Initialization of the notification hook
+    const { showNotification } = useNotification();
 
     useEffect(() => {
         // Retrieve all categories
         categoryApi.readAllCategories()
             .then((data) => setCategories(data))
-            .catch((error) => setError({ message: error.message, type: "error" }));
+            .catch((error) => showNotification("error", error.message));
 
         // Retrieve the categories of the serie
         categoryApi.readSerieCategoryIdsBySerieLink(serie.link)
             .then((data) => setCheckedCategories(data))
-            .catch((error) => setError({ message: error.message, type: "error" }));
+            .catch((error) => showNotification("error", error.message));
 
-    }, [categoryApi, serie, setCheckedCategories]);
+    }, [categoryApi, serie, setCheckedCategories, showNotification]);
 
     const handleCategoryChange = (e, categoryId) => {
         const isChecked = e.target.checked;
 
-        if (isChecked) {
-            setCheckedCategories((prevCategories) => [...prevCategories, categoryId]);
-        } else {
-            setCheckedCategories((prevCategories) => prevCategories.filter((id) => id !== categoryId));
-        }
+        if (isChecked) setCheckedCategories((prevCategories) => [...prevCategories, categoryId]);
+        else setCheckedCategories((prevCategories) => prevCategories.filter((id) => id !== categoryId));
     };
 
     const handleAddToCategory = async () => {
         try {
-            // TODO : we only need the serie link to update it 
-            console.log(extension.link);
-            await categoryApi.addSerieToCategories(serie.link, extension.link, checkedCategories);
+            const extension = await extensionApi.readExtensionById(serie.extension_id);
+            await categoryApi.addSerieToCategories(serie.link, extension.link, checkedCategories, shouldUpdateSeries);
 
-            onClose({ message: "La série a été déplacée avec succès", type: "success" });
+            showNotification("success", "La série a bien été déplacée avec succès");
+            onClose();
+            
             if (onMoreClick) onMoreClick();
         } catch (error) {
-            setError({ message: error.message, type: "error" })
+            showNotification("error", error.message)
             console.error(error);
         }
     };
 
     return (
         <div className={styles.modal}>
-            {error && <Notification message={error.message} type={error.type} />}
             <div className={styles.modalContent}>
                 <div className={styles.modalHeader}>
                     <h2 className={styles.modalTitle}>Déplacer vers une catégorie</h2>

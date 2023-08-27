@@ -17,7 +17,7 @@ import ExtensionApi from "../../services/api/extension/ExtensionApi";
 // Styles
 import styles from "./SeriesDisplay.module.scss";
 
-function SeriesDisplay({ serie, extension, linkedSeries, episodes, onPlayClick, onRefresh, calledFromExplore, setEpisodes }) {
+function SeriesDisplay({ serie, linkedSeries, episodes, onPlayClick, onRefresh, calledFromExplore, setEpisodes }) {
     // Services initialization
     const [trackApi] = useState(() => new TrackApi());
     const [folderManager] = useState(() => new FolderManager());
@@ -27,7 +27,6 @@ function SeriesDisplay({ serie, extension, linkedSeries, episodes, onPlayClick, 
     const [openVideoPlayer, setOpenVideoPlayer] = useState(false);
     const [resumeEpisode, setResumeEpisode] = useState(null);
     const [shouldPlayEpisode, setShouldPlayEpisode] = useState(false);
-
 
     const updateCurrentEpisode = useCallback((playedTime = 0, viewed = false) => {
         const updatedEpisode = { ...resumeEpisode, played_time: playedTime, viewed: viewed };
@@ -84,18 +83,17 @@ function SeriesDisplay({ serie, extension, linkedSeries, episodes, onPlayClick, 
     return (
         <div className={styles.sourceContent}>
             {serie && (
-                <DetailsContainer serie={serie} extension={extension} />
+                <DetailsContainer serie={serie} />
             )}
 
             <div className={styles.seriesContainer}>
                 {linkedSeries.map((linkedSerie) => (
                     <SerieCard
                         key={linkedSerie.link}
-                        details={linkedSerie}
-                        extension={extension}
+                        serie={linkedSerie}
                         onPlayClick={onPlayClick}
                         onMoreClick={onRefresh}
-                        displayLabel={calledFromExplore}
+                        calledFromExplore={calledFromExplore}
                     />
                 ))}
             </div>

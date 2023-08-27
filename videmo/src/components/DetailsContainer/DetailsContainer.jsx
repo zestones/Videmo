@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNotification } from "../../components/Notification/NotificationProvider";
 
 // External
 import FavoriteIcon from '@mui/icons-material/Favorite';
@@ -10,17 +11,18 @@ import SerieApi from '../../services/api/serie/SerieApi';
 
 // Components
 import CategoryModal from '../CategoryModal/CategoryModal';
-import Notification from '../Notification/Notification';
 
 // Styles
 import styles from './DetailsContainer.module.scss';
 
 
-const DetailsContainer = ({ serie, extension }) => {
+const DetailsContainer = ({ serie }) => {
 	// State initialization
 	const [showModal, setShowModal] = useState(false);
 	const [alreadyInLibrary, setAlreadyInLibrary] = useState(false);
-	const [error, setError] = useState(null);
+
+	// Initialization of the notification hook
+	const { showNotification } = useNotification();
 
 	// Api initialization
 	const [serieApi] = useState(() => new SerieApi());
@@ -34,23 +36,17 @@ const DetailsContainer = ({ serie, extension }) => {
 	useEffect(() => {
 		serieApi.readSerieBySerieObject(serie.link)
 			.then((serie) => setAlreadyInLibrary(!!serie?.inLibrary))
-			.catch((error) => setError({ message: error.message, type: 'error' }));
-	}, [serieApi, serie]);
+			.catch((error) => showNotification('error', error.message));
+	}, [serieApi, serie, showNotification]);
 
 	const refreshSerieState = () => {
 		serieApi.readSerieBySerieObject(serie.link)
 			.then((serie) => setAlreadyInLibrary(!!serie.inLibrary))
-			.catch((error) => setError({ message: error.message, type: 'error' }));
-	}
-
-	const handleCloseModal = (notification) => {
-		setShowModal(false);
-		setError(notification);
+			.catch((error) => showNotification('error', error.message));
 	}
 
 	return (
 		<div className={styles.detailsContainer}>
-			{error && <Notification message={error.message} type={error.type} onClose={setError} />}
 			<div className={styles.serieBackground} >
 				<img className={styles.serieImage} src={serie.image} alt={serie.basename} />
 				<div className={styles.serieFavoriteContainer}>
@@ -91,8 +87,7 @@ const DetailsContainer = ({ serie, extension }) => {
 			{showModal && (
 				<CategoryModal
 					serie={serie}
-					extension={extension}
-					onClose={handleCloseModal}
+					onClose={() => setShowModal(false)}
 					onMoreClick={refreshSerieState}
 				/>
 			)}
