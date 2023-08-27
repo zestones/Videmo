@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 
 // Services & Api
 import FolderManager from "../../utilities/folderManager/FolderManager";
+import SortManager from "../../utilities/sortManager/SortManager";
 import CategoryApi from "../../services/api/category/CategoryApi";
-import AniList from "../../services/aniList/aniList";
 import TrackApi from "../../services/api/track/TrackApi";
+import AniList from "../../services/aniList/aniList";
 
 // Pages
 import Source from "./Source/Source";
@@ -22,16 +23,18 @@ function Explore() {
     // State initialization
     const [selectedExtension, setSelectedExtension] = useState(null);
     const [folderContents, setFolderContents] = useState([]);
-    const [serie, setSerie] = useState(null);
-    const [episodes, setEpisodes] = useState([]);
     const [searchValue, setSearchValue] = useState("");
+    const [episodes, setEpisodes] = useState([]);
+    const [serie, setSerie] = useState(null);
     const [error, setError] = useState(null);
 
     // Utilities and services initialization
-    const [folderManager] = useState(() => new FolderManager());
-    const [categoryApi] = useState(() => new CategoryApi());
-    const [trackApi] = useState(() => new TrackApi());
-    const [aniList] = useState(() => new AniList());
+    const folderManager = useMemo(() => new FolderManager(), []);
+    const sortManager = useMemo(() => new SortManager(), []);
+    const categoryApi = useMemo(() => new CategoryApi(), []);
+    const trackApi = useMemo(() => new TrackApi(), []);
+    const aniList = useMemo(() => new AniList(), []);
+
 
     const retrieveSeriesInLibraryByExtension = useCallback((contents) => {
         categoryApi.readAllSeriesInLibraryByExtension(selectedExtension)
@@ -88,14 +91,7 @@ function Explore() {
         try {
             const level = await folderManager.retrieveLevel(selectedExtension.link, details.link);
             checkAndHandleFolderContentsWithExtension(details.link, details.extension_id, level);
-            const searchName = details.basename === details.name ? details.basename : details.basename + " " + details.name;
-            const data = await aniList.searchAnimeDetailsByName(searchName);
-            setSerie({
-                ...details,
-                name: folderManager.retrieveBaseName(details.link),
-                extension_id: selectedExtension.id,
-                ...data
-            });
+            setSerie({...details, name: folderManager.retrieveBaseName(details.link), extension_id: selectedExtension.id});
             setSearchValue("");
         } catch (error) {
             setError({ message: error.message, type: "error" })
@@ -123,11 +119,7 @@ function Explore() {
         }
     };
 
-    const filterFolders = folderContents.filter((folderContent) =>
-        folderManager.retrieveBaseName(folderContent.link)
-            .toLowerCase()
-            .includes(searchValue.toLowerCase())
-    );
+    const filterFolders = sortManager.filterByKeyword(searchValue, 'basename', folderContents);
 
     return (
         <div className={styles.explore}>
@@ -146,7 +138,6 @@ function Explore() {
                         linkedSeries={filterFolders}
                         episodes={episodes}
                         serie={serie}
-                        extension={selectedExtension}
                         onPlayClick={handlePlayClick}
                         onRefresh={refreshFolderContents}
                         calledFromExplore={true}
