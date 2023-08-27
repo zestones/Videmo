@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 
 // External
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
@@ -11,7 +11,8 @@ import VideoPlayer from "../VideoPlayer/VideoPlayer";
 
 // Services
 import TrackApi from "../../services/api/track/TrackApi";
-// import FolderManager from "../../utilities/folderManager/FolderManager";
+import FolderManager from "../../utilities/folderManager/FolderManager";
+import ExtensionApi from "../../services/api/extension/ExtensionApi";
 
 // Styles
 import styles from "./SeriesDisplay.module.scss";
@@ -19,40 +20,55 @@ import styles from "./SeriesDisplay.module.scss";
 function SeriesDisplay({ serie, extension, linkedSeries, episodes, onPlayClick, onRefresh, calledFromExplore, setEpisodes }) {
     // Services initialization
     const [trackApi] = useState(() => new TrackApi());
-    // const [folderManager] = useState(() => new FolderManager());
+    const [folderManager] = useState(() => new FolderManager());
+    const [extensionApi] = useState(() => new ExtensionApi());
 
     // State initialization
     const [openVideoPlayer, setOpenVideoPlayer] = useState(false);
     const [resumeEpisode, setResumeEpisode] = useState(null);
+    const [shouldPlayEpisode, setShouldPlayEpisode] = useState(false);
 
-    const handleResumeEpisode = () => {
+
+    const updateCurrentEpisode = useCallback((playedTime = 0, viewed = false) => {
+        const updatedEpisode = { ...resumeEpisode, played_time: playedTime, viewed: viewed };
+        trackApi.updatePlayedTime(serie, updatedEpisode, new Date().getTime());
+        setEpisodes((episodes) => episodes.map((episode) => episode.link === updatedEpisode.link ? updatedEpisode : episode));
+    }, [resumeEpisode, serie, setEpisodes, trackApi]);
+
+    useEffect(() => {
+        if (shouldPlayEpisode && resumeEpisode) {
+            updateCurrentEpisode(resumeEpisode.played_time, false);
+            setShouldPlayEpisode(false);
+        }
+    }, [shouldPlayEpisode, resumeEpisode, updateCurrentEpisode, setShouldPlayEpisode]);
+
+    const handleResumeEpisode = async () => {
         const resumeEpisode = episodes.slice().reverse().find(episode => episode.played_time && episode.played_time !== 0) ||
             episodes.slice().reverse().find(episode => !episode.viewed);
 
         if (resumeEpisode) {
-            // TODO - Retrieve extension
-            // TODO - if Extension is local open in local video player else open in video player
+            setShouldPlayEpisode(true);
             setResumeEpisode(resumeEpisode);
-            setOpenVideoPlayer(true);
+
+            try {
+                const extension = await extensionApi.readExtensionById(serie.extension_id);
+                if (!extension.local) setOpenVideoPlayer(true);
+                else handleOpenLocalVideoPlayer(resumeEpisode);
+            } catch (error) {
+                console.log(error);
+            }
         }
     };
 
-    // TODO - Uncomment when #15 is done
-    // const handleOpenLocalVideoPlayer = () => {
-    //     folderManager.openFileInLocalVideoPlayer(resumeEpisode.link);
-    //     updateCurrentEpisode(resumeEpisode.played_time, false);
-    // };
+    const handleOpenLocalVideoPlayer = (resumeEpisode) => {
+        folderManager.openFileInLocalVideoPlayer(resumeEpisode.link);
+        setShouldPlayEpisode(true);
+    };
 
     const setEpisodesAsViewed = () => {
         const updatedEpisode = { ...resumeEpisode, viewed: !resumeEpisode.viewed, played_time: 0 };
         setEpisodes((episodes) => episodes.map((episode) => episode.link === updatedEpisode.link ? updatedEpisode : episode));
         trackApi.addEpisodeToViewed(serie, updatedEpisode);
-    };
-
-    const updateCurrentEpisode = (playedTime = 0, viewed = false) => {
-        const updatedEpisode = { ...resumeEpisode, played_time: playedTime, viewed: viewed };
-        trackApi.updatePlayedTime(serie, updatedEpisode, new Date().getTime());
-        setEpisodes((episodes) => episodes.map((episode) => episode.link === updatedEpisode.link ? updatedEpisode : episode));
     };
 
     const handleCloseVideoPlayer = (playedTime, finished) => {
@@ -63,12 +79,14 @@ function SeriesDisplay({ serie, extension, linkedSeries, episodes, onPlayClick, 
         updateCurrentEpisode(playedTime);
     };
 
+    const shouldShowResumeButton = episodes.some(episode => !episode.viewed || episode.played_time);
+
     return (
         <div className={styles.sourceContent}>
             {serie && (
                 <DetailsContainer serie={serie} extension={extension} />
             )}
-    
+
             <div className={styles.seriesContainer}>
                 {linkedSeries.map((linkedSerie) => (
                     <SerieCard
@@ -87,7 +105,7 @@ function SeriesDisplay({ serie, extension, linkedSeries, episodes, onPlayClick, 
                     <EpisodeCard key={episode.link} serie={serie} episode={episode} setEpisodes={setEpisodes} />
                 ))}
 
-                {(episodes.length !== 0 && episodes.find((episode) => episode.viewed === undefined || episode.viewed === false)) && (
+                {shouldShowResumeButton && (
                     <button className={styles.resumeButton} onClick={handleResumeEpisode}>
                         <PlayArrowIcon />
                         <span>{episodes.find((episode) => (episode.viewed || episode.played_time)) ? "Resume" : "Play"}</span>
@@ -96,7 +114,11 @@ function SeriesDisplay({ serie, extension, linkedSeries, episodes, onPlayClick, 
             </div>
 
             {openVideoPlayer && (
-                <VideoPlayer link={resumeEpisode.link} startTime={!resumeEpisode.played_time ? 0 : resumeEpisode.played_time} onCloseVideoPlayer={handleCloseVideoPlayer} />
+                <VideoPlayer
+                    link={resumeEpisode.link}
+                    startTime={!resumeEpisode.played_time ? 0 : resumeEpisode.played_time}
+                    onCloseVideoPlayer={handleCloseVideoPlayer}
+                />
             )}
         </div>
     );

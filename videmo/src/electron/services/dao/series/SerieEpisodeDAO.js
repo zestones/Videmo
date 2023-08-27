@@ -59,7 +59,7 @@ class SerieEpisodeDAO {
             episode.viewed = this.dataTypesConverter.convertIntegerToBoolean(episode.viewed);
             episode.bookmarked = this.dataTypesConverter.convertIntegerToBoolean(episode.bookmarked);
             return episode;
-        });
+        }).reverse();
     }
 
     // Update an episode in the Episode table
