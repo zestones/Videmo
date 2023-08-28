@@ -54,8 +54,8 @@ export default class CategoryApi {
     }
 
     // Add Serie to Categories
-    addSerieToCategories(serieLink, extensionLink, categoriesId, shouldUpdateSeries) {
-        window.api.send("/add/categories/to/serie/", { serieLink: serieLink, extensionLink: extensionLink, categoriesId: categoriesId, shouldUpdateSeries: shouldUpdateSeries  });
+    addSerieToCategories(serie, extensionLink, categoriesId, shouldUpdateSeries) {
+        window.api.send("/add/categories/to/serie/", { serie: serie, extensionLink: extensionLink, categoriesId: categoriesId, shouldUpdateSeries: shouldUpdateSeries  });
 
         return new Promise((resolve, reject) => {
             window.api.receive("/add/categories/to/serie/", (data) => data.success ? resolve(data.categories) : reject(data.error));

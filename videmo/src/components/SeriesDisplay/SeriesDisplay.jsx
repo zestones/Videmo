@@ -83,7 +83,7 @@ function SeriesDisplay({ serie, linkedSeries, episodes, onPlayClick, onRefresh, 
     return (
         <div className={styles.sourceContent}>
             {serie && (
-                <DetailsContainer serie={serie} />
+                <DetailsContainer serie={serie} isCalledFromExplore={calledFromExplore} />
             )}
 
             <div className={styles.seriesContainer}>
@@ -93,7 +93,7 @@ function SeriesDisplay({ serie, linkedSeries, episodes, onPlayClick, onRefresh, 
                         serie={linkedSerie}
                         onPlayClick={onPlayClick}
                         onMoreClick={onRefresh}
-                        calledFromExplore={calledFromExplore}
+                        isCalledFromExplore={calledFromExplore}
                     />
                 ))}
             </div>

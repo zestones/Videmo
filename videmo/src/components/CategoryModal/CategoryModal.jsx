@@ -46,7 +46,7 @@ function CategoryModal({ serie, onClose, onMoreClick, shouldUpdateSeries = false
     const handleAddToCategory = async () => {
         try {
             const extension = await extensionApi.readExtensionById(serie.extension_id);
-            await categoryApi.addSerieToCategories(serie.link, extension.link, checkedCategories, shouldUpdateSeries);
+            await categoryApi.addSerieToCategories(serie, extension.link, checkedCategories, shouldUpdateSeries);
 
             showNotification("success", "La série a bien été déplacée avec succès");
             onClose();

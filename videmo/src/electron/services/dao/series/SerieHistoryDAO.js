@@ -39,7 +39,6 @@ class SerieHistoryDAO {
                     Serie.id AS serie_id,
                     Serie.basename AS serie_basename,
                     Serie.name AS serie_name,
-                    Serie.description AS serie_description,
                     Serie.link AS serie_link,
                     Serie.image AS serie_image,
                     Serie.inLibrary AS serie_inLibrary,
@@ -69,7 +68,7 @@ class SerieHistoryDAO {
     // Organize the retrieved data
     #organizeObject(result) {
         return result.map((item) => {
-            const { serie_id, serie_basename, serie_name, serie_description, serie_link, serie_image, serie_inLibrary,
+            const { serie_id, serie_basename, serie_name, serie_link, serie_image, serie_inLibrary,
                 extension_id, extension_link, extension_name, extension_local,
                 episode_id, episode_name, episode_link, episode_viewed, episode_bookmarked, episode_played_time,
                 history_timestamp } = item;
@@ -78,7 +77,6 @@ class SerieHistoryDAO {
                     id: serie_id,
                     basename: serie_basename,
                     name: serie_name,
-                    description: serie_description,
                     link: serie_link,
                     image: serie_image,
                     inLibrary: this.dataTypesConverter.convertIntegerToBoolean(serie_inLibrary),

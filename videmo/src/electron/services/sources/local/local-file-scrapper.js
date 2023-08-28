@@ -79,9 +79,6 @@ class LocalFileScrapper {
             const localTreeWithoutCovers = this.tree.removeDirectoryFromTree(localTree, 'Cover');
             const differences = this.tree.compareTrees(databaseTree, localTreeWithoutCovers);
             
-            this.tree.saveTreeToFile(databaseTree, './databaseTree.json');
-            this.tree.saveTreeToFile(differences, './differences.json');
-
             if (differences.length !== 0) {
                 for (const diff of differences) {
                     await this.tree.updateTree(diff, this.extensionLink, extension.id);

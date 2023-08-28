@@ -81,8 +81,8 @@ class BackupDAO {
 
     #generateInsertSeriesStatements(series) {
         return series.map(serie => `
-            INSERT OR IGNORE INTO Serie (id, basename, name, description, link, image, inLibrary, extension_id)
-            VALUES (${serie.id}, '${serie.basename}', '${serie.name}', '${serie.description}', '${serie.link}', '${serie.image}', ${serie.inLibrary}, ${serie.extension_id});
+            INSERT OR IGNORE INTO Serie (id, basename, name, link, image, inLibrary, extension_id)
+            VALUES (${serie.id}, '${serie.basename}', '${serie.name}', '${serie.link}', '${serie.image}', ${serie.inLibrary}, ${serie.extension_id});
         `).join('');
     }
 

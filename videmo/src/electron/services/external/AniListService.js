@@ -1,5 +1,4 @@
-
-export default class AniList {
+class AniListService {
 
     constructor() {
         this.url = 'https://graphql.anilist.co';
@@ -13,9 +12,9 @@ export default class AniList {
 
     /**
      * @param {String} name : The name of the anime to search. 
-     * @returns {Object} The anime details.
+     * @returns {Object} The anime infos.
      */
-    searchAnimeDetailsByName(name) {
+    searchAnimeInfosName(name) {
         const query = `
             query ($search: String) {
                 Page {
@@ -51,8 +50,8 @@ export default class AniList {
                 if (anime) {
                     return {
                         description: anime.description,
-                        genres: anime.genres ? anime.genres : [],
-                        startDate: this.formatDate(anime.startDate),
+                        genres: this.formatGenres(anime.genres),
+                        releaseDate: this.formatDate(anime.startDate),
                         duration: this.formatDuration(anime.duration),
                         rating: this.formatRating(anime.meanScore)
                     };
@@ -61,6 +60,15 @@ export default class AniList {
                 }
             })
             .catch(error => console.error(error));
+    }
+
+    /**
+     * 
+     * @param {Array} genres 
+     * @returns 
+     */
+    formatGenres(genres) {
+        return genres.map(genre => ({ name: genre }));
     }
 
     /**
@@ -97,3 +105,5 @@ export default class AniList {
         return `${(rating / 10).toFixed(1).replace(/\.0$/, "")}/10`;
     }
 }
+
+module.exports = AniListService;

@@ -11,9 +11,8 @@ CREATE TABLE IF NOT EXISTS Extension (
 -- Create the Serie table
 CREATE TABLE IF NOT EXISTS Serie (
   id INTEGER PRIMARY KEY,
-  basename TEXT, -- The name of the serie
-  name TEXT, -- Sub name of the serie (ex: Seasons for local series)
-  description TEXT,
+  basename TEXT,
+  name TEXT, 
   link TEXT,
   image TEXT,
   inLibrary INTEGER,
@@ -23,12 +22,23 @@ CREATE TABLE IF NOT EXISTS Serie (
   UNIQUE (link)
 );
 
+-- Create the SerieInfos table
+CREATE TABLE IF NOT EXISTS SerieInfos (
+  id INTEGER PRIMARY KEY,
+  serie_id INTEGER,
+  description TEXT,
+  duration DATETIME,
+  rating INTEGER,
+  releaseDate DATETIME,
+  FOREIGN KEY (serie_id) REFERENCES Serie (id)
+);
+
 -- Create the SerieGenre table
 CREATE TABLE IF NOT EXISTS SerieGenre (
   id INTEGER PRIMARY KEY,
   serie_id INTEGER,
   genre_id INTEGER,
-  FOREIGN KEY (serie_id) REFERENCES Serie (id),
+  FOREIGN KEY (serie_id) REFERENCES SerieInfos (serie_id),
   FOREIGN KEY (genre_id) REFERENCES Genre (id),
   UNIQUE (serie_id, genre_id)
 );

@@ -5,7 +5,6 @@ import FolderManager from "../../utilities/folderManager/FolderManager";
 import SortManager from "../../utilities/sortManager/SortManager";
 import CategoryApi from "../../services/api/category/CategoryApi";
 import TrackApi from "../../services/api/track/TrackApi";
-import AniList from "../../services/aniList/aniList";
 
 // Pages
 import Source from "./Source/Source";
@@ -33,7 +32,6 @@ function Explore() {
     const sortManager = useMemo(() => new SortManager(), []);
     const categoryApi = useMemo(() => new CategoryApi(), []);
     const trackApi = useMemo(() => new TrackApi(), []);
-    const aniList = useMemo(() => new AniList(), []);
 
 
     const retrieveSeriesInLibraryByExtension = useCallback((contents) => {
@@ -69,11 +67,6 @@ function Explore() {
                 const name = folderManager.retrieveBaseName(link);
                 serieUpdates = { ...serieUpdates, ...{ image: cover, basename, name, link } };
             }
-
-            // We search for the serie on AniList to retrieve its details
-            const searchName = serieUpdates.basename === serieUpdates.name ? serieUpdates.basename : `${serieUpdates.basename} ${serieUpdates.name}`;
-            const data = await aniList.searchAnimeDetailsByName(searchName);
-            serieUpdates = { ...serieUpdates, ...data };
 
             setSerie((prevSerie) => ({ ...prevSerie, ...serieUpdates }));
         } catch (error) {

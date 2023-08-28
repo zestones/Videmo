@@ -64,23 +64,6 @@ class SerieCategoryDAO {
         return await this.queryExecutor.executeAndFetchAll(sql);
     }
 
-    async #updateSerieCategory(serieId, categoriesId) {
-        // Clear existing categories for the series in the SerieCategory table
-        await this.deleteSerieCategoryBySerieId(serieId);
-        await this.serieDAO.updateSerieInLibrary(serieId, 1);
-
-        // Insert new categories for the series in the SerieCategory table
-        for (const categoryId of categoriesId) {
-            await this.createSerieCategory(serieId, categoryId);
-        }
-
-        // Update the Serie 'inLibrary' column if the series has no categories
-        const serieCategoryCount = await this.#countSerieCategoriesBySerieId(serieId);
-        if (serieCategoryCount.count === 0) {
-            await this.serieDAO.updateSerieInLibrary(serieId, 0);
-        }
-    }
-
     // Count serie categories by serie ID
     async #countSerieCategoriesBySerieId(serieId) {
         const sql = `SELECT COUNT(*) AS count FROM SerieCategory WHERE serie_id = ?`;
@@ -89,14 +72,22 @@ class SerieCategoryDAO {
     }
 
     // Update series categories
-    // TODO : change the logic to update the SerieCategory table
-    // We should first search for the serie in the Serie table, 
-    // if it does not exist, we search for the serie in the LinkedSerie table
-    // Then we update the SerieCategory table with the new series and categories
-    // ! IMPORTANT : the serie SHOULD already exist in the Serie table
     async updateSerieCategories(serie, categoriesId) {
-        // Update the SerieCategory table with the new series and categories
-        await this.#updateSerieCategory(serie.id, categoriesId);
+
+        // Clear existing categories for the series in the SerieCategory table
+        await this.deleteSerieCategoryBySerieId(serie.id);
+        await this.serieDAO.updateSerieInLibrary(serie.id, 1);
+
+        // Insert new categories for the series in the SerieCategory table
+        for (const categoryId of categoriesId) {
+            await this.createSerieCategory(serie.id, categoryId);
+        }
+
+        // Update the Serie 'inLibrary' column if the series has no categories
+        const serieCategoryCount = await this.#countSerieCategoriesBySerieId(serie.id);
+        if (serieCategoryCount.count === 0) {
+            await this.serieDAO.updateSerieInLibrary(serie.id, 0);
+        }
     }
 
     // Delete serie categories by serie ID

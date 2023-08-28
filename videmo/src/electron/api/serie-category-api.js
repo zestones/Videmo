@@ -3,6 +3,7 @@ const { ipcMain } = require('electron');
 const LocalFileScrapper = require('../services/sources/local/local-file-scrapper');
 
 const SerieCategoryDAO = require('../services/dao/series/SerieCategoryDAO');
+const SerieInfosDAO = require('../services/dao/series/SerieInfosDAO');
 const SerieDAO = require('../services/dao/series/SerieDAO');
 
 // Read categories by serie id
@@ -15,13 +16,22 @@ ipcMain.on('/read/serie-categories/by/serie/link/', (event, arg) => {
 // Add Serie to Category
 ipcMain.on('/add/categories/to/serie/', async (event, arg) => {
 
+    // TODO : SHOULD ADD A CHECK TO SEE IF THE SERIE IS A LOCAL SERIE
     // We scrap the serie if needed (if we are inside the explorer page)
     if (arg.shouldUpdateSeries) {
-        const scrapper = new LocalFileScrapper(arg.extensionLink, arg.serieLink);
+        // We scrap the serie
+        const scrapper = new LocalFileScrapper(arg.extensionLink, arg.serie.link);
         await scrapper.scrap();
+
+        const serieDAO = new SerieDAO();
+        const serieInfosDAO = new SerieInfosDAO();
+
+        // We update the serie infos - the infos are all the same for all the children
+        const serieId = await serieDAO.getSerieByLink(arg.serie.link);
+        await serieInfosDAO.updateSerieInfo(serieId, arg.serie.infos);
     }
 
-    const serie = await new SerieDAO().getSerieByLink(arg.serieLink);
+    const serie = await new SerieDAO().getSerieByLink(arg.serie.link);
     await new SerieCategoryDAO().updateSerieCategories(serie, arg.categoriesId)
         .then((categories) => event.reply('/add/categories/to/serie/', { success: true, categories: categories }))
         .catch((err) => event.reply('/add/categories/to/serie/', { success: false, error: err }));

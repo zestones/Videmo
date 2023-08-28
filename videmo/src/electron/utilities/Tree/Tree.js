@@ -115,9 +115,7 @@ class Tree {
             await this.serieDAO.deleteSerieById(serie.id);
         } else if (tree.type === this.type.FILE) {
             const test = this.folderManager.accessFileWithCustomProtocol(baseLink + path.sep + tree.name);
-            console.log('test : ', test);
             const episode = await this.serieEpisodeDAO.getEpisodeByLink(test);
-            console.log('episode : ', episode);
 
             await this.serieEpisodeDAO.deleteEpisodeById(episode.id);
             await this.serieTrackDAO.deleteSerieTrackByEpisodeId(episode.id);
