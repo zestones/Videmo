@@ -28,7 +28,6 @@ class SerieDAO {
         const params = [serieId];
 
         const result = await this.queryExecutor.executeAndFetchOne(sql, params);
-        console.log(result);
         result.inLibrary = this.dataTypesConverter.convertIntegerToBoolean(result.inLibrary);
         return result;
     }

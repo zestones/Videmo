@@ -27,8 +27,8 @@ ipcMain.on('/add/categories/to/serie/', async (event, arg) => {
         const serieInfosDAO = new SerieInfosDAO();
 
         // We update the serie infos - the infos are all the same for all the children
-        const serieId = await serieDAO.getSerieByLink(arg.serie.link);
-        await serieInfosDAO.updateSerieInfo(serieId, arg.serie.infos);
+        const serie = await serieDAO.getSerieByLink(arg.serie.link);
+        await serieInfosDAO.updateSerieInfo(serie.id, arg.serie.infos);
     }
 
     const serie = await new SerieDAO().getSerieByLink(arg.serie.link);

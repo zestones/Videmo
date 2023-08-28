@@ -4,13 +4,13 @@ Table "Extension" {
   "link" TEXT
   "name" TEXT
   "local" INTEGER
+  "is_active" INTEGER
 }
 
-// Become a table to store only the root series (series -> episodes)
 Table "Serie" {
   "id" INTEGER [pk]
-  "basename" TEXT
-  "name" TEXT
+  "basename" TEXT // name of a serie
+  "name" TEXT // used only for local series when a folder posses a subfolder
   "link" TEXT
   "image" TEXT
   "extension_id" INTEGER
@@ -19,6 +19,15 @@ Table "Serie" {
 Indexes {
   (link) [unique]
 }
+}
+
+Table "SerieInfos" {
+  "id" INTEGER [pk]
+  "serie_id" INTEGER
+  "description" TEXT
+  "duration" DATETIME
+  "stars" INTEGER
+  "date" DATETIME
 }
 
 Table "SerieGenre" {
@@ -76,8 +85,6 @@ Table "History" {
   "timestamp" DATETIME
 }
 
-// Update should work only for the series that has inLibrary to true
-// Should search at max n+1 
 Table "UpdatedSeries" {
   "id" INTEGER [pk]
   "serie_id" INTEGER
@@ -93,12 +100,14 @@ Ref:"Category"."id" < "SerieCategory"."category_id"
 
 Ref:"Category"."id" < "LastOpenedCategory"."category_id"
 
-Ref:"Serie"."id" < "SerieGenre"."serie_id"
-
 Ref:"Genre"."id" < "SerieGenre"."genre_id"
 
 Ref:"Serie"."id" < "Track"."serie_id"
 
-Ref:"Episode"."id" < "Track"."episode_id"
+Ref:"Episode"."id" - "Track"."episode_id"
 
 Ref:"Episode"."id" < "History"."episode_id"
+
+Ref: "Serie"."id" < "SerieInfos"."id"
+
+Ref: "SerieInfos"."serie_id" < "SerieGenre"."serie_id"

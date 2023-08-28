@@ -8,6 +8,7 @@ import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import WatchLaterIcon from '@mui/icons-material/WatchLater';
 
 // Api 
+import SerieInfosApi from '../../services/api/serie/SerieInfosApi';
 import SerieApi from '../../services/api/serie/SerieApi';
 import AniList from '../../services/extenal/AniListService';
 
@@ -26,16 +27,16 @@ function DetailsContainer({ serie, isCalledFromExplore }) {
 	const [isLoading, setIsLoading] = useState(true);
 	const serieDataRef = useRef(serie); // We use a ref to store the fetched data
 
-
 	// Initialization of the notification hook
 	const { showNotification } = useNotification();
 
 	// Api initialization
+	const serieInfosApi = useMemo(() => new SerieInfosApi(), []);
 	const serieApi = useMemo(() => new SerieApi(), []);
 	const aniList = useMemo(() => new AniList(), []);
 
 	useEffect(() => {
-		async function fetchAndUpdateSerieDetails() {
+		const fetchAndUpdateSerieDetails = async () => {
 			const fetchSerieDetails = async (searchName) => {
 				return aniList.searchAnimeInfosName(searchName);
 			}
@@ -44,14 +45,9 @@ function DetailsContainer({ serie, isCalledFromExplore }) {
 				setIsLoading(true);
 
 				const searchName = serie.basename === serie.name ? serie.basename : `${serie.basename} ${serie.name}`;
-				let serieDetails = await fetchSerieDetails(searchName);
+				const serieDetails = await fetchSerieDetails(searchName) || await fetchSerieDetails(serie.basename);
 
-				if (!serieDetails) {
-					serieDetails = await fetchSerieDetails(serie.basename);
-				}
-
-				const updatedSerieData = { ...serie, infos: serieDetails };
-				serieDataRef.current = updatedSerieData;
+				serieDataRef.current = { ...serie, infos: serieDetails };
 			} catch (error) {
 				showNotification('error', error.message);
 			} finally {
@@ -59,9 +55,21 @@ function DetailsContainer({ serie, isCalledFromExplore }) {
 			}
 		}
 
-		// TODO : add a condition - isCalledFromExplore
-		fetchAndUpdateSerieDetails();
-	}, [aniList, showNotification, serie]);
+		const readSerieInfos = async () => {
+			try {
+				setIsLoading(true);
+				const serieInfos = await serieInfosApi.readSerieInfosById(serie.id);
+				serieDataRef.current = { ...serie, infos: serieInfos };
+			} catch (error) {
+				showNotification('error', error.message);
+			} finally {
+				setIsLoading(false);
+			}
+		}
+
+		if (isCalledFromExplore) fetchAndUpdateSerieDetails();
+		else readSerieInfos();
+	}, [aniList, showNotification, serie, serieInfosApi, isCalledFromExplore]);
 
 
 	useEffect(() => {
