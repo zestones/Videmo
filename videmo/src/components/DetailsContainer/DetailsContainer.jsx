@@ -6,6 +6,8 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import StarIcon from '@mui/icons-material/Star';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import WatchLaterIcon from '@mui/icons-material/WatchLater';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import CloseIcon from '@mui/icons-material/Close';
 
 // Api 
 import SerieInfosApi from '../../services/api/serie/SerieInfosApi';
@@ -25,6 +27,8 @@ function DetailsContainer({ serie, isCalledFromExplore }) {
 	const [showModal, setShowModal] = useState(false);
 	const [alreadyInLibrary, setAlreadyInLibrary] = useState(false);
 	const [isLoading, setIsLoading] = useState(true);
+	const [showOptionPanel, setShowOptionPanel] = useState(false);
+
 	const serieDataRef = useRef(serie); // We use a ref to store the fetched data
 
 	// Initialization of the notification hook
@@ -84,6 +88,22 @@ function DetailsContainer({ serie, isCalledFromExplore }) {
 			.catch((error) => showNotification('error', error.message));
 	}
 
+	const toogleOptionPanel = () => setShowOptionPanel((prev) => !prev);
+	const handleUpdateSerieInfos = async () => {
+		try {
+			setIsLoading(true);
+			setShowOptionPanel(false);
+			const infos = await aniList.searchAnimeInfosName(serie.basename);
+			await serieInfosApi.updateSerieInfos(serie.link, infos);
+			serieDataRef.current = { ...serie, infos: infos };
+		} catch (error) {
+			showNotification('error', error.message);
+		} finally {
+			setIsLoading(false);
+		}
+	}
+
+
 	return (
 		<div className={styles.detailsContainer}>
 			<DetailsContainerSkeleton isLoading={isLoading} >
@@ -94,6 +114,19 @@ function DetailsContainer({ serie, isCalledFromExplore }) {
 							<FavoriteIcon className={`${styles.serieFavorite} ${alreadyInLibrary ? styles.active : ''}`} />
 						</span>
 						<p className={styles.serieFavoriteLabel}>Ajouter à ma liste</p>
+					</div>
+				</div>
+
+				<div className={styles.options}>
+					<span className={styles.optionsIcon} onClick={toogleOptionPanel}>
+						{showOptionPanel ? <CloseIcon className={styles.icon} /> :
+							<MoreHorizIcon className={styles.icon} />}
+					</span>
+					<div className={`${styles.optionsPanel} ${showOptionPanel ? styles.active : ''}`}>
+						<div className={styles.optionsPanelContent}>
+							<span className={styles.optionsPanelItem} onClick={() => setShowModal(true)}>Ajouter à ma liste</span>
+							<span className={styles.optionsPanelItem} onClick={handleUpdateSerieInfos}>Mettre à jour les informations</span>
+						</div>
 					</div>
 				</div>
 
@@ -108,9 +141,7 @@ function DetailsContainer({ serie, isCalledFromExplore }) {
 
 						<div className={styles.genres}>
 							{serieDataRef.current?.infos?.genres?.map((genre, _) => (
-								<span className={styles.genre} key={genre.name}>
-									{genre.name}
-								</span>
+								<span className={styles.genre} key={genre.name}>{genre.name}</span>
 							))}
 						</div>
 					</div>

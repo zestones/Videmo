@@ -36,22 +36,21 @@ class SerieInfosDAO {
         return await this.queryExecutor.executeAndFetchOne(sql, params);
     }
 
-
     // Update a serie info entry
-    async updateSerieInfo(serieId, infos) {
+    async updateSerieInfos(serieId, infos) {
 
         // We check if an entry exists
         const serieInfoExists = await this.#getSerieInfoBySerieId(serieId);
         
         // If it does not exist, we create it
         if (!serieInfoExists) await this.createSerieInfo(serieId, infos);
-        else await this.#updateSerieInfo(serieId, infos);
+        else await this.#updateSerieInfos(serieId, infos);
 
         // We finally update the genres
         await this.serieGenreDAO.updateSerieGenres(serieId, infos.genres);
     }
 
-    async #updateSerieInfo(serieId, infos) {
+    async #updateSerieInfos(serieId, infos) {
         const sql = `UPDATE SerieInfos SET description = ?, duration = ?, rating = ?, releaseDate = ? WHERE serie_id = ?`;
         const params = [infos.description, infos.duration, infos.rating, infos.releaseDate, serieId];
         await this.queryExecutor.executeAndCommit(sql, params);
