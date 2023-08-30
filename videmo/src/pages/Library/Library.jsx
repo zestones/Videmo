@@ -98,7 +98,7 @@ function Library() {
         }
     }
 
-    const filterFolders = sortManager.filterByKeyword(searchValue, 'basename', subSeries);
+    const filterFolders = sortManager.filterByKeyword(searchValue, subSeries, 'basename', 'name');
 
     return (
         <div className={styles.library}>

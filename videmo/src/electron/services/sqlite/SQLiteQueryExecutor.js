@@ -37,10 +37,10 @@ class SQLiteQueryExecutor {
      * @private
     */
     async initializeDatabase() {
-        
+
         if (!fs.existsSync(this.database)) {
             this.db = new sqlite3.Database(this.database);
-            
+
             await this.executeFile(this.create_tables_sql);
             await this.executeFile(this.fill_data_sql);
         }
@@ -205,11 +205,19 @@ class SQLiteQueryExecutor {
                 if (err) {
                     reject(err);
                 } else {
-                    resolve();
+                    // Change the journal mode to WAL after opening the connection
+                    this.db.exec("PRAGMA journal_mode = WAL;", (err) => {
+                        if (err) {
+                            reject(err);
+                        } else {
+                            resolve();
+                        }
+                    });
                 }
             });
         });
     }
+
 
     /**
      * Closes the database connection.

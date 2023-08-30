@@ -136,12 +136,11 @@
         .optionsPanel {
             position: absolute;
             display: none;
-
             z-index: 1;
 
             top: 50px;
             right: 0;
-
+            
             width: 200px;
 
             background-color: var(--primary-color-darker);
@@ -156,25 +155,26 @@
 
                 width: 0;
                 height: 0;
-
+                
                 border-left: 10px solid transparent;
                 border-right: 10px solid transparent;
                 border-bottom: 10px solid var(--primary-color-darker);
             }
 
             &.active {
+                animation: optionsPanel 0.2s ease-in-out forwards;
+                transform-origin: top right; 
                 display: block;
-                animation: optionsPanel 0.5s ease-in-out forwards;
 
                 @keyframes optionsPanel {
                     0% {
                         opacity: 0;
-                        transform: translateY(-10px);
+                        transform: translateY(-10px) scaleY(0);
                     }
 
                     100% {
                         opacity: 1;
-                        transform: translateY(0);
+                        transform: translateY(0) scaleY(1);
                     }
                 }
             }

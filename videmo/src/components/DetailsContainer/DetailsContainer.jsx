@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useNotification } from "../../components/Notification/NotificationProvider";
 
+// Constants
+import { EXPLORE_STRING, HISTORY_STRING } from "../../utilities/utils/Constants";
+
 // External
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import StarIcon from '@mui/icons-material/Star';
@@ -22,7 +25,7 @@ import DetailsContainerSkeleton from './DetailsContainerSkeleton';
 import styles from './DetailsContainer.module.scss';
 
 
-function DetailsContainer({ serie, isCalledFromExplore }) {
+function DetailsContainer({ serie, calledFrom }) {
 	// State initialization
 	const [showModal, setShowModal] = useState(false);
 	const [alreadyInLibrary, setAlreadyInLibrary] = useState(false);
@@ -47,7 +50,6 @@ function DetailsContainer({ serie, isCalledFromExplore }) {
 
 			try {
 				setIsLoading(true);
-
 				const searchName = serie.basename === serie.name ? serie.basename : `${serie.basename} ${serie.name}`;
 				const serieDetails = await fetchSerieDetails(searchName) || await fetchSerieDetails(serie.basename);
 
@@ -71,9 +73,14 @@ function DetailsContainer({ serie, isCalledFromExplore }) {
 			}
 		}
 
-		if (isCalledFromExplore) fetchAndUpdateSerieDetails();
+		const areAllValuesNullOrUndefined = (obj) => Object.values(obj).every(value => value === null || value === undefined);
+
+		if (calledFrom === HISTORY_STRING && areAllValuesNullOrUndefined(serie.infos)) fetchAndUpdateSerieDetails();
+		else if (calledFrom === HISTORY_STRING && !areAllValuesNullOrUndefined(serie.infos)) setIsLoading(false);
+		else if (calledFrom === EXPLORE_STRING && !serie.inLibrary) fetchAndUpdateSerieDetails();
 		else readSerieInfos();
-	}, [aniList, showNotification, serie, serieInfosApi, isCalledFromExplore]);
+
+	}, [aniList, showNotification, serie, serieInfosApi, calledFrom]);
 
 
 	useEffect(() => {
@@ -167,7 +174,7 @@ function DetailsContainer({ serie, isCalledFromExplore }) {
 					serie={serieDataRef.current}
 					onClose={() => setShowModal(false)}
 					onMoreClick={refreshSerieState}
-					shouldUpdateSeries={isCalledFromExplore}
+					shouldUpdateSeries={calledFrom === EXPLORE_STRING}
 				/>
 			)}
 		</div >

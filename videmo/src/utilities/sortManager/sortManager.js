@@ -1,15 +1,29 @@
 class SortManager {
-
-    filterByKeyword(keyword, objectKey, object) {
-        return object.filter((element) => this.filterString(keyword, element[objectKey]));
+    filterByKeyword(keyword, object, ...keys) {
+        return object.filter((element) => {
+            for (const key of keys) {
+                if (this.filterNestedString(keyword, element, key)) {
+                    return true;
+                }
+            }
+            return false;
+        });
     }
 
-    filterArrayByString(searchString, stringArray) {
-        return stringArray.filter((element) => this.filterString(searchString, element));
+    filterNestedString(keyword, object, key) {
+        const keyParts = key.split('.');
+
+        let value = object;
+        for (const part of keyParts) {
+            value = value[part];
+            if (!value) return false;
+        }
+
+        return this.filterString(keyword, value);
     }
 
-    filterString(searchString, string) {
-        return string.toLowerCase().includes(searchString.toLowerCase());
+    filterString(keyword, value) {
+        return value.toLowerCase().includes(keyword.toLowerCase());
     }
 }
 

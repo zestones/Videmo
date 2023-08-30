@@ -1,5 +1,8 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 
+// Constants
+import { EXPLORE_STRING } from "../../utilities/utils/Constants";
+
 // Services & Api
 import FolderManager from "../../utilities/folderManager/FolderManager";
 import SortManager from "../../utilities/sortManager/SortManager";
@@ -84,7 +87,7 @@ function Explore() {
         try {
             const level = await folderManager.retrieveLevel(selectedExtension.link, details.link);
             checkAndHandleFolderContentsWithExtension(details.link, details.extension_id, level);
-            setSerie({...details, name: folderManager.retrieveBaseName(details.link), extension_id: selectedExtension.id});
+            setSerie({ ...details, name: folderManager.retrieveBaseName(details.link), extension_id: selectedExtension.id });
             setSearchValue("");
         } catch (error) {
             setError({ message: error.message, type: "error" })
@@ -112,7 +115,7 @@ function Explore() {
         }
     };
 
-    const filterFolders = sortManager.filterByKeyword(searchValue, 'basename', folderContents);
+    const filterFolders = sortManager.filterByKeyword(searchValue, folderContents, 'basename');
 
     return (
         <div className={styles.explore}>
@@ -133,7 +136,7 @@ function Explore() {
                         serie={serie}
                         onPlayClick={handlePlayClick}
                         onRefresh={refreshFolderContents}
-                        calledFromExplore={true}
+                        calledFrom={EXPLORE_STRING}
                         setEpisodes={setEpisodes}
                     />
                 </>

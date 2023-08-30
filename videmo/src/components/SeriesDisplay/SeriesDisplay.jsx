@@ -1,5 +1,8 @@
 import React, { useState, useEffect, useCallback } from "react";
 
+// Constants
+import { EXPLORE_STRING } from "../../utilities/utils/Constants";
+
 // External
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 
@@ -17,7 +20,7 @@ import ExtensionApi from "../../services/api/extension/ExtensionApi";
 // Styles
 import styles from "./SeriesDisplay.module.scss";
 
-function SeriesDisplay({ serie, linkedSeries, episodes, onPlayClick, onRefresh, calledFromExplore, setEpisodes }) {
+function SeriesDisplay({ serie, linkedSeries = [], episodes, onPlayClick, onRefresh, calledFrom, setEpisodes }) {
     // Services initialization
     const [trackApi] = useState(() => new TrackApi());
     const [folderManager] = useState(() => new FolderManager());
@@ -54,7 +57,7 @@ function SeriesDisplay({ serie, linkedSeries, episodes, onPlayClick, onRefresh, 
                 if (!extension.local) setOpenVideoPlayer(true);
                 else handleOpenLocalVideoPlayer(resumeEpisode);
             } catch (error) {
-                console.log(error);
+                console.error(error);
             }
         }
     };
@@ -83,7 +86,7 @@ function SeriesDisplay({ serie, linkedSeries, episodes, onPlayClick, onRefresh, 
     return (
         <div className={styles.sourceContent}>
             {serie && (
-                <DetailsContainer serie={serie} isCalledFromExplore={calledFromExplore} />
+                <DetailsContainer serie={serie} calledFrom={calledFrom} />
             )}
 
             <div className={styles.seriesContainer}>
@@ -93,7 +96,7 @@ function SeriesDisplay({ serie, linkedSeries, episodes, onPlayClick, onRefresh, 
                         serie={linkedSerie}
                         onPlayClick={onPlayClick}
                         onMoreClick={onRefresh}
-                        isCalledFromExplore={calledFromExplore}
+                        isCalledFromExplore={calledFrom === EXPLORE_STRING}
                     />
                 ))}
             </div>
