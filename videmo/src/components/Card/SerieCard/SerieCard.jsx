@@ -2,8 +2,8 @@ import React, { useState, useMemo } from 'react';
 import { useNotification } from "../../Notification/NotificationProvider";
 
 // External
-import ControlPointIcon from '@mui/icons-material/ControlPoint';
-import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
+import LabelIcon from '@mui/icons-material/Label';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 
 // Services
 import Utils from '../../../utilities/utils/Utils';
@@ -65,9 +65,12 @@ function SerieCard({ serie, onPlayClick, onMoreClick, isCalledFromExplore }) {
 
                 <div className={`${styles.cardLayer} ${isHovered && styles.hovered}`}>
                     <div className={styles.cardLayerContent}>
-                        <ControlPointIcon className={styles.cardLayerImage} onClick={handleAddToCategory} />
-                        <hr className={styles.separator} />
-                        <PlayCircleOutlineIcon className={styles.cardLayerImage} onClick={() => onPlayClick(serie)} />
+                        <span className={styles.iconContainer + " " + styles.moreIcon}>
+                            <LabelIcon onClick={handleAddToCategory} />
+                        </span>
+                        <span className={styles.iconContainer + " " + styles.playIcon}>
+                            <PlayArrowIcon onClick={() => onPlayClick(serie)} />
+                        </span>
                     </div>
                 </div>
             </li>
