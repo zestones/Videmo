@@ -37,7 +37,8 @@ function SeriesDisplay({ serie, linkedSeries = [], episodes, onPlayClick, onRefr
 
     useEffect(() => {
         setCheckedSeries(linkedSeries.map(() => false));
-    }, [linkedSeries]);
+        setIsOptionBarActive(false);
+    }, [linkedSeries, setIsOptionBarActive]);
 
 
     const updateCurrentEpisode = useCallback((playedTime = 0, viewed = false) => {

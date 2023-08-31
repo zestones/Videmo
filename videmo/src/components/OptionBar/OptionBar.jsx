@@ -13,8 +13,16 @@ function OptionBar({ series, onClose, checked, onCheck }) {
             <div className={styles.container}>
                 <div className={styles.checkbox}>
                     <input type="checkbox" checked={checked} onChange={() => onCheck()} />
-                    <span className={styles.label}>{series.length} Séries sélectionnées</span>
+                    <span
+                        className={styles.label}
+                        onClick={() => onCheck()}
+                    >
+                        {series.length} Séries sélectionnées
+                    </span>
                     <span className={styles.erase} onClick={() => onClose()}>Effacer</span>
+                </div>
+                <div className={styles.optionContainer}>
+        
                 </div>
             </div>
         </div>

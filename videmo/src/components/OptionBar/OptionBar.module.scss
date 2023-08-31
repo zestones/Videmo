@@ -88,6 +88,11 @@
                 color: var(--white-color);
                 font-weight: 800;
                 margin-left: 0.5rem;
+
+                &:hover {
+                    cursor: pointer;
+                    color: var(--gray-2);
+                }
             }
 
             .erase {
