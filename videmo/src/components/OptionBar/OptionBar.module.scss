@@ -1,0 +1,106 @@
+.optionBar {
+    position: sticky;
+    bottom: 7px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 85%;
+    margin: 0 auto;
+
+    height: 50px;
+    padding: 0 1rem;
+
+    background-color: #353535;
+    border-radius: 7px;
+
+    .container {
+        display: flex;
+        align-items: center;
+
+        width: 100%;
+
+        .checkbox {
+            display: flex;
+            align-items: center;
+
+            input[type="checkbox"] {
+                position: relative;
+
+                width: 23px;
+                height: 23px;
+
+                appearance: none;
+                border: 2px solid var(--gray-4);
+                border-radius: 4px;
+
+                background-color: var(--white-color);
+                outline: none;
+
+                transition: all 0.2s ease-in-out;
+
+                &:checked {
+                    background-color: var(--white-color);
+                    border: 2px solid var(--white-color);
+
+                    &::after {
+                        content: '';
+                        display: block;
+
+                        width: 10px;
+                        height: 5px;
+
+                        border: 2px solid var(--light-blue-hover);
+                        border-top: none;
+                        border-right: none;
+
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+
+                        transform: translate(-50%, -50%) rotate(-45deg);
+
+                        animation: checkmark 0.2s ease-in-out;
+
+                        @keyframes checkmark {
+                            from {
+                                width: 0;
+                                height: 0;
+                            }
+
+                            to {
+                                width: 10px;
+                                height: 5px;
+                            }
+                        }
+                    }
+                }
+
+                &:hover {
+                    cursor: pointer;
+                }
+
+                &:focus {
+                    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.5);
+                }
+            }
+
+            .label {
+                font-size: 0.8rem;
+                color: var(--white-color);
+                font-weight: 800;
+                margin-left: 0.5rem;
+            }
+
+            .erase {
+                font-size: 0.8rem;
+                color: var(--red-4);
+                font-weight: 800;
+                margin-left: 0.5rem;
+                cursor: pointer;
+            }
+        }
+    }
+
+}

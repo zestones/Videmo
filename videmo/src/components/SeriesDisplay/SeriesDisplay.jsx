@@ -11,6 +11,7 @@ import DetailsContainer from "../DetailsContainer/DetailsContainer";
 import SerieCard from "../Card/SerieCard/SerieCard";
 import EpisodeCard from "../Card/EpisodeCard/EpisodeCard";
 import VideoPlayer from "../VideoPlayer/VideoPlayer";
+import OptionBar from "../OptionBar/OptionBar";
 
 // Services
 import TrackApi from "../../services/api/track/TrackApi";
@@ -30,6 +31,13 @@ function SeriesDisplay({ serie, linkedSeries = [], episodes, onPlayClick, onRefr
     const [openVideoPlayer, setOpenVideoPlayer] = useState(false);
     const [resumeEpisode, setResumeEpisode] = useState(null);
     const [shouldPlayEpisode, setShouldPlayEpisode] = useState(false);
+    const [isOptionBarActive, setIsOptionBarActive] = useState(false);
+    const [checkedSeries, setCheckedSeries] = useState([]);
+
+    useEffect(() => {
+        setCheckedSeries(linkedSeries.map(() => false));
+    }, [linkedSeries]);
+
 
     const updateCurrentEpisode = useCallback((playedTime = 0, viewed = false) => {
         const updatedEpisode = { ...resumeEpisode, played_time: playedTime, viewed: viewed };
@@ -81,6 +89,22 @@ function SeriesDisplay({ serie, linkedSeries = [], episodes, onPlayClick, onRefr
         updateCurrentEpisode(playedTime);
     };
 
+    // Function to toggle the checked state for a specific serie
+    const toggleChecked = (index) => {
+        const newCheckedSeries = [...checkedSeries];
+        newCheckedSeries[index] = !newCheckedSeries[index];
+        setCheckedSeries(newCheckedSeries);
+
+        // activate the option bar when at least one serie is checked
+        if (!isOptionBarActive && newCheckedSeries.some(checked => checked === true)) setIsOptionBarActive(true);
+        else if (isOptionBarActive && !newCheckedSeries.some(checked => checked === true)) setIsOptionBarActive(false);
+    };
+
+    const handleCloseOptionBar = () => {
+        setCheckedSeries(linkedSeries.map(() => false));
+        setIsOptionBarActive(false);
+    };
+
     const shouldShowResumeButton = episodes.some(episode => !episode.viewed || episode.played_time);
 
     return (
@@ -90,16 +114,26 @@ function SeriesDisplay({ serie, linkedSeries = [], episodes, onPlayClick, onRefr
             )}
 
             <div className={styles.seriesContainer}>
-                {linkedSeries.map((linkedSerie) => (
+                {linkedSeries.map((linkedSerie, index) => (
                     <SerieCard
                         key={linkedSerie.link}
                         serie={linkedSerie}
                         onPlayClick={onPlayClick}
                         onMoreClick={onRefresh}
                         isCalledFromExplore={calledFrom === EXPLORE_STRING}
+                        isOptionBarActive={isOptionBarActive}
+                        checked={checkedSeries[index] || false}
+                        setChecked={() => toggleChecked(index)}
                     />
                 ))}
             </div>
+
+            {isOptionBarActive && (
+                <OptionBar
+                    series={linkedSeries.filter((_, index) => checkedSeries[index])}
+                    onClose={handleCloseOptionBar}
+                />
+            )}
 
             <div className={styles.episodesContainer}>
                 {episodes.map((episode) => (
