@@ -33,6 +33,7 @@ function SeriesDisplay({ serie, linkedSeries = [], episodes, onPlayClick, onRefr
     const [shouldPlayEpisode, setShouldPlayEpisode] = useState(false);
     const [isOptionBarActive, setIsOptionBarActive] = useState(false);
     const [checkedSeries, setCheckedSeries] = useState([]);
+    const [checkAll, setCheckAll] = useState(false);
 
     useEffect(() => {
         setCheckedSeries(linkedSeries.map(() => false));
@@ -97,12 +98,21 @@ function SeriesDisplay({ serie, linkedSeries = [], episodes, onPlayClick, onRefr
 
         // activate the option bar when at least one serie is checked
         if (!isOptionBarActive && newCheckedSeries.some(checked => checked === true)) setIsOptionBarActive(true);
-        else if (isOptionBarActive && !newCheckedSeries.some(checked => checked === true)) setIsOptionBarActive(false);
+        else if (isOptionBarActive && !newCheckedSeries.some(checked => checked === true)) setIsOptionBarActive(false); // deactivate the option bar when no serie is checked
+        
+        setCheckAll(newCheckedSeries.every(checked => checked === true)); // check the checkAll checkbox if all series are checked
     };
 
     const handleCloseOptionBar = () => {
         setCheckedSeries(linkedSeries.map(() => false));
         setIsOptionBarActive(false);
+        setCheckAll(false);
+    };
+    
+    const handleCheckAll = () => {
+        setCheckAll(!checkAll);
+        setCheckedSeries(linkedSeries.map(() => !checkAll));
+        setIsOptionBarActive(!checkAll);
     };
 
     const shouldShowResumeButton = episodes.some(episode => !episode.viewed || episode.played_time);
@@ -132,6 +142,8 @@ function SeriesDisplay({ serie, linkedSeries = [], episodes, onPlayClick, onRefr
                 <OptionBar
                     series={linkedSeries.filter((_, index) => checkedSeries[index])}
                     onClose={handleCloseOptionBar}
+                    checked={checkAll}
+                    onCheck={handleCheckAll}
                 />
             )}
 

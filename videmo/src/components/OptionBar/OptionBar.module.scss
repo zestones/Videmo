@@ -12,7 +12,7 @@
     height: 50px;
     padding: 0 1rem;
 
-    background-color: #353535;
+    background-color: var(--dark-color);
     border-radius: 7px;
 
     .container {
@@ -35,14 +35,15 @@
                 border: 2px solid var(--gray-4);
                 border-radius: 4px;
 
-                background-color: var(--white-color);
+                background-color: #222222;
                 outline: none;
 
                 transition: all 0.2s ease-in-out;
 
                 &:checked {
-                    background-color: var(--white-color);
-                    border: 2px solid var(--white-color);
+                    background-color: rgba($color: #585858, $alpha: 0.7);
+                    border: 2px solid rgba($color: #585858, $alpha: 0.7);
+                    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.5);
 
                     &::after {
                         content: '';
@@ -51,7 +52,7 @@
                         width: 10px;
                         height: 5px;
 
-                        border: 2px solid var(--light-blue-hover);
+                        border: 2px solid var(--white-color);
                         border-top: none;
                         border-right: none;
 
@@ -79,10 +80,6 @@
 
                 &:hover {
                     cursor: pointer;
-                }
-
-                &:focus {
-                    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.5);
                 }
             }
 
