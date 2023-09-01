@@ -145,6 +145,8 @@ function SeriesDisplay({ serie, linkedSeries = [], episodes, onPlayClick, onRefr
                     onClose={handleCloseOptionBar}
                     checked={checkAll}
                     onCheck={handleCheckAll}
+                    onCategoryChange={onRefresh}
+                    isCalledFromExplore={calledFrom === EXPLORE_STRING}
                 />
             )}
 

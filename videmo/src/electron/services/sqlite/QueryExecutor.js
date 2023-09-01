@@ -53,7 +53,7 @@ class QueryExecutor {
         }
     }
 
-    async executeManyAndCommit(sql, params) {
+    async executeManyAndCommit(sql, params = []) {
         try {
             this.open();
             const result = await this.sqlQueryExecutor.executeManyAndCommit(sql, params);

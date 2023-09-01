@@ -171,7 +171,7 @@ function DetailsContainer({ serie, calledFrom }) {
 			</DetailsContainerSkeleton>
 			{showModal && (
 				<CategoryModal
-					serie={serieDataRef.current}
+					series={[serieDataRef.current]}
 					onClose={() => setShowModal(false)}
 					onMoreClick={refreshSerieState}
 					shouldUpdateSeries={calledFrom === EXPLORE_STRING}

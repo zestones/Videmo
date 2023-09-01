@@ -108,7 +108,7 @@ function SerieCard({ serie, onPlayClick, onMoreClick, isCalledFromExplore, isOpt
 
             {showCategoryModal && (
                 <CategoryModal
-                    serie={serie}
+                    series={[serie]}
                     onClose={handleCloseModal}
                     onMoreClick={onMoreClick}
                     shouldUpdateSeries={isCalledFromExplore}

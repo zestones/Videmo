@@ -93,6 +93,13 @@ class SerieDAO {
         await this.queryExecutor.executeAndCommit(sql, params);
     }
 
+    // Update series by serie links (add serie to library)
+    async updateSeriesInLibraryBySerieLinks(serieLinks, inLibrary) {
+        const sql = `UPDATE Serie SET inLibrary = ? WHERE link IN (${serieLinks.map(() => '?').join(',')})`;
+        const params = [this.dataTypesConverter.convertBooleanToInteger(inLibrary), ...serieLinks];
+        await this.queryExecutor.executeAndCommit(sql, params);
+    }
+
     // Delete serie by ID
     async deleteSerieById(serieId) {
         const sql = `DELETE FROM Serie WHERE id = ?`;

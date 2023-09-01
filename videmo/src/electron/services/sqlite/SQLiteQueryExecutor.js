@@ -162,7 +162,7 @@ class SQLiteQueryExecutor {
      * @param {Array<Array>} params - An array of parameter sets for the query.
      * @returns {Promise<void>} A promise that resolves when the changes are committed.
     */
-    executeManyAndCommit(sql, paramsArray) {
+    executeManyAndCommit(sql, paramsArray = []) {
         return new Promise((resolve, reject) => {
             this.db.serialize(() => {
                 this.db.run('BEGIN TRANSACTION');
