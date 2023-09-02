@@ -46,6 +46,33 @@ class SerieDAO {
         return await this.queryExecutor.executeAndFetchAll(sql, params);
     }
 
+    async getNumberOfEpisodes(series) {
+        let newSeries = [];
+
+        for (const serie of series) {
+
+            const childsSeries = await this.getSeriesChildrenByLinks([serie.link]);
+            const serieIds = childsSeries.map(serie => serie.id);
+
+            const idsConditions = [];
+            serieIds.forEach(_ => idsConditions.push("Serie.id = ?"));
+            const idsCondition = idsConditions.join(" OR ");
+
+
+            const sql = `SELECT COUNT(*) AS number FROM Episode
+                    INNER JOIN Track ON Episode.id = Track.episode_id
+                    INNER JOIN Serie ON Serie.id = Track.serie_id
+                    WHERE ${idsCondition}`;
+
+            const params = serieIds;
+            const result = await this.queryExecutor.executeAndFetchOne(sql, params);
+            serie.number = result.number;
+            newSeries.push(serie);
+        }
+
+        return newSeries;
+    }
+
     async getSeriesChildrenByLinks(links) {
         const linkConditions = [];
         links.forEach(_ => linkConditions.push("Serie.link = ?"));

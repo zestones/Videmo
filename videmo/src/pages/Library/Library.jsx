@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { useNotification } from "../../components/Notification/NotificationProvider";
 
+// Constants
+import { LIBRARY_STRING } from "../../utilities/utils/Constants";
+
 // Api 
 import SerieApi from "../../services/api/serie/SerieApi";
 import TrackApi from "../../services/api/track/TrackApi";
@@ -33,10 +36,17 @@ function Library() {
     // Initialization of the notification hook
     const { showNotification } = useNotification();
 
-
     const retrieveAllSeries = useCallback(() => {
+        // TODO : retrieve the number of episodes for each serie
         serieApi.readAllSeriesByCategory(currentCategory?.id)
-            .then((seriesInLibrary) => setSubSeries(seriesInLibrary))
+            .then((seriesInLibrary) => {
+                serieApi.readNumberOfEpisode(seriesInLibrary)
+                    .then((series) => {
+                        console.log("useEffect series", series)
+                        setSubSeries(series);
+                    })
+                    .catch((error) => console.error(error));
+            })
             .catch((error) => showNotification("error", `Error retrieving series: ${error.message}`));
     }, [serieApi, currentCategory, showNotification]);
 
@@ -82,6 +92,7 @@ function Library() {
 
             if (clickedSerie) {
                 subSeries = await getChildSeries(clickedSerie.id);
+                subSeries = await serieApi.readNumberOfEpisode(subSeries);
                 episodes = await trackApi.readAllEpisodesBySerieId(clickedSerie.id);
             }
 
@@ -117,7 +128,7 @@ function Library() {
                     serie={serie}
                     onPlayClick={handleSerieSelection}
                     onRefresh={!serie && retrieveAllSeries}
-                    calledFromExplore={false}
+                    calledFrom={LIBRARY_STRING}
                     setEpisodes={setEpisodes}
                 />
             </div>

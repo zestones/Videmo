@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 
 // Constants
-import { EXPLORE_STRING } from "../../utilities/utils/Constants";
+import { EXPLORE_STRING, LIBRARY_STRING } from "../../utilities/utils/Constants";
 
 // External
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
@@ -23,9 +23,9 @@ import styles from "./SeriesDisplay.module.scss";
 
 function SeriesDisplay({ serie, linkedSeries = [], episodes, onPlayClick, onRefresh, calledFrom, setEpisodes }) {
     // Services initialization
-    const [trackApi] = useState(() => new TrackApi());
-    const [folderManager] = useState(() => new FolderManager());
-    const [extensionApi] = useState(() => new ExtensionApi());
+    const trackApi = useMemo(() => new TrackApi(), []);
+    const folderManager = useMemo(() => new FolderManager(), []);
+    const extensionApi = useMemo(() => new ExtensionApi(), []);
 
     // State initialization
     const [openVideoPlayer, setOpenVideoPlayer] = useState(false);
@@ -100,7 +100,7 @@ function SeriesDisplay({ serie, linkedSeries = [], episodes, onPlayClick, onRefr
         // activate the option bar when at least one serie is checked
         if (!isOptionBarActive && newCheckedSeries.some(checked => checked === true)) setIsOptionBarActive(true);
         else if (isOptionBarActive && !newCheckedSeries.some(checked => checked === true)) setIsOptionBarActive(false); // deactivate the option bar when no serie is checked
-        
+
         setCheckAll(newCheckedSeries.every(checked => checked === true)); // check the checkAll checkbox if all series are checked
     };
 
@@ -109,7 +109,7 @@ function SeriesDisplay({ serie, linkedSeries = [], episodes, onPlayClick, onRefr
         setIsOptionBarActive(false);
         setCheckAll(false);
     };
-    
+
     const handleCheckAll = () => {
         setCheckAll(!checkAll);
         setCheckedSeries(linkedSeries.map(() => !checkAll));
@@ -132,6 +132,7 @@ function SeriesDisplay({ serie, linkedSeries = [], episodes, onPlayClick, onRefr
                         onPlayClick={onPlayClick}
                         onMoreClick={onRefresh}
                         isCalledFromExplore={calledFrom === EXPLORE_STRING}
+                        isCalledFromLibrary={calledFrom === LIBRARY_STRING}
                         isOptionBarActive={isOptionBarActive}
                         checked={checkedSeries[index] || false}
                         setChecked={() => toggleChecked(index)}

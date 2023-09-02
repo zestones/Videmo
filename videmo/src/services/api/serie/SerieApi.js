@@ -31,4 +31,12 @@ export default class SerieApi {
             window.api.receive("/read/all/series/by/parent-id/", (data) => data.success ? resolve(data.series) : reject(data.error));
         });
     }
+
+    readNumberOfEpisode(series) {
+        window.api.send("/read/serie/number-of-episodes/", series);
+
+        return new Promise((resolve, reject) => {
+            window.api.receive("/read/serie/number-of-episodes/", (data) => data.success ? resolve(data.series) : reject(data.error));
+        });
+    }
 }

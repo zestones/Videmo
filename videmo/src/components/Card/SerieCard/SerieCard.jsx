@@ -16,7 +16,7 @@ import CategoryModal from '../../CategoryModal/CategoryModal';
 import styles from './SerieCard.module.scss';
 
 
-function SerieCard({ serie, onPlayClick, onMoreClick, isCalledFromExplore, isOptionBarActive, checked, setChecked }) {
+function SerieCard({ serie, onPlayClick, onMoreClick, isCalledFromExplore, isCalledFromLibrary, isOptionBarActive, checked, setChecked, numberOfEpisode }) {
     // State initialization
     const [showCategoryModal, setShowCategoryModal] = useState(false);
     const [imageLoaded, setImageLoaded] = useState(false);
@@ -28,7 +28,6 @@ function SerieCard({ serie, onPlayClick, onMoreClick, isCalledFromExplore, isOpt
 
     // Initialization of the notification hook
     const { showNotification } = useNotification();
-
 
     const handleCloseModal = (notification) => {
         setShowCategoryModal(false);
@@ -63,6 +62,11 @@ function SerieCard({ serie, onPlayClick, onMoreClick, isCalledFromExplore, isOpt
                 />
 
                 <p className={styles.cardTitle}>{utils.constructTitle(serie)}</p>
+                <div className={isCalledFromLibrary && styles.episodeInfos}>
+                    <span className={styles.number}>
+                        {serie.number}
+                    </span>
+                </div>
 
                 <div className={`${styles.cardLayer} ${(isHovered || isOptionBarActive) && styles.hovered}`}>
                     <div className={styles.cardLayerContent}>
