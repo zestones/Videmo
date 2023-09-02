@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useMemo, useEffect } from "react";
+import { useNotification } from "../../components/Notification/NotificationProvider";
 
 // External
 import LabelIcon from '@mui/icons-material/Label';
@@ -10,11 +11,51 @@ import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import Tooltip from "../Tooltip/Tooltip";
 import CategoryModal from "../CategoryModal/CategoryModal";
 
+// Services
+import TrackApi from "../../services/api/track/TrackApi";
+import CategoryApi from "../../services/api/category/CategoryApi";
+
 // Styles
 import styles from "./OptionBar.module.scss";
 
 function OptionBar({ series, onClose, checked, onCheck, onCategoryChange, isCalledFromExplore }) {
+    // Services initialization
+    const trackApi = useMemo(() => new TrackApi(), []);
+    const categoryApi = useMemo(() => new CategoryApi(), []);
+
+    // States initialization
     const [showCategoryModal, setShowCategoryModal] = useState(false);
+    const [categories, setCategories] = useState([]);
+
+    // Initialization of the notification hook
+    const { showNotification } = useNotification();
+
+
+    useEffect(() => {
+        categoryApi.readAllCategories()
+            .then((data) => setCategories(data))
+            .catch((error) => showNotification("error", error.message));
+    }, [categoryApi, showNotification]);
+
+    const handleViewedState = (viewed) => {
+        trackApi.updateAllSeriesEpisodesViewedFlag(series, viewed)
+            .then(() => showNotification("success", "Tout les épisodes ont été marqués comme " + (viewed ? "vu" : "non vu") + "."))
+            .catch((error) => showNotification("error", error.message));
+
+        onClose();
+    }
+
+    const handleDeleteFromLibrary = async () => {
+        try {
+            const checkedCategories = categories.map((category) => ({ category, serie: [], flag: "unchecked" }));
+            await categoryApi.addSerieToCategories(series, checkedCategories, false);
+            showNotification("success", "Les séries ont été supprimées de la bibliothèque.");
+            onCategoryChange();
+        } catch (error) {
+            showNotification("error", error.message);
+            console.error(error);
+        }
+    }
 
     return (
         <>
@@ -41,15 +82,15 @@ function OptionBar({ series, onClose, checked, onCheck, onCategoryChange, isCall
                         </Tooltip>
 
                         <Tooltip title="Marquer comme vu" placement="top">
-                            <div className={styles.option}>
+                            <div className={styles.option} onClick={() => handleViewedState(true)}>
                                 <span className={styles.icon}>
                                     <DoneAllIcon />
                                 </span>
                             </div>
                         </Tooltip>
 
-                        <Tooltip title="Marquer comme non vu" placement="top">
-                            <div className={styles.option}>
+                        <Tooltip title="Marquer comme non vu" placement="top" >
+                            <div className={styles.option} onClick={() => handleViewedState(false)}>
                                 <span className={styles.icon}>
                                     <RemoveDoneIcon />
                                 </span>
@@ -57,7 +98,7 @@ function OptionBar({ series, onClose, checked, onCheck, onCategoryChange, isCall
                         </Tooltip>
 
                         <Tooltip title="Supprimer" placement="top">
-                            <div className={styles.option}>
+                            <div className={styles.option} onClick={() => handleDeleteFromLibrary()}>
                                 <span className={styles.icon}>
                                     <DeleteOutlinedIcon />
                                 </span>

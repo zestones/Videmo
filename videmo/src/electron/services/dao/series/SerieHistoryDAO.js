@@ -150,7 +150,7 @@ class SerieHistoryDAO {
 
         return await this.queryExecutor.executeAndCommit(query, params);
     }
-
+    
     // Delete serie history by episode id
     async deleteSerieHistoryByEpisodeId(episodeId) {
         const query = `DELETE FROM History WHERE episode_id = ?`;

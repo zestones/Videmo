@@ -82,8 +82,6 @@ function CategoryModal({ series, onClose, onMoreClick, shouldUpdateSeries = fals
     };
 
     const handleAddToCategory = async () => {
-        console.log("checkedCategories", checkedCategories);
-
         try {
             await categoryApi.addSerieToCategories(series, checkedCategories, shouldUpdateSeries);
 

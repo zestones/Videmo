@@ -1,11 +1,12 @@
 const QueryExecutor = require('../../sqlite/QueryExecutor');
 const DataTypesConverter = require('../../../utilities/converter/DataTypesConverter.js');
-
+const SerieDAO = require('./SerieDAO');
 
 class SerieEpisodeDAO {
     constructor() {
         this.queryExecutor = new QueryExecutor();
         this.dataTypesConverter = new DataTypesConverter();
+        this.serieDAO = new SerieDAO();
     }
 
     // Insert a new episode in the Episode table
@@ -59,7 +60,39 @@ class SerieEpisodeDAO {
             episode.viewed = this.dataTypesConverter.convertIntegerToBoolean(episode.viewed);
             episode.bookmarked = this.dataTypesConverter.convertIntegerToBoolean(episode.bookmarked);
             return episode;
-        }).reverse();
+        }).reverse(); // Reverse the array for the display
+    }
+
+    // Get all episodes by a table of serie links
+    async getAllEpisodesBySerieLinks(links) {
+        const seriesChilds = await this.serieDAO.getSeriesChildrenByLinks(links);
+        const childsLinks = seriesChilds.map(serie => serie.link);
+
+        // Initialize an array to store link conditions
+        const linkConditions = [];
+
+        // Generate a condition for each link
+        childsLinks.forEach(_ => linkConditions.push("Serie.link = ?"));
+
+        // Combine link conditions with the OR operator
+        const linkCondition = linkConditions.join(" OR ");
+
+        const sql = `SELECT Episode.* FROM Episode
+                    INNER JOIN Track ON Episode.id = Track.episode_id
+                    INNER JOIN Serie ON Serie.id = Track.serie_id
+                    WHERE ${linkCondition}`;
+
+        const params = childsLinks; // Use the childsLinks array as parameters
+        const result = await this.queryExecutor.executeAndFetchAll(sql, params);
+
+        // Convert integer columns to boolean
+        const episodes = result.map(episode => {
+            episode.viewed = this.dataTypesConverter.convertIntegerToBoolean(episode.viewed);
+            episode.bookmarked = this.dataTypesConverter.convertIntegerToBoolean(episode.bookmarked);
+            return episode;
+        });
+
+        return episodes;
     }
 
     // Update an episode in the Episode table
@@ -73,6 +106,13 @@ class SerieEpisodeDAO {
         ];
 
         await this.queryExecutor.executeAndCommit(sql, params);
+    }
+
+    // Update all episodes viewed flag
+    async updateAllEpisodesViewedFlag(episodeIds, viewed) {
+        const sql = `UPDATE Episode SET viewed = ? WHERE id IN (?)`;
+        const params = episodeIds.map(episodeId => [this.dataTypesConverter.convertBooleanToInteger(viewed), episodeId]);
+        await this.queryExecutor.executeManyAndCommit(sql, params);
     }
 
     async deleteEpisodeById(id) {

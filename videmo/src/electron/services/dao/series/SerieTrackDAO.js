@@ -58,7 +58,7 @@ class SerieTrackDAO {
             await this.createSerieTrack(serieId, episodeId);
         }
     }
-    
+
     // Update a serie track entry
     async updateSerieTrack(serie, episode) {
         const serieParsedObject = JSON.parse(serie);
@@ -68,6 +68,16 @@ class SerieTrackDAO {
         const retrievedEpisode = await this.#createOrUpdateEpisode(episodeParsedObject);
 
         await this.#createSerieTrackIfNotExist(retrievedSerie.id, retrievedEpisode.id);
+    }
+
+    // Update all series episodes viewed flag
+    async updateAllSeriesEpisodesViewedFlag(series, viewed) {
+        // Retrieve all the episodes ids from the database
+        const episodesFromDatabase = await this.serieEpisodeDAO.getAllEpisodesBySerieLinks(series.map(serie => serie.link));
+        const episodesIdsFromDatabase = episodesFromDatabase.map(episode => episode.id);
+
+        // Update the viewed flag for all the episodes
+        return await this.serieEpisodeDAO.updateAllEpisodesViewedFlag(episodesIdsFromDatabase, viewed);
     }
 
     // Delete a serie track entry

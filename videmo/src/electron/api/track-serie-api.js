@@ -20,6 +20,13 @@ ipcMain.on('/update/serie/track/and/history/', async (event, arg) => {
         .catch(error => event.reply('/update/serie/track/and/history/', { success: false, error }));
 })
 
+// update all series episodes viewed flag
+ipcMain.on('/update/all/series/episodes/viewed/flag/', async (event, arg) => {
+    await new SerieTrackDAO().updateAllSeriesEpisodesViewedFlag(arg.series, arg.viewed)
+        .then((updatedEpisodes) => event.reply('/update/all/series/episodes/viewed/flag/', { success: true, episodes: updatedEpisodes }))
+        .catch(error => event.reply('/update/all/series/episodes/viewed/flag/', { success: false, error }));
+})
+
 // Read episode by link
 ipcMain.on('/read/episode/by/link/', async (event, arg) => {
     new SerieEpisodeDAO().getEpisodeByLink(arg)

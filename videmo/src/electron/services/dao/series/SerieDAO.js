@@ -46,6 +46,38 @@ class SerieDAO {
         return await this.queryExecutor.executeAndFetchAll(sql, params);
     }
 
+    async getSeriesChildrenByLinks(links) {
+        const linkConditions = [];
+        links.forEach(_ => linkConditions.push("Serie.link = ?"));
+
+        // Combine link conditions with the OR operator
+        const linkCondition = linkConditions.join(" OR ");
+
+        const sql = `WITH RECURSIVE SerieHierarchy AS (
+                        SELECT id, parent_id
+                        FROM Serie
+                        WHERE ${linkCondition}
+                        
+                        UNION ALL
+                        
+                        SELECT S.id, S.parent_id
+                            FROM Serie S
+                            JOIN SerieHierarchy SH ON S.parent_id = SH.id
+                    )
+                    SELECT *
+                        FROM Serie
+                        WHERE id IN (SELECT id FROM SerieHierarchy);
+                `;
+
+        const params = links;
+        const result = await this.queryExecutor.executeAndFetchAll(sql, params);
+
+        return result.map(serie => {
+            serie.inLibrary = this.dataTypesConverter.convertIntegerToBoolean(serie.inLibrary);
+            return serie;
+        });
+    }
+
     // Read all series by parent ID
     async getSeriesByParentId(parentId) {
         const sql = `SELECT * FROM Serie WHERE parent_id = ?`;

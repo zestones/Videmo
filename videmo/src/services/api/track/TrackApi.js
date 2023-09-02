@@ -8,6 +8,14 @@ export default class TrackApi {
         return this.#updateSerieTrack(serie, episode);
     }
 
+    updateAllSeriesEpisodesViewedFlag = (series, viewed) => {
+        window.api.send("/update/all/series/episodes/viewed/flag/", { series: series, viewed });
+
+        return new Promise((resolve, reject) => {
+            window.api.receive("/update/all/series/episodes/viewed/flag/", (data) => data.success ? resolve(data.episodes) : reject(data.error));
+        });
+    }
+
     updatePlayedTime = (serie, episode, timestamp) => {
         window.api.send("/update/serie/track/and/history/", { serie: JSON.stringify(serie), episode: JSON.stringify(episode), timestamp: timestamp });
 
