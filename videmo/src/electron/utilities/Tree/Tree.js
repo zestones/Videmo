@@ -105,7 +105,7 @@ class Tree {
             link: link,
             extension_id: extensionId,
             parent_id: parentId,
-            inLibrary: 0,
+            inLibrary: false,
         };
 
         return await this.serieDAO.createSerie(serie);

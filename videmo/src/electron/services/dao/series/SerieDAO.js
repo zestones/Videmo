@@ -10,7 +10,7 @@ class SerieDAO {
     // Create a new serie
     async createSerie(serie) {
         const sql = `INSERT INTO Serie (basename, name, image, link, extension_id, parent_id, inLibrary) VALUES (?, ?, ?, ?, ?, ?, ?)`;
-        const params = [serie.basename, serie.name, serie.image, serie.link, serie.extension_id, serie.parent_id, serie.inLibrary];
+        const params = [serie.basename, serie.name, serie.image, serie.link, serie.extension_id, serie.parent_id, this.dataTypesConverter.convertBooleanToInteger(serie.inLibrary)];
         await this.queryExecutor.executeAndCommit(sql, params);
 
         return await this.getSerieByLink(serie.link);
@@ -36,7 +36,10 @@ class SerieDAO {
     async getSerieByLink(link) {
         const sql = `SELECT * FROM Serie WHERE link = ?`;
         const params = [link];
-        return await this.queryExecutor.executeAndFetchOne(sql, params);
+
+        const result = await this.queryExecutor.executeAndFetchOne(sql, params);
+        result.inLibrary = this.dataTypesConverter.convertIntegerToBoolean(result.inLibrary);
+        return result;
     }
 
     // Read all parent series
@@ -138,7 +141,12 @@ class SerieDAO {
         `;
 
         const params = [extension.id];
-        return await this.queryExecutor.executeAndFetchAll(sql, params);
+        const result = await this.queryExecutor.executeAndFetchAll(sql, params);
+        
+        return result.map(serie => {
+            serie.inLibrary = this.dataTypesConverter.convertIntegerToBoolean(serie.inLibrary);
+            return serie;
+        });
     }
 
     // Read all series by category ID

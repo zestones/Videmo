@@ -37,7 +37,7 @@ class SerieTrackDAO {
     async #getOrCreateSerie(serieParsedObject) {
         let retrievedSerie = await this.serieDAO.getSerieByLink(serieParsedObject.link);
         if (!retrievedSerie) {
-            await this.serieDAO.createSerie({ ...serieParsedObject, inLibrary: 0 });
+            await this.serieDAO.createSerie({ ...serieParsedObject, inLibrary: false });
             retrievedSerie = await this.serieDAO.getSerieByLink(serieParsedObject.link);
         }
         return retrievedSerie;

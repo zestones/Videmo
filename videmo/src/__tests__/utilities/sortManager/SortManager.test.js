@@ -1,6 +1,5 @@
 import SortManager from "../../../utilities/sortManager/sortManager";
 
-
 describe('SortManager', () => {
     let sortManager;
 
@@ -29,24 +28,45 @@ describe('SortManager', () => {
         expect(result).toBe(false);
     });
 
-    test('filterArrayByString filters the array correctly', () => {
+    test('filterByKeyword filters the object array correctly', () => {
         const searchString = 'apple';
-        const stringArray = ['This is an Apple', 'Banana', 'Orange', 'This is an apple pie'];
-        const filteredArray = sortManager.filterArrayByString(searchString, stringArray);
-        expect(filteredArray).toEqual(['This is an Apple', 'This is an apple pie']);
+        const objectArray = [
+            { name: 'This is an Apple' },
+            { name: 'Banana' },
+            { name: 'Orange' },
+            { name: 'This is an apple pie' },
+        ];
+        const filteredArray = sortManager.filterByKeyword(searchString, objectArray, 'name');
+        expect(filteredArray).toEqual([
+            { name: 'This is an Apple' },
+            { name: 'This is an apple pie' },
+        ]);
     });
 
-    test('filterArrayByString filters the array case-insensitively', () => {
+    test('filterByKeyword filters the object array case-insensitively', () => {
         const searchString = 'orange';
-        const stringArray = ['This is an Apple', 'Banana', 'Orange', 'This is an orange juice'];
-        const filteredArray = sortManager.filterArrayByString(searchString, stringArray);
-        expect(filteredArray).toEqual(['Orange', 'This is an orange juice']);
+        const objectArray = [
+            { name: 'This is an Apple' },
+            { name: 'Banana' },
+            { name: 'Orange' },
+            { name: 'This is an orange juice' },
+        ];
+        const filteredArray = sortManager.filterByKeyword(searchString, objectArray, 'name');
+        expect(filteredArray).toEqual([
+            { name: 'Orange' },
+            { name: 'This is an orange juice' },
+        ]);
     });
 
-    test('filterArrayByString returns an empty array if no match is found', () => {
+    test('filterByKeyword returns an empty array if no match is found', () => {
         const searchString = 'grape';
-        const stringArray = ['This is an Apple', 'Banana', 'Orange', 'This is an orange juice'];
-        const filteredArray = sortManager.filterArrayByString(searchString, stringArray);
+        const objectArray = [
+            { name: 'This is an Apple' },
+            { name: 'Banana' },
+            { name: 'Orange' },
+            { name: 'This is an orange juice' },
+        ];
+        const filteredArray = sortManager.filterByKeyword(searchString, objectArray, 'name');
         expect(filteredArray).toEqual([]);
     });
 });

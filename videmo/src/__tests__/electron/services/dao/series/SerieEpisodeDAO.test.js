@@ -116,8 +116,8 @@ describe('SerieEpisodeDAO', () => {
         await serieEpisodeDAO.createEpisode(episode2);
 
         // Insert a Serie
-        const sql = `INSERT INTO Serie (basename, name, description, image, link, extension_id, inLibrary) VALUES (?, ?, ?, ?, ?, ?, ?)`;
-        const params = [serie.basename, serie.name, serie.description, serie.image, serie.link, serie.extension_id, serie.inLibrary];
+        const sql = `INSERT INTO Serie (basename, name, image, link, extension_id, inLibrary) VALUES (?, ?, ?, ?, ?, ?)`;
+        const params = [serie.basename, serie.name, serie.image, serie.link, serie.extension_id, serie.inLibrary];
         await mockQueryExecutor.executeAndCommit(sql, params);
 
         // Insert Track

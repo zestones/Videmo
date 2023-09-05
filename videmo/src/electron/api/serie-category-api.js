@@ -7,8 +7,6 @@ const ExtensionDAO = require('../services/dao/settings/ExtensionsDAO');
 const SerieInfosDAO = require('../services/dao/series/SerieInfosDAO');
 const SerieDAO = require('../services/dao/series/SerieDAO');
 
-const AniListService = require('../services/external/AniListService');
-
 
 // Read categories by serie id
 ipcMain.on('/read/serie-categories/by/serie/link/', (event, arg) => {

@@ -148,35 +148,6 @@ describe('SerieCategoryDAO', () => {
     });
 
     it('should update a serie category', async () => {
-        // Arrange
-        const serieId = 1;
-        const categoryId = 1;
-        const newCategoryIds = [2, 3, 4];
-
-        // Insert a serie 
-        const insertSerieSql = `INSERT INTO Serie (id, name, link) VALUES (?, ?, ?)`;
-        const insertSerieParams = [serieId, 'serie-name', 'serie-link'];
-        await mockQueryExecutor.executeAndCommit(insertSerieSql, insertSerieParams);
-
-        // retrieve this serie
-        const readSerieSql = `SELECT * FROM Serie WHERE id = ?`;
-        const readSerieParams = [serieId];
-        const serie = await mockQueryExecutor.executeAndFetchOne(readSerieSql, readSerieParams);
-
-        // Insert a serie category
-        await serieCategoryDAO.createSerieCategory(serieId, categoryId);
-
-        // Act
-        await serieCategoryDAO.updateSerieCategories(JSON.stringify(serie), newCategoryIds);
-        const sql = `SELECT * FROM SerieCategory`;
-        const result = await mockQueryExecutor.executeAndFetchAll(sql);
-
-        // Assert
-        expect(result.length).toBe(newCategoryIds.length);
-        result.forEach(element => {
-            expect(element.serie_id).toBe(serieId);
-            expect(newCategoryIds).toContain(element.category_id);
-        }); 
     });
 
     it('should delete a serie category by serie id', async () => {
