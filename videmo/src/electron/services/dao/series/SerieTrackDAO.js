@@ -98,24 +98,30 @@ class SerieTrackDAO {
             }
 
             // 2. Set parent series to the sum of viewed episodes of all child series
-            let parentSerie = await this.serieDAO.getSerieById(serie.parent_id);
-            do {
-                // If the serie has a parent serie
-                const childrens = await this.serieDAO.getSerieChildren(parentSerie.id)
-
-                let sumViewedEpisodes = 0;
-                for (const child of childrens) {
-                    const infos = await this.serieInfosDAO.getSerieInfosBySerieId(child.id);
-                    sumViewedEpisodes += infos?.total_viewed_episodes || 0;
-                }
-
-                await this.serieInfosDAO.updateSerieEpisodesViewed(parentSerie.id, sumViewedEpisodes);
-                if (!parentSerie.parent_id) break;
-
-                // Get the parent serie of the parent serie
-                parentSerie = await this.serieDAO.getSerieById(parentSerie.parent_id);
-            } while (parentSerie);
+            if (!serie.parent_id) continue;
+            this.#updateParentSeriesViewedEpisodes(serie.parent_id);
         }
+    }
+
+    // Update parent series viewed episodes
+    async #updateParentSeriesViewedEpisodes(parentId) {
+        let parentSerie = await this.serieDAO.getSerieById(parentId);
+        do {
+            // If the serie has a parent serie
+            const childrens = await this.serieDAO.getSerieChildren(parentSerie.id)
+
+            let sumViewedEpisodes = 0;
+            for (const child of childrens) {
+                const infos = await this.serieInfosDAO.getSerieInfosBySerieId(child.id);
+                sumViewedEpisodes += infos?.total_viewed_episodes || 0;
+            }
+
+            await this.serieInfosDAO.updateSerieEpisodesViewed(parentSerie.id, sumViewedEpisodes);
+            if (!parentSerie.parent_id) break;
+
+            // Get the parent serie of the parent serie
+            parentSerie = await this.serieDAO.getSerieById(parentSerie.parent_id);
+        } while (parentSerie);
     }
 
     // Delete a serie track entry

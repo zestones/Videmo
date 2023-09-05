@@ -34,7 +34,6 @@ ipcMain.on('/read/all/series/by/parent-id/', (event, arg) => {
 
 // Read all series by links
 ipcMain.on('/read/all/series/by/links/', (event, arg) => {
-    console.log(arg.links)
     new SerieDAO().getSeriesByLinks(arg.links)
         .then((series) => event.reply('/read/all/series/by/links/', { success: true, series: series }))
         .catch((err) => event.reply('/read/all/series/by/links/', { success: false, error: err }));
