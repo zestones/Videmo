@@ -15,6 +15,7 @@
     --secondary-color-darker: #a7cbff;
 
     --tertiary-color: #1f1f1f;
+    --dark-color: #353535;
 
     --black-color: #000000;
     --white-color: #ffffff;
@@ -83,11 +84,34 @@
 
 body {
     margin: 0;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Roboto', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     background-color: var(--primary-color-darkest);
     color: var(--white-color);
+
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+}
+
+/* Make text selectable */
+p,
+span,
+a,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    user-select: text;
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    -o-user-select: text;
 }
 
 * {
@@ -134,8 +158,9 @@ h6 {
 }
 
 h1 {
-    font-size: 2rem;
+    font-size: 1.5rem;
     font-weight: 600;
+    text-transform: uppercase;
 }
 
 a {

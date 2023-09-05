@@ -1,4 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
+
+// Constants
+import { HISTORY_STRING } from "../../utilities/utils/Constants";
 
 // Components
 import Header from "../../components/Header/Header";
@@ -9,8 +12,8 @@ import HistoryCard from "../../components/Card/HistoryCard/HistoryCard";
 // Services
 import HistoryApi from "../../services/api/track/HistoryApi";
 import TrackApi from "../../services/api/track/TrackApi";
-import FolderManager from "../../utilities/folderManager/FolderManager";
 import Utils from "../../utilities/utils/Utils";
+import SortManager from "../../utilities/sortManager/SortManager";
 
 // Styles
 import styles from "./History.module.scss";
@@ -18,18 +21,18 @@ import styles from "./History.module.scss";
 
 function History() {
     // Services initialization
-    const [historyApi] = useState(() => new HistoryApi());
-    const [trackApi] = useState(() => new TrackApi());
-    const [folderManager] = useState(() => new FolderManager());
-    const [utils] = useState(() => new Utils());
+    const sortManager = useMemo(() => new SortManager(), []);
+    const historyApi = useMemo(() => new HistoryApi(), []);
+    const trackApi = useMemo(() => new TrackApi(), []);
+    const utils = useMemo(() => new Utils(), []);
 
     // State initialization
     const [history, setHistory] = useState([]);
     const [searchValue, setSearchValue] = useState("");
-    const [selectedEntry, setSelectedEntry] = useState(null); // To store the selected entry
-    const [showSerieDisplay, setShowSerieDisplay] = useState(false); // To show the serie display
-    const [showVideoPlayer, setShowVideoPlayer] = useState(false); // To show the video player
-    const [episodes, setEpisodes] = useState([]); // To store the episodes of the selected serie
+    const [selectedEntry, setSelectedEntry] = useState(null);
+    const [showSerieDisplay, setShowSerieDisplay] = useState(false);
+    const [showVideoPlayer, setShowVideoPlayer] = useState(false);
+    const [episodes, setEpisodes] = useState([]);
 
 
     useEffect(() => {
@@ -37,7 +40,7 @@ function History() {
         historyApi.retrieveAllEpisodeAndSerieHistory()
             .then((data) => setHistory(data))
             .catch((error) => console.error(error));
-    }, [historyApi, showSerieDisplay]);
+    }, [historyApi]);
 
 
     // Handle click on serie name to show VideoPlayer
@@ -47,28 +50,19 @@ function History() {
     };
 
     // Handle click on serie image to show SerieDisplay
-    const handleSerieImageClick = async (entry) => {
-        try {
-            const data = await folderManager.retrieveFilesInFolder(entry.serie.link);
-            const retrievedEpisodes = await trackApi.readAllEpisodesBySerieLink(entry.serie.link);
-            setEpisodes(trackApi.mapSerieEpisodeWithDatabaseEpisode(data, retrievedEpisodes));
+    const handleSerieImageClick = (entry) => {
+        trackApi.readAllEpisodesBySerieLink(entry.serie.link)
+            .then((data) => setEpisodes(data))
+            .catch((error) => console.error(error));
 
-            setSelectedEntry(entry);
-            setShowSerieDisplay(true);
-        } catch (error) {
-            console.log(error);
-        }
+        setSelectedEntry(entry);
+        setShowSerieDisplay(true);
     };
-
-    const filterHistory = history.filter((entry) => {
-        const serieName = utils.constructTitle(entry.serie);
-        return serieName.toLowerCase().includes(searchValue.toLowerCase());
-    });
 
     const handleDeleteEpisodeHistory = (episode) => {
         historyApi.deleteEpisodeHistory(episode.id)
             .then(() => setHistory(history.filter((entry) => entry.episode.id !== episode.id)))
-            .catch((error) => console.log(error));
+            .catch((error) => console.error(error));
     };
 
     const handleCloseVideoPlayer = (playedTime, episodeFinished) => {
@@ -97,6 +91,8 @@ function History() {
         setSelectedEntry(null);
         setEpisodes([]);
     };
+
+    const filterHistory = sortManager.filterByKeyword(searchValue, history, 'serie.basename', 'serie.name', 'episode.name');
 
     return (
         <div className={styles.history}>
@@ -131,16 +127,18 @@ function History() {
                         })}
                     </div>
                     {showVideoPlayer &&
-                        <VideoPlayer link={selectedEntry.episode.link} startTime={selectedEntry.episode.played_time} onCloseVideoPlayer={handleCloseVideoPlayer} />
+                        <VideoPlayer
+                            link={selectedEntry.episode.link}
+                            startTime={selectedEntry.episode.played_time}
+                            onCloseVideoPlayer={handleCloseVideoPlayer} />
                     }
                 </>
             ) : (
                 <SerieDisplay
-                    serie={{ ...selectedEntry.serie, extension_id: selectedEntry.extension.id }}
-                    episodes={episodes}
-                    calledFromExplore={true}
-                    folderContents={[]}
+                    serie={selectedEntry.serie}
+                    calledFrom={HISTORY_STRING}
                     setEpisodes={setEpisodes}
+                    episodes={episodes}
                 />
             )}
         </div>

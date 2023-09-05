@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 
 // External
 import FolderIcon from '@mui/icons-material/Folder';
@@ -18,8 +18,8 @@ import styles from "./Source.module.scss";
 
 function Source({ handleSelectedExtension }) {
     // Utilities and services initialization
-    const [extensionApi] = useState(() => new ExtensionApi());
-    const [sortManager] = useState(() => new SortManager());
+    const extensionApi = useMemo(() => new ExtensionApi(), []);
+    const sortManager = useMemo(() => new SortManager(), []);
 
     // State initialization
     const [extensions, setExtensions] = useState([]);
@@ -32,11 +32,8 @@ function Source({ handleSelectedExtension }) {
     }, [extensionApi]);
 
     const handleSearch = (value) => setSearchValue(value);
-    const filterExtensions = extensions.filter((extension) => {
-        // Filter by search value and map extensions names back to the original array
-        return sortManager.filterArrayByString(searchValue, extensions.map((extension) => extension.name)).includes(extension.name)
-    });
-
+    const filterExtensions = sortManager.filterByKeyword(searchValue, extensions, 'name');
+ 
     return (
         <>
             <Header title="Explorer" onSearch={handleSearch} />

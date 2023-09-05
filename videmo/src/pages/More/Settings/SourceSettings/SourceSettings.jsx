@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from "react";
+import { useNotification } from "../../../../components/Notification/NotificationProvider";
 
 // External
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import CreateNewFolderOutlinedIcon from '@mui/icons-material/CreateNewFolderOutlined';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-
-// Components
-import Notification from "../../../../components/Notification/Notification";
 
 // Services
 import ExtensionsApi from "../../../../services/api/extension/ExtensionApi";
@@ -25,32 +23,38 @@ function SourceSettings() {
     // State initialization
     const [extensions, setExtensions] = useState([]);
     const [editingExtension, setEditingExtension] = useState(null);
-    const [error, setError] = useState(null);
+
+    // Initialize the notification hook
+    const { showNotification, hideNotification } = useNotification();
 
     useEffect(() => {
         // Get the list of extensions from the database
         extensionApi.readExtension()
             .then((data) => setExtensions(data))
-            .catch((error) => setError({ message: error.message, type: "error" }));
-    }, [extensionApi]);
+            .catch((error) => showNotification("error", error.message));
+    }, [extensionApi, showNotification]);
 
     const handleDeleteExtension = (id) => {
         extensionApi.deleteExtension(id)
             // Update the array of extensions by removing the deleted extension
             .then(() => setExtensions(extensions.filter((extension) => extension.id !== id)))
-            .catch((error) => setError({ message: error.message, type: "error" }));
+            .catch((error) => showNotification("error", error.message));
     };
 
-    const selectLocalSourceFolder = () => {
-        // Open the dialog window to select a folder
-        folderManager.openDialogWindow()
-            .then((path) => {
-                // Create a new extension with the selected folder path 
-                extensionApi.createExtension(path, folderManager.retrieveBaseName(path))
-                    // Update the array of extensions by adding the new extension
-                    .then((_) => setExtensions([...extensions, { id: null, name: folderManager.retrieveBaseName(path), link: path }]))
-                    .catch((error) => setError({ message: error.message, type: "error" }));
-            }).catch((error) => setError({ message: error.message, type: "error" }));
+    const selectLocalSourceFolder = async () => {
+        try {
+            // Open the dialog window to select a folder
+            const path = await folderManager.openDialogWindow();
+            showNotification("loading", "Chargement en cours...", false);
+
+            // Create a new extension with the selected folder path
+            await extensionApi.createExtension(path, folderManager.retrieveBaseName(path));
+            hideNotification();
+            
+            setExtensions([...extensions, { id: null, name: folderManager.retrieveBaseName(path), link: path }]);
+        } catch (error) {
+            showNotification("error", error.message);
+        }
     };
 
     const updateEditedExtension = (id) => {
@@ -60,15 +64,13 @@ function SourceSettings() {
         );
 
         extensionApi.updateExtension(editingExtension)
-            .catch((error) => setError({ message: error.message, type: "error" }));
+            .catch((error) => showNotification("error", error.message));
 
         setExtensions(updatedExtensions);
         setEditingExtension(null);
     };
 
-    const editExtension = (extension) => {
-        setEditingExtension(extension);
-    };
+    const editExtension = (extension) => setEditingExtension(extension);
 
     const updateExtensionPath = (id) => {
         // Open the dialog window to select a folder
@@ -80,18 +82,17 @@ function SourceSettings() {
                 );
 
                 extensionApi.updateExtension(updatedExtensions.find((extension) => extension.id === id))
-                    .catch((error) => setError({ message: error.message, type: "error" }));
+                    .catch((error) => showNotification("error", error.message));
 
                 setExtensions(updatedExtensions);
-            }).catch((error) => setError({ message: error.message, type: "error" }));
+            }).catch((error) => showNotification("error", error.message));
     };
 
     return (
         <>
-            {error && <Notification message={error.message} type={error.type} onClose={setError} />}
             <ul className={styles.sourceList}>
-                {extensions.map((extension, index) => (
-                    <li key={index} className={styles.sourceItem}>
+                {extensions.map((extension, _) => (
+                    <li key={extension.link} className={styles.sourceItem}>
                         <div className={styles.sourceInfos}>
                             {editingExtension?.id === extension.id ? (
                                 <input

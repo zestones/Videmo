@@ -2,6 +2,7 @@
 .sourceContent {
     margin: 0;
     width: 100%;
+    height: 100vh;
 
     .seriesContainer {
         margin-top: 12px;
@@ -43,7 +44,6 @@
                 background-color: var(--light-blue-hover);
             }
 
-            // Add animation on click
             &:active {  
                 animation: click 0.2s ease-in-out;
                 
