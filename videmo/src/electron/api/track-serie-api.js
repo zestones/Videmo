@@ -23,7 +23,7 @@ ipcMain.on('/update/serie/track/and/history/', async (event, arg) => {
 // update all series episodes viewed flag
 ipcMain.on('/update/all/series/episodes/viewed/flag/', async (event, arg) => {
     await new SerieTrackDAO().updateAllSeriesEpisodesViewedFlag(arg.series, arg.viewed)
-        .then((updatedEpisodes) => event.reply('/update/all/series/episodes/viewed/flag/', { success: true, episodes: updatedEpisodes }))
+        .then(() => event.reply('/update/all/series/episodes/viewed/flag/', { success: true}))
         .catch(error => event.reply('/update/all/series/episodes/viewed/flag/', { success: false, error }));
 })
 

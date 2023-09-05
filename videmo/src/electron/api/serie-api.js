@@ -32,16 +32,17 @@ ipcMain.on('/read/all/series/by/parent-id/', (event, arg) => {
         .catch((err) => event.reply('/read/all/series/by/parent-id/', { success: false, error: err }));
 })
 
+// Read all series by links
+ipcMain.on('/read/all/series/by/links/', (event, arg) => {
+    console.log(arg.links)
+    new SerieDAO().getSeriesByLinks(arg.links)
+        .then((series) => event.reply('/read/all/series/by/links/', { success: true, series: series }))
+        .catch((err) => event.reply('/read/all/series/by/links/', { success: false, error: err }));
+})
+
 // Read serie by id
 ipcMain.on('/read/serie/by/id/', (event, arg) => {
     new SerieDAO().getSerieById(arg.id)
         .then((serie) => event.reply('/read/serie/by/id/', { success: true, serie: serie }))
         .catch((err) => event.reply('/read/serie/by/id/', { success: false, error: err }));
-})
-
-// Read number of episodes
-ipcMain.on('/read/serie/number-of-episodes/', async (event, arg) => {
-    new SerieDAO().getNumberOfEpisodes(arg)
-        .then((series) => event.reply('/read/serie/number-of-episodes/', { success: true, series: series }))
-        .catch((err) => event.reply('/read/serie/number-of-episodes/', { success: false, error: err }));
 })

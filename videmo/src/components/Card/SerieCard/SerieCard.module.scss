@@ -18,6 +18,10 @@ $card-height: 300px;
 
     list-style: none;
 
+    &.completed {
+        opacity: 0.6;
+    }
+
     &:active {
         transform: scale(0.95);
         box-shadow: 0px 0px 30px 0px rgba(0, 0, 0, 0.7);
@@ -113,6 +117,10 @@ $card-height: 300px;
         color: var(--white-color);
         text-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
         background-color: var(--light-blue-6);
+
+        &.completed {
+            background-color: var(--green-1);
+        }
 
         .number {
             position: relative;

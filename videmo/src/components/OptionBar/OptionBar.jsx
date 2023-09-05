@@ -37,12 +37,15 @@ function OptionBar({ series, onClose, checked, onCheck, onCategoryChange, isCall
             .catch((error) => showNotification("error", error.message));
     }, [categoryApi, showNotification]);
 
-    const handleViewedState = (viewed) => {
-        trackApi.updateAllSeriesEpisodesViewedFlag(series, viewed)
-            .then(() => showNotification("success", "Tout les épisodes ont été marqués comme " + (viewed ? "vu" : "non vu") + "."))
-            .catch((error) => showNotification("error", error.message));
-
-        onClose();
+    const handleViewedState = async (viewed) => {
+        try {
+            await trackApi.updateAllSeriesEpisodesViewedFlag(series, viewed);
+            showNotification("success", "Tout les épisodes ont été marqués comme " + (viewed ? "vu" : "non vu") + ".");
+            onCategoryChange(series.map((serie) => serie.link));
+        } catch (error) {
+            showNotification("error", error.message);
+            console.error(error);
+        }
     }
 
     const handleDeleteFromLibrary = async () => {

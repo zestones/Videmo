@@ -32,11 +32,11 @@ export default class SerieApi {
         });
     }
 
-    readNumberOfEpisode(series) {
-        window.api.send("/read/serie/number-of-episodes/", series);
+    readAllSeriesByLinks(links) {
+        window.api.send("/read/all/series/by/links/", { links: links });
 
         return new Promise((resolve, reject) => {
-            window.api.receive("/read/serie/number-of-episodes/", (data) => data.success ? resolve(data.series) : reject(data.error));
+            window.api.receive("/read/all/series/by/links/", (data) => data.success ? resolve(data.series) : reject(data.error));
         });
     }
 }

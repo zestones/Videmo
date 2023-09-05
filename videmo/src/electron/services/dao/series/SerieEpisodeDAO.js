@@ -86,13 +86,11 @@ class SerieEpisodeDAO {
         const result = await this.queryExecutor.executeAndFetchAll(sql, params);
 
         // Convert integer columns to boolean
-        const episodes = result.map(episode => {
+        return result.map(episode => {
             episode.viewed = this.dataTypesConverter.convertIntegerToBoolean(episode.viewed);
             episode.bookmarked = this.dataTypesConverter.convertIntegerToBoolean(episode.bookmarked);
             return episode;
         });
-
-        return episodes;
     }
 
     // Update an episode in the Episode table

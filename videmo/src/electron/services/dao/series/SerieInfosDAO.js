@@ -23,7 +23,7 @@ class SerieInfosDAO {
         await this.queryExecutor.executeAndCommit(sql, params);
     }
 
-    async getSerieInfoBySerieId(serieId) {
+    async getSerieInfosBySerieId(serieId) {
         const sql = `SELECT * FROM SerieInfos WHERE serie_id = ?`;
         const params = [serieId];
 
@@ -33,7 +33,7 @@ class SerieInfosDAO {
         return { ...serieInfos, genres: serieGenres };
     }
 
-    async #getSerieInfoBySerieId(serieId) {
+    async #getSerieInfosBySerieId(serieId) {
         const sql = `SELECT * FROM SerieInfos WHERE serie_id = ?`;
         const params = [serieId];
 
@@ -60,7 +60,7 @@ class SerieInfosDAO {
     async updateSerieInfos(serieId, infos) {
 
         // We check if an entry exists
-        const serieInfoExists = await this.#getSerieInfoBySerieId(serieId);
+        const serieInfoExists = await this.#getSerieInfosBySerieId(serieId);
         
         // If it does not exist, we create it
         if (!serieInfoExists) await this.createSerieInfo(serieId, infos);
@@ -78,6 +78,12 @@ class SerieInfosDAO {
 
     async updateNumberOfEpisodesWithIncrement(serieId, increment) {
         const sql = `UPDATE SerieInfos SET number_of_episodes = number_of_episodes + ? WHERE serie_id = ?`;
+        const params = [increment, serieId];
+        await this.queryExecutor.executeAndCommit(sql, params);
+    }
+
+    async updateNumberOfEpisodesViewedWithIncrement(serieId, increment) {
+        const sql = `UPDATE SerieInfos SET total_viewed_episodes = total_viewed_episodes + ? WHERE serie_id = ?`;
         const params = [increment, serieId];
         await this.queryExecutor.executeAndCommit(sql, params);
     }

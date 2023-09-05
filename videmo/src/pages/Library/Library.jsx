@@ -37,11 +37,16 @@ function Library() {
     const { showNotification } = useNotification();
 
     const retrieveAllSeries = useCallback(() => {
-        // TODO : retrieve the number of episodes for each serie
         serieApi.readAllSeriesByCategory(currentCategory?.id)
             .then((seriesInLibrary) => setSubSeries(seriesInLibrary))
             .catch((error) => showNotification("error", `Error retrieving series: ${error.message}`));
     }, [serieApi, currentCategory, showNotification]);
+
+    const retrieveAllSeriesByLinks = (links) => {
+        serieApi.readAllSeriesByLinks(links)
+            .then((series) => setSubSeries(subSeries.map((serie) => series.find((s) => s.link === serie.link) || serie)))
+            .catch((error) => showNotification("error", `Error retrieving series: ${error.message}`));
+    }
 
     useEffect(() => {
         if (!currentCategory) return;
@@ -85,7 +90,6 @@ function Library() {
 
             if (clickedSerie) {
                 subSeries = await getChildSeries(clickedSerie.id);
-                subSeries = await serieApi.readNumberOfEpisode(subSeries);
                 episodes = await trackApi.readAllEpisodesBySerieId(clickedSerie.id);
             }
 
@@ -104,6 +108,7 @@ function Library() {
 
     const filterFolders = sortManager.filterByKeyword(searchValue, subSeries, 'basename', 'name');
 
+    // TODO: add a filter option to sort by (name, date, genre, rating, etc.)
     return (
         <div className={styles.library}>
             <div className={styles.libraryContainer}>
@@ -120,7 +125,7 @@ function Library() {
                     episodes={episodes}
                     serie={serie}
                     onPlayClick={handleSerieSelection}
-                    onRefresh={!serie && retrieveAllSeries}
+                    onRefresh={!serie ? retrieveAllSeries : retrieveAllSeriesByLinks}
                     calledFrom={LIBRARY_STRING}
                     setEpisodes={setEpisodes}
                 />

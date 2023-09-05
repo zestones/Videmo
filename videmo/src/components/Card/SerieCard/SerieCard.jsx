@@ -44,10 +44,12 @@ function SerieCard({ serie, onPlayClick, onMoreClick, isCalledFromExplore, isCal
         }
     }
 
+    const isSerieCompleted = () => serie?.infos?.total_viewed_episodes === serie?.infos?.number_of_episodes;
+
     return (
         <>
             <li
-                className={styles.card}
+                className={`${styles.card} ${isSerieCompleted() && styles.completed}`}
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
                 onClick={() => !isOptionBarActive && onPlayClick(serie)}
@@ -63,7 +65,7 @@ function SerieCard({ serie, onPlayClick, onMoreClick, isCalledFromExplore, isCal
 
                 <p className={styles.cardTitle}>{utils.constructTitle(serie)}</p>
                 {isCalledFromLibrary && (
-                    <div className={styles.episodeInfos}>
+                    <div className={`${styles.episodeInfos} ${isSerieCompleted() && styles.completed}`}>
                         <span className={styles.number}>
                             {serie?.infos?.total_viewed_episodes} / {serie?.infos?.number_of_episodes}
                         </span>

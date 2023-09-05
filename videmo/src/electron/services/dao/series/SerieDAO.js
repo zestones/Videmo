@@ -67,33 +67,6 @@ class SerieDAO {
         return await this.queryExecutor.executeAndFetchAll(sql, params);
     }
 
-    async getNumberOfEpisodes(series) {
-        let newSeries = [];
-
-        for (const serie of series) {
-
-            const childsSeries = await this.getSeriesChildrenByLinks([serie.link]);
-            const serieIds = childsSeries.map(serie => serie.id);
-
-            const idsConditions = [];
-            serieIds.forEach(_ => idsConditions.push("Serie.id = ?"));
-            const idsCondition = idsConditions.join(" OR ");
-
-
-            const sql = `SELECT COUNT(*) AS number FROM Episode
-                    INNER JOIN Track ON Episode.id = Track.episode_id
-                    INNER JOIN Serie ON Serie.id = Track.serie_id
-                    WHERE ${idsCondition}`;
-
-            const params = serieIds;
-            const result = await this.queryExecutor.executeAndFetchOne(sql, params);
-            serie.number = result.number;
-            newSeries.push(serie);
-        }
-
-        return newSeries;
-    }
-
     async getSeriesChildrenByLinks(links) {
         const linkConditions = [];
         links.forEach(_ => linkConditions.push("Serie.link = ?"));
@@ -102,19 +75,20 @@ class SerieDAO {
         const linkCondition = linkConditions.join(" OR ");
 
         const sql = `WITH RECURSIVE SerieHierarchy AS (
-                        SELECT id, parent_id
-                        FROM Serie
-                        WHERE ${linkCondition}
-                        
-                        UNION ALL
-                        
-                        SELECT S.id, S.parent_id
-                            FROM Serie S
-                            JOIN SerieHierarchy SH ON S.parent_id = SH.id
-                    )
-                    SELECT *
-                        FROM Serie
-                        WHERE id IN (SELECT id FROM SerieHierarchy);
+                    SELECT id, parent_id
+                    FROM Serie
+                    WHERE ${linkCondition}
+                
+                    UNION ALL
+                
+                    SELECT S.id, S.parent_id
+                    FROM Serie S
+                    JOIN SerieHierarchy SH ON S.parent_id = SH.id
+                )
+                SELECT Serie.*, SerieInfos.number_of_episodes, SerieInfos.total_viewed_episodes 
+                    FROM Serie
+                    INNER JOIN SerieInfos ON SerieInfos.serie_id = Serie.id
+                    WHERE Serie.id IN (SELECT id FROM SerieHierarchy)
                 `;
 
         const params = links;
@@ -191,6 +165,36 @@ class SerieDAO {
     `;
 
         const params = [categoryId];
+        const result = await this.queryExecutor.executeAndFetchAll(sql, params);
+
+        // We format the result
+        return this.formatSerie(result);
+    }
+
+
+    async getSeriesByLinks(links) {
+        const sql = `
+                    SELECT Serie.*,
+                        SerieInfos.id AS serieInfos_id, 
+                        SerieInfos.serie_id AS serieInfos_serie_id, 
+                        SerieInfos.description AS serieInfos_description, 
+                        SerieInfos.duration AS serieInfos_duration, 
+                        SerieInfos.number_of_episodes AS serieInfos_number_of_episodes, 
+                        SerieInfos.total_viewed_episodes AS serieInfos_total_viewed_episodes, 
+                        SerieInfos.rating AS serieInfos_rating, 
+                        SerieInfos.releaseDate AS serieInfos_releaseDate,
+                        Genre.id AS genre_id,
+                        Genre.name AS genre_name
+                    FROM Serie
+                    INNER JOIN SerieInfos ON Serie.id = SerieInfos.serie_id
+                    LEFT JOIN SerieGenre ON SerieInfos.serie_id = SerieGenre.serie_id
+                    LEFT JOIN Genre ON SerieGenre.genre_id = Genre.id
+                    WHERE Serie.link IN (${links.map(() => '?').join(',')})
+                    ORDER BY Serie.basename ASC;
+                `;
+
+
+        const params = links;
         const result = await this.queryExecutor.executeAndFetchAll(sql, params);
 
         // We format the result

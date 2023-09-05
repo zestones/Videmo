@@ -12,7 +12,7 @@ export default class TrackApi {
         window.api.send("/update/all/series/episodes/viewed/flag/", { series: series, viewed });
 
         return new Promise((resolve, reject) => {
-            window.api.receive("/update/all/series/episodes/viewed/flag/", (data) => data.success ? resolve(data.episodes) : reject(data.error));
+            window.api.receive("/update/all/series/episodes/viewed/flag/", (data) => data.success ? resolve(data.success) : reject(data.error));
         });
     }
 
