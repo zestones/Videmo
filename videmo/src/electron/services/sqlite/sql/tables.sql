@@ -28,6 +28,8 @@ CREATE TABLE IF NOT EXISTS SerieInfos (
   serie_id INTEGER,
   description TEXT,
   duration DATETIME,
+  number_of_episodes INTEGER,
+  total_viewed_episodes INTEGER,
   rating INTEGER,
   releaseDate DATETIME,
   FOREIGN KEY (serie_id) REFERENCES Serie (id)

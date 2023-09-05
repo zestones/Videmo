@@ -39,14 +39,7 @@ function Library() {
     const retrieveAllSeries = useCallback(() => {
         // TODO : retrieve the number of episodes for each serie
         serieApi.readAllSeriesByCategory(currentCategory?.id)
-            .then((seriesInLibrary) => {
-                serieApi.readNumberOfEpisode(seriesInLibrary)
-                    .then((series) => {
-                        console.log("useEffect series", series)
-                        setSubSeries(series);
-                    })
-                    .catch((error) => console.error(error));
-            })
+            .then((seriesInLibrary) => setSubSeries(seriesInLibrary))
             .catch((error) => showNotification("error", `Error retrieving series: ${error.message}`));
     }, [serieApi, currentCategory, showNotification]);
 

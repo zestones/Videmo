@@ -39,6 +39,27 @@ class SerieDAO {
         return await this.queryExecutor.executeAndFetchOne(sql, params);
     }
 
+    // Read all parent series
+    async getAllParentSeries(link) {
+        const sql = `WITH RECURSIVE SerieHierarchy AS (
+                        SELECT id, parent_id
+                        FROM Serie
+                        WHERE link = ?
+                        
+                        UNION ALL
+
+                        SELECT S.id, S.parent_id
+                            FROM Serie S
+                            JOIN SerieHierarchy SH ON S.id = SH.parent_id
+                    )
+                    SELECT *
+                        FROM Serie
+                        WHERE id IN (SELECT id FROM SerieHierarchy);
+                    `;
+        const params = [link];
+        return await this.queryExecutor.executeAndFetchAll(sql, params);
+    }
+
     // Read serie children
     async getSerieChildren(serieId) {
         const sql = `SELECT * FROM Serie WHERE parent_id = ?`;
@@ -107,14 +128,28 @@ class SerieDAO {
 
     // Read all series by parent ID
     async getSeriesByParentId(parentId) {
-        const sql = `SELECT * FROM Serie WHERE parent_id = ?`;
+        const sql = `SELECT 
+                Serie.*,
+                SerieInfos.id AS serieInfos_id, 
+                SerieInfos.serie_id AS serieInfos_serie_id, 
+                SerieInfos.description AS serieInfos_description, 
+                SerieInfos.duration AS serieInfos_duration, 
+                SerieInfos.number_of_episodes AS serieInfos_number_of_episodes, 
+                SerieInfos.total_viewed_episodes AS serieInfos_total_viewed_episodes, 
+                SerieInfos.rating AS serieInfos_rating, 
+                SerieInfos.releaseDate AS serieInfos_releaseDate,
+                Genre.id AS genre_id,
+                Genre.name AS genre_name
+            FROM Serie
+            INNER JOIN SerieInfos ON SerieInfos.serie_id = Serie.id
+            LEFT JOIN SerieGenre ON SerieInfos.serie_id = SerieGenre.serie_id
+            LEFT JOIN Genre ON SerieGenre.genre_id = Genre.id
+            WHERE parent_id = ?`;
+
         const params = [parentId];
 
         const result = await this.queryExecutor.executeAndFetchAll(sql, params);
-        return result.map(serie => {
-            serie.inLibrary = this.dataTypesConverter.convertIntegerToBoolean(serie.inLibrary);
-            return serie;
-        });
+        return this.formatSerie(result);
     }
 
     // Read all series in library by extension
@@ -135,14 +170,85 @@ class SerieDAO {
     // Read all series by category ID
     async getSeriesByCategoryId(categoryId) {
         const sql = `
-            SELECT Serie.*
+            SELECT Serie.*,
+                SerieInfos.id AS serieInfos_id, 
+                SerieInfos.serie_id AS serieInfos_serie_id, 
+                SerieInfos.description AS serieInfos_description, 
+                SerieInfos.duration AS serieInfos_duration, 
+                SerieInfos.number_of_episodes AS serieInfos_number_of_episodes, 
+                SerieInfos.total_viewed_episodes AS serieInfos_total_viewed_episodes, 
+                SerieInfos.rating AS serieInfos_rating, 
+                SerieInfos.releaseDate AS serieInfos_releaseDate,
+                Genre.id AS genre_id,
+                Genre.name AS genre_name
             FROM Serie
             INNER JOIN SerieCategory ON Serie.id = SerieCategory.serie_id
+            INNER JOIN SerieInfos ON Serie.id = SerieInfos.serie_id
+            LEFT JOIN SerieGenre ON SerieInfos.serie_id = SerieGenre.serie_id
+            LEFT JOIN Genre ON SerieGenre.genre_id = Genre.id
             WHERE SerieCategory.category_id = ?
-            ORDER BY Serie.basename ASC`;
+            ORDER BY Serie.basename ASC;
+    `;
 
         const params = [categoryId];
-        return await this.queryExecutor.executeAndFetchAll(sql, params);
+        const result = await this.queryExecutor.executeAndFetchAll(sql, params);
+
+        // We format the result
+        return this.formatSerie(result);
+    }
+
+    // format complete serie with all infos
+    formatSerie(series) {
+        const seriesMap = new Map(); // Use a map to group series by their unique ID
+
+        // Populate the map with series data and genres
+        series.forEach(serie => {
+            // Check if the series is already in the map
+            if (!seriesMap.has(serie.id)) {
+                // If not, add it to the map with genres as an array
+                seriesMap.set(serie.id, {
+                    ...serie,
+                    genres: [],
+                });
+            }
+
+            // Add the genre to the series's genre array
+            seriesMap.get(serie.id).genres.push({
+                id: serie.genre_id,
+                name: serie.genre_name,
+            });
+        });
+
+        // Convert the map values back to an array
+        const seriesList = Array.from(seriesMap.values());
+
+        // We rename the serieInfos columns by removing the prefix "serieInfos_"
+        return seriesList.map(serie => {
+            serie.inLibrary = this.dataTypesConverter.convertIntegerToBoolean(serie.inLibrary);
+            serie.infos = {
+                id: serie.serieInfos_id,
+                description: serie.serieInfos_description,
+                duration: serie.serieInfos_duration,
+                number_of_episodes: serie.serieInfos_number_of_episodes,
+                total_viewed_episodes: serie.serieInfos_total_viewed_episodes,
+                rating: serie.serieInfos_rating,
+                releaseDate: serie.serieInfos_releaseDate,
+            };
+
+            delete serie.serieInfos_id;
+            delete serie.serieInfos_description;
+            delete serie.serieInfos_duration;
+            delete serie.serieInfos_number_of_episodes;
+            delete serie.serieInfos_total_viewed_episodes;
+            delete serie.serieInfos_rating;
+            delete serie.serieInfos_releaseDate;
+            delete serie.serieInfos_serie_id;
+
+            delete serie.genre_id;
+            delete serie.genre_name;
+
+            return serie;
+        });
     }
 
     // Update serie by ID (add serie to library)

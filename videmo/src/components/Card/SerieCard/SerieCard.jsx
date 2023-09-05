@@ -62,11 +62,13 @@ function SerieCard({ serie, onPlayClick, onMoreClick, isCalledFromExplore, isCal
                 />
 
                 <p className={styles.cardTitle}>{utils.constructTitle(serie)}</p>
-                <div className={isCalledFromLibrary && styles.episodeInfos}>
-                    <span className={styles.number}>
-                        {serie.number}
-                    </span>
-                </div>
+                {isCalledFromLibrary && (
+                    <div className={styles.episodeInfos}>
+                        <span className={styles.number}>
+                            {serie?.infos?.total_viewed_episodes} / {serie?.infos?.number_of_episodes}
+                        </span>
+                    </div>
+                )}
 
                 <div className={`${styles.cardLayer} ${(isHovered || isOptionBarActive) && styles.hovered}`}>
                     <div className={styles.cardLayerContent}>

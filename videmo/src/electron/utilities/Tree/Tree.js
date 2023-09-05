@@ -6,6 +6,8 @@ const FolderManager = require('../folderManager/FolderManager');
 const SerieTrackDAO = require('../../services/dao/series/SerieTrackDAO');
 const SerieEpisodeDAO = require('../../services/dao/series/SerieEpisodeDAO');
 const ExtensionsDAO = require('../../services/dao/settings/ExtensionsDAO');
+const SerieInfosDAO = require('../../services/dao/series/SerieInfosDAO');
+
 
 class Tree {
     constructor() {
@@ -17,6 +19,7 @@ class Tree {
         this.extensionsDAO = new ExtensionsDAO();
         this.serieTrackDAO = new SerieTrackDAO();
         this.serieEpisodeDAO = new SerieEpisodeDAO();
+        this.serieInfosDAO = new SerieInfosDAO();
 
         this.folderManager = new FolderManager();
     }
@@ -55,21 +58,41 @@ class Tree {
     }
 
     async insertTree(tree, baseLink, extensionId, basename = null, parentId = null, link = null, depth = 0) {
+        // Insert the tree in the database
         await this.#insertTree(tree, baseLink, basename || tree.name, extensionId, parentId, link, depth);
     }
 
     async #insertTree(tree, baseLink, basename, extensionId, parentId = null, link = null, depth = 0) {
+        let totalEpisodes = 0; // Initialize total episodes count for the current series directory
+        const newLink = link ? link + path.sep + tree.name : baseLink + path.sep + tree.name;
+
         if (tree.type === this.type.DIRECTORY && tree.name !== 'Cover') {
-            const newLink = link ? link + path.sep + tree.name : baseLink + path.sep + tree.name;
             const serie = await this.#insertDirectory(tree, basename, extensionId, newLink, parentId, depth);
             const children = tree.content;
 
             for (const child of children) {
-                await this.#insertTree(child, baseLink, basename, extensionId, serie.id, newLink, depth + 1);
+                const childTotalEpisodes = await this.#insertTree(child, baseLink, basename, extensionId, serie.id, newLink, depth + 1);
+
+                // Add the count of child episodes to the current series
+                totalEpisodes += childTotalEpisodes;
             }
         } else if (tree.type === this.type.FILE) {
             await this.#insertFile(tree, parentId, link);
+            totalEpisodes++;
         }
+
+        // Check if it's a series directory and insert/update SerieInfos table only if it contains episodes (files)
+        if (tree.type === this.type.DIRECTORY && totalEpisodes > 0) {
+            // Update the total number of episodes of the serie
+
+            // Retrieve the serie id
+            const serie = await this.serieDAO.getSerieByLink(newLink);
+
+            // Insert inside the SerieInfos table the number of episodes of each serie
+            await this.serieInfosDAO.updateSerieInfos(serie.id, { numberOfEpisodes: totalEpisodes });
+        }
+
+        return totalEpisodes;
     }
 
     async #insertDirectory(tree, basename, extensionId, link, parentId = null, depth = 0) {
@@ -123,20 +146,37 @@ class Tree {
     }
 
     async updateTree(tree, extensionLink, extensionId) {
+        const parentLink = tree.link.split(path.sep).slice(0, -1).join(path.sep);
+        const link = extensionLink + path.sep + parentLink;
 
         if (tree.status === this.status.ADDED) {
             // retrieve the parent of tree.link
-            const parentLink = tree.link.split(path.sep).slice(0, -1).join(path.sep);
             const parentSerie = await this.serieDAO.getSerieByLink(extensionLink + path.sep + parentLink);
-            
             const baseLink = extensionLink + path.sep + tree.link.split(path.sep)[0]; // We add the root folder
-            const link = extensionLink + path.sep + parentLink;
+            
             const depth = this.folderManager.retrieveLevel(baseLink, link);
-
             await this.insertTree(tree.node, baseLink, extensionId, parentSerie.basename, parentSerie.id, link, depth);
+
+            // retrieve all the parent from a link serie
+            const allParentSeries = await this.serieDAO.getAllParentSeries(parentSerie.link);
+
+            for (const parentSerie of allParentSeries) {
+                const numberOfEpisodes = this.countAddedFiles(tree.node);
+                await this.serieInfosDAO.updateNumberOfEpisodesWithIncrement(parentSerie.id, numberOfEpisodes)
+            }
+
+
         } else if (tree.status === this.status.REMOVED) {
             const baseLink = (extensionLink + path.sep + tree.link).split(path.sep).slice(0, -1).join(path.sep);
             await this.removeTree(tree.node, baseLink);
+
+            // retrieve all the parent from a link serie
+            const allParentSeries = await this.serieDAO.getAllParentSeries(link);
+
+            for (const parentSerie of allParentSeries) {
+                await this.serieInfosDAO.updateNumberOfEpisodesWithIncrement(parentSerie.id, -1)
+            }
+
         } else if (tree.status === this.status.MODIFIED) {
             // For now we do nothing
         }
@@ -248,6 +288,18 @@ class Tree {
         }
 
         return newTree;
+    }
+
+    countAddedFiles(node) {
+        if (node.type === "file") return 1;
+        else if (node.type === "directory" && node.content) {
+            let fileCount = 0;
+            for (const childNode of node.content) {
+                fileCount += this.countAddedFiles(childNode);
+            }
+            return fileCount;
+        }
+        else return 0;
     }
 
     saveTreeToFile(tree, filePath) {
