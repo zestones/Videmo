@@ -12,7 +12,7 @@ class BackupDAO {
 
     async generateBackup() {
         const date = new Date();
-        const fileName = `backup-${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}.db`;
+        const fileName = `videmo-${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}.proto`;
 
         const downloadsPath = app.getPath('downloads');
         const filePath = path.join(downloadsPath, fileName);

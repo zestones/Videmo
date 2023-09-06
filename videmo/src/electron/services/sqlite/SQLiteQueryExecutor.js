@@ -1,7 +1,10 @@
 const { app } = require('electron');
 const sqlite3 = require('sqlite3').verbose();
+
 const path = require('path');
 const fs = require('fs');
+const zlib = require('zlib');
+
 
 class SQLiteQueryExecutor {
     constructor() {
@@ -195,24 +198,48 @@ class SQLiteQueryExecutor {
         });
     }
 
+    createDatabaseBackup(filePath) {
+        return new Promise((resolve, reject) => {
+            this.#createDatabaseBackupFile(filePath)
+                .then(() => resolve())
+                .catch((err) => reject(err));
+        });
+    }
+
+    #compressBackupFile(filePath) {
+        return new Promise((resolve, reject) => {
+            const readStream = fs.createReadStream(filePath);
+            const writeStream = fs.createWriteStream(`${filePath}.gz`);
+            const gzip = zlib.createGzip();
+
+            readStream.pipe(gzip).pipe(writeStream);
+
+            writeStream.on('finish', () => {
+                fs.unlink(filePath, (err) => {
+                    if (err) reject(err);
+                    else resolve(`${filePath}.gz`);
+                });
+            });
+
+            writeStream.on('error', reject);
+        });
+    }
+
     /**
      * Creates a backup of the database.
      * @param {String} filePath - The path to the backup file.
      * @returns {Promise<void>} A promise that resolves when the backup is created.
      */
-    createDatabaseBackup(filePath) {
+    #createDatabaseBackupFile(filePath) {
+        // We copy the database file to the backup file
         return new Promise((resolve, reject) => {
-            const backup = this.db.backup(filePath, (err) => {
+            fs.copyFile(this.database, filePath, (err) => {
                 if (err) {
                     reject(err);
                 } else {
-                    resolve();
-                }
-            });
-
-            backup.step(-1, (backupCode) => {
-                if (backupCode !== sqlite3.OK) {
-                    reject(new Error(`Backup step failed with code ${backupCode}`));
+                    this.#compressBackupFile(filePath)
+                        .then(() => resolve())
+                        .catch((err) => reject(err));
                 }
             });
         });
@@ -225,13 +252,49 @@ class SQLiteQueryExecutor {
      */
     restoreDatabaseBackup(filePath) {
         return new Promise((resolve, reject) => {
-            // replace the current database file with the backup file
-            fs.copyFile(filePath, this.database, (err) => {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve();
-                }
+            // the backup file is compressed
+            if (filePath.endsWith('.gz')) {
+                this.#decompressBackupFile(filePath)
+                    .then((decompressedFilePath) => this.#restoreDatabaseBackupFile(decompressedFilePath))
+                    .then(() => resolve())
+                    .catch((err) => reject(err));
+            } else {
+                reject(new Error('Invalid backup file'));
+            }
+        });
+    }
+
+    #decompressBackupFile(filePath) {
+        return new Promise((resolve, reject) => {
+            const gunzip = zlib.createGunzip();
+            const input = fs.createReadStream(filePath);
+            const decompressedFilePath = filePath.replace('.gz', '');
+            const output = fs.createWriteStream(decompressedFilePath);
+
+            input.pipe(gunzip).pipe(output);
+
+            output.on('finish', () => {
+                output.close(() => {
+                    resolve(decompressedFilePath);
+                });
+            });
+
+            output.on('error', (err) => {
+                reject(err);
+            });
+        });
+    }
+
+
+    /**
+     * Restores a database backup by replacing the current
+     * @param {String} filePath - The path to the backup file.
+     */
+    #restoreDatabaseBackupFile(filePath) {
+        fs.copyFile(filePath, this.database, (err) => {
+            if (err) throw err;
+            else fs.unlink(filePath, (err) => {
+                if (err) throw err;
             });
         });
     }

@@ -44,7 +44,7 @@ function SerieCard({ serie, onPlayClick, onMoreClick, isCalledFromExplore, isCal
         }
     }
 
-    const isSerieCompleted = () => serie?.infos?.total_viewed_episodes === serie?.infos?.number_of_episodes;
+    const isSerieCompleted = () => serie?.infos?.total_viewed_episodes === serie?.infos?.number_of_episodes && serie?.infos?.number_of_episodes !== undefined;
 
     return (
         <>
