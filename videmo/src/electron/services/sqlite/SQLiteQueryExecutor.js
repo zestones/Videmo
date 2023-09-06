@@ -1,5 +1,5 @@
 const { app } = require('electron');
-const sqlite3 = require('sqlite3');
+const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 const fs = require('fs');
 
@@ -191,6 +191,47 @@ class SQLiteQueryExecutor {
                         }
                     });
                 });
+            });
+        });
+    }
+
+    /**
+     * Creates a backup of the database.
+     * @param {String} filePath - The path to the backup file.
+     * @returns {Promise<void>} A promise that resolves when the backup is created.
+     */
+    createDatabaseBackup(filePath) {
+        return new Promise((resolve, reject) => {
+            const backup = this.db.backup(filePath, (err) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve();
+                }
+            });
+
+            backup.step(-1, (backupCode) => {
+                if (backupCode !== sqlite3.OK) {
+                    reject(new Error(`Backup step failed with code ${backupCode}`));
+                }
+            });
+        });
+    }
+
+    /**
+     * Restores a database backup.
+     * @param {String} filePath 
+     * @returns {Promise<void>} A promise that resolves when the backup is restored.
+     */
+    restoreDatabaseBackup(filePath) {
+        return new Promise((resolve, reject) => {
+            // replace the current database file with the backup file
+            fs.copyFile(filePath, this.database, (err) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve();
+                }
             });
         });
     }

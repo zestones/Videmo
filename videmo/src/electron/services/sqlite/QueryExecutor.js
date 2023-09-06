@@ -77,6 +77,27 @@ class QueryExecutor {
         }
     }
 
+    async createDatabaseBackup(db) {
+        try {
+            this.open();
+            const result = await this.sqlQueryExecutor.createDatabaseBackup(db);
+            this.close();
+            return result;
+        } catch (err) {
+            console.error('Error creating database backup:', err);
+            throw err;
+        }
+    } 
+
+    async restoreDatabaseBackup(filePath) {
+        try {
+            return await this.sqlQueryExecutor.restoreDatabaseBackup(filePath);
+        } catch (err) {
+            console.error('Error restoring database backup:', err);
+            throw err;
+        }
+    }
+
     async open() {
         try {
             await this.sqlQueryExecutor.open();
