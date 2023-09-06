@@ -99,7 +99,7 @@ class SerieTrackDAO {
 
             // 2. Set parent series to the sum of viewed episodes of all child series
             if (!serie.parent_id) continue;
-            this.#updateParentSeriesViewedEpisodes(serie.parent_id);
+            await this.#updateParentSeriesViewedEpisodes(serie.parent_id);
         }
     }
 

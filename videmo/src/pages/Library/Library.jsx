@@ -43,6 +43,7 @@ function Library() {
     }, [serieApi, currentCategory, showNotification]);
 
     const retrieveAllSeriesByLinks = (links) => {
+        if(!links) return;
         serieApi.readAllSeriesByLinks(links)
             .then((series) => setSubSeries(subSeries.map((serie) => series.find((s) => s.link === serie.link) || serie)))
             .catch((error) => showNotification("error", `Error retrieving series: ${error.message}`));
