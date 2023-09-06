@@ -4,21 +4,35 @@ CREATE TABLE IF NOT EXISTS Extension (
   link TEXT,
   name TEXT,
   local INTEGER,
+  is_active INTEGER,
   UNIQUE (link)
 );
 
 -- Create the Serie table
 CREATE TABLE IF NOT EXISTS Serie (
   id INTEGER PRIMARY KEY,
-  basename TEXT, -- The name of the serie
-  name TEXT, -- Sub name of the serie (ex: Seasons for local series)
-  description TEXT,
+  basename TEXT,
+  name TEXT, 
   link TEXT,
   image TEXT,
   inLibrary INTEGER,
   extension_id INTEGER,
+  parent_id INTEGER,
   FOREIGN KEY (extension_id) REFERENCES Extension (id),
   UNIQUE (link)
+);
+
+-- Create the SerieInfos table
+CREATE TABLE IF NOT EXISTS SerieInfos (
+  id INTEGER PRIMARY KEY,
+  serie_id INTEGER,
+  description TEXT,
+  duration DATETIME,
+  number_of_episodes INTEGER,
+  total_viewed_episodes INTEGER,
+  rating INTEGER,
+  releaseDate DATETIME,
+  FOREIGN KEY (serie_id) REFERENCES Serie (id)
 );
 
 -- Create the SerieGenre table
@@ -26,7 +40,7 @@ CREATE TABLE IF NOT EXISTS SerieGenre (
   id INTEGER PRIMARY KEY,
   serie_id INTEGER,
   genre_id INTEGER,
-  FOREIGN KEY (serie_id) REFERENCES Serie (id),
+  FOREIGN KEY (serie_id) REFERENCES SerieInfos (serie_id),
   FOREIGN KEY (genre_id) REFERENCES Genre (id),
   UNIQUE (serie_id, genre_id)
 );
@@ -80,6 +94,7 @@ CREATE TABLE IF NOT EXISTS Episode (
   viewed INTEGER,
   bookmarked INTEGER,
   played_time DATETIME,
+  hash DATETIME,
   UNIQUE (link)
 );
 
@@ -90,6 +105,13 @@ CREATE TABLE IF NOT EXISTS History (
   timestamp DATETIME,
   FOREIGN KEY (episode_id) REFERENCES Episode (id),
   UNIQUE (episode_id, timestamp)
+);
+
+-- Create the UpdatedSerie table
+CREATE TABLE IF NOT EXISTS UpdatedSerie (
+  id INTEGER PRIMARY KEY,
+  serie_id INTEGER,
+  FOREIGN KEY (serie_id) REFERENCES Serie (id)
 );
 
 -- Insert the default category

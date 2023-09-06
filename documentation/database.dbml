@@ -1,0 +1,113 @@
+
+Table "Extension" {
+  "id" INTEGER [pk]
+  "link" TEXT
+  "name" TEXT
+  "local" INTEGER
+  "is_active" INTEGER
+}
+
+Table "Serie" {
+  "id" INTEGER [pk]
+  "basename" TEXT // name of a serie
+  "name" TEXT // used only for local series when a folder posses a subfolder
+  "link" TEXT
+  "image" TEXT
+  "extension_id" INTEGER
+  "inLibrary" INTEGER
+  "parent_id" INTEGER
+Indexes {
+  (link) [unique]
+}
+}
+
+Table "SerieInfos" {
+  "id" INTEGER [pk]
+  "serie_id" INTEGER
+  "description" TEXT
+  "duration" DATETIME
+  "stars" INTEGER
+  "date" DATETIME
+}
+
+Table "SerieGenre" {
+  "id" INTEGER [pk]
+  "serie_id" INTEGER
+  "genre_id" INTEGER
+Indexes {
+  (serie_id, genre_id) [unique]
+}
+}
+
+Table "Genre" {
+  "id" INTEGER [pk]
+  "name" TEXT
+}
+
+Table "SerieCategory" {
+  "id" INTEGER [pk]
+  "serie_id" INTEGER
+  "category_id" INTEGER
+
+Indexes {
+  (serie_id, category_id) [unique]
+}
+}
+
+Table "Category" {
+  "id" INTEGER [pk]
+  "name" TEXT
+}
+
+Table "Track" {
+  "id" INTEGER [pk]
+  "serie_id" INTEGER
+  "episode_id" INTEGER
+}
+
+Table "Episode" {
+  "id" INTEGER [pk]
+  "link" TEXT
+  "name" TEXT
+  "viewed" INTEGER
+  "bookmarked" INTEGER
+  "played_time" DATETIME
+}
+
+Table "LastOpenedCategory" {
+  "id" INTEGER [pk]
+  "category_id" INTEGER
+}
+
+Table "History" {
+  "id" INTEGER [pk]
+  "episode_id" INTEGER
+  "timestamp" DATETIME
+}
+
+Table "UpdatedSeries" {
+  "id" INTEGER [pk]
+  "serie_id" INTEGER
+}
+  
+Ref:"Serie"."id" < "UpdatedSeries"."serie_id"
+
+Ref:"Extension"."id" < "Serie"."extension_id"
+
+Ref:"Serie"."id" < "SerieCategory"."serie_id"
+
+Ref:"Category"."id" < "SerieCategory"."category_id"
+
+Ref:"Category"."id" < "LastOpenedCategory"."category_id"
+
+Ref:"Genre"."id" < "SerieGenre"."genre_id"
+
+Ref:"Serie"."id" < "Track"."serie_id"
+
+Ref:"Episode"."id" - "Track"."episode_id"
+
+Ref:"Episode"."id" < "History"."episode_id"
+
+Ref: "Serie"."id" < "SerieInfos"."id"
+
+Ref: "SerieInfos"."serie_id" < "SerieGenre"."serie_id"

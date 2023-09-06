@@ -53,7 +53,7 @@ class QueryExecutor {
         }
     }
 
-    async executeManyAndCommit(sql, params) {
+    async executeManyAndCommit(sql, params = []) {
         try {
             this.open();
             const result = await this.sqlQueryExecutor.executeManyAndCommit(sql, params);
@@ -73,6 +73,27 @@ class QueryExecutor {
             return result;
         } catch (err) {
             console.error('Error executing query from file:', err);
+            throw err;
+        }
+    }
+
+    async createDatabaseBackup(db) {
+        try {
+            this.open();
+            const result = await this.sqlQueryExecutor.createDatabaseBackup(db);
+            this.close();
+            return result;
+        } catch (err) {
+            console.error('Error creating database backup:', err);
+            throw err;
+        }
+    } 
+
+    async restoreDatabaseBackup(filePath) {
+        try {
+            return await this.sqlQueryExecutor.restoreDatabaseBackup(filePath);
+        } catch (err) {
+            console.error('Error restoring database backup:', err);
             throw err;
         }
     }

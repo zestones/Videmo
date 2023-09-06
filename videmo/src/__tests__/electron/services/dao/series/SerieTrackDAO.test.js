@@ -69,11 +69,10 @@ describe('SerieTrackDAO', () => {
             id: 1,
             basename: 'Serie 1',
             name: 'Serie 1',
-            description: 'Description 1',
             image: 'Image 1',
             link: 'Link 1',
             extension_id: 1,
-            inLibrary: 0,
+            inLibrary: false,
         };
 
         const episode = {
@@ -86,8 +85,8 @@ describe('SerieTrackDAO', () => {
         };
 
         // Insert the serie and episode
-        const insertSerieSql = `INSERT INTO Serie (id, basename, name, description, image, link, extension_id, inLibrary) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
-        const insertSerieParams = [serie.id, serie.basename, serie.name, serie.description, serie.image, serie.link, serie.extension_id, serie.inLibrary];
+        const insertSerieSql = `INSERT INTO Serie (id, basename, name, image, link, extension_id, inLibrary) VALUES (?, ?, ?, ?, ?, ?, ?)`;
+        const insertSerieParams = [serie.id, serie.basename, serie.name, serie.image, serie.link, serie.extension_id, serie.inLibrary];
         await mockQueryExecutor.executeAndCommit(insertSerieSql, insertSerieParams);
 
         const insertEpisodeSql = `INSERT INTO Episode (id, name, link, viewed, bookmarked, played_time) VALUES (?, ?, ?, ?, ?, ?)`;

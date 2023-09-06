@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { NotificationProvider } from './components/Notification/NotificationProvider';
 
 // External
 import SubscriptionsIcon from '@mui/icons-material/Subscriptions';
@@ -25,16 +26,18 @@ function App() {
 	const history = { history: { component: <History />, icon: HistoryIcon, label: "Historique" } };
 	const settings = { more: { component: <Settings />, icon: MoreHorizIcon, label: "Plus" } };
 
-	const [activePage, setActivePage] =  useState(Object.keys(library)[0]);
+	const [activePage, setActivePage] = useState(Object.keys(library)[0]);
 	const navigationItems = { ...library, ...explore, ...history, ...settings };
 
 	return (
 		<div className="App">
-			<Navigation
-				navItems={navigationItems}
-				activePage={activePage}
-				onPageChange={setActivePage}
-			/>
+			<NotificationProvider>
+				<Navigation
+					navItems={navigationItems}
+					activePage={activePage}
+					onPageChange={setActivePage}
+				/>
+			</NotificationProvider>
 		</div>
 	);
 }

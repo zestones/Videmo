@@ -1,0 +1,52 @@
+{
+    "status": "added",
+    "link": "Root\\Sub folder - 3",
+    "node": {
+        "name": "Sub folder - 3",
+        "type": "directory",
+        "content": [
+            {
+                "name": "Sub Sub folder - 1",
+                "type": "directory",
+                "content": [
+                    {
+                        "name": "file - 1.txt",
+                        "type": "file",
+                        "modified": 1693843916559.631
+                    },
+                    {
+                        "name": "file - 2.txt",
+                        "type": "file",
+                        "modified": 1693843916559.631
+                    },
+                    {
+                        "name": "file - 3.txt",
+                        "type": "file",
+                        "modified": 1693843916559.631
+                    }
+                ]
+            },
+            {
+                "name": "Sub Sub folder - 2",
+                "type": "directory",
+                "content": [
+                    {
+                        "name": "file - 1.txt",
+                        "type": "file",
+                        "modified": 1693843916559.631
+                    },
+                    {
+                        "name": "file - 2.txt",
+                        "type": "file",
+                        "modified": 1693843916559.631
+                    },
+                    {
+                        "name": "file - 3.txt",
+                        "type": "file",
+                        "modified": 1693843916559.631
+                    }
+                ]
+            }
+        ]
+    }
+}

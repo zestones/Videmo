@@ -18,6 +18,55 @@ $card-height: 300px;
 
     list-style: none;
 
+    &.completed {
+        opacity: 0.6;
+    }
+
+    &:active {
+        transform: scale(0.95);
+        box-shadow: 0px 0px 30px 0px rgba(0, 0, 0, 0.7);
+    }
+
+    .loadingEffect {
+        position: absolute;
+        top: 0;
+        left: 0;
+
+        width: 100%;
+        height: 100%;
+
+        background: rgba(255, 255, 255, 0.7);
+        z-index: 1;
+
+        &::after {
+            content: '';
+            display: block;
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--light-blue);
+
+            border-top-color: transparent;
+            border-radius: 50%;
+            position: absolute;
+
+            top: 50%;
+            left: 50%;
+
+            transform: translate(-50%, -50%);
+            animation: spin 1s linear infinite;
+
+            @keyframes spin {
+                to {
+                    transform: translate(-50%, -50%) rotate(360deg);
+                }
+            }
+        }
+    }
+
+    .imageLoaded {
+        opacity: 1;
+    }
+
     .inLibraryLabel {
         position: absolute;
         top: 0;
@@ -46,7 +95,7 @@ $card-height: 300px;
         left: 0;
 
         width: $card-width;
-        
+
         margin: 0;
         padding: 0.5rem 1rem;
 
@@ -56,62 +105,219 @@ $card-height: 300px;
         background: linear-gradient(0deg, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0));
     }
 
+    .episodeInfos {
+        position: absolute;
+        top: 5px;
+        left: 5px;
+
+        padding: 4px 8px;
+        border-radius: 4px;
+
+        font-weight: 600;
+        color: var(--white-color);
+        text-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+        background-color: var(--light-blue-6);
+
+        &.completed {
+            background-color: var(--green-1);
+        }
+
+        .number {
+            position: relative;
+            font-size: 0.8rem;
+            color: var(--white-color);
+        }
+    }
+
     .cardLayer {
         position: absolute;
         bottom: 0;
         left: 0;
 
-        background-color: rgba(0, 0, 0, 0.5);
+        background-color: rgba(0, 0, 0, 0.3);
         border-radius: $card-border-radius;
-        overflow: hidden;
 
-        width: 0;
-        height: 0;
+        overflow: hidden;
+        display: none;
+
+        width: 100%;
+        height: 100%;
 
         animation-duration: 0.5s;
         animation-timing-function: ease-in-out;
 
         &.hovered {
-            animation: expandBottomToUp 0.5s ease-in-out;
-            width: 100%;
-            height: 100%;
+            display: block;
+            animation: fadeIn 0.2s ease-in-out;
 
-            @keyframes expandBottomToUp {
-                0% {
-                    height: 0%;
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
                 }
 
-                100% {
-                    height: 100%;
+                to {
+                    opacity: 1;
                 }
             }
+
         }
 
         .cardLayerContent {
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            position: relative;
+            bottom: 0;
+            left: 0;
 
             height: 100%;
             padding: 0.5rem 2rem;
 
-            .cardLayerImage {
-                width: 65px;
-                height: 65px;
+            .iconContainer {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                width: 40px;
+                height: 40px;
 
                 border-radius: 50%;
-                background-size: cover;
-                background-position: center;
-                cursor: pointer;
+
+                svg {
+                    width: 27px;
+                    height: 27px;
+
+                    padding: 2px;
+                }
+
+                &.moreIcon {
+                    position: absolute;
+                    bottom: 10px;
+                    left: 10px;
+
+                    background-color: rgba(0, 0, 0, 0.5);
+                    border: 2px solid var(--green-1);
+
+                    svg {
+                        fill: var(--green-1);
+                    }
+                }
+
+                &.playIcon {
+                    position: absolute;
+
+                    bottom: 10px;
+                    right: 10px;
+
+                    background-color: rgba(0, 0, 0, 0.5);
+                    border: 2px solid var(--light-blue);
+
+                    svg {
+                        fill: var(--light-blue);
+                    }
+                }
+
+                &.checkboxIcon {
+                    position: absolute;
+
+                    top: 0;
+                    right: 0;
+
+                    border: none;
+
+                    input[type="checkbox"] {
+                        width: 23px;
+                        height: 23px;
+
+                        appearance: none;
+                        border: 2px solid var(--gray-4);
+                        border-radius: 4px;
+
+                        background-color: rgba(0, 0, 0, 0.5);
+                        outline: none;
+
+                        transition: all 0.2s ease-in-out;
+
+                        &:checked {
+                            background-color: var(--light-blue);
+                            border: 2px solid var(--light-blue);
+
+                            &::after {
+                                content: '';
+                                display: block;
+
+                                width: 10px;
+                                height: 5px;
+
+                                border: 2px solid var(--white-color);
+                                border-top: none;
+                                border-right: none;
+
+                                position: absolute;
+                                top: 50%;
+                                left: 50%;
+
+                                transform: translate(-50%, -50%) rotate(-45deg);
+
+                                animation: checkmark 0.2s ease-in-out;
+
+                                @keyframes checkmark {
+                                    from {
+                                        width: 0;
+                                        height: 0;
+                                    }
+
+                                    to {
+                                        width: 10px;
+                                        height: 5px;
+                                    }
+                                }
+                            }
+                        }
+
+                        &:hover {
+                            cursor: pointer;
+                        }
+
+                        &:focus {
+                            box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.5);
+                        }
+                    }
+                }
 
                 &:hover {
-                    background-color: rgba(255, 255, 255, 0.2);
-                }
-            }
+                    cursor: pointer;
 
-            hr {
-                height: 80%;
-                border: 2px solid var(--white-color);
+                    &.playIcon,
+                    &.moreIcon {
+                        background-color: rgba(0, 0, 0, 0.2);
+                        border: 2px solid var(--white-color);
+
+                        animation: pulse 1s ease-in-out infinite;
+
+                        @keyframes pulse {
+                            0% {
+                                transform: scale(1);
+                                opacity: 0.7;
+                            }
+
+                            50% {
+                                transform: scale(1.05);
+                                opacity: 1;
+
+                            }
+
+                            100% {
+                                transform: scale(1);
+                                opacity: 0.7;
+                            }
+                        }
+
+                    }
+
+                    svg {
+                        transform: scale(1.1);
+                        transition: all 0.2s ease-in-out;
+                    }
+                }
+
             }
         }
     }

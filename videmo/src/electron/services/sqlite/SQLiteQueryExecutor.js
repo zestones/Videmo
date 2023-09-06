@@ -1,7 +1,10 @@
 const { app } = require('electron');
-const sqlite3 = require('sqlite3');
+const sqlite3 = require('sqlite3').verbose();
+
 const path = require('path');
 const fs = require('fs');
+const zlib = require('zlib');
+
 
 class SQLiteQueryExecutor {
     constructor() {
@@ -37,10 +40,10 @@ class SQLiteQueryExecutor {
      * @private
     */
     async initializeDatabase() {
-        
+
         if (!fs.existsSync(this.database)) {
             this.db = new sqlite3.Database(this.database);
-            
+
             await this.executeFile(this.create_tables_sql);
             await this.executeFile(this.fill_data_sql);
         }
@@ -162,7 +165,7 @@ class SQLiteQueryExecutor {
      * @param {Array<Array>} params - An array of parameter sets for the query.
      * @returns {Promise<void>} A promise that resolves when the changes are committed.
     */
-    executeManyAndCommit(sql, paramsArray) {
+    executeManyAndCommit(sql, paramsArray = []) {
         return new Promise((resolve, reject) => {
             this.db.serialize(() => {
                 this.db.run('BEGIN TRANSACTION');
@@ -195,6 +198,107 @@ class SQLiteQueryExecutor {
         });
     }
 
+    createDatabaseBackup(filePath) {
+        return new Promise((resolve, reject) => {
+            this.#createDatabaseBackupFile(filePath)
+                .then(() => resolve())
+                .catch((err) => reject(err));
+        });
+    }
+
+    #compressBackupFile(filePath) {
+        return new Promise((resolve, reject) => {
+            const readStream = fs.createReadStream(filePath);
+            const writeStream = fs.createWriteStream(`${filePath}.gz`);
+            const gzip = zlib.createGzip();
+
+            readStream.pipe(gzip).pipe(writeStream);
+
+            writeStream.on('finish', () => {
+                fs.unlink(filePath, (err) => {
+                    if (err) reject(err);
+                    else resolve(`${filePath}.gz`);
+                });
+            });
+
+            writeStream.on('error', reject);
+        });
+    }
+
+    /**
+     * Creates a backup of the database.
+     * @param {String} filePath - The path to the backup file.
+     * @returns {Promise<void>} A promise that resolves when the backup is created.
+     */
+    #createDatabaseBackupFile(filePath) {
+        // We copy the database file to the backup file
+        return new Promise((resolve, reject) => {
+            fs.copyFile(this.database, filePath, (err) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    this.#compressBackupFile(filePath)
+                        .then(() => resolve())
+                        .catch((err) => reject(err));
+                }
+            });
+        });
+    }
+
+    /**
+     * Restores a database backup.
+     * @param {String} filePath 
+     * @returns {Promise<void>} A promise that resolves when the backup is restored.
+     */
+    restoreDatabaseBackup(filePath) {
+        return new Promise((resolve, reject) => {
+            // the backup file is compressed
+            if (filePath.endsWith('.gz')) {
+                this.#decompressBackupFile(filePath)
+                    .then((decompressedFilePath) => this.#restoreDatabaseBackupFile(decompressedFilePath))
+                    .then(() => resolve())
+                    .catch((err) => reject(err));
+            } else {
+                reject(new Error('Invalid backup file'));
+            }
+        });
+    }
+
+    #decompressBackupFile(filePath) {
+        return new Promise((resolve, reject) => {
+            const gunzip = zlib.createGunzip();
+            const input = fs.createReadStream(filePath);
+            const decompressedFilePath = filePath.replace('.gz', '');
+            const output = fs.createWriteStream(decompressedFilePath);
+
+            input.pipe(gunzip).pipe(output);
+
+            output.on('finish', () => {
+                output.close(() => {
+                    resolve(decompressedFilePath);
+                });
+            });
+
+            output.on('error', (err) => {
+                reject(err);
+            });
+        });
+    }
+
+
+    /**
+     * Restores a database backup by replacing the current
+     * @param {String} filePath - The path to the backup file.
+     */
+    #restoreDatabaseBackupFile(filePath) {
+        fs.copyFile(filePath, this.database, (err) => {
+            if (err) throw err;
+            else fs.unlink(filePath, (err) => {
+                if (err) throw err;
+            });
+        });
+    }
+
     /**
      * Opens the database connection.
      * @returns {Promise<void>} A promise that resolves when the database connection is opened.
@@ -205,11 +309,19 @@ class SQLiteQueryExecutor {
                 if (err) {
                     reject(err);
                 } else {
-                    resolve();
+                    // Change the journal mode to WAL after opening the connection
+                    this.db.exec("PRAGMA journal_mode = WAL;", (err) => {
+                        if (err) {
+                            reject(err);
+                        } else {
+                            resolve();
+                        }
+                    });
                 }
             });
         });
     }
+
 
     /**
      * Closes the database connection.

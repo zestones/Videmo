@@ -38,11 +38,11 @@ describe('SerieDAO', () => {
         const serie = {
             basename: 'serie',
             name: 'Serie',
-            description: 'Description',
             image: 'image.png',
             link: 'serie',
             extension_id: 1,
-            inLibrary: 1
+            inLibrary: 1,
+            parent_id: 1
         };
 
         // Act
@@ -54,11 +54,11 @@ describe('SerieDAO', () => {
         // Assert
         expect(result.basename).toBe(serie.basename);
         expect(result.name).toBe(serie.name);
-        expect(result.description).toBe(serie.description);
         expect(result.image).toBe(serie.image);
         expect(result.link).toBe(serie.link);
         expect(result.extension_id).toBe(serie.extension_id);
         expect(result.inLibrary).toBe(serie.inLibrary);
+        expect(result.parent_id).toBe(serie.parent_id);
     });
 
     it('should get all series', async () => {
@@ -66,21 +66,21 @@ describe('SerieDAO', () => {
         const serie1 = {
             basename: 'serie1',
             name: 'Serie 1',
-            description: 'Description 1',
             image: 'image1.png',
             link: 'serie1',
             extension_id: 1,
-            inLibrary: 1
+            inLibrary: 1,
+            parent_id: 1
         };
 
         const serie2 = {
             basename: 'serie2',
             name: 'Serie 2',
-            description: 'Description 2',
             image: 'image2.png',
             link: 'serie2',
             extension_id: 1,
-            inLibrary: 1
+            inLibrary: 1,
+            parent_id: 1
         };
 
         // Insert series
@@ -104,11 +104,11 @@ describe('SerieDAO', () => {
         const serie = {
             basename: 'serie',
             name: 'Serie',
-            description: 'Description',
             image: 'image.png',
             link: 'serie',
             extension_id: 1,
-            inLibrary: 1
+            inLibrary: true,
+            parent_id: 1
         };
 
         // Insert serie
@@ -129,11 +129,11 @@ describe('SerieDAO', () => {
         const serie = {
             basename: 'serie',
             name: 'Serie',
-            description: 'Description',
             image: 'image.png',
             link: 'serie',
             extension_id: 1,
-            inLibrary: 1
+            inLibrary: true,
+            parent_id: 1
         };
 
         // Insert serie
@@ -155,31 +155,31 @@ describe('SerieDAO', () => {
         const serie1 = {
             basename: 'serie1',
             name: 'Serie 1',
-            description: 'Description 1',
             image: 'image1.png',
             link: 'serie1',
             extension_id: extension.id,
-            inLibrary: 1
+            inLibrary: true,
+            parent_id: 1
         };
 
         const serie2 = {
             basename: 'serie2',
             name: 'Serie 2',
-            description: 'Description 2',
             image: 'image2.png',
             link: 'serie2',
             extension_id: extension.id,
-            inLibrary: 1
+            inLibrary: true,
+            parent_id: 1
         };
 
         const serie3 = {
             basename: 'serie3',
             name: 'Serie 3',
-            description: 'Description 3',
             image: 'image3.png',
             link: 'serie3',
             extension_id: 2,
-            inLibrary: 1
+            inLibrary: true,
+            parent_id: 1
         };
 
         // Insert series
@@ -208,36 +208,36 @@ describe('SerieDAO', () => {
         const serie1 = {
             basename: 'serie1',
             name: 'Serie 1',
-            description: 'Description 1',
             image: 'image1.png',
             link: 'serie1',
             extension_id: 1,
-            inLibrary: 1
+            inLibrary: true,
+            parent_id: 1
         };
 
         const serie2 = {
             basename: 'serie2',
             name: 'Serie 2',
-            description: 'Description 2',
             image: 'image2.png',
             link: 'serie2',
             extension_id: 1,
-            inLibrary: 1
+            inLibrary: true,
+            parent_id: 1
         };
 
         const serie3 = {
             basename: 'serie3',
             name: 'Serie 3',
-            description: 'Description 3',
             image: 'image3.png',
             link: 'serie3',
             extension_id: 1,
-            inLibrary: 1
+            inLibrary: true,
+            parent_id: 1
         };
 
         // Insert series
-        await serieDAO.createSerie(serie1);
-        await serieDAO.createSerie(serie2);
+        const insertedSerie1 = await serieDAO.createSerie(serie1);
+        const insertedSerie2 = await serieDAO.createSerie(serie2);
         await serieDAO.createSerie(serie3);
 
         // Insert category
@@ -246,12 +246,18 @@ describe('SerieDAO', () => {
         // Insert category_serie
         await mockQueryExecutor.executeAndCommit(`INSERT INTO SerieCategory (category_id, serie_id) VALUES (?, ?)`, [category.id, 1]);
         await mockQueryExecutor.executeAndCommit(`INSERT INTO SerieCategory (category_id, serie_id) VALUES (?, ?)`, [category.id, 2]);
+        await mockQueryExecutor.executeAndCommit(`INSERT INTO SerieInfos (serie_id) VALUES (?)`, [insertedSerie1.id]);
+        await mockQueryExecutor.executeAndCommit(`INSERT INTO SerieInfos (serie_id) VALUES (?)`, [insertedSerie2.id]);
 
         // Act
         const result = await serieDAO.getSeriesByCategoryId(category.id);
 
         // remove the id property
-        result.forEach(serie => delete serie.id);
+        result.forEach(serie => {
+            delete serie.id;
+            delete serie.infos;
+            delete serie.genres;
+        });
 
         // Assert
         expect(result.length).toBe(2);
@@ -264,11 +270,11 @@ describe('SerieDAO', () => {
         const serie = {
             basename: 'serie',
             name: 'Serie',
-            description: 'Description',
             image: 'image.png',
             link: 'serie',
             extension_id: 1,
-            inLibrary: true
+            inLibrary: true,
+            parent_id: 1
         };
 
         // Insert serie
@@ -287,11 +293,11 @@ describe('SerieDAO', () => {
         const serie = {
             basename: 'serie',
             name: 'Serie',
-            description: 'Description',
             image: 'image.png',
             link: 'serie',
             extension_id: 1,
-            inLibrary: true
+            inLibrary: true,
+            parent_id: 1
         };
 
         // Insert serie
