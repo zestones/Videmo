@@ -48,10 +48,10 @@ function SourceSettings() {
             showNotification("loading", "Chargement en cours...", false);
 
             // Create a new extension with the selected folder path
-            await extensionApi.createExtension(path, folderManager.retrieveBaseName(path));
+            const extension = await extensionApi.createExtension(path, folderManager.retrieveBaseName(path));
             hideNotification();
-            
-            setExtensions([...extensions, { id: null, name: folderManager.retrieveBaseName(path), link: path }]);
+
+            setExtensions([...extensions, { ...extension }]);
         } catch (error) {
             showNotification("error", error.message);
             console.error(error);

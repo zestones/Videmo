@@ -14,14 +14,14 @@ ipcMain.on('/create/extension/', async (event, arg) => {
     if (retrievedExtension !== undefined && !retrievedExtension.is_active) {
         await scrapper.scrap();
         await extensionDAO.updateExtensionIsActive(retrievedExtension.id, true);
-        event.reply('/create/extension/', { success: true, extension: { link: arg.link, name: arg.name, local: arg.local } })
+        event.reply('/create/extension/', { success: true, extension: { id: retrievedExtension.id, link: arg.link, name: arg.name, local: arg.local } })
     } else {
-        new ExtensionsDAO().createExtension(arg.link, arg.name, arg.local, false)
+        extensionDAO.createExtension(arg.link, arg.name, arg.local, false)
             .then(async (extension) => {
                 // Scrap all the tree structure and insert it into the database
                 await scrapper.scrap();
                 await extensionDAO.updateExtensionIsActive(extension.id, true);
-                event.reply('/create/extension/', { success: true, extension: { link: arg.link, name: arg.name, local: arg.local } })
+                event.reply('/create/extension/', { success: true, extension: extension })
             })
             .catch((err) => event.reply('/create/extension/', { success: false, error: err }));
     }
