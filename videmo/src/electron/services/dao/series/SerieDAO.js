@@ -34,12 +34,21 @@ class SerieDAO {
 
     // Read serie by link
     async getSerieByLink(link) {
-        const sql = `SELECT * FROM Serie WHERE link = ?`;
-        const params = [link];
+        try {
+            const sql = `SELECT * FROM Serie WHERE link = ?`;
+            const params = [link];
+    
+            const result = await this.queryExecutor.executeAndFetchOne(sql, params);
 
-        const result = await this.queryExecutor.executeAndFetchOne(sql, params);
-        result.inLibrary = this.dataTypesConverter.convertIntegerToBoolean(result.inLibrary);
-        return result;
+            if (result !== null && result !== undefined) {
+                result.inLibrary = this.dataTypesConverter.convertIntegerToBoolean(result.inLibrary);
+            }
+
+            return result;
+        } catch (err) {
+            console.error('Error executing query and fetching one result:', err);
+            throw err;
+        }
     }
 
     // Read all parent series

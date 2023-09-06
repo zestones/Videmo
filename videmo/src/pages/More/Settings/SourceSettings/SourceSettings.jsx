@@ -54,6 +54,7 @@ function SourceSettings() {
             setExtensions([...extensions, { id: null, name: folderManager.retrieveBaseName(path), link: path }]);
         } catch (error) {
             showNotification("error", error.message);
+            console.error(error);
         }
     };
 
