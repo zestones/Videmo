@@ -1,8 +1,5 @@
-// Variables
-$navigation-width: 65px;
-
 .nav {
-    width: $navigation-width;
+    width: var(--navigation-width);
     height: 100%;
     
     position: fixed;
@@ -25,6 +22,5 @@ $navigation-width: 65px;
 }
 
 .content {
-    margin-left: $navigation-width;
-    height: 100vh;
+    margin-left: var(--navigation-width);
 }
