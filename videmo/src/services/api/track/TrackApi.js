@@ -24,7 +24,7 @@ export default class TrackApi {
         });
     }
 
-    #updateSerieTrack = (serie, episode, timestamp) => {
+    #updateSerieTrack = (serie, episode) => {
         window.api.send("/update/serie/track/", { serie: JSON.stringify(serie), episode: JSON.stringify(episode) });
 
         return new Promise((resolve, reject) => {

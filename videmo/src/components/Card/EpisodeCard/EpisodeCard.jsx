@@ -40,8 +40,8 @@ function EpisodeCard({ serie, episode, setEpisodes }) {
         trackApi.addEpisodeToBookmarks(serie, updatedEpisode);
     };
 
-    const handleViewedClick = () => {
-        const updatedEpisode = { ...currentEpisode, viewed: !currentEpisode.viewed, played_time: 0 };
+    const handleViewedClick = (viewed) => {
+        const updatedEpisode = { ...currentEpisode, viewed: typeof viewed === "boolean" ? viewed : !currentEpisode.viewed, played_time: 0 };
         setCurrentEpisode(updatedEpisode);
         setEpisodes((episodes) => episodes.map((episode) => episode.link === updatedEpisode.link ? updatedEpisode : episode));
         trackApi.addEpisodeToViewed(serie, updatedEpisode);
@@ -49,12 +49,12 @@ function EpisodeCard({ serie, episode, setEpisodes }) {
 
     const handleCloseVideoPlayer = (playedTime, finished) => {
         setOpenVideoPlayer(false);
-        if (finished) return handleViewedClick();
-        updateCurrentEpisode(playedTime);
+        if (finished) return handleViewedClick(true);
+        updateCurrentEpisode(null, playedTime);
     };
 
-    const updateCurrentEpisode = (playedTime = 0, viewed = false) => {
-        const updatedEpisode = { ...currentEpisode, played_time: playedTime, viewed: viewed };
+    const updateCurrentEpisode = (viewed, playedTime = 0) => {
+        const updatedEpisode = { ...currentEpisode, played_time: playedTime, viewed: viewed || currentEpisode.viewed };
         trackApi.updatePlayedTime(serie, updatedEpisode, new Date().getTime());
         setCurrentEpisode(updatedEpisode);
         setEpisodes((episodes) => episodes.map((episode) => episode.link === updatedEpisode.link ? updatedEpisode : episode));
@@ -62,7 +62,7 @@ function EpisodeCard({ serie, episode, setEpisodes }) {
 
     const handleOpenLocalVideoPlayer = () => {
         folderManager.openFileInLocalVideoPlayer(currentEpisode.link);
-        updateCurrentEpisode(currentEpisode.played_time, false);
+        updateCurrentEpisode(false, currentEpisode.played_time);
     };
 
 
