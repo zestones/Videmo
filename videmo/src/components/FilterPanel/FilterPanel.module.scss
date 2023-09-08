@@ -1,0 +1,178 @@
+.filterButton {
+    background: none;
+    border: none;
+    color: white;
+
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+
+    cursor: pointer;
+    margin: 0 7px;
+    padding: 0.5rem !important;
+
+    transition-duration: 0.4s;
+
+    &:hover {
+        animation: pulse 2s infinite;
+        color: var(--secondary-color-darker);
+        background-color: var(--primary-color-light) !important;
+    }
+
+    @keyframes pulse {
+        0% {
+            transform: scale(1);
+        }
+
+        50% {
+            transform: scale(1.1);
+        }
+
+        100% {
+            transform: scale(1);
+        }
+    }
+
+    .filterIcon {
+        display: flex;
+        align-items: center;
+        font-size: 1.7rem;
+    }
+}
+
+.filterPanel {
+    position: fixed;
+    bottom: 0;
+    left: calc(50% + var(--navigation-width) / 2);
+
+    transform: translateX(-50%) translateY(100%);
+
+    width: 85%;
+    min-height: 200px;
+    background-color: var(--primary-color-dark);
+    transition: transform 0.3s ease-in-out;
+
+    z-index: 999;
+
+    border-radius: 10px 10px 0 0;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+
+    &.open {
+        transform: translateX(-50%) translateY(0);
+    }
+
+    .tabs {
+        display: flex;
+        justify-content: space-around;
+        border-bottom: 1px solid #ccc;
+        padding: 5px 0;
+    }
+
+    .tab {
+        padding: 10px 20px;
+        cursor: pointer;
+
+        &.active {
+            border-bottom: 2px solid #007bff;
+        }
+    }
+
+    .content {
+        padding: 20px;
+    }
+
+    .filterTab {
+        animation: fadeIn 0.3s ease-in-out;
+
+        label {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            cursor: pointer;
+
+            input[type="checkbox"] {
+                margin-right: 10px;
+                appearance: none;
+                width: 20px;
+                height: 20px;
+                border: 2px solid #007bff;
+                border-radius: 3px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                background-color: transparent;
+                transition: background-color 0.3s ease-in-out, border-color 0.3s ease-in-out;
+
+                &:checked {
+                    background-color: #007bff;
+                    border-color: #007bff;
+
+                    &:after {
+                        content: "";
+                        display: block;
+                        width: 5px;
+                        height: 10px;
+                        border: solid white;
+                        border-width: 0 2px 2px 0;
+                        transform: rotate(45deg);
+                    }
+                }
+            }
+        }
+    }
+
+    .sortTab {
+        display: flex;
+        flex-direction: column;
+
+        animation: fadeIn 0.3s ease-in-out;
+
+        label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            padding: 10px;
+            transition: background-color 0.3s ease-in-out;
+
+            &.selectedSort {
+                color: #fff;
+            }
+
+            .sortArrow {
+                width: 20px;
+                height: 20px;
+
+                margin-right: 17px;
+
+                display: flex;
+                justify-content: center;
+                align-items: center;
+
+                transition: transform 0.3s ease-in-out;
+
+                &.ascending {
+                    transform: rotate(180deg);
+                }
+
+                &.descending {
+                    transform: rotate(0deg);
+                }
+
+                svg {
+                    fill: #007bff;
+                    transform: translateY(2px);
+                }
+            }
+        }
+    }
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}

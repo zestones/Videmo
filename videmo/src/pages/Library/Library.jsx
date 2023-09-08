@@ -43,7 +43,7 @@ function Library() {
     }, [serieApi, currentCategory, showNotification]);
 
     const retrieveAllSeriesByLinks = (links) => {
-        if(!links) return;
+        if (!links) return;
         serieApi.readAllSeriesByLinks(links)
             .then((series) => setSubSeries(subSeries.map((serie) => series.find((s) => s.link === serie.link) || serie)))
             .catch((error) => showNotification("error", `Error retrieving series: ${error.message}`));
@@ -118,6 +118,7 @@ function Library() {
                     onSearch={setSearchValue}
                     onBack={serie ? onBackClick : null}
                     onRandom={() => subSeries.length > 0 && handleSerieSelection(subSeries[Math.floor(Math.random() * subSeries.length)])}
+                    onFilter={setSubSeries}
                 />
 
                 <CategoryHeader selectedCategory={currentCategory} onSelectCategory={setCurrentCategory} />

@@ -2,9 +2,45 @@
     display: flex;
     align-items: center;
 
-    .searchIcon {
+    .searchButton {
+        background: none;
+        border: none;
+        color: white;
+
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+
         cursor: pointer;
-        font-size: 2rem;
+        margin: 0 7px;
+        padding: 0.5rem !important;
+
+        transition-duration: 0.4s;
+
+        &:hover {
+            animation: pulse 2s infinite;
+            color: var(--secondary-color-darker);
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .searchIcon {
+            display: flex;
+            align-items: center;
+            font-size: 1.7rem;
+        }
     }
 
     .searchInput {
