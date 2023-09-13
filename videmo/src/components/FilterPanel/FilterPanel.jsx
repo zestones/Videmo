@@ -2,38 +2,28 @@ import React, { useState } from 'react';
 
 // External
 import FilterListIcon from '@mui/icons-material/FilterList';
-import NorthIcon from '@mui/icons-material/North';
 
 // Styles
 import styles from './FilterPanel.module.scss';
 
+// Components
+import SortContent from './SortContent/SortContent';
+
+// Constants
+export const SORT_TYPES = { ASC: 'asc', DESC: 'desc' };
+
+
 const FilterPanel = ({ onFilter }) => {
     // Constants initialization
     const TABS_NAME = { FILTER: 'Filter', SORT: 'Sort', DISPLAY: 'Display' };
-    const SORT_TYPES = { ASC: 'asc', DESC: 'desc' };
 
     // State initialization
     const [open, setOpen] = useState(false);
     const [activeTab, setActiveTab] = useState('Filter');
-    const [selectedSort, setSelectedSort] = useState(null);
-    const [sortType, setSortType] = useState(SORT_TYPES.ASC);
-
 
     // Function to handle tab click
     const handleTabClick = (tabName) => {
         setActiveTab(tabName);
-        setSelectedSort(null);
-    };
-
-    // Function to handle sort option click
-    const handleSortOptionClick = (sortOption) => {
-        if (selectedSort === sortOption) {
-            // If the same option is clicked again, toggle the sort type
-            setSortType(sortType === SORT_TYPES.ASC ? SORT_TYPES.DESC : SORT_TYPES.ASC);
-        } else {
-            setSelectedSort(sortOption);
-            setSortType(SORT_TYPES.ASC);
-        }
     };
 
     return (
@@ -47,20 +37,19 @@ const FilterPanel = ({ onFilter }) => {
                     <div
                         className={`${styles.tab} ${activeTab === TABS_NAME.FILTER ? styles.active : ''
                             }`}
-                        onClick={() => handleTabClick(TABS_NAME.FILTER)} // Handle click event
+                        onClick={() => handleTabClick(TABS_NAME.FILTER)}
                     >
                         Filter
                     </div>
                     <div
                         className={`${styles.tab} ${activeTab === TABS_NAME.SORT ? styles.active : ''}`}
-                        onClick={() => handleTabClick(TABS_NAME.SORT)} // Handle click event
+                        onClick={() => handleTabClick(TABS_NAME.SORT)}
                     >
                         Sort
                     </div>
                     <div
-                        className={`${styles.tab} ${activeTab === TABS_NAME.DISPLAY ? styles.active : ''
-                            }`}
-                        onClick={() => handleTabClick(TABS_NAME.DISPLAY)} // Handle click event
+                        className={`${styles.tab} ${activeTab === TABS_NAME.DISPLAY ? styles.active : ''}`}
+                        onClick={() => handleTabClick(TABS_NAME.DISPLAY)}
                     >
                         Display
                     </div>
@@ -87,17 +76,10 @@ const FilterPanel = ({ onFilter }) => {
                         </div>
                     )}
                     {activeTab === TABS_NAME.SORT && (
-                        <div className={styles.sortTab}>
-                            <label
-                                className={`${selectedSort === 'Alphabetical' ? styles.selectedSort : ''}`}
-                                onClick={() => handleSortOptionClick('Alphabetical')}
-                            >
-                                <div className={`${styles.sortArrow} ${sortType === SORT_TYPES.ASC ? styles.ascending : styles.descending}`}>
-                                    <NorthIcon />
-                                </div>
-                                Alphabétiquement
-                            </label>
-                        </div>
+                        <SortContent
+                            onFilter={onFilter}
+                        />
+
                     )}
 
                     {activeTab === TABS_NAME.DISPLAY && (

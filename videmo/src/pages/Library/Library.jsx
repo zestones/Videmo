@@ -57,7 +57,6 @@ function Library() {
         retrieveAllSeries();
     }, [serieApi, currentCategory, retrieveAllSeries]);
 
-
     const onBackClick = async () => {
         try {
             if (navigationHistory.length === 0) {
