@@ -160,7 +160,7 @@ function DetailsContainer({ serie, calledFrom }) {
 						</div>
 						<div className={styles.serieDetailsInfoItem}>
 							<span className={styles.serieDetailsInfoItemIcon}><CalendarTodayIcon /></span>
-							<span className={styles.serieDetailsInfoItemLabel}>{serieDataRef.current?.infos?.releaseDate}</span>
+							<span className={styles.serieDetailsInfoItemLabel}>{serieDataRef.current?.infos?.release_date}</span>
 						</div>
 						<div className={styles.serieDetailsInfoItem}>
 							<span className={styles.serieDetailsInfoItemIcon}><WatchLaterIcon /></span>

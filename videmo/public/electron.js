@@ -114,6 +114,7 @@ require(path.resolve(__dirname, '..', 'src', 'electron', 'api', 'serie-history-a
 require(path.resolve(__dirname, '..', 'src', 'electron', 'api', 'scrappers', 'local-scrapper-api'));
 require(path.resolve(__dirname, '..', 'src', 'electron', 'api', 'ani-list-api'));
 require(path.resolve(__dirname, '..', 'src', 'electron', 'api', 'serie-infos-api'));
+require(path.resolve(__dirname, '..', 'src', 'electron', 'api', 'category-filter-api'));
 
 // handle local file system requests using the endpoint defined inside the local-file-service file from the sources/local folder
 // The local-file-service file is responsible for reading the local file system and returning the data to the renderer process

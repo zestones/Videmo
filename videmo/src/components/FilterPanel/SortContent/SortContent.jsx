@@ -10,44 +10,44 @@ import SortManager from "../../../utilities/sortManager/SortManager";
 import styles from "./SortContent.module.scss";
 
 // Constants
-import { SORT_TYPES } from "../FilterPanel";
+import { FLAGS as SORT_FLAGS } from "../../../utilities/utils/Constants";
 
-function SortContent({ onFilter, data }) {
+function SortContent({ onFilter, setSort, sort }) {
     // Utilities initialization
     const sortManager = useMemo(() => new SortManager(), []);
 
-    // TODO: retrieve this from the database inside a useEffect hook
-    const [selectedSort, setSelectedSort] = useState('Alphabetical');
-    const [sortType, setSortType] = useState(SORT_TYPES.ASC);
+    const [selectedSort, setSelectedSort] = useState(sort.name);
+    const [sortType, setSortType] = useState(SORT_FLAGS.ASC);
 
-    const arrowClassNames = () => styles.sortArrow + ' ' + (sortType === SORT_TYPES.ASC ? styles.ascending : styles.descending);
+    const arrowClassNames = () => styles.sortArrow + ' ' + (sortType === SORT_FLAGS.ASC ? styles.ascending : styles.descending);
 
     const handleSortOptionClick = (sortOption) => {
+        console.log(sort);
         if (selectedSort === sortOption) {
-            setSortType(sortType === SORT_TYPES.ASC ? SORT_TYPES.DESC : SORT_TYPES.ASC);
+            setSortType(sortType === SORT_FLAGS.ASC ? SORT_FLAGS.DESC : SORT_FLAGS.ASC);
         } else {
             setSelectedSort(sortOption);
-            setSortType(SORT_TYPES.DESC);
+            setSortType(SORT_FLAGS.DESC);
         }
     };
 
     useEffect(() => {
         if (selectedSort === 'Alphabetical') {
-            onFilter((data) => [...sortManager.sortStringByKeys(data, sortType === SORT_TYPES.ASC, "basename", "name")]);
+            onFilter((data) => [...sortManager.sortStringByKeys(data, sortType === SORT_FLAGS.DESC, "basename", "name")]);
         } else if (selectedSort === 'Date') {
             // TODO : change name of the field in the database to release_date
-            onFilter((data) => [...sortManager.sortDates(data, sortType === SORT_TYPES.ASC, "infos.releaseDate")]);
+            onFilter((data) => [...sortManager.sortDates(data, sortType === SORT_FLAGS.DESC, "infos.release_date")]);
         } else if (selectedSort === 'Popularité') {
             // TODO : store only the rating value in the database (without the /10)
             onFilter((data) => {
                 return [...data.sort((a, b) => {
                     if (a.infos.rating === null) return 1;
                     if (b.infos.rating === null) return -1;
-                    return sortType === SORT_TYPES.ASC ? parseFloat(a.infos.rating.split('/')[0]) - parseFloat(b.infos.rating.split('/')[0]) : parseFloat(b.infos.rating.split('/')[0]) - parseFloat(a.infos.rating.split('/')[0]);
+                    return sortType === SORT_FLAGS.ASC ? parseFloat(a.infos.rating.split('/')[0]) - parseFloat(b.infos.rating.split('/')[0]) : parseFloat(b.infos.rating.split('/')[0]) - parseFloat(a.infos.rating.split('/')[0]);
                 })];
             });
         } else if (selectedSort === 'NumberOfEpisodes') {
-            onFilter((data) => [...sortManager.sortNumbers(data, sortType === SORT_TYPES.ASC, "infos.number_of_episodes")]); 
+            onFilter((data) => [...sortManager.sortNumbers(data, sortType === SORT_FLAGS.DESC, "infos.number_of_episodes")]); 
         }
     }, [selectedSort, sortType, onFilter, sortManager]);
 

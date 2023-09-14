@@ -75,7 +75,7 @@ describe("AniListService", () => {
         expect(animeDetails).toEqual({
             description: "A great anime",
             genres: [{ name: "Action" }, { name: "Superpower" }],
-            releaseDate: "3/4/2016",
+            release_date: "3/4/2016",
             duration: "00:24:00",
             rating: "8.6/10",
         });

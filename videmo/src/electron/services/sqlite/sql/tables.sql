@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS SerieInfos (
   number_of_episodes INTEGER,
   total_viewed_episodes INTEGER,
   rating INTEGER,
-  releaseDate DATETIME,
+  release_date DATETIME,
   FOREIGN KEY (serie_id) REFERENCES Serie (id)
 );
 
@@ -114,8 +114,40 @@ CREATE TABLE IF NOT EXISTS UpdatedSerie (
   FOREIGN KEY (serie_id) REFERENCES Serie (id)
 );
 
+-- Create the CategoryFilter table
+CREATE TABLE IF NOT EXISTS CategoryFilter (
+  id INTEGER PRIMARY KEY,
+  category_id INTEGER,
+  filter_id INTEGER,
+  sort_id INTEGER,
+  flag TEXT,
+  FOREIGN KEY (category_id) REFERENCES Category(id),
+  FOREIGN KEY (filter_id) REFERENCES Filter(id),
+  FOREIGN KEY (sort_id) REFERENCES Sort(id)
+);
+
+-- Create the Filter table
+CREATE TABLE IF NOT EXISTS Filter (
+  id INTEGER PRIMARY KEY,
+  name TEXT,
+  UNIQUE (name)
+);
+
+-- Create the Sort table
+CREATE TABLE IF NOT EXISTS Sort (
+  id INTEGER PRIMARY KEY,
+  name TEXT,
+  UNIQUE (name)
+);
+
 -- Insert the default category
 INSERT INTO Category (name) VALUES ('Default');
 
 -- Insert the default last opened category
 INSERT INTO LastOpenedCategory (category_id) VALUES (1);
+
+-- Insert the default sort
+INSERT INTO Sort (name) VALUES ('Alphabetical');
+
+-- Insert the default CategoryFilter
+INSERT INTO CategoryFilter (category_id, filter_id, sort_id, flag) VALUES (1, 1, 1, 'ASC');

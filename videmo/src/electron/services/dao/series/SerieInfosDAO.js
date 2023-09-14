@@ -15,11 +15,11 @@ class SerieInfosDAO {
     // Create a serie info entry
     async createSerieInfo(serieId, infos) {
         const sql = `INSERT INTO SerieInfos 
-                    (serie_id, description, duration, rating, releaseDate, number_of_episodes, total_viewed_episodes) 
+                    (serie_id, description, duration, rating, release_date, number_of_episodes, total_viewed_episodes) 
                     VALUES (?, ?, ?, ?, ?, ?, ?)
                 `;
 
-        const params = [serieId, infos?.description, infos?.duration, infos?.rating, infos?.releaseDate, infos.numberOfEpisodes ?? 0, infos.totalViewedEpisodes ?? 0];
+        const params = [serieId, infos?.description, infos?.duration, infos?.rating, infos?.release_date, infos.numberOfEpisodes ?? 0, infos.totalViewedEpisodes ?? 0];
         await this.queryExecutor.executeAndCommit(sql, params);
     }
 
@@ -71,8 +71,8 @@ class SerieInfosDAO {
     }
 
     async #updateSerieInfos(serieId, infos) {
-        const sql = `UPDATE SerieInfos SET description = ?, duration = ?, rating = ?, releaseDate = ? WHERE serie_id = ?`;
-        const params = [infos.description, infos.duration, infos.rating, infos.releaseDate, serieId];
+        const sql = `UPDATE SerieInfos SET description = ?, duration = ?, rating = ?, release_date = ? WHERE serie_id = ?`;
+        const params = [infos.description, infos.duration, infos.rating, infos.release_date, serieId];
         await this.queryExecutor.executeAndCommit(sql, params);
     }
 

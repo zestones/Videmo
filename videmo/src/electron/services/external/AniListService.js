@@ -51,7 +51,7 @@ class AniListService {
                     return {
                         description: anime.description,
                         genres: this.formatGenres(anime.genres),
-                        releaseDate: this.formatDate(anime.startDate),
+                        release_date: this.formatDate(anime.startDate),
                         duration: this.formatDuration(anime.duration),
                         rating: this.formatRating(anime.meanScore)
                     };

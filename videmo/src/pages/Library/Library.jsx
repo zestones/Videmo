@@ -108,7 +108,6 @@ function Library() {
 
     const filterFolders = sortManager.filterByKeyword(searchValue, subSeries, 'basename', 'name');
 
-    // TODO: add a filter option to sort by (name, date, genre, rating, etc.)
     return (
         <div className={styles.library}>
             <div className={styles.libraryContainer}>
