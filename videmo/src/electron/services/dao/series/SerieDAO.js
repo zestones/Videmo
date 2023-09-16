@@ -123,7 +123,7 @@ class SerieDAO {
                 SerieInfos.number_of_episodes AS serieInfos_number_of_episodes, 
                 SerieInfos.total_viewed_episodes AS serieInfos_total_viewed_episodes, 
                 SerieInfos.rating AS serieInfos_rating, 
-                SerieInfos.releaseDate AS serieInfos_releaseDate,
+                SerieInfos.release_date AS serieInfos_releaseDate,
                 Genre.id AS genre_id,
                 Genre.name AS genre_name
             FROM Serie
@@ -169,7 +169,7 @@ class SerieDAO {
                 SerieInfos.number_of_episodes AS serieInfos_number_of_episodes, 
                 SerieInfos.total_viewed_episodes AS serieInfos_total_viewed_episodes, 
                 SerieInfos.rating AS serieInfos_rating, 
-                SerieInfos.releaseDate AS serieInfos_releaseDate,
+                SerieInfos.release_date AS serieInfos_releaseDate,
                 Genre.id AS genre_id,
                 Genre.name AS genre_name
             FROM Serie
@@ -199,7 +199,7 @@ class SerieDAO {
                         SerieInfos.number_of_episodes AS serieInfos_number_of_episodes, 
                         SerieInfos.total_viewed_episodes AS serieInfos_total_viewed_episodes, 
                         SerieInfos.rating AS serieInfos_rating, 
-                        SerieInfos.releaseDate AS serieInfos_releaseDate,
+                        SerieInfos.release_date AS serieInfos_releaseDate,
                         Genre.id AS genre_id,
                         Genre.name AS genre_name
                     FROM Serie
@@ -253,7 +253,7 @@ class SerieDAO {
                 number_of_episodes: serie.serieInfos_number_of_episodes,
                 total_viewed_episodes: serie.serieInfos_total_viewed_episodes,
                 rating: serie.serieInfos_rating,
-                releaseDate: serie.serieInfos_releaseDate,
+                release_date: serie.serieInfos_releaseDate,
             };
 
             delete serie.serieInfos_id;

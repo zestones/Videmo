@@ -51,7 +51,7 @@ class AniListService {
                     return {
                         description: anime.description,
                         genres: this.formatGenres(anime.genres),
-                        releaseDate: this.formatDate(anime.startDate),
+                        release_date: this.formatDate(anime.startDate),
                         duration: this.formatDuration(anime.duration),
                         rating: this.formatRating(anime.meanScore)
                     };
@@ -102,7 +102,7 @@ class AniListService {
      * - With 1 decimal place. if last digit is 0, it is removed.
      */
     formatRating(rating) {
-        return `${(rating / 10).toFixed(1).replace(/\.0$/, "")}/10`;
+        return `${(rating / 10).toFixed(1).replace(/\.0$/, "")}`;
     }
 }
 

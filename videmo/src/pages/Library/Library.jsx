@@ -7,6 +7,7 @@ import { LIBRARY_STRING } from "../../utilities/utils/Constants";
 // Api 
 import SerieApi from "../../services/api/serie/SerieApi";
 import TrackApi from "../../services/api/track/TrackApi";
+import CategoryFilterApi from "../../services/api/category/CategoryFilterApi";
 
 // Utilities
 import SortManager from "../../utilities/sortManager/SortManager";
@@ -32,18 +33,27 @@ function Library() {
     const serieApi = useMemo(() => new SerieApi(), []);
     const trackApi = useMemo(() => new TrackApi(), []);
     const sortManager = useMemo(() => new SortManager(), []);
+    const categoryFilterApi = useMemo(() => new CategoryFilterApi(), []);
+
 
     // Initialization of the notification hook
     const { showNotification } = useNotification();
 
-    const retrieveAllSeries = useCallback(() => {
-        serieApi.readAllSeriesByCategory(currentCategory?.id)
-            .then((seriesInLibrary) => setSubSeries(seriesInLibrary))
-            .catch((error) => showNotification("error", `Error retrieving series: ${error.message}`));
-    }, [serieApi, currentCategory, showNotification]);
+    const retrieveAllSeries = useCallback(async () => {
+        try {
+            const seriesInLibrary = await serieApi.readAllSeriesByCategory(currentCategory?.id);
+            const filters = await categoryFilterApi.getFiltersByCategoryId(currentCategory.id);
+
+            const sortedSeries = [...sortManager.sortSeriesByField(seriesInLibrary, filters.sort.name, filters.sort.flag)];
+            setSubSeries(sortedSeries);
+        } catch (error) {
+            showNotification("error", `Error retrieving series: ${error.message}`);
+            console.error(error);
+        }
+    }, [serieApi, currentCategory, sortManager, categoryFilterApi, showNotification]);
 
     const retrieveAllSeriesByLinks = (links) => {
-        if(!links) return;
+        if (!links) return;
         serieApi.readAllSeriesByLinks(links)
             .then((series) => setSubSeries(subSeries.map((serie) => series.find((s) => s.link === serie.link) || serie)))
             .catch((error) => showNotification("error", `Error retrieving series: ${error.message}`));
@@ -56,7 +66,6 @@ function Library() {
         setEpisodes([]);
         retrieveAllSeries();
     }, [serieApi, currentCategory, retrieveAllSeries]);
-
 
     const onBackClick = async () => {
         try {
@@ -109,7 +118,6 @@ function Library() {
 
     const filterFolders = sortManager.filterByKeyword(searchValue, subSeries, 'basename', 'name');
 
-    // TODO: add a filter option to sort by (name, date, genre, rating, etc.)
     return (
         <div className={styles.library}>
             <div className={styles.libraryContainer}>
@@ -118,6 +126,9 @@ function Library() {
                     onSearch={setSearchValue}
                     onBack={serie ? onBackClick : null}
                     onRandom={() => subSeries.length > 0 && handleSerieSelection(subSeries[Math.floor(Math.random() * subSeries.length)])}
+                    onFilter={setSubSeries}
+                    series={subSeries}
+                    currentCategory={currentCategory}
                 />
 
                 <CategoryHeader selectedCategory={currentCategory} onSelectCategory={setCurrentCategory} />

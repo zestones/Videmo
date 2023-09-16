@@ -1,0 +1,52 @@
+.sortTab {
+    display: flex;
+    flex-direction: column;
+
+    animation: fadeIn 0.3s ease-in-out;
+
+    .row {
+        display: flex;
+        align-items: center;
+        position: relative;
+
+        .sortArrow {
+            width: 20px;
+            height: 20px;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            transition: transform 0.3s ease-in-out;
+
+            &.ascending {
+                transform: rotate(180deg);
+            }
+
+            &.descending {
+                transform: rotate(0deg);
+            }
+
+            svg {
+                fill: #007bff;
+                transform: translateY(2px);
+            }
+        }
+
+        label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+
+            padding: 10px;
+            position: relative;
+            left: 17px;
+
+            transition: background-color 0.3s ease-in-out;
+
+            &.selectedSort {
+                color: #fff;
+            }
+        }
+    }
+}

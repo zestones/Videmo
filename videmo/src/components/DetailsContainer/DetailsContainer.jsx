@@ -156,11 +156,11 @@ function DetailsContainer({ serie, calledFrom }) {
 					<div className={styles.serieDetailsInfo}>
 						<div className={styles.serieDetailsInfoItem}>
 							<span className={styles.serieDetailsInfoItemIcon}><StarIcon /></span>
-							<span className={styles.serieDetailsInfoItemLabel}>{serieDataRef.current?.infos?.rating}</span>
+							<span className={styles.serieDetailsInfoItemLabel}>{serieDataRef.current?.infos?.rating} / 10</span>
 						</div>
 						<div className={styles.serieDetailsInfoItem}>
 							<span className={styles.serieDetailsInfoItemIcon}><CalendarTodayIcon /></span>
-							<span className={styles.serieDetailsInfoItemLabel}>{serieDataRef.current?.infos?.releaseDate}</span>
+							<span className={styles.serieDetailsInfoItemLabel}>{serieDataRef.current?.infos?.release_date}</span>
 						</div>
 						<div className={styles.serieDetailsInfoItem}>
 							<span className={styles.serieDetailsInfoItemIcon}><WatchLaterIcon /></span>

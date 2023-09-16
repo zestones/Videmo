@@ -49,21 +49,13 @@ function SerieCard({ serie, onPlayClick, onMoreClick, isCalledFromExplore, isCal
     return (
         <>
             <li
-                className={`${styles.card} ${isSerieCompleted() && styles.completed}`}
+                className={`${styles.card}`}
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
                 onClick={() => !isOptionBarActive && onPlayClick(serie)}
             >
                 {!imageLoaded && <div className={styles.loadingEffect}></div>}
-                {(isCalledFromExplore && serie.inLibrary) && <span className={styles.inLibraryLabel}>In Library</span>}
-                <img
-                    className={`${styles.cardImage} ${imageLoaded ? styles.imageLoaded : ''}`}
-                    src={serie.image}
-                    alt={serie.name}
-                    onLoad={() => setImageLoaded(true)}
-                />
-
-                <p className={styles.cardTitle}>{utils.constructTitle(serie)}</p>
+                {(isCalledFromExplore && serie.inLibrary) && <span className={styles.inLibraryLabel}>Dans la bibliothèque</span>}
                 {isCalledFromLibrary && (
                     <div className={`${styles.episodeInfos} ${isSerieCompleted() && styles.completed}`}>
                         <span className={styles.number}>
@@ -72,44 +64,56 @@ function SerieCard({ serie, onPlayClick, onMoreClick, isCalledFromExplore, isCal
                     </div>
                 )}
 
-                <div className={`${styles.cardLayer} ${(isHovered || isOptionBarActive) && styles.hovered}`}>
-                    <div className={styles.cardLayerContent}>
-                        <span
-                            className={styles.iconContainer + " " + styles.moreIcon}
-                            style={{ display: isOptionBarActive ? "none" : "" }}
-                            onClick={(event) => {
-                                event.stopPropagation();
-                                handleAddToCategory();
-                            }}
-                        >
-                            <LabelIcon />
-                        </span>
-                        <span
-                            className={styles.iconContainer + " " + styles.playIcon}
-                            style={{ display: isOptionBarActive ? "none" : "" }}
-                            onClick={(event) => {
-                                event.stopPropagation();
-                                onPlayClick(serie);
-                            }}
-                        >
-                            <PlayArrowIcon />
-                        </span>
-                        <span
-                            className={styles.iconContainer + " " + styles.checkboxIcon}
-                            onClick={(event) => {
-                                event.stopPropagation();
-                                setChecked(!checked);
-                            }}
-                        >
-                            <input
-                                type="checkbox"
-                                checked={checked}
-                                onChange={(event) => {
+                <div className={`${styles.cardContent} ${(isSerieCompleted() || (isCalledFromExplore && serie.inLibrary)) && styles.completed}`}>
+                    <img
+                        className={`${styles.cardImage} ${imageLoaded ? styles.imageLoaded : ''}`}
+                        src={serie.image}
+                        alt={serie.name}
+                        onLoad={() => setImageLoaded(true)}
+                    />
+
+                    <p className={styles.cardTitle}>{utils.constructTitle(serie)}</p>
+
+                    <div
+                        className={`${styles.cardLayer} ${(isHovered || isOptionBarActive) && styles.hovered}`}>
+                        <div className={styles.cardLayerContent}>
+                            <span
+                                className={styles.iconContainer + " " + styles.moreIcon}
+                                style={{ display: isOptionBarActive ? "none" : "" }}
+                                onClick={(event) => {
+                                    event.stopPropagation();
+                                    handleAddToCategory();
+                                }}
+                            >
+                                <LabelIcon />
+                            </span>
+                            <span
+                                className={styles.iconContainer + " " + styles.playIcon}
+                                style={{ display: isOptionBarActive ? "none" : "" }}
+                                onClick={(event) => {
+                                    event.stopPropagation();
+                                    onPlayClick(serie);
+                                }}
+                            >
+                                <PlayArrowIcon />
+                            </span>
+                            <span
+                                className={styles.iconContainer + " " + styles.checkboxIcon}
+                                onClick={(event) => {
                                     event.stopPropagation();
                                     setChecked(!checked);
                                 }}
-                            />
-                        </span>
+                            >
+                                <input
+                                    type="checkbox"
+                                    checked={checked}
+                                    onChange={(event) => {
+                                        event.stopPropagation();
+                                        setChecked(!checked);
+                                    }}
+                                />
+                            </span>
+                        </div>
                     </div>
                 </div>
             </li>

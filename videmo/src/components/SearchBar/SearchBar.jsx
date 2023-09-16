@@ -46,7 +46,10 @@ function SearchBar({ onSearch }) {
                     onBlur={handleSearchInputBlur}
                 />
             )}
-            <SearchIcon data-testid="search-icon" className={styles.searchIcon} onClick={handleSearchIconClick} />
+
+            <button className={styles.searchButton} onClick={handleSearchIconClick}>
+                <SearchIcon data-testid="search-icon" className={styles.searchIcon} />
+            </button>
         </div>
     );
 }
