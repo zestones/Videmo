@@ -37,3 +37,9 @@ INSERT INTO CategoryFilter (category_id, sort_id, flag) VALUES (9, 1, 'asc');
 INSERT INTO CategoryFilter (category_id, sort_id, flag) VALUES (10, 1, 'asc');
 INSERT INTO CategoryFilter (category_id, sort_id, flag) VALUES (11, 1, 'asc');
 INSERT INTO CategoryFilter (category_id, sort_id, flag) VALUES (12, 1, 'asc');
+
+
+-- Insert the Themes
+INSERT INTO Theme (name, is_active) VALUES ('default', 1); -- The default theme is active
+INSERT INTO Theme (name, is_active) VALUES ('dark-theme', 0);
+INSERT INTO Theme (name, is_active) VALUES ('light-theme', 0);

@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { NotificationProvider } from './components/Notification/NotificationProvider';
+import { useTheme } from './pages/More/Settings/ThemeSettings/ThemeContext';
 
 // External
 import SubscriptionsIcon from '@mui/icons-material/Subscriptions';
@@ -25,12 +26,18 @@ function App() {
 	const explore = { explore: { component: <Explore />, icon: ExploreIcon, label: "Explorer" } };
 	const history = { history: { component: <History />, icon: HistoryIcon, label: "Historique" } };
 	const settings = { more: { component: <Settings />, icon: MoreHorizIcon, label: "Plus" } };
+	const { theme } = useTheme();
 
 	const [activePage, setActivePage] = useState(Object.keys(library)[0]);
 	const navigationItems = { ...library, ...explore, ...history, ...settings };
 
+	useEffect(() => {
+        // Apply the theme class to the root element (body)
+        document.body.className = theme || 'default'; // 'default' is the fallback theme
+    }, [theme]);
+
 	return (
-		<div className="App">
+		<div className={`App ${theme === 'default' ? '' : theme}`}>
 			<NotificationProvider>
 				<Navigation
 					navItems={navigationItems}

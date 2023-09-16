@@ -19,7 +19,6 @@
 
         &:hover {
             animation: pulse 2s infinite;
-            color: var(--secondary-color-darker);
         }
 
         @keyframes pulse {
@@ -50,7 +49,7 @@
         border: none;
         border-bottom: 1px solid var(--gray-3);
 
-        background-color: var(--primary-color-darker);
+        background-color: var(--primary-color);
         color: var(--white-color);
         width: 0;
 

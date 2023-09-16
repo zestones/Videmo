@@ -140,6 +140,14 @@ CREATE TABLE IF NOT EXISTS Sort (
   UNIQUE (name)
 );
 
+-- Create Theme table
+CREATE TABLE IF NOT EXISTS Theme (
+  id INTEGER PRIMARY KEY,
+  name TEXT,
+  is_active INTEGER,
+  UNIQUE (name)
+);
+
 -- Insert the default category
 INSERT INTO Category (name) VALUES ('Default');
 

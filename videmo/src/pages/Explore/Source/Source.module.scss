@@ -3,12 +3,12 @@
     width: 90%;
 
     border-radius: 10px;
-    background-color: var(--primary-color-light);
+    background-color: var(--tertiary-color);
 
     h3 {
         margin: 0;
         padding: 14px 22px;
-        color: var(--gray-3);
+        color: var(--white-color);
     }
 
     .extension {
@@ -40,7 +40,7 @@
         }
 
         &:hover {
-            background-color: var(--primary-color-lighter);
+            background-color: var(--secondary-color);
             border-radius: 7px;
             cursor: pointer;
         }
