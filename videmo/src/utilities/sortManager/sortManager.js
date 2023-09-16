@@ -1,4 +1,7 @@
+import { SORTS_FIELDS, FLAGS as SORT_FLAGS } from "../utils/Constants";
+
 class SortManager {
+
     filterByKeyword(keyword, object, ...keys) {
         return object.filter((element) => {
             for (const key of keys) {
@@ -77,6 +80,21 @@ class SortManager {
             }
             return 0;
         });
+    }
+
+    sortSeriesByField(object, field, reverse) {
+        reverse = reverse === SORT_FLAGS.DESC;
+        if (field === SORTS_FIELDS.ALPHABETICAL) {
+            return this.sortStringByKeys(object, reverse, "basename", "name");
+        } else if (field === SORTS_FIELDS.RELEASE_DATE) {
+            return this.sortDates(object, reverse, "infos.release_date");
+        } else if (field === SORTS_FIELDS.RATING) {
+            return this.sortNumbers(object, reverse, "infos.rating");
+        } else if (field === SORTS_FIELDS.NUMBER_OF_EPISODES) {
+            return this.sortNumbers(object, reverse, "infos.number_of_episodes");
+        }
+
+        return object;
     }
 }
 

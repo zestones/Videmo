@@ -145,9 +145,3 @@ INSERT INTO Category (name) VALUES ('Default');
 
 -- Insert the default last opened category
 INSERT INTO LastOpenedCategory (category_id) VALUES (1);
-
--- Insert the default sort
-INSERT INTO Sort (name) VALUES ('Alphabetical');
-
--- Insert the default CategoryFilter
-INSERT INTO CategoryFilter (category_id, filter_id, sort_id, flag) VALUES (1, 1, 1, 'ASC');

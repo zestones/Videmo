@@ -38,9 +38,9 @@ describe("AniListService", () => {
         const rating1 = 80;
         const rating2 = 43;
         const rating3 = 100;
-        expect(aniList.formatRating(rating1)).toBe("8/10");
-        expect(aniList.formatRating(rating2)).toBe("4.3/10");
-        expect(aniList.formatRating(rating3)).toBe("10/10");
+        expect(aniList.formatRating(rating1)).toBe("8");
+        expect(aniList.formatRating(rating2)).toBe("4.3");
+        expect(aniList.formatRating(rating3)).toBe("10");
     });
 
     // Test case 5: Test the searchAnimeDetailsByName method (use a mocked fetch response)
@@ -77,7 +77,7 @@ describe("AniListService", () => {
             genres: [{ name: "Action" }, { name: "Superpower" }],
             release_date: "3/4/2016",
             duration: "00:24:00",
-            rating: "8.6/10",
+            rating: "8.6",
         });
     });
 

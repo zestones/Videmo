@@ -10,7 +10,7 @@ import FilterPanel from "../FilterPanel/FilterPanel";
 // Styles
 import styles from "./Header.module.scss";
 
-function Header({ title, onSearch = null, onRandom = null, onFilter = null, onBack = null, onDelete = null }) {
+function Header({ title, series, currentCategory, onSearch = null, onRandom = null, onFilter = null, onBack = null, onDelete = null }) {
     return (
         <header className={styles.header}>
             <div className={styles.headerLeft}>
@@ -20,7 +20,7 @@ function Header({ title, onSearch = null, onRandom = null, onFilter = null, onBa
 
             <div className={styles.headerRight}>
                 {onSearch && <SearchBar onSearch={onSearch} />}
-                {onFilter && <FilterPanel onFilter={onFilter} />}
+                {onFilter && <FilterPanel onFilter={onFilter} series={series} currentCategory={currentCategory} />}
                 {onRandom && <RandomButton onClick={onRandom} />}
                 {onDelete && <DeleteButton onClick={onDelete} />}
             </div>

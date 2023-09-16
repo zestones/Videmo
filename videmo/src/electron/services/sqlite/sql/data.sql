@@ -17,7 +17,8 @@ INSERT INTO Filter (name) VALUES ('downloaded');
 INSERT INTO Filter (name) VALUES ('started');
 INSERT INTO Filter (name) VALUES ('finished');
 
--- Insert Sorts
+-- Insert Sorts 
+-- ! ATTENTION ! The names should be the same as the ones in the Sort enum in the frontend
 INSERT INTO Sort (name) VALUES ('alphabetical');
 INSERT INTO Sort (name) VALUES ('release date');
 INSERT INTO Sort (name) VALUES ('rating');

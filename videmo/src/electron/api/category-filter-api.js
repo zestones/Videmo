@@ -8,3 +8,10 @@ ipcMain.on('/read/filters/by/category-id/', (event, arg) => {
         .then((filters) => event.reply('/read/filters/by/category-id/', { success: true, filters: filters }))
         .catch((err) => event.reply('/read/filters/by/category-id/', { success: false, error: err }));
 })
+
+// Update category filter by category ID
+ipcMain.on('/update/category-filter/by/category-id/', (event, arg) => {
+    new CategoryFilterDAO().updateCategoryFilter(arg.categoryFilter, arg.categoryId)
+        .then((categoryFilter) => event.reply('/update/category-filter/by/category-id/', { success: true, categoryFilter: categoryFilter }))
+        .catch((err) => event.reply('/update/category-filter/by/category-id/', { success: false, error: err }));
+})

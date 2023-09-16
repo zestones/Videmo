@@ -102,7 +102,7 @@ class AniListService {
      * - With 1 decimal place. if last digit is 0, it is removed.
      */
     formatRating(rating) {
-        return `${(rating / 10).toFixed(1).replace(/\.0$/, "")}/10`;
+        return `${(rating / 10).toFixed(1).replace(/\.0$/, "")}`;
     }
 }
 
