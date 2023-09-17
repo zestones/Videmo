@@ -7,8 +7,9 @@
     overflow-y: auto;
 
     .themes {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start;
         gap: 20px;
 
         .themeCard {
