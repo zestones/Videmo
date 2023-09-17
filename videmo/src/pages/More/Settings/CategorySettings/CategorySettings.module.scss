@@ -16,10 +16,10 @@
         padding: 10px;
         
         border-radius: 4px;
-        background-color: var(--primary-color-light);
+        background-color: var(--primary-color);
 
         &:hover {
-            background-color: var(--primary-color-lighter);
+            background-color: var(--secondary-color);
             border-radius: 4px;
             transition: all 0.3s ease-in-out;
             transform: scale(1.01);
@@ -28,7 +28,7 @@
 
         .categoryName {
             font-size: 18px;
-            color: var(--gray-1);
+            color: var(--primary-text-color);
             font-weight: bold;
             margin-left: 20px;
         }
@@ -42,7 +42,7 @@
                 width: 50px;
                 height: 50px;
                 border-radius: 50%;
-                background-color: var(--primary-color-light);
+                background-color: var(--primary-color);
                 transition: all 0.3s ease-in-out;
 
                 margin-right: 20px;
@@ -51,8 +51,8 @@
                 &:hover {
                     transform: scale(1.1);
                     cursor: pointer;
-                    background-color: var(--primary-color-darker);
-                    color: var(--red-3);
+                    background-color: var(--tertiary-color);
+                    color: var(--danger-color);
                 }
             }
 
@@ -60,7 +60,7 @@
                 width: 50px;
                 height: 50px;
                 border-radius: 50%;
-                background-color: var(--primary-color-light);
+                background-color: var(--primary-color);
                 transition: all 0.3s ease-in-out;
 
                 margin-right: 20px;
@@ -69,8 +69,8 @@
                 &:hover {
                     transform: scale(1.1);
                     cursor: pointer;
-                    background-color: var(--primary-color-darker);
-                    color: var(--blue-1);
+                    background-color: var(--tertiary-color);
+                    color: var(--selection-color);
                 }
             }
         }
@@ -95,14 +95,14 @@
     align-items: center;
     justify-content: center;
 
-    border: 1px solid var(--gray-2);
+    border: 1px solid var(--secondary-text-color);
     border-radius: 4px;
     
     padding: 10px;
     width: 80%;
     
     margin: 20px auto;
-    background-color: var(--white-color);
+    background-color: var(--primary-text-color);
 
     .formInput {
         flex: 1;
@@ -118,14 +118,10 @@
     .createIcon {
         cursor: pointer;
         font-size: 24px;
-        color: var(--green-1);
+        color: var(--success-color);
 
         &:hover {
-            color: var(--green-1);
-        }
-
-        &:active {
-            color: var(--green-3);
+            color: var(--success-color);
         }
     }
 }

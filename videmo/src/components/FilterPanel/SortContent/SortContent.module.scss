@@ -28,7 +28,7 @@
             }
 
             svg {
-                fill: #007bff;
+                fill: var(--highlight-color);
                 transform: translateY(2px);
             }
         }

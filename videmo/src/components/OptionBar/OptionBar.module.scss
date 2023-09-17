@@ -6,6 +6,7 @@
     right: 50%;
 
     transform: translate(-50%, -50%);
+    z-index: 10;
 
     display: flex;
     align-items: center;
@@ -17,7 +18,7 @@
     height: 50px;
     padding: 0 1rem;
 
-    background-color: var(--dark-color);
+    background-color: var(--tertiary-color);
     border-radius: 7px;
 
     .container {
@@ -37,7 +38,7 @@
                 height: 23px;
 
                 appearance: none;
-                border: 2px solid var(--gray-4);
+                border: 2px solid var(--secondary-text-color);
                 border-radius: 4px;
 
                 background-color: #222222;
@@ -57,7 +58,7 @@
                         width: 10px;
                         height: 5px;
 
-                        border: 2px solid var(--white-color);
+                        border: 2px solid var(--primary-text-color);
                         border-top: none;
                         border-right: none;
 
@@ -90,19 +91,19 @@
 
             .label {
                 font-size: 0.8rem;
-                color: var(--white-color);
+                color: var(--primary-text-color);
                 font-weight: 800;
                 margin-left: 0.5rem;
 
                 &:hover {
                     cursor: pointer;
-                    color: var(--gray-2);
+                    color: var(--secondary-text-color);
                 }
             }
 
             .erase {
                 font-size: 0.8rem;
-                color: var(--red-4);
+                color: var(--danger-color);
                 font-weight: 800;
                 margin-left: 0.5rem;
                 cursor: pointer;
@@ -122,20 +123,19 @@
                 align-items: center;
                 justify-content: center;
 
-                background-color: #585858;
                 padding: 4px 12px;
                 border-radius: 7px;
 
                 margin-left: 0.5rem;
 
                 font-size: 0.8rem;
-                color: var(--white-color);
+                color: var(--primary-text-color);
                 font-weight: 800;
 
                 &:hover {
                     transition: all 0.2s ease-in-out;
                     cursor: pointer;
-                    background-color: #696969;
+                    background-color: var(--secondary-color);
                 }
 
                 .icon {

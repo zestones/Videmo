@@ -1,8 +1,8 @@
 .randButton {
     background: none;
     border: none;
-    color: white;
-
+    color: var(--primary-text-color);
+    
     text-align: center;
     text-decoration: none;
     display: inline-block;
@@ -15,7 +15,7 @@
 
     &:hover {
         animation: pulse 2s infinite;
-        color: var(--secondary-color-darker);
+        background-color: var(--secondary-color);
     }
 
     @keyframes pulse {

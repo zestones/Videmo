@@ -13,8 +13,8 @@
     color: var(--text-color);
 
     &:hover {
-        background-color: var(--gray-1);
-        color: var(--gray-7);
+        background-color: var(--primary-text-color);
+        color: var(--tertiary-text-color);
     }
 
     .title {
