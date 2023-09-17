@@ -32,12 +32,11 @@ function App() {
 	const navigationItems = { ...library, ...explore, ...history, ...settings };
 
 	useEffect(() => {
-        // Apply the theme class to the root element (body)
-        document.body.className = theme || 'default'; // 'default' is the fallback theme
-    }, [theme]);
+		document.body.className = theme;
+	}, [theme]);
 
 	return (
-		<div className={`App ${theme === 'default' ? '' : theme}`}>
+		<div className={`App ${theme}`}>
 			<NotificationProvider>
 				<Navigation
 					navItems={navigationItems}

@@ -21,7 +21,7 @@
 
             .sourceName {
                 font-size: 18px;
-                color: var(--white-color);
+                color: var(--primary-text-color);
                 margin-bottom: 5px;
                 font-weight: bold;
             }
@@ -30,7 +30,7 @@
                 margin-top: 5px;
                 margin-left: 15px;
                 font-size: 14px;
-                color: var(--blue-1);
+                color: var(--selection-color);
                 font-weight: bold;
                 cursor: pointer;
             }
@@ -67,7 +67,7 @@
                     transform: scale(1.1);
                     cursor: pointer;
                     background-color: var(--primary-color);
-                    color: var(--blue-1);
+                    color: var(--selection-color);
                 }
             }
 
@@ -85,7 +85,7 @@
                     transform: scale(1.1);
                     cursor: pointer;
                     background-color: var(--primary-color);
-                    color: var(--red-3);
+                    color: var(--danger-color);
                 }
             }
         }
@@ -124,7 +124,7 @@
     .addSource {
         font-size: 18px;
         font-weight: bold;
-        color: var(--gray-1);
+        color: var(--primary-text-color);
 
         margin-right: 20px;
     }

@@ -113,7 +113,7 @@
             }
 
             .icon {
-                color: var(--white-color);
+                color: var(--primary-text-color);
                 animation: pop 0.5s ease-in-out forwards;
                 transform-origin: center;
 
@@ -143,8 +143,7 @@
             
             width: 200px;
 
-            background-color: var(--tertiary-color);
-            border: 1px solid var(--primary-color);
+            background-color: var(--primary-color);
             border-radius: 10px;
 
             &:before {
@@ -198,7 +197,7 @@
                     border-radius: 5px;
 
                     &:hover {
-                        background-color: var(--secondary-color);
+                        background-color: var(--tertiary-color);
                         cursor: pointer;
                     }
                 }
@@ -223,7 +222,7 @@
 
             .subtitle {
                 font-weight: bold;
-                color: var(--gray-5);
+                color: var(--secondary-text-color);
                 margin: 10px 0;
             }
 
@@ -242,7 +241,7 @@
                 margin-bottom: 10px;
 
                 .genre {
-                    background-color: var(--blue-1);
+                    background-color: var(--highlight-color);
                     color: #fff;
                     font-weight: bold;
 

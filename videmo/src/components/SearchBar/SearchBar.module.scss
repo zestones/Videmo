@@ -5,7 +5,7 @@
     .searchButton {
         background: none;
         border: none;
-        color: white;
+        color: var(--primary-text-color);
 
         text-align: center;
         text-decoration: none;
@@ -47,10 +47,10 @@
         margin-right: 1rem;
 
         border: none;
-        border-bottom: 1px solid var(--gray-3);
+        border-bottom: 1px solid var(--secondary-text-color);
 
         background-color: var(--primary-color);
-        color: var(--white-color);
+        color: var(--primary-text-color);
         width: 0;
 
         &.active {

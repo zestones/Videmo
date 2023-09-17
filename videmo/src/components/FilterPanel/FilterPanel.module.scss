@@ -1,8 +1,8 @@
 .filterButton {
     background: none;
     border: none;
-    color: white;
-
+    color: var(--primary-text-color);
+    
     text-align: center;
     text-decoration: none;
     display: inline-block;
@@ -76,7 +76,7 @@
         cursor: pointer;
 
         &.active {
-            border-bottom: 2px solid var(--light-blue-5);
+            border-bottom: 2px solid var(--selection-color);
         }
     }
 
@@ -98,7 +98,7 @@
                 appearance: none;
                 width: 20px;
                 height: 20px;
-                border: 2px solid var(--light-blue-5);
+                border: 2px solid var(--selection-color);
                 border-radius: 3px;
                 display: flex;
                 justify-content: center;
@@ -107,8 +107,8 @@
                 transition: background-color 0.3s ease-in-out, border-color 0.3s ease-in-out;
 
                 &:checked {
-                    background-color: var(--light-blue-5);
-                    border-color: var(--light-blue-5);
+                    background-color: var(--selection-color);
+                    border-color: var(--selection-color);
 
                     &:after {
                         content: "";

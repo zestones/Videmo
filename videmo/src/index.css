@@ -1,101 +1,75 @@
-/* Theme 1 : Default theme */
+/* Global Styles */
 :root {
-    --primary-color: #343740;
-    --secondary-color: #4a4e5a;
-    --tertiary-color: #2c303c;
-
-    --black-color: #000000;
-    --white-color: #ffffff;
-
-    --gray-1: #fafafa;
-    --gray-2: #f4f4f4;
-    --gray-3: #e0e0e0;
-    --gray-4: #bdbdbd;
-    --gray-5: #9e9e9e;
-    --gray-6: #757575;
-    --gray-7: #616161;
-
-    --blue-1: #6e81ec;
-    --blue-2: #5c6ac4;
-    --blue-5: #323e6e;
-    --blue-6: #2c3860;
-
-    --light-blue-5: #6590ff;
-    --light-blue-6: #4c6fd5;
-    --light-blue: #007bff;
-    --light-blue-hover: #0069d9;
-
-    --red-1: #ff6b6b;
-    --red-2: #ff5252;
-    --red-3: #ff3d3d;
-    --red-4: #ff2e2e;
-    --red-6: #e61919;
-
-    --green-1: #21bf73;
-    --green-3: #149b5d;
-
     --header-height: 60px;
     --navigation-width: 65px;
 }
 
+/* Theme 1 : Default theme */
+.default-theme {
+    --primary-color: #343740;
+    --secondary-color: #4a4e5a;
+    --tertiary-color: #2c303c;
+
+    --primary-text-color: #ffffff;
+    --secondary-text-color: #9e9e9e;
+    --tertiary-text-color: #000000;
+
+    --selection-color: #6590ff;
+    
+    --highlight-color: #007bff;
+    --highlight-color-hover: #0069d9;
+
+    --danger-color: #ff2e2e;
+    --danger-color-hover: #e61919;
+
+    --success-color: #21bf73;
+
+    transition: all 0.3s ease-in-out;
+}
+
 /* Theme 2: Dark Theme */
 .dark-theme {
-    --primary-color: #1b1d23;
-    --secondary-color: #272a34;
-    --tertiary-color: #17181d;
-
-    --gray-1: #222222;
-
-    --blue-1: #3d4a8f;
-    --light-blue-5: #4164d9;
-
-    --red-1: #d13e3e;
-
-    --green-1: #0ea870;
+    --primary-color: #1a1a1a;       /* Dark Charcoal */
+    --secondary-color: #2c2c2c;     /* Charcoal */
+    --tertiary-color: #333333;      /* Slightly Lighter Charcoal */
+    
+    --primary-text-color: #ffffff;  /* White */
+    --secondary-text-color: #b4b4b4; /* Light Gray */
+    --tertiary-text-color: #7e7e7e;  /* Gray */
+    
+    --selection-color: #1f59ec;     /* Light Blue */
+    
+    --highlight-color: #007bff;     /* Bright Blue */
+    --highlight-color-hover: #0069d9; /* Darker Blue */
+    
+    --danger-color: #ff2e2e;       /* Red */
+    --danger-color-hover: #e61919; /* Darker Red */
+    
+    --success-color: #3cbd7e;      /* Green */
+    
+    transition: all 0.3s ease-in-out;
 }
 
 /* Theme 3: Light Theme */
 .light-theme {
-    --primary-color: #ffffff;
-    --secondary-color: #f4f4f4;
-    --tertiary-color: #e0e0e0;
-
-    --black-color: #ffffff;
-    --white-color: #000000;
-
-    --gray-1: #616161;
-    --gray-2: #e0e0e0;
-    --gray-3: #343740;
-    --gray-4: #9e9e9e;
-    --gray-5: #757575;
-    --gray-6: #616161;
-    --gray-7: #343740;
-
-    --blue-1: #6e81ec;
-    --blue-2: #5c6ac4;
-    --blue-5: #323e6e;
-    --blue-6: #2c3860;
-
-    --light-blue-5: #6590ff;
-    --light-blue-6: #4c6fd5;
-    --light-blue: #007bff;
-    --light-blue-hover: #0069d9;
-
-    --red-1: #ff6b6b;
-    --red-2: #ff5252;
-    --red-3: #ff3d3d;
-    --red-4: #ff2e2e;
-    --red-6: #e61919;
-
-    --green-1: #21bf73;
-    --green-3: #149b5d;
-}
-
-
-/* Theme 4: VS-Code Theme */
-.vs-code-theme {
-    --primary-color: green;
-    /* A bright and vibrant blue */
+    --primary-color: #f0f2f5;       /* Light Gray */
+    --secondary-color: #ffffff;     /* White */
+    --tertiary-color: #e3e6ea;      /* Lighter Gray */
+    
+    --primary-text-color: #343740;  /* Dark Blue Gray */
+    --secondary-text-color: #4a4e5a; /* Blue Gray */
+    --tertiary-text-color: #9e9e9e;  /* Gray */
+    
+    --selection-color: #7a96df;     /* Light Blue */
+    
+    --highlight-color: #007bff;     /* Bright Blue */
+    --highlight-color-hover: #0069d9; /* Darker Blue */
+    
+    --danger-color: #ff2e2e;       /* Red */
+    --danger-color-hover: #e61919; /* Darker Red */
+    
+    --success-color: #21bf73;      /* Green */
+    transition: all 0.3s ease-in-out;
 }
 
 body {
@@ -104,7 +78,7 @@ body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     background-color: var(--primary-color);
-    color: var(--white-color);
+    color: var(--primary-text-color);
 
     user-select: none;
     -webkit-user-select: none;
@@ -145,17 +119,17 @@ code {
 }
 
 ::-webkit-scrollbar-track {
-    background: var(--gray-5);
+    background: var(--primary-text-color);
 }
 
 ::-webkit-scrollbar-thumb {
-    background-color: var(--gray-6);
+    background-color: var(--secondary-text-color);
     border-radius: 6px;
-    border: 3px solid var(--gray-6);
+    border: 3px solid var(--secondary-text-color);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background-color: var(--gray-6);
+    background-color: var(--secondary-text-color);
 }
 
 
@@ -170,7 +144,7 @@ h3,
 h4,
 h5,
 h6 {
-    color: var(--white-color);
+    color: var(--primary-text-color);
 }
 
 h1 {
@@ -204,7 +178,7 @@ button {
 
 button:hover {
     background-color: var(--primary-color);
-    color: var(--white-color);
+    color: var(--primary-text-color);
 }
 
 input {

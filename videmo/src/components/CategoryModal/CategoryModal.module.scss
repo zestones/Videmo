@@ -58,12 +58,12 @@
 
                 cursor: pointer;
                 font-size: 18px;
-                color: #999;
+                color: var(--danger-color-hover);
 
                 transition: color 0.3s ease;
 
                 &:hover {
-                    color: var(--white-color);
+                    color: var(--danger-color);
                 }
 
                 svg {
@@ -110,7 +110,7 @@
                             position: relative;
 
                             &:checked {
-                                background-color: #dc3545;
+                                background-color: var(--danger-color);
 
                                 // add a minus checkmark
                                 &::after {
@@ -165,7 +165,7 @@
                 justify-content: flex-end;
 
                 .filledButton {
-                    background-color: #007bff;
+                    background-color: var(--selection-color);
                     color: white;
                     border: none;
 
@@ -177,12 +177,12 @@
                 }
 
                 .filledButton:hover {
-                    background-color: #0056b3;
+                    background-color: var(--selection-color-hover);
                 }
 
                 .emptyButton {
                     background-color: transparent;
-                    color: #3898ff;
+                    color: var(--selection-color);
 
                     padding: 6px 12px;
                     margin-right: 10px;
@@ -193,7 +193,7 @@
                 }
 
                 .emptyButton:hover {
-                    color: #0570ff;
+                    color: var(--selection-color-hover);
                 }
             }
         }
