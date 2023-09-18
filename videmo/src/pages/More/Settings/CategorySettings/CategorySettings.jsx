@@ -74,10 +74,15 @@ function CategorySettings() {
     const handleDragEnd = (result) => {
         if (!result.destination) return;
 
-        console.log(result);
         const reorderedCategories = [...categories];
         const [movedCategory] = reorderedCategories.splice(result.source.index, 1);
         reorderedCategories.splice(result.destination.index, 0, movedCategory);
+
+        // we update the id of the categories
+        reorderedCategories.forEach((category, index) => category.id = index + 1);
+
+        categoryApi.updateCategoriesOrder(reorderedCategories)
+            .catch((error) => setError({ message: error.message, type: "error" }));
 
         // Update the state with the new order of categories
         setCategories(reorderedCategories);

@@ -23,6 +23,13 @@ ipcMain.on('/update/category/', (event, arg) => {
         .catch((err) => event.reply('/update/category/', { success: false, error: err }));
 })
 
+// Update categories order
+ipcMain.on('/update/categories/order/', (event, arg) => {
+    new CategoriesDAO().updateCategoriesOrder(arg.categories)
+        .then(() => event.reply('/update/categories/order/', { success: true, categories: arg.categories }))
+        .catch((err) => event.reply('/update/categories/order/', { success: false, error: err }));
+})
+
 // Delete category by ID
 ipcMain.on('/delete/category/', (event, arg) => {
     new CategoriesDAO().deleteCategoryById(arg.id)

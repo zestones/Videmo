@@ -43,6 +43,16 @@ class CategoriesDAO {
         await this.queryExecutor.executeAndCommit(sql, params);
     }
 
+    // Update categories order
+    async updateCategoriesOrder(categories) {
+        const sql = 'UPDATE Category SET id = ? WHERE name = ?';
+
+        for (const element of categories) {
+            const params = [element.id, element.name];
+            await this.queryExecutor.executeAndCommit(sql, params);
+        }
+    }
+
     // Delete category by ID
     async deleteCategoryById(categoryId) {
         const sql = 'DELETE FROM Category WHERE id = ?';
