@@ -25,7 +25,7 @@ ipcMain.on('/update/category/', (event, arg) => {
 
 // Update categories order
 ipcMain.on('/update/categories/order/', (event, arg) => {
-    new CategoriesDAO().updateCategoriesOrder(arg.categories)
+    new CategoriesDAO().updateCategoriesOrder(JSON.parse(arg.categories))
         .then(() => event.reply('/update/categories/order/', { success: true, categories: arg.categories }))
         .catch((err) => event.reply('/update/categories/order/', { success: false, error: err }));
 })

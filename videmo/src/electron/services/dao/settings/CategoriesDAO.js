@@ -21,7 +21,7 @@ class CategoriesDAO {
 
     // Read all categories
     async getAllCategories() {
-        const sql = 'SELECT * FROM Category';
+        const sql = 'SELECT * FROM Category ORDER BY order_id ASC';
         return await this.queryExecutor.executeAndFetchAll(sql);
     }
 
@@ -45,12 +45,11 @@ class CategoriesDAO {
 
     // Update categories order
     async updateCategoriesOrder(categories) {
-        const sql = 'UPDATE Category SET id = ? WHERE name = ?';
+        const sql = 'UPDATE Category SET order_id = ? WHERE id = ?';
+        const params = [];
 
-        for (const element of categories) {
-            const params = [element.id, element.name];
-            await this.queryExecutor.executeAndCommit(sql, params);
-        }
+        for (const element of categories) params.push([element.order_id, element.id]);
+        await this.queryExecutor.executeManyAndCommit(sql, params);
     }
 
     // Delete category by ID

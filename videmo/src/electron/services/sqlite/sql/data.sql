@@ -1,16 +1,16 @@
 -- Insert other categories
-INSERT INTO Category (name) VALUES ('PLAN TO WATCH');
-INSERT INTO Category (name) VALUES ('COMPLETED');
-INSERT INTO Category (name) VALUES ('ON HOLD');
-INSERT INTO Category (name) VALUES ('DROPPED');
-INSERT INTO Category (name) VALUES ('WATCHING');
-INSERT INTO Category (name) VALUES ('MAINSTREAM');
-INSERT INTO Category (name) VALUES ('MASTERCLASS');
-INSERT INTO Category (name) VALUES ('TOP');
-INSERT INTO Category (name) VALUES ('GOOD');
-INSERT INTO Category (name) VALUES ('AVERAGE');
-INSERT INTO Category (name) VALUES ('BAD');
-INSERT INTO Category (name) VALUES ('TRASH');
+INSERT INTO Category (name, order_id) VALUES ('PLAN TO WATCH', 1);
+INSERT INTO Category (name, order_id) VALUES ('COMPLETED', 2);
+INSERT INTO Category (name, order_id) VALUES ('ON HOLD', 3);
+INSERT INTO Category (name, order_id) VALUES ('DROPPED', 4);
+INSERT INTO Category (name, order_id) VALUES ('WATCHING', 5);
+INSERT INTO Category (name, order_id) VALUES ('MAINSTREAM', 6);
+INSERT INTO Category (name, order_id) VALUES ('MASTERCLASS', 7);
+INSERT INTO Category (name, order_id) VALUES ('TOP', 8);
+INSERT INTO Category (name, order_id) VALUES ('GOOD', 9);
+INSERT INTO Category (name, order_id) VALUES ('AVERAGE', 10);
+INSERT INTO Category (name, order_id) VALUES ('BAD', 11);
+INSERT INTO Category (name, order_id) VALUES ('TRASH', 12);
 
 -- Insert Filters
 INSERT INTO Filter (name) VALUES ('downloaded');

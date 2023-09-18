@@ -65,6 +65,7 @@ CREATE TABLE IF NOT EXISTS SerieCategory (
 -- Create the Category table
 CREATE TABLE IF NOT EXISTS Category (
   id INTEGER PRIMARY KEY,
+  order_id INTEGER,
   name TEXT,
   UNIQUE (name)
 );

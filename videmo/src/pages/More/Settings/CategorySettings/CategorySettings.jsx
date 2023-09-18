@@ -78,10 +78,10 @@ function CategorySettings() {
         const [movedCategory] = reorderedCategories.splice(result.source.index, 1);
         reorderedCategories.splice(result.destination.index, 0, movedCategory);
 
-        // we update the id of the categories
-        reorderedCategories.forEach((category, index) => category.id = index + 1);
+        // Update the order_id of each category
+        const reorderedCategoriesWithId = reorderedCategories.map((category, index) => ({ ...category, order_id: index + 1 }));
 
-        categoryApi.updateCategoriesOrder(reorderedCategories)
+        categoryApi.updateCategoriesOrder(reorderedCategoriesWithId)
             .catch((error) => setError({ message: error.message, type: "error" }));
 
         // Update the state with the new order of categories
