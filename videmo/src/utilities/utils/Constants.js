@@ -14,3 +14,6 @@ export const SORTS_FIELDS = {
     RATING: 'rating',
     NUMBER_OF_EPISODES: 'number of episodes',
 };
+
+// Display modes
+export const DISPLAY_OPTION_TYPE = { COMPACT: 1, SPACED: 2, LIST: 3 };

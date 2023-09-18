@@ -149,8 +149,32 @@ CREATE TABLE IF NOT EXISTS Theme (
   UNIQUE (name)
 );
 
+-- Create the Settings table
+CREATE TABLE IF NOT EXISTS Settings (
+  id INTEGER PRIMARY KEY,
+  theme_id INTEGER,
+  FOREIGN KEY (theme_id) REFERENCES Theme (id)
+);
+
+-- Create the DisplaySettings table
+CREATE TABLE IF NOT EXISTS DisplaySettings (
+  id INTEGER PRIMARY KEY,
+  display_mode_id INTEGER,
+  FOREIGN KEY (display_mode_id) REFERENCES DisplayMode (id)
+);
+
+-- Create the DisplayMode table
+CREATE TABLE IF NOT EXISTS DisplayMode (
+  id INTEGER PRIMARY KEY,
+  name TEXT,
+  UNIQUE (name)
+);
+
 -- Insert the default category
 INSERT INTO Category (name) VALUES ('Default');
+
+-- Insert DisplaySettings (with the default display option)
+INSERT INTO DisplaySettings (display_mode_id) VALUES (1); 
 
 -- Insert the default last opened category
 INSERT INTO LastOpenedCategory (category_id) VALUES (1);
