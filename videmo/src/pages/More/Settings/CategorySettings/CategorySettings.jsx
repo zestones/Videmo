@@ -40,13 +40,16 @@ function CategorySettings() {
     }, [extensionApi, categoryApi]);
 
 
-    const handleCreateCategory = () => {
-        if (newCategoryName.trim() !== "") {
+    const handleCreateCategory = (event) => {
+        if (event.key === "Enter" && newCategoryName.trim() !== "") {
             setNewCategoryName(""); // Reset the input value
 
+            // We retrieve the last order_id of the categories + 1
+            const lastCategoryId = categories[categories.length - 1]?.id || 0;
+
             // Create a new category with the name entered by the user
-            categoryApi.createCategory(newCategoryName)
-                .then((name) => setCategories([...categories, { ...name, id: name }]))
+            categoryApi.createCategory(newCategoryName, lastCategoryId + 1)
+                .then((category) => setCategories([...categories, category]))
                 .catch((error) => setError({ message: error.message, type: "error" }));
         }
     };
@@ -126,7 +129,7 @@ function CategorySettings() {
                     className={styles.formInput}
                     value={newCategoryName}
                     onChange={(e) => setNewCategoryName(e.target.value)}
-                    onKeyDown={(e) => e.key === "Enter" && handleCreateCategory()}
+                    onKeyDown={(e) => handleCreateCategory(e)}
                 />
                 <CheckCircleIcon
                     className={styles.createIcon}

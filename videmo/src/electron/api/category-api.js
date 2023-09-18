@@ -4,8 +4,8 @@ const CategoriesDAO = require('../services/dao/settings/CategoriesDAO');
 
 // Add new category
 ipcMain.on('/create/category/', (event, arg) => {
-    new CategoriesDAO().createCategory(arg.name)
-        .then(() =>  event.reply('/create/category/', { success: true, category: { name: arg.name } }))
+    new CategoriesDAO().createCategory(arg.name, arg.order_id)
+        .then((category) =>  event.reply('/create/category/', { success: true, category: category }))
         .catch((err) => event.reply('/create/category/', { success: false, error: err }));
 })
 

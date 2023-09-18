@@ -2,8 +2,8 @@
 export default class CategoryApi {
 
     // Create a new category
-    createCategory(name) {
-        window.api.send("/create/category/", { name: name });
+    createCategory(name, orderId) {
+        window.api.send("/create/category/", { name: name, order_id: orderId });
 
         return new Promise((resolve, reject) => {
             window.api.receive("/create/category/", (data) => data.success ? resolve(data.category) : reject(data.error));

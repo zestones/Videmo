@@ -10,13 +10,14 @@ class CategoriesDAO {
     }
 
     // Create a new category
-    async createCategory(name) {
-        const sql = 'INSERT INTO Category (name) VALUES (?)';
-        const params = [name];
+    async createCategory(name, orderId) {
+        const sql = 'INSERT INTO Category (name, order_id) VALUES (?, ?)';
+        const params = [name, orderId];
 
         await this.queryExecutor.executeAndCommit(sql, params);
         const category = await this.getCategoryByName(name);
         await this.categoryFilterDAO.createDefaultCategorySort(category.id);
+        return category;
     }
 
     // Read all categories
