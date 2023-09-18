@@ -45,6 +45,7 @@ function DisplayOptions() {
                         <input
                             type="checkbox"
                             id={option.id}
+                            className={styles.checkbox}
                             checked={checkedDisplayMode.display_mode_id === option.id}
                             onChange={() => handleCheckedMode(option)}
                         />
