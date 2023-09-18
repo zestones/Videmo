@@ -19,12 +19,41 @@
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     }
 
-    .categoryName {
-        font-size: 18px;
-        color: var(--primary-text-color);
-        font-weight: bold;
-        margin-left: 20px;
+    .content {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+
+        svg {
+            width: 30px;
+            height: 30px;
+            margin-left: 10px;
+            color: var(--primary-text-color);
+        }
+      
+        .categoryName {
+            font-size: 18px;
+            color: var(--primary-text-color);
+            font-weight: bold;
+
+            margin-left: 45px;
+        }
+
+        .editInput {
+            width: 200px;
+            height: 30px;
+            border-radius: 4px;
+
+            border: none;
+            outline: none;
+
+            padding: 0 10px;
+            margin-bottom: 5px;
+            margin-left: 20px;
+        }
     }
+
+
 
     .categoryIcons {
         display: flex;
@@ -66,18 +95,5 @@
                 color: var(--selection-color);
             }
         }
-    }
-
-    .editInput {
-        width: 200px;
-        height: 30px;
-        border-radius: 4px;
-
-        border: none;
-        outline: none;
-
-        padding: 0 10px;
-        margin-bottom: 5px;
-        margin-left: 20px;
     }
 }
