@@ -14,8 +14,9 @@
     --secondary-text-color: #9e9e9e;
     --tertiary-text-color: #000000;
 
-    --selection-color: #6590ff;
-
+    --selection-color: #1f59ec;
+    --selection-color-hover: #1f59ec;
+    
     --highlight-color: #007bff;
     --highlight-color-hover: #0069d9;
 
