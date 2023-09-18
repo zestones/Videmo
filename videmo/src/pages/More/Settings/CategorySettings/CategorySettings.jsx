@@ -3,13 +3,14 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 // External
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import Notification from "../../../../components/Notification/Notification";
 
 // Api
 import ExtensionApi from "../../../../services/api/extension/ExtensionApi";
 import CategoryApi from "../../../../services/api/category/CategoryApi";
+
+// Components
+import CategoryCard from "../../../../components/Card/CategoryCard/CategoryCard";
 
 // Styles
 import styles from "./CategorySettings.module.scss";
@@ -92,34 +93,16 @@ function CategorySettings() {
                             <ul className={styles.categoryList} {...provided.droppableProps} ref={provided.innerRef}>
                                 {categories.map((category, index) => (
                                     <Draggable key={category.name} draggableId={category.name} index={index}>
-                                        {(provided) => (
-                                            <li
-                                                ref={provided.innerRef}
-                                                {...provided.draggableProps}
-                                                {...provided.dragHandleProps}
-                                                className={styles.categoryItem}
-                                            >
-                                                {editingCategory?.id === category.id ? (
-                                                    <input
-                                                        type="text"
-                                                        className={styles.editInput}
-                                                        value={editingCategory.name}
-                                                        onChange={(e) => setEditingCategory({ ...editingCategory, name: e.target.value })}
-                                                        onKeyDown={(e) => e.key === "Enter" && handleUpdateCategory(category.id)}
-                                                        autoFocus
-                                                    />
-                                                ) : (
-                                                    <p className={styles.categoryName}>{category.name}</p>
-                                                )}
-                                                <div className={styles.categoryIcons}>
-                                                    {editingCategory?.id === category.id ? (
-                                                        <CheckCircleIcon className={styles.editIcon} onClick={() => handleUpdateCategory(category.id)} />
-                                                    ) : (
-                                                        <EditOutlinedIcon className={styles.editIcon} onClick={() => setEditingCategory(category)} />
-                                                    )}
-                                                    <DeleteForeverIcon className={styles.deleteIcon} onClick={() => handleDeleteCategory(category.id)} />
-                                                </div>
-                                            </li>
+                                        {(provided, snapshot) => (
+                                            <CategoryCard
+                                                category={category}
+                                                provided={provided}
+                                                snapshot={snapshot}
+                                                editingCategory={editingCategory}
+                                                setEditingCategory={setEditingCategory}
+                                                handleUpdateCategory={handleUpdateCategory}
+                                                handleDeleteCategory={handleDeleteCategory}
+                                            />
                                         )}
                                     </Draggable>
                                 ))}
