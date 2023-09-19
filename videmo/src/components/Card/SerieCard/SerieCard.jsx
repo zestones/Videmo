@@ -19,7 +19,7 @@ import CategoryModal from '../../CategoryModal/CategoryModal';
 import styles from './SerieCard.module.scss';
 
 
-function SerieCard({ serie, onPlayClick, onMoreClick, isCalledFromExplore, isCalledFromLibrary, isOptionBarActive, checked, setChecked, numberOfEpisode }) {
+function SerieCard({ serie, onPlayClick, onMoreClick, isCalledFromExplore, isCalledFromLibrary, isOptionBarActive, checked, setChecked }) {
     // State initialization
     const [showCategoryModal, setShowCategoryModal] = useState(false);
     const [imageLoaded, setImageLoaded] = useState(false);
