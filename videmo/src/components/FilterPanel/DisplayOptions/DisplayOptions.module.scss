@@ -23,6 +23,7 @@
             flex-direction: row;
             justify-content: flex-start;
             align-items: center;
+
             gap: 0.5rem;
             position: relative;
 
@@ -63,7 +64,9 @@
                 font-size: 1rem;
                 font-weight: 500;
                 color: var(--primary-text-color);
+                
                 text-transform: capitalize;
+                cursor: pointer;
             }
         }
     }
