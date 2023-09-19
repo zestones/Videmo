@@ -64,7 +64,6 @@ function SerieCard({ serie, onPlayClick, onMoreClick, isCalledFromExplore, isCal
                 onMouseLeave={() => setIsHovered(false)}
                 onClick={() => !isOptionBarActive && onPlayClick(serie)}
             >
-                {!imageLoaded && <div className={styles.loadingEffect}></div>}
                 {(isCalledFromExplore && serie.inLibrary) && <span className={styles.inLibraryLabel}>Dans la bibliothèque</span>}
                 {isCalledFromLibrary && (
                     <div className={`${styles.episodeInfos} ${isSerieCompleted() && styles.completed}`}>
@@ -75,13 +74,16 @@ function SerieCard({ serie, onPlayClick, onMoreClick, isCalledFromExplore, isCal
                 )}
 
                 <div className={`${styles.cardContent} ${(isSerieCompleted() || (isCalledFromExplore && serie.inLibrary)) && styles.completed}`}>
-                    <img
-                        className={`${styles.cardImage} ${imageLoaded ? styles.imageLoaded : ''}`}
-                        src={serie.image}
-                        alt={serie.name}
-                        onLoad={() => setImageLoaded(true)}
-                    />
 
+                    <span className={styles.imgContainer}>
+                        <img
+                            className={`${styles.cardImage} ${imageLoaded ? styles.imageLoaded : ''}`}
+                            src={serie.image}
+                            alt={serie.name}
+                            onLoad={() => setImageLoaded(true)}
+                        />
+                        {!imageLoaded && <div className={`${styles.cardImage} ${styles.loadingEffect}`} />}
+                    </span>
                     <p className={styles.cardTitle}>{utils.constructTitle(serie)}</p>
 
                     <div
