@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 
 // Context
 import { useDisplayMode } from "../../FilterPanel/DisplayOptions/DisplayModeContext";
@@ -34,10 +34,6 @@ function SerieCard({ serie, onPlayClick, onMoreClick, isCalledFromExplore, isCal
 
     // Context initialization
     const { displayMode } = useDisplayMode();
-
-    useEffect(() => {
-        console.log("here => ", displayMode);
-    }, [displayMode]);
 
     const handleCloseModal = (notification) => {
         setShowCategoryModal(false);

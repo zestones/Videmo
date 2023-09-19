@@ -23,7 +23,7 @@ function DisplayOptions() {
         displayModeApi.readAllDisplayMode()
             .then((modes) => setModes(modes))
             .catch((error) => console.error(error));
-    }, [displayModeApi, displaySettingsApi, setDisplayMode]);
+    }, [displayModeApi, displaySettingsApi]);
 
     const handleCheckedMode = (mode) => {
         displaySettingsApi.updateDisplayMode(mode.id)
@@ -34,7 +34,7 @@ function DisplayOptions() {
 
     return (
         <div className={styles.displayOptions}>
-            <div className={styles.title}>Display Options</div>
+            <div className={styles.title}>Mode d'affichage</div>
             <div className={styles.options}>
                 {modes.map((option) => (
                     <div className={styles.option} key={option.id}>
