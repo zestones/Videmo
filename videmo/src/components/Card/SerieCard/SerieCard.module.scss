@@ -20,6 +20,7 @@ $card-height: 300px;
 
     &:active {
         transform: scale(0.95);
+        transition: transform 0.3s ease-in-out;
         box-shadow: 0px 0px 30px 0px rgba(0, 0, 0, 0.7);
     }
 
@@ -150,16 +151,6 @@ $card-height: 300px;
             &.hovered {
                 display: block;
                 animation: fadeIn 0.2s ease-in-out;
-
-                @keyframes fadeIn {
-                    from {
-                        opacity: 0;
-                    }
-
-                    to {
-                        opacity: 1;
-                    }
-                }
             }
 
             &.inLibrary {
@@ -264,18 +255,6 @@ $card-height: 300px;
                                     transform: translate(-50%, -50%) rotate(-45deg);
 
                                     animation: checkmark 0.2s ease-in-out;
-
-                                    @keyframes checkmark {
-                                        from {
-                                            width: 0;
-                                            height: 0;
-                                        }
-
-                                        to {
-                                            width: 10px;
-                                            height: 5px;
-                                        }
-                                    }
                                 }
                             }
 
@@ -370,16 +349,15 @@ $card-height: 300px;
 .list {
     display: flex;
     align-items: center;
-    /* Vertically align items */
     justify-content: space-between;
-    /* Space between image/episodes and options */
 
-    /* Card container style */
     width: 100%;
     margin: 5px;
     padding: 10px;
+
     border-radius: $card-border-radius;
     box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.2);
+
     transition: all 0.3s ease-in-out;
     list-style: none;
 
@@ -566,10 +544,19 @@ $card-height: 300px;
                         transition: all 0.2s ease-in-out;
 
                         &:checked {
+                            position: relative;
+
                             background-color: var(--highlight-color);
                             border: 2px solid var(--highlight-color);
 
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+
                             &::after {
+                                content: '';
+                                display: block;
+
                                 width: 10px;
                                 height: 5px;
 
@@ -577,19 +564,12 @@ $card-height: 300px;
                                 border-top: none;
                                 border-right: none;
 
+                                position: absolute;
+                                top: 50%;
+                                left: 50%;
+
+                                transform: translate(-50%, -50%) rotate(-45deg);
                                 animation: checkmark 0.2s ease-in-out;
-
-                                @keyframes checkmark {
-                                    from {
-                                        width: 0;
-                                        height: 0;
-                                    }
-
-                                    to {
-                                        width: 10px;
-                                        height: 5px;
-                                    }
-                                }
                             }
                         }
 
@@ -609,5 +589,27 @@ $card-height: 300px;
 
             }
         }
+    }
+}
+
+@keyframes checkmark {
+    from {
+        width: 0;
+        height: 0;
+    }
+
+    to {
+        width: 10px;
+        height: 5px;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
     }
 }
