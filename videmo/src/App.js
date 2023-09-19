@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
+
+// Contexts
 import { NotificationProvider } from './components/Notification/NotificationProvider';
 import { useTheme } from './pages/More/Settings/ThemeSettings/ThemeContext';
+import { DisplayModeProvider } from './components/FilterPanel/DisplayOptions/DisplayModeContext';
+
 
 // External
 import SubscriptionsIcon from '@mui/icons-material/Subscriptions';
@@ -38,11 +42,13 @@ function App() {
 	return (
 		<div className={`App ${theme}`}>
 			<NotificationProvider>
-				<Navigation
-					navItems={navigationItems}
-					activePage={activePage}
-					onPageChange={setActivePage}
-				/>
+				<DisplayModeProvider>
+					<Navigation
+						navItems={navigationItems}
+						activePage={activePage}
+						onPageChange={setActivePage}
+					/>
+				</DisplayModeProvider>
 			</NotificationProvider>
 		</div>
 	);

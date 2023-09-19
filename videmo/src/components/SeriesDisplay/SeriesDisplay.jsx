@@ -18,8 +18,13 @@ import TrackApi from "../../services/api/track/TrackApi";
 import FolderManager from "../../utilities/folderManager/FolderManager";
 import ExtensionApi from "../../services/api/extension/ExtensionApi";
 
+// Context
+import { useDisplayMode } from "../FilterPanel/DisplayOptions/DisplayModeContext";
+
 // Styles
 import styles from "./SeriesDisplay.module.scss";
+
+// Context initialization
 
 function SeriesDisplay({ serie, linkedSeries = [], episodes, onPlayClick, onRefresh, calledFrom, setEpisodes }) {
     // Services initialization
@@ -34,6 +39,13 @@ function SeriesDisplay({ serie, linkedSeries = [], episodes, onPlayClick, onRefr
     const [isOptionBarActive, setIsOptionBarActive] = useState(false);
     const [checkedSeries, setCheckedSeries] = useState([]);
     const [checkAll, setCheckAll] = useState(false);
+
+    // Context initialization
+    const { displayMode } = useDisplayMode();
+
+    useEffect(() => {
+        console.log("here => ", displayMode);
+    }, [displayMode]);
 
     useEffect(() => {
         setCheckedSeries(linkedSeries.map(() => false));
@@ -174,6 +186,5 @@ function SeriesDisplay({ serie, linkedSeries = [], episodes, onPlayClick, onRefr
         </div>
     );
 }
-
 
 export default SeriesDisplay;

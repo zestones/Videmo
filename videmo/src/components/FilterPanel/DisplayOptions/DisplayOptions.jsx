@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useMemo } from "react";
 
-
 // Api
 import DisplayModeApi from "../../../services/api/settings/DisplayModeApi";
 import DisplaySettingsApi from "../../../services/api/settings/DisplaySettingsApi";
 
+import { useDisplayMode } from "./DisplayModeContext";
+
 // Styles
 import styles from "./DisplayOptions.module.scss";
+
 
 function DisplayOptions() {
     // Api initialization   
@@ -15,23 +17,17 @@ function DisplayOptions() {
 
     // State initialization
     const [modes, setModes] = useState([]);
-    const [checkedDisplayMode, setCheckedDisplayMode] = useState({});
+    const { displayMode, setDisplayMode } = useDisplayMode();
 
     useEffect(() => {
         displayModeApi.readAllDisplayMode()
             .then((modes) => setModes(modes))
             .catch((error) => console.error(error));
-
-        displaySettingsApi.readDisplayMode()
-            .then((mode) => setCheckedDisplayMode(mode))
-    }, [displayModeApi, displaySettingsApi]);
+    }, [displayModeApi, displaySettingsApi, setDisplayMode]);
 
     const handleCheckedMode = (mode) => {
         displaySettingsApi.updateDisplayMode(mode.id)
-            .then((mode) => {
-                console.log(mode);
-                setCheckedDisplayMode(mode)
-            })
+            .then((mode) => setDisplayMode(mode))
             .catch((error) => console.error(error));
     }
 
@@ -46,7 +42,7 @@ function DisplayOptions() {
                             type="checkbox"
                             id={option.id}
                             className={styles.checkbox}
-                            checked={checkedDisplayMode.display_mode_id === option.id}
+                            checked={displayMode.display_mode_id === option.id}
                             onChange={() => handleCheckedMode(option)}
                         />
                         <label htmlFor={option.id}>{option.name}</label>
