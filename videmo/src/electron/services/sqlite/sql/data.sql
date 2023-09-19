@@ -47,3 +47,8 @@ INSERT INTO Theme (name, is_active) VALUES ('ocean-theme', 0);
 INSERT INTO Theme (name, is_active) VALUES ('fire-theme', 0);
 INSERT INTO Theme (name, is_active) VALUES ('forest-theme', 0);
 INSERT INTO Theme (name, is_active) VALUES ('sky-theme', 0);
+
+-- Insert the DisplayMode (with the default display option)
+INSERT INTO DisplayMode (name) VALUES ('compact');
+INSERT INTO DisplayMode (name) VALUES ('spaced');
+INSERT INTO DisplayMode (name) VALUES ('list');

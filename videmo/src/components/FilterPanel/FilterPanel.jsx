@@ -8,6 +8,7 @@ import styles from './FilterPanel.module.scss';
 
 // Components
 import SortContent from './SortContent/SortContent';
+import DisplayOptions from './DisplayOptions/DisplayOptions';
 
 const FilterPanel = ({ onFilter, series, currentCategory }) => {
     // Constants initialization
@@ -77,7 +78,7 @@ const FilterPanel = ({ onFilter, series, currentCategory }) => {
 
                     {activeTab === TABS_NAME.DISPLAY && (
                         <div className={styles.displayTab}>
-                            {/* Add display content */}
+                            <DisplayOptions />
                         </div>
                     )}
                 </div>

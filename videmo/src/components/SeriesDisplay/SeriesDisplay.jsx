@@ -21,6 +21,8 @@ import ExtensionApi from "../../services/api/extension/ExtensionApi";
 // Styles
 import styles from "./SeriesDisplay.module.scss";
 
+// Context initialization
+
 function SeriesDisplay({ serie, linkedSeries = [], episodes, onPlayClick, onRefresh, calledFrom, setEpisodes }) {
     // Services initialization
     const trackApi = useMemo(() => new TrackApi(), []);
@@ -159,7 +161,7 @@ function SeriesDisplay({ serie, linkedSeries = [], episodes, onPlayClick, onRefr
                 {shouldShowResumeButton && (
                     <button className={styles.resumeButton} onClick={handleResumeEpisode}>
                         <PlayArrowIcon />
-                        <span>{episodes.find((episode) => (episode.viewed || episode.played_time)) ? "Resume" : "Play"}</span>
+                        <span>{episodes.find((episode) => (episode.viewed || episode.played_time)) ? "Reprendre" : "Commencer"}</span>
                     </button>
                 )}
             </div>
@@ -174,6 +176,5 @@ function SeriesDisplay({ serie, linkedSeries = [], episodes, onPlayClick, onRefr
         </div>
     );
 }
-
 
 export default SeriesDisplay;

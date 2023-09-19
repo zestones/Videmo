@@ -3,7 +3,8 @@ $card-border-radius: 4px;
 $card-width: 250px;
 $card-height: 300px;
 
-.card {
+.compact,
+.spaced {
     position: relative;
 
     width: $card-width;
@@ -14,53 +15,19 @@ $card-height: 300px;
 
     border-radius: $card-border-radius;
     box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.2);
-    transition: all 0.3s ease-in-out;
 
     list-style: none;
 
     &:active {
         transform: scale(0.95);
+        transition: transform 0.3s ease-in-out;
         box-shadow: 0px 0px 30px 0px rgba(0, 0, 0, 0.7);
     }
 
-    .loadingEffect {
-        position: absolute;
-        top: 0;
-        left: 0;
-
-        width: 100%;
-        height: 100%;
-
-        background: rgba(255, 255, 255, 0.7);
-        z-index: 1;
-
-        &::after {
-            content: '';
-            display: block;
-            width: 40px;
-            height: 40px;
-            border: 4px solid var(--highlight-color);
-
-            border-top-color: transparent;
-            border-radius: 50%;
-            position: absolute;
-
-            top: 50%;
-            left: 50%;
-
-            transform: translate(-50%, -50%);
-            animation: spin 1s linear infinite;
-
-            @keyframes spin {
-                to {
-                    transform: translate(-50%, -50%) rotate(360deg);
-                }
-            }
-        }
-    }
-
-    .imageLoaded {
-        opacity: 1;
+    &.checked {
+        transition: transform 0.2s ease-in-out;
+        transform: scale(0.98);
+        border: 5px solid var(--highlight-color);
     }
 
     .inLibraryLabel {
@@ -73,11 +40,11 @@ $card-height: 300px;
 
         font-weight: 600;
         font-size: 0.8rem;
-        
+
         color: var(--primary-text-color);
         text-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
         background-color: var(--selection-color);
-        
+
         z-index: 1;
     }
 
@@ -117,26 +84,51 @@ $card-height: 300px;
 
         .cardImage {
             width: 100%;
-            height: $card-height;
+            height: 100%;
 
             background-size: cover;
             background-position: center;
-        }
+            background-repeat: no-repeat;
 
-        .cardTitle {
-            position: absolute;
-            bottom: 0;
-            left: 0;
+            &.loadingEffect {
+                position: absolute;
+                top: 0;
+                left: 0;
 
-            width: $card-width;
+                width: 100%;
+                height: 100%;
 
-            margin: 0;
-            padding: 0.5rem 1rem;
+                background: rgba(255, 255, 255, 0.7);
+                z-index: 1;
 
-            font-weight: 600;
-            color: #ffffff;
-            text-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
-            background: linear-gradient(0deg, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0));
+                &::after {
+                    content: '';
+                    display: block;
+                    width: 40px;
+                    height: 40px;
+                    border: 4px solid var(--highlight-color);
+
+                    border-top-color: transparent;
+                    border-radius: 50%;
+                    position: absolute;
+
+                    top: 50%;
+                    left: 50%;
+
+                    transform: translate(-50%, -50%);
+                    animation: spin 1s linear infinite;
+
+                    @keyframes spin {
+                        to {
+                            transform: translate(-50%, -50%) rotate(360deg);
+                        }
+                    }
+                }
+            }
+
+            &.imageLoaded {
+                opacity: 1;
+            }
         }
 
         .cardLayer {
@@ -159,16 +151,6 @@ $card-height: 300px;
             &.hovered {
                 display: block;
                 animation: fadeIn 0.2s ease-in-out;
-
-                @keyframes fadeIn {
-                    from {
-                        opacity: 0;
-                    }
-
-                    to {
-                        opacity: 1;
-                    }
-                }
             }
 
             &.inLibrary {
@@ -184,6 +166,7 @@ $card-height: 300px;
 
                 height: 100%;
                 padding: 0.5rem 2rem;
+                z-index: 2;
 
                 .iconContainer {
                     display: flex;
@@ -272,18 +255,6 @@ $card-height: 300px;
                                     transform: translate(-50%, -50%) rotate(-45deg);
 
                                     animation: checkmark 0.2s ease-in-out;
-
-                                    @keyframes checkmark {
-                                        from {
-                                            width: 0;
-                                            height: 0;
-                                        }
-
-                                        to {
-                                            width: 10px;
-                                            height: 5px;
-                                        }
-                                    }
                                 }
                             }
 
@@ -336,5 +307,309 @@ $card-height: 300px;
                 }
             }
         }
+    }
+}
+
+.compact {
+    .cardTitle {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+
+        width: 100%;
+
+        margin: 0;
+        padding: 0.5rem 1rem;
+
+        font-weight: 600;
+        color: #ffffff;
+        text-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+        background: linear-gradient(0deg, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0));
+    }
+}
+
+.spaced {
+    margin-bottom: 2.4rem;
+
+    .cardTitle {
+        position: relative;
+        width: 100%;
+
+        margin: 0;
+        padding: 0.5rem 1rem;
+
+        font-weight: 600;
+        color: var(--primary-text-color);
+    }
+
+}
+
+
+// List Style
+.list {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    width: 100%;
+    margin: 5px;
+    padding: 10px;
+
+    border-radius: $card-border-radius;
+    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.2);
+
+    transition: all 0.3s ease-in-out;
+    list-style: none;
+
+    &:active {
+        transform: scale(0.95);
+        box-shadow: 0px 0px 30px 0px rgba(0, 0, 0, 0.7);
+    }
+
+    &.checked {
+        transition: transform 0.2s ease-in-out;
+        transform: scale(0.98);
+        border: 5px solid var(--highlight-color);
+    }
+
+    .inLibraryLabel {
+        padding: 4px 8px;
+        border-radius: 4px;
+
+        font-weight: 600;
+        font-size: 0.8rem;
+
+        color: var(--primary-text-color);
+        text-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+        background-color: var(--selection-color);
+
+        z-index: 1;
+        order: 1;
+    }
+
+    .episodeInfos {
+        padding: 4px 8px;
+        border-radius: 4px;
+
+        font-weight: 600;
+        text-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+        background-color: var(--selection-color);
+
+        z-index: 1;
+        order: 1;
+
+        &.completed {
+            background-color: var(--success-color);
+        }
+
+        .number {
+            font-size: 0.8rem;
+            color: var(--primary-text-color);
+        }
+    }
+
+    .cardContent {
+        display: flex;
+        align-items: center;
+        position: relative;
+
+        .imgContainer {
+            position: relative;
+
+            width: 75px;
+            height: 95px;
+            margin-right: 10px;
+
+            order: 1;
+
+            .cardImage {
+                width: 75px;
+                height: 95px;
+                background-size: cover;
+                background-position: center;
+                background-repeat: no-repeat;
+
+                &.loadingEffect {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+
+                    width: 100%;
+                    height: 100%;
+
+                    background: rgba(255, 255, 255, 0.7);
+                    z-index: 1;
+
+                    &::after {
+                        content: '';
+                        display: block;
+                        width: 40px;
+                        height: 40px;
+                        border: 4px solid var(--highlight-color);
+
+                        border-top-color: transparent;
+                        border-radius: 50%;
+                        position: absolute;
+
+                        top: 50%;
+                        left: 50%;
+
+                        transform: translate(-50%, -50%);
+                        animation: spin 1s linear infinite;
+
+                        @keyframes spin {
+                            to {
+                                transform: translate(-50%, -50%) rotate(360deg);
+                            }
+                        }
+                    }
+                }
+
+                &.imageLoaded {
+                    opacity: 1;
+                }
+            }
+        }
+
+        .cardTitle {
+            font-weight: 600;
+            color: var(--primary-text-color);
+            order: 2;
+        }
+
+        .cardLayer {
+            display: flex;
+            align-items: center;
+
+            .cardLayerContent {
+                display: flex;
+                align-items: center;
+
+                .cardOptions {
+                    order: 1;
+                    margin: 0 12px;
+
+                    .iconContainer {
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+
+                        width: 40px;
+                        height: 40px;
+
+                        border-radius: 50%;
+                        margin: 4px 0;
+
+                        svg {
+                            width: 27px;
+                            height: 27px;
+
+                            padding: 2px;
+                        }
+                    }
+
+                    .iconContainer.moreIcon {
+                        background-color: rgba(0, 0, 0, 0.5);
+                        order: 3;
+
+                        svg {
+                            fill: var(--success-color);
+                        }
+                    }
+
+                    .iconContainer.playIcon {
+                        background-color: rgba(0, 0, 0, 0.5);
+                        order: 4;
+
+                        svg {
+                            fill: var(--selection-color-hover);
+                        }
+                    }
+                }
+
+                .iconContainer.checkboxIcon {
+                    border: none;
+
+                    input[type="checkbox"] {
+                        width: 23px;
+                        height: 23px;
+
+                        appearance: none;
+                        border: 2px solid var(--secondary-text-color);
+                        border-radius: 4px;
+
+                        background-color: rgba(0, 0, 0, 0.5);
+                        outline: none;
+
+                        transition: all 0.2s ease-in-out;
+
+                        &:checked {
+                            position: relative;
+
+                            background-color: var(--highlight-color);
+                            border: 2px solid var(--highlight-color);
+
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+
+                            &::after {
+                                content: '';
+                                display: block;
+
+                                width: 10px;
+                                height: 5px;
+
+                                border: 2px solid var(--primary-text-color);
+                                border-top: none;
+                                border-right: none;
+
+                                position: absolute;
+                                top: 50%;
+                                left: 50%;
+
+                                transform: translate(-50%, -50%) rotate(-45deg);
+                                animation: checkmark 0.2s ease-in-out;
+                            }
+                        }
+
+                        &:hover {
+                            cursor: pointer;
+                        }
+
+                        &:focus {
+                            box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.5);
+                        }
+                    }
+                }
+
+                &:hover {
+                    cursor: pointer;
+                }
+
+            }
+        }
+    }
+}
+
+@keyframes checkmark {
+    from {
+        width: 0;
+        height: 0;
+    }
+
+    to {
+        width: 10px;
+        height: 5px;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
     }
 }
