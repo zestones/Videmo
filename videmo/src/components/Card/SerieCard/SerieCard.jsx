@@ -49,7 +49,7 @@ function SerieCard({ serie, onPlayClick, onMoreClick, isCalledFromExplore, isCal
     return (
         <>
             <li
-                className={`${styles.card}`}
+                className={`${styles.card} ${checked && styles.checked}`}
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
                 onClick={() => !isOptionBarActive && onPlayClick(serie)}
