@@ -1,4 +1,7 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
+
+// Context
+import { useDisplayMode } from "../../FilterPanel/DisplayOptions/DisplayModeContext";
 import { useNotification } from "../../Notification/NotificationProvider";
 
 // External
@@ -29,6 +32,13 @@ function SerieCard({ serie, onPlayClick, onMoreClick, isCalledFromExplore, isCal
     // Initialization of the notification hook
     const { showNotification } = useNotification();
 
+    // Context initialization
+    const { displayMode } = useDisplayMode();
+
+    useEffect(() => {
+        console.log("here => ", displayMode);
+    }, [displayMode]);
+
     const handleCloseModal = (notification) => {
         setShowCategoryModal(false);
         if (notification) showNotification(notification.type, notification.message);
@@ -49,7 +59,7 @@ function SerieCard({ serie, onPlayClick, onMoreClick, isCalledFromExplore, isCal
     return (
         <>
             <li
-                className={`${styles.card} ${checked && styles.checked}`}
+                className={`${styles[displayMode.name]} ${checked && styles.checked}`}
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
                 onClick={() => !isOptionBarActive && onPlayClick(serie)}
@@ -77,25 +87,27 @@ function SerieCard({ serie, onPlayClick, onMoreClick, isCalledFromExplore, isCal
                     <div
                         className={`${styles.cardLayer} ${(isHovered || isOptionBarActive) && styles.hovered}`}>
                         <div className={styles.cardLayerContent}>
-                            <span
-                                className={styles.iconContainer + " " + styles.moreIcon}
-                                style={{ display: isOptionBarActive ? "none" : "" }}
-                                onClick={(event) => {
-                                    event.stopPropagation();
-                                    handleAddToCategory();
-                                }}
-                            >
-                                <LabelIcon />
-                            </span>
-                            <span
-                                className={styles.iconContainer + " " + styles.playIcon}
-                                style={{ display: isOptionBarActive ? "none" : "" }}
-                                onClick={(event) => {
-                                    event.stopPropagation();
-                                    onPlayClick(serie);
-                                }}
-                            >
-                                <PlayArrowIcon />
+                            <span className={styles.cardOptions}>
+                                <span
+                                    className={styles.iconContainer + " " + styles.moreIcon}
+                                    style={{ display: isOptionBarActive ? "none" : "" }}
+                                    onClick={(event) => {
+                                        event.stopPropagation();
+                                        handleAddToCategory();
+                                    }}
+                                >
+                                    <LabelIcon />
+                                </span>
+                                <span
+                                    className={styles.iconContainer + " " + styles.playIcon}
+                                    style={{ display: isOptionBarActive ? "none" : "" }}
+                                    onClick={(event) => {
+                                        event.stopPropagation();
+                                        onPlayClick(serie);
+                                    }}
+                                >
+                                    <PlayArrowIcon />
+                                </span>
                             </span>
                             <span
                                 className={styles.iconContainer + " " + styles.checkboxIcon}
