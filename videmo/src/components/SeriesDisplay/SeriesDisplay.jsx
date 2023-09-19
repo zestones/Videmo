@@ -161,7 +161,7 @@ function SeriesDisplay({ serie, linkedSeries = [], episodes, onPlayClick, onRefr
                 {shouldShowResumeButton && (
                     <button className={styles.resumeButton} onClick={handleResumeEpisode}>
                         <PlayArrowIcon />
-                        <span>{episodes.find((episode) => (episode.viewed || episode.played_time)) ? "Resume" : "Play"}</span>
+                        <span>{episodes.find((episode) => (episode.viewed || episode.played_time)) ? "Reprendre" : "Commencer"}</span>
                     </button>
                 )}
             </div>
