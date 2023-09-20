@@ -1,11 +1,19 @@
 export default class TrackApi {
 
     addEpisodeToBookmarks = (serie, episode) => {
-        return this.#updateSerieTrack(serie, episode);
-    }   
+        return this.#updateSerieTrack(serie, [episode]);
+    }
 
     addEpisodeToViewed = (serie, episode) => {
-        return this.#updateSerieTrack(serie, episode);
+        return this.#updateSerieTrack(serie, [episode]);
+    }
+
+    addManyEpisodesToBookmarks = (serie, episodes) => {
+        return this.#updateSerieTrack(serie, episodes);
+    }
+
+    addManyEpisodesToViewed = (serie, episodes) => {
+        return this.#updateSerieTrack(serie, episodes);
     }
 
     updateAllSeriesEpisodesViewedFlag = (series, viewed) => {
@@ -24,8 +32,8 @@ export default class TrackApi {
         });
     }
 
-    #updateSerieTrack = (serie, episode) => {
-        window.api.send("/update/serie/track/", { serie: JSON.stringify(serie), episode: JSON.stringify(episode) });
+    #updateSerieTrack = (serie, episodes) => {
+        window.api.send("/update/serie/track/", { serie: JSON.stringify(serie), episodes: JSON.stringify(episodes) });
 
         return new Promise((resolve, reject) => {
             window.api.receive("/update/serie/track/", (data) => data.success ? resolve(data.episode) : reject(data.error));
@@ -39,7 +47,6 @@ export default class TrackApi {
             window.api.receive("/read/episode/by/link/", (data) => data.success ? resolve(data.episode) : reject(data.error));
         });
     }
-
 
     readAllEpisodesBySerieLink = (link) => {
         window.api.send("/read/all/episodes/by/serie/link/", link);
@@ -61,7 +68,7 @@ export default class TrackApi {
         return episodes.map(episode => {
             const episodeFromDatabase = episodesFromDatabase.find(episodeFromDatabase => episodeFromDatabase.link === episode.link);
             if (episodeFromDatabase) {
-                return {...episodeFromDatabase, modifiedTime: episode.modifiedTime};
+                return { ...episodeFromDatabase, modifiedTime: episode.modifiedTime };
             }
             return episode;
         });

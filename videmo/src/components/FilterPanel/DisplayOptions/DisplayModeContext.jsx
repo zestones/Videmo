@@ -16,7 +16,6 @@ export const DisplayModeProvider = ({ children }) => {
     const [displayMode, setDisplayMode] = useState(null);
 
     useEffect(() => {
-        console.log("useEffect");
         displaySettingsApi.readDisplayMode()
             .then((mode) => setDisplayMode(mode))
             .catch((error) => console.error(error));

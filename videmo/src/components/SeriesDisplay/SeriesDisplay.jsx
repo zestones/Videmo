@@ -34,7 +34,7 @@ function SeriesDisplay({ serie, linkedSeries = [], episodes, onPlayClick, onRefr
     const [openVideoPlayer, setOpenVideoPlayer] = useState(false);
     const [resumeEpisode, setResumeEpisode] = useState(null);
     const [shouldPlayEpisode, setShouldPlayEpisode] = useState(false);
-    
+
     const [isOptionBarActive, setIsOptionBarActive] = useState(false);
     const [isEpisodeOptionBarActive, setIsEpisodeOptionBarActive] = useState(false);
     const [checkAllEpisodes, setCheckAllEpisodes] = useState(false);
@@ -142,10 +142,9 @@ function SeriesDisplay({ serie, linkedSeries = [], episodes, onPlayClick, onRefr
     };
 
     const handleCheckAllEpisodeUnderIndex = (index) => {
-        const test = checkedEpisodes.map((checked, i) => i >= index ? true : checked);
-        console.log("test", test);
-
-        setCheckedEpisodes(test)
+        const updatedEpisodes = checkedEpisodes.map((checked, i) => i >= index ? true : checked);
+        if (updatedEpisodes.every(checked => checked === true)) setCheckAllEpisodes(true);
+        setCheckedEpisodes(updatedEpisodes)
     };
 
     const handleCheckAllEpisode = () => {
@@ -198,6 +197,7 @@ function SeriesDisplay({ serie, linkedSeries = [], episodes, onPlayClick, onRefr
 
             {isEpisodeOptionBarActive && (
                 <OptionBarEpisode
+                    serie={serie}
                     episodes={episodes.filter((_, index) => checkedEpisodes[index])}
                     onClose={handleCloseOptionBarEpisode}
                     checked={checkAllEpisodes}

@@ -7,23 +7,22 @@
     position: fixed;
 
     width: 50px;
-    height: 250px;
+    height: 225px;
 
-    bottom: 0;
+    bottom: 50%;
+    transform: translateY(50%);
 
     left: calc(var(--navigation-width));
     z-index: 10;
 
     background-color: var(--selection-color);
-    border-radius: 0 25px 0 0;
+    border-radius: 0 25px 25px 0;
 
     .episodeOptionBarCheckboxContainer {
         position: absolute;
-        top: 0;
+        top: 18px;
 
         width: 100%;
-        margin-top: 15px;
-        margin-right: 5px;
 
         display: flex;
         align-items: center;
@@ -86,8 +85,8 @@
         align-items: center;
         flex-direction: column;
         
-        gap: 10px;
-        margin-bottom: 15px;
+        gap: 15px;
+        margin-bottom: 35px;
 
         .episodeOptionBarButton {
             width: 100%;
@@ -106,24 +105,6 @@
             &:hover {
                 color: rgba(0, 0, 0, 0.7);
                 cursor: pointer;
-            }
-
-            &:active {
-                animation: click 0.2s ease-in-out;
-
-                @keyframes click {
-                    0% {
-                        transform: scale(1);
-                    }
-
-                    50% {
-                        transform: scale(0.9);
-                    }
-
-                    100% {
-                        transform: scale(1);
-                    }
-                }
             }
         }
     }
