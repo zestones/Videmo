@@ -6,6 +6,7 @@ import DoneAllIcon from '@mui/icons-material/DoneAll';
 import RemoveDoneIcon from '@mui/icons-material/RemoveDone';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import KeyboardDoubleArrowDownIcon from '@mui/icons-material/KeyboardDoubleArrowDown';
 
 // Utilities
 import FolderManager from "../../../utilities/folderManager/FolderManager";
@@ -21,7 +22,7 @@ import VideoPlayer from "../../VideoPlayer/VideoPlayer";
 import styles from "./EpisodeCard.module.scss";
 
 
-function EpisodeCard({ serie, episode, setEpisodes }) {
+function EpisodeCard({ serie, episode, setEpisodes, checked, setChecked, exactlyOneChecked, setAllCheckedUnderIndex }) {
     // Services initialization
     const [folderManager] = useState(() => new FolderManager());
     const [trackApi] = useState(() => new TrackApi());
@@ -67,8 +68,21 @@ function EpisodeCard({ serie, episode, setEpisodes }) {
 
 
     return (
-        <li className={`${styles.card} ${currentEpisode.viewed ? styles.viewed : ""} ${currentEpisode.bookmarked ? styles.bookmarked : ""}`}>
+        <li
+            className={`${styles.card} 
+                ${currentEpisode.viewed ? styles.viewed : ""} 
+                ${currentEpisode.bookmarked ? styles.bookmarked : ""}
+                ${checked && styles.checked}`}
+        >
             <div className={styles.cardContent}>
+                <div className={styles.cardCheckboxContainer}>
+                    <input
+                        type="checkbox"
+                        className={styles.cardCheckbox}
+                        checked={checked}
+                        onChange={() => setChecked(!checked)}
+                    />
+                </div>
                 <div className={styles.cardInfo}>
                     <p className={styles.cardTitle}>{currentEpisode.name}</p>
                     <div className={styles.cardDescriptionContainer}>
@@ -77,18 +91,28 @@ function EpisodeCard({ serie, episode, setEpisodes }) {
                     </div>
                 </div>
                 <div className={styles.cardButtonsContainer}>
-                    <PlayArrowIcon className={styles.cardButton} onClick={() => setOpenVideoPlayer(true)} />
-                    <OpenInNewIcon className={styles.cardButton} onClick={handleOpenLocalVideoPlayer} />
-                    <BookmarkIcon className={`${styles.cardButton} ${currentEpisode.bookmarked ? styles.bookmarked : ""}`} onClick={handleBookmarkClick} />
+                    {(!checked && !exactlyOneChecked) && (
+                        <>
+                            <PlayArrowIcon className={styles.cardButton} onClick={() => setOpenVideoPlayer(true)} />
+                            <OpenInNewIcon className={styles.cardButton} onClick={handleOpenLocalVideoPlayer} />
+                            <BookmarkIcon className={`${styles.cardButton} ${currentEpisode.bookmarked ? styles.bookmarked : ""}`} onClick={handleBookmarkClick} />
+                        </>
+                    )}
                     {!currentEpisode.viewed ? (
                         <DoneAllIcon className={styles.cardButton} onClick={handleViewedClick} />
                     ) : (
                         <RemoveDoneIcon className={styles.cardButton} onClick={handleViewedClick} />
                     )}
+
+                    {(checked && exactlyOneChecked) && <KeyboardDoubleArrowDownIcon className={styles.cardButton} onClick={setAllCheckedUnderIndex} />}
                 </div>
             </div>
             {openVideoPlayer && (
-                <VideoPlayer link={currentEpisode.link} startTime={!currentEpisode.played_time ? 0 : currentEpisode.played_time} onCloseVideoPlayer={handleCloseVideoPlayer} />
+                <VideoPlayer
+                    link={currentEpisode.link}
+                    startTime={!currentEpisode.played_time ? 0 : currentEpisode.played_time}
+                    onCloseVideoPlayer={handleCloseVideoPlayer}
+                />
             )}
         </li>
     );

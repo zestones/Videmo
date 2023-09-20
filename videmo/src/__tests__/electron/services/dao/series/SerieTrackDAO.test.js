@@ -95,7 +95,7 @@ describe('SerieTrackDAO', () => {
 
         // Act
         await serieTrackDAO.createSerieTrack(serie.id, episode.id);
-        await serieTrackDAO.updateSerieTrack(JSON.stringify(serie), JSON.stringify(episode));
+        await serieTrackDAO.updateSerieTrack(JSON.stringify(serie), JSON.stringify([episode]));
 
         const sql = `SELECT * FROM Track WHERE serie_id = ? AND episode_id = ?`;
         const params = [serie.id, episode.id];

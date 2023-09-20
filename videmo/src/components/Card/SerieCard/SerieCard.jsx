@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 
 // Context
 import { useDisplayMode } from "../../FilterPanel/DisplayOptions/DisplayModeContext";
@@ -19,7 +19,7 @@ import CategoryModal from '../../CategoryModal/CategoryModal';
 import styles from './SerieCard.module.scss';
 
 
-function SerieCard({ serie, onPlayClick, onMoreClick, isCalledFromExplore, isCalledFromLibrary, isOptionBarActive, checked, setChecked, numberOfEpisode }) {
+function SerieCard({ serie, onPlayClick, onMoreClick, isCalledFromExplore, isCalledFromLibrary, isOptionBarActive, checked, setChecked }) {
     // State initialization
     const [showCategoryModal, setShowCategoryModal] = useState(false);
     const [imageLoaded, setImageLoaded] = useState(false);
@@ -34,10 +34,6 @@ function SerieCard({ serie, onPlayClick, onMoreClick, isCalledFromExplore, isCal
 
     // Context initialization
     const { displayMode } = useDisplayMode();
-
-    useEffect(() => {
-        console.log("here => ", displayMode);
-    }, [displayMode]);
 
     const handleCloseModal = (notification) => {
         setShowCategoryModal(false);

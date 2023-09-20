@@ -62,22 +62,26 @@ class SerieTrackDAO {
     }
 
     // Update a serie track entry
-    async updateSerieTrack(serie, episode) {
+    async updateSerieTrack(serie, episodes) {
         const serieParsedObject = JSON.parse(serie);
-        const episodeParsedObject = JSON.parse(episode);
+        const episodeParsedObject = JSON.parse(episodes);
 
         const retrievedSerie = await this.#getOrCreateSerie(serieParsedObject);
-        const episodeBeforeUpdate = await this.serieEpisodeDAO.getEpisodeByLink(episodeParsedObject.link);
-        const retrievedEpisode = await this.#createOrUpdateEpisode(episodeParsedObject);
 
-        await this.#createSerieTrackIfNotExist(retrievedSerie.id, retrievedEpisode.id);
+        for (const episode of episodeParsedObject) {
 
-        if (episodeBeforeUpdate && episodeBeforeUpdate.viewed !== retrievedEpisode.viewed) {
-            const viewed = retrievedEpisode.viewed;
-            const parentSeries = await this.serieDAO.getAllParentSeries(retrievedSerie.link);
+            const episodeBeforeUpdate = await this.serieEpisodeDAO.getEpisodeByLink(episode.link);
+            const retrievedEpisode = await this.#createOrUpdateEpisode(episode);
 
-            for (const parentSerie of parentSeries) {
-                await this.serieInfosDAO.updateNumberOfEpisodesViewedWithIncrement(parentSerie.id, viewed ? 1 : -1);
+            await this.#createSerieTrackIfNotExist(retrievedSerie.id, retrievedEpisode.id);
+
+            if (episodeBeforeUpdate && episodeBeforeUpdate.viewed !== retrievedEpisode.viewed) {
+                const viewed = retrievedEpisode.viewed;
+                const parentSeries = await this.serieDAO.getAllParentSeries(retrievedSerie.link);
+
+                for (const parentSerie of parentSeries) {
+                    await this.serieInfosDAO.updateNumberOfEpisodesViewedWithIncrement(parentSerie.id, viewed ? 1 : -1);
+                }
             }
         }
 

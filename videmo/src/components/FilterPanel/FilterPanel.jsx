@@ -33,19 +33,19 @@ const FilterPanel = ({ onFilter, series, currentCategory }) => {
                         className={`${styles.tab} ${activeTab === TABS_NAME.FILTER ? styles.active : ''}`}
                         onClick={() => handleTabClick(TABS_NAME.FILTER)}
                     >
-                        Filter
+                        Filtres
                     </div>
                     <div
                         className={`${styles.tab} ${activeTab === TABS_NAME.SORT ? styles.active : ''}`}
                         onClick={() => handleTabClick(TABS_NAME.SORT)}
                     >
-                        Sort
+                        Trier
                     </div>
                     <div
                         className={`${styles.tab} ${activeTab === TABS_NAME.DISPLAY ? styles.active : ''}`}
                         onClick={() => handleTabClick(TABS_NAME.DISPLAY)}
                     >
-                        Display
+                        Affichage
                     </div>
                 </div>
                 <div className={styles.content}>

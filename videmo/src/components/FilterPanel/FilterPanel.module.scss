@@ -67,8 +67,7 @@
     .tabs {
         display: flex;
         justify-content: space-around;
-        border-bottom: 1px solid #ccc;
-        padding: 5px 0;
+        border-bottom: 1px solid var(--secondary-color);
     }
 
     .tab {
@@ -76,7 +75,8 @@
         cursor: pointer;
 
         &.active {
-            border-bottom: 2px solid var(--selection-color);
+            border-bottom: 6px solid var(--selection-color);
+            border-radius: 4px;
         }
     }
 
@@ -96,14 +96,19 @@
             input[type="checkbox"] {
                 margin-right: 10px;
                 appearance: none;
+                
                 width: 20px;
                 height: 20px;
+                
                 border: 2px solid var(--selection-color);
                 border-radius: 3px;
+
                 display: flex;
                 justify-content: center;
                 align-items: center;
                 background-color: transparent;
+
+                cursor: pointer;
                 transition: background-color 0.3s ease-in-out, border-color 0.3s ease-in-out;
 
                 &:checked {
