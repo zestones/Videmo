@@ -11,7 +11,8 @@ import DetailsContainer from "../DetailsContainer/DetailsContainer";
 import SerieCard from "../Card/SerieCard/SerieCard";
 import EpisodeCard from "../Card/EpisodeCard/EpisodeCard";
 import VideoPlayer from "../VideoPlayer/VideoPlayer";
-import OptionBar from "../OptionBar/OptionBar";
+import OptionBarSerie from "../OptionBar/OptionBarSerie/OptionBarSerie";
+import OptionBarEpisode from "../OptionBar/OptionBarEpisode/OptionBarEpisode";
 
 // Services
 import TrackApi from "../../services/api/track/TrackApi";
@@ -20,7 +21,6 @@ import ExtensionApi from "../../services/api/extension/ExtensionApi";
 
 // Styles
 import styles from "./SeriesDisplay.module.scss";
-import OptionBarEpisode from "../OptionBar/OptionBarEpisode/OptionBarEpisode";
 
 // Context initialization
 
@@ -184,8 +184,7 @@ function SeriesDisplay({ serie, linkedSeries = [], episodes, onPlayClick, onRefr
             </div>
 
             {isOptionBarActive && (
-                // TODO rename component to OptionBarSeries
-                <OptionBar
+                <OptionBarSerie
                     series={linkedSeries.filter((_, index) => checkedSeries[index])}
                     onClose={handleCloseOptionBar}
                     checked={checkAllSeries}
