@@ -24,7 +24,7 @@ import styles from "./SeriesDisplay.module.scss";
 
 // Context initialization
 
-function SeriesDisplay({ serie, linkedSeries = [], episodes, onPlayClick, onRefresh, calledFrom, setEpisodes }) {
+function SeriesDisplay({ serie, linkedSeries, episodes, onPlayClick, onRefresh, calledFrom, setEpisodes }) {
     // Services initialization
     const trackApi = useMemo(() => new TrackApi(), []);
     const folderManager = useMemo(() => new FolderManager(), []);
@@ -48,7 +48,7 @@ function SeriesDisplay({ serie, linkedSeries = [], episodes, onPlayClick, onRefr
     useEffect(() => {
         setCheckedSeries(linkedSeries.map(() => false));
         setIsOptionBarActive(false);
-    }, [linkedSeries, setIsOptionBarActive, setCheckedSeries]);
+    }, [linkedSeries, setCheckedSeries]);
 
     useEffect(() => {
         setCheckedEpisodes(episodes.map(() => false));
