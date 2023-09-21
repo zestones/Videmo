@@ -51,7 +51,7 @@ function FilterContent({ currentCategory, onFilter }) {
             {filters.map((filter) => (
                 <label key={filter.id}>
                     <input
-                        className={styles[checkboxStates[filter.id]]}
+                        className={styles[checkboxStates[filter.id]?.toLowerCase()]}
                         type="checkbox"
                         onChange={() => handleCheckboxChange(filter.id)}
                         checked={checkboxStates[filter.id] === FILTER_FLAGS.INCLUDE}
