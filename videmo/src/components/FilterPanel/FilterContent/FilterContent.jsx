@@ -6,6 +6,7 @@ import { FLAGS as FILTER_FLAGS, FILTERS_FIELDS } from "../../../utilities/utils/
 
 // Api services
 import FilterApi from "../../../services/api/category/FilterApi";
+import CategoryFilterApi from "../../../services/api/category/CategoryFilterApi";
 
 // Styles
 import styles from "./FilterContent.module.scss";
@@ -13,24 +14,34 @@ import styles from "./FilterContent.module.scss";
 
 function FilterContent({ currentCategory, onFilter }) {
     // Services initialization
+    const categoryFilterApi = useMemo(() => new CategoryFilterApi(), []);
     const filterApi = useMemo(() => new FilterApi(), []);
 
     // State initialization
     const [checkboxStates, setCheckboxStates] = useState({});
+    const [selectedFilterField, setSelectedFilterField] = useState();
+    const [filterTyper, setFilterType] = useState();
     const [filters, setFilters] = useState([]);
 
     useEffect(() => {
         filterApi.getAllFiltersEntries()
             .then((filters) => setFilters(filters))
             .catch((err) => console.error(err));
-    }, [filterApi]);
+
+        categoryFilterApi.getFiltersByCategoryId(currentCategory.id)
+            .then((filters) => {
+                setSelectedFilterField(filters.filter.name);
+                setFilterType(filters.filter.flag);
+            })
+            .catch((err) => console.error(err));
+    }, [filterApi, categoryFilterApi, currentCategory.id]);
 
     const handleCheckboxChange = (filterId) => {
         setCheckboxStates((prevState) => {
-            const checkmark = prevState[filterId] === 'exclude' ? '' : 'include';
+            const checkmark = prevState[filterId] === FILTER_FLAGS.EXCLUDE ? '' : FILTER_FLAGS.INCLUDE;
             return {
                 ...prevState,
-                [filterId]: prevState[filterId] === 'include' ? 'exclude' : checkmark
+                [filterId]: prevState[filterId] === FILTER_FLAGS.INCLUDE ? FILTER_FLAGS.EXCLUDE : checkmark
             }
         });
     };
@@ -43,7 +54,7 @@ function FilterContent({ currentCategory, onFilter }) {
                         className={styles[checkboxStates[filter.id]]}
                         type="checkbox"
                         onChange={() => handleCheckboxChange(filter.id)}
-                        checked={checkboxStates[filter.id] === 'include'}
+                        checked={checkboxStates[filter.id] === FILTER_FLAGS.INCLUDE}
                     />
                     <span className={styles.checkboxText}>{filter.name}</span>
                 </label>

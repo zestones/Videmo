@@ -34,7 +34,7 @@ function SortContent({ onFilter, currentCategory }) {
         sortApi.getAllSortsEntries()
             .then((sorts) => setSortsFields(sorts))
             .catch((err) => console.error(err));
-        
+
         categoryFilterApi.getFiltersByCategoryId(currentCategory.id)
             .then((filters) => {
                 setSelectedSortField(filters.sort.name);
