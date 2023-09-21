@@ -41,7 +41,6 @@ class FilterManager {
             //     return series;
 
             default:
-                console.error(`Filter ${filter.name} not recognized`);
                 return series;
         }
     }
