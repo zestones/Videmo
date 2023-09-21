@@ -14,7 +14,8 @@ INSERT INTO Category (name, order_id) VALUES ('TRASH', 12);
 
 -- Insert Filters
 INSERT INTO Filter (name) VALUES ('downloaded');
-INSERT INTO Filter (name) VALUES ('started');
+INSERT INTO Filter (name) VALUES ('watched');
+INSERT INTO Filter (name) VALUES ('not watched');
 INSERT INTO Filter (name) VALUES ('finished');
 
 -- Insert Sorts 
@@ -25,18 +26,71 @@ INSERT INTO Sort (name) VALUES ('rating');
 INSERT INTO Sort (name) VALUES ('number of episodes');
 
 -- Insert CategoryFilter for each category (with a flag asc and alphabetically sorted)
-INSERT INTO CategoryFilter (category_id, sort_id, flag) VALUES (1, 1, 'asc');
-INSERT INTO CategoryFilter (category_id, sort_id, flag) VALUES (2, 1, 'asc');
-INSERT INTO CategoryFilter (category_id, sort_id, flag) VALUES (3, 1, 'asc');
-INSERT INTO CategoryFilter (category_id, sort_id, flag) VALUES (4, 1, 'asc');
-INSERT INTO CategoryFilter (category_id, sort_id, flag) VALUES (5, 1, 'asc');
-INSERT INTO CategoryFilter (category_id, sort_id, flag) VALUES (6, 1, 'asc');
-INSERT INTO CategoryFilter (category_id, sort_id, flag) VALUES (7, 1, 'asc');
-INSERT INTO CategoryFilter (category_id, sort_id, flag) VALUES (8, 1, 'asc');
-INSERT INTO CategoryFilter (category_id, sort_id, flag) VALUES (9, 1, 'asc');
-INSERT INTO CategoryFilter (category_id, sort_id, flag) VALUES (10, 1, 'asc');
-INSERT INTO CategoryFilter (category_id, sort_id, flag) VALUES (11, 1, 'asc');
-INSERT INTO CategoryFilter (category_id, sort_id, flag) VALUES (12, 1, 'asc');
+INSERT INTO CategoryFilter (category_id, sort_id, flag) VALUES (1, 1, 'ASC');
+INSERT INTO CategoryFilter (category_id, sort_id, flag) VALUES (2, 1, 'ASC');
+INSERT INTO CategoryFilter (category_id, sort_id, flag) VALUES (3, 1, 'ASC');
+INSERT INTO CategoryFilter (category_id, sort_id, flag) VALUES (4, 1, 'ASC');
+INSERT INTO CategoryFilter (category_id, sort_id, flag) VALUES (5, 1, 'ASC');
+INSERT INTO CategoryFilter (category_id, sort_id, flag) VALUES (6, 1, 'ASC');
+INSERT INTO CategoryFilter (category_id, sort_id, flag) VALUES (7, 1, 'ASC');
+INSERT INTO CategoryFilter (category_id, sort_id, flag) VALUES (8, 1, 'ASC');
+INSERT INTO CategoryFilter (category_id, sort_id, flag) VALUES (9, 1, 'ASC');
+INSERT INTO CategoryFilter (category_id, sort_id, flag) VALUES (10, 1, 'ASC');
+INSERT INTO CategoryFilter (category_id, sort_id, flag) VALUES (11, 1, 'ASC');
+INSERT INTO CategoryFilter (category_id, sort_id, flag) VALUES (12, 1, 'ASC');
+
+-- Insert CategoryFilter for each category (with a flag none)
+INSERT INTO CategoryFilter (category_id, filter_id, flag) VALUES (1, 1, 'NONE');
+INSERT INTO CategoryFilter (category_id, filter_id, flag) VALUES (2, 1, 'NONE');
+INSERT INTO CategoryFilter (category_id, filter_id, flag) VALUES (3, 1, 'NONE');
+INSERT INTO CategoryFilter (category_id, filter_id, flag) VALUES (4, 1, 'NONE');
+INSERT INTO CategoryFilter (category_id, filter_id, flag) VALUES (5, 1, 'NONE');
+INSERT INTO CategoryFilter (category_id, filter_id, flag) VALUES (6, 1, 'NONE');
+INSERT INTO CategoryFilter (category_id, filter_id, flag) VALUES (7, 1, 'NONE');
+INSERT INTO CategoryFilter (category_id, filter_id, flag) VALUES (8, 1, 'NONE');
+INSERT INTO CategoryFilter (category_id, filter_id, flag) VALUES (9, 1, 'NONE');
+INSERT INTO CategoryFilter (category_id, filter_id, flag) VALUES (10, 1, 'NONE');
+INSERT INTO CategoryFilter (category_id, filter_id, flag) VALUES (11, 1, 'NONE');
+INSERT INTO CategoryFilter (category_id, filter_id, flag) VALUES (12, 1, 'NONE');
+
+INSERT INTO CategoryFilter (category_id, filter_id, flag) VALUES (1, 2, 'NONE');
+INSERT INTO CategoryFilter (category_id, filter_id, flag) VALUES (2, 2, 'NONE');
+INSERT INTO CategoryFilter (category_id, filter_id, flag) VALUES (3, 2, 'NONE');
+INSERT INTO CategoryFilter (category_id, filter_id, flag) VALUES (4, 2, 'NONE');
+INSERT INTO CategoryFilter (category_id, filter_id, flag) VALUES (5, 2, 'NONE');
+INSERT INTO CategoryFilter (category_id, filter_id, flag) VALUES (6, 2, 'NONE');
+INSERT INTO CategoryFilter (category_id, filter_id, flag) VALUES (7, 2, 'NONE');
+INSERT INTO CategoryFilter (category_id, filter_id, flag) VALUES (8, 2, 'NONE');
+INSERT INTO CategoryFilter (category_id, filter_id, flag) VALUES (9, 2, 'NONE');
+INSERT INTO CategoryFilter (category_id, filter_id, flag) VALUES (10, 2, 'NONE');
+INSERT INTO CategoryFilter (category_id, filter_id, flag) VALUES (11, 2, 'NONE');
+INSERT INTO CategoryFilter (category_id, filter_id, flag) VALUES (12, 2, 'NONE');
+
+INSERT INTO CategoryFilter (category_id, filter_id, flag) VALUES (1, 3, 'NONE');
+INSERT INTO CategoryFilter (category_id, filter_id, flag) VALUES (2, 3, 'NONE');
+INSERT INTO CategoryFilter (category_id, filter_id, flag) VALUES (3, 3, 'NONE');
+INSERT INTO CategoryFilter (category_id, filter_id, flag) VALUES (4, 3, 'NONE');
+INSERT INTO CategoryFilter (category_id, filter_id, flag) VALUES (5, 3, 'NONE');
+INSERT INTO CategoryFilter (category_id, filter_id, flag) VALUES (6, 3, 'NONE');
+INSERT INTO CategoryFilter (category_id, filter_id, flag) VALUES (7, 3, 'NONE');
+INSERT INTO CategoryFilter (category_id, filter_id, flag) VALUES (8, 3, 'NONE');
+INSERT INTO CategoryFilter (category_id, filter_id, flag) VALUES (9, 3, 'NONE');
+INSERT INTO CategoryFilter (category_id, filter_id, flag) VALUES (10, 3, 'NONE');
+INSERT INTO CategoryFilter (category_id, filter_id, flag) VALUES (11, 3, 'NONE');
+INSERT INTO CategoryFilter (category_id, filter_id, flag) VALUES (12, 3, 'NONE');
+
+INSERT INTO CategoryFilter (category_id, filter_id, flag) VALUES (1, 4, 'NONE');
+INSERT INTO CategoryFilter (category_id, filter_id, flag) VALUES (2, 4, 'NONE');
+INSERT INTO CategoryFilter (category_id, filter_id, flag) VALUES (3, 4, 'NONE');
+INSERT INTO CategoryFilter (category_id, filter_id, flag) VALUES (4, 4, 'NONE');
+INSERT INTO CategoryFilter (category_id, filter_id, flag) VALUES (5, 4, 'NONE');
+INSERT INTO CategoryFilter (category_id, filter_id, flag) VALUES (6, 4, 'NONE');
+INSERT INTO CategoryFilter (category_id, filter_id, flag) VALUES (7, 4, 'NONE');
+INSERT INTO CategoryFilter (category_id, filter_id, flag) VALUES (8, 4, 'NONE');
+INSERT INTO CategoryFilter (category_id, filter_id, flag) VALUES (9, 4, 'NONE');
+INSERT INTO CategoryFilter (category_id, filter_id, flag) VALUES (10, 4, 'NONE');
+INSERT INTO CategoryFilter (category_id, filter_id, flag) VALUES (11, 4, 'NONE');
+INSERT INTO CategoryFilter (category_id, filter_id, flag) VALUES (12, 4, 'NONE');
 
 
 -- Insert the Themes

@@ -9,6 +9,7 @@ import styles from './FilterPanel.module.scss';
 // Components
 import SortContent from './SortContent/SortContent';
 import DisplayOptions from './DisplayOptions/DisplayOptions';
+import FilterContent from './FilterContent/FilterContent';
 
 const FilterPanel = ({ onFilter, series, currentCategory }) => {
     // Constants initialization
@@ -16,14 +17,20 @@ const FilterPanel = ({ onFilter, series, currentCategory }) => {
 
     // State initialization
     const [open, setOpen] = useState(false);
-    const [activeTab, setActiveTab] = useState('Filter');
+    const [activeTab, setActiveTab] = useState();
 
     // Function to handle tab click
     const handleTabClick = (tabName) => setActiveTab(tabName);
 
+    const handleFilterPanel = () => {
+        setOpen(!open);
+        if (!open) setActiveTab(TABS_NAME.FILTER);
+        else setActiveTab();
+    }
+
     return (
         <>
-            <button className={styles.filterButton} onClick={() => setOpen(!open)}>
+            <button className={styles.filterButton} onClick={handleFilterPanel}>
                 <FilterListIcon className={styles.filterIcon} />
             </button>
 
@@ -50,24 +57,12 @@ const FilterPanel = ({ onFilter, series, currentCategory }) => {
                 </div>
                 <div className={styles.content}>
                     {activeTab === TABS_NAME.FILTER && (
-                        <div className={styles.filterTab}>
-                            <label>
-                                <input type="checkbox" />
-                                Téléchargé
-                            </label>
-                            <label>
-                                <input type="checkbox" />
-                                Non lus
-                            </label>
-                            <label>
-                                <input type="checkbox" />
-                                Commencé
-                            </label>
-                            <label>
-                                <input type="checkbox" />
-                                Terminé
-                            </label>
-                        </div>
+                        <FilterContent
+                            currentCategory={currentCategory}
+                            onFilter={onFilter}
+                            series={series}
+                        />
+
                     )}
                     {activeTab === TABS_NAME.SORT && (
                         <SortContent

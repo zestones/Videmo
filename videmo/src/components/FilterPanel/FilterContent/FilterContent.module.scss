@@ -1,0 +1,66 @@
+.filterTab {
+    animation: fadeIn 0.3s ease-in-out;
+
+    label {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+        cursor: pointer;
+
+        input[type="checkbox"] {
+            margin-right: 10px;
+            appearance: none;
+
+            width: 20px;
+            height: 20px;
+
+            border: 2px solid var(--selection-color);
+            border-radius: 3px;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: transparent;
+
+            cursor: pointer;
+
+            &:checked {
+                background-color: var(--selection-color);
+
+                &:after {
+                    content: "";
+                    display: block;
+                    width: 5px;
+                    height: 10px;
+                    
+                    border: solid var(--primary-color);
+                    border-width: 0 3px 3px 0;
+                    transform: rotate(45deg);
+                }
+            }
+
+            &.exclude {
+                background-color: var(--selection-color);
+                
+                &:after,
+                &:before {
+                    content: "";
+                    display: block;
+                    width: 15px;
+                    height: 3px;
+                    background-color: var(--primary-color);
+                    position: absolute;
+                }
+
+                &:after {
+                    transform: rotate(45deg);
+                }
+
+                &:before {
+                    transform: rotate(-45deg);
+                }
+            }
+        }
+
+    }
+}

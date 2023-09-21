@@ -4,7 +4,7 @@ export const LIBRARY_STRING = "Library";
 export const HISTORY_STRING = "History";
 
 // Sorts & Filters
-export const FLAGS = { ASC: 'ASC', DESC: 'DESC', INCLUDE: 'INCLUDE', EXCLUDE: 'EXCLUDE' };
+export const FLAGS = { ASC: 'ASC', DESC: 'DESC', INCLUDE: 'INCLUDE', EXCLUDE: 'EXCLUDE', NONE: 'NONE' };
 export const TYPES = { FILTER: 'filter', SORT: 'sort' };
 
 // Sorts fields
@@ -13,6 +13,14 @@ export const SORTS_FIELDS = {
     RELEASE_DATE: 'release date',
     RATING: 'rating',
     NUMBER_OF_EPISODES: 'number of episodes',
+};
+
+// Filters fields
+export const FILTERS_FIELDS = {
+    DOWNLOADED: 'downloaded',
+    UNWATCHED: 'not watched',
+    WATCHED: 'watched',
+    FINISHED: 'finished',
 };
 
 // Display modes

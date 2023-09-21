@@ -11,6 +11,7 @@ import CategoryFilterApi from "../../services/api/category/CategoryFilterApi";
 
 // Utilities
 import SortManager from "../../utilities/sortManager/SortManager";
+import FilterManager from "../../utilities/filterManager/FilterManager";
 
 // Components
 import SeriesDisplay from "../../components/SeriesDisplay/SeriesDisplay";
@@ -24,6 +25,7 @@ function Library() {
     // State initialization
     const [navigationHistory, setNavigationHistory] = useState([]);
     const [currentCategory, setCurrentCategory] = useState();
+    const [filteredSeries, setFilteredSeries] = useState();
     const [searchValue, setSearchValue] = useState("");
     const [subSeries, setSubSeries] = useState([]);
     const [episodes, setEpisodes] = useState([]);
@@ -33,6 +35,7 @@ function Library() {
     const serieApi = useMemo(() => new SerieApi(), []);
     const trackApi = useMemo(() => new TrackApi(), []);
     const sortManager = useMemo(() => new SortManager(), []);
+    const filterManager = useMemo(() => new FilterManager(), []);
     const categoryFilterApi = useMemo(() => new CategoryFilterApi(), []);
 
 
@@ -45,12 +48,15 @@ function Library() {
             const filters = await categoryFilterApi.getFiltersByCategoryId(currentCategory.id);
 
             const sortedSeries = [...sortManager.sortSeriesByField(seriesInLibrary, filters.sort.name, filters.sort.flag)];
+            const filteredSeries = [...filterManager.filterSeriesByFilters(sortedSeries, filters.filter)];
+            
             setSubSeries(sortedSeries);
+            setFilteredSeries(filteredSeries);
         } catch (error) {
             showNotification("error", `Error retrieving series: ${error.message}`);
             console.error(error);
         }
-    }, [serieApi, currentCategory, sortManager, categoryFilterApi, showNotification]);
+    }, [serieApi, currentCategory, sortManager, filterManager, categoryFilterApi, showNotification]);
 
     const retrieveAllSeriesByLinks = (links) => {
         if (!links) return;
@@ -116,7 +122,7 @@ function Library() {
         }
     }
 
-    const filterFolders = sortManager.filterByKeyword(searchValue, subSeries, 'basename', 'name');
+    const filterFolders = sortManager.filterByKeyword(searchValue, filteredSeries, 'basename', 'name');
 
     return (
         <div className={styles.library}>
@@ -125,8 +131,8 @@ function Library() {
                     title="Bilbliothèque"
                     onSearch={setSearchValue}
                     onBack={serie ? onBackClick : null}
-                    onRandom={() => subSeries.length > 0 && handleSerieSelection(subSeries[Math.floor(Math.random() * subSeries.length)])}
-                    onFilter={setSubSeries}
+                    onRandom={() => filteredSeries.length > 0 && handleSerieSelection(filteredSeries[Math.floor(Math.random() * filteredSeries.length)])}
+                    onFilter={setFilteredSeries}
                     series={subSeries}
                     currentCategory={currentCategory}
                 />

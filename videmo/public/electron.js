@@ -116,6 +116,7 @@ require(path.resolve(__dirname, '..', 'src', 'electron', 'api', 'ani-list-api'))
 require(path.resolve(__dirname, '..', 'src', 'electron', 'api', 'serie-infos-api'));
 require(path.resolve(__dirname, '..', 'src', 'electron', 'api', 'category-filter-api'));
 require(path.resolve(__dirname, '..', 'src', 'electron', 'api', 'sort-api'));
+require(path.resolve(__dirname, '..', 'src', 'electron', 'api', 'filter-api'));
 require(path.resolve(__dirname, '..', 'src', 'electron', 'api', 'theme-api'));
 require(path.resolve(__dirname, '..', 'src', 'electron', 'api', 'display-settings-api'));
 require(path.resolve(__dirname, '..', 'src', 'electron', 'api', 'display-mode-api'));
