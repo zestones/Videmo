@@ -25,9 +25,9 @@ function Library() {
     // State initialization
     const [navigationHistory, setNavigationHistory] = useState([]);
     const [currentCategory, setCurrentCategory] = useState();
-    const [filteredSeries, setFilteredSeries] = useState();
+    const [filteredSeries, setFilteredSeries] = useState(); // Filtered array of series (used to display)
     const [searchValue, setSearchValue] = useState("");
-    const [subSeries, setSubSeries] = useState([]);
+    const [subSeries, setSubSeries] = useState([]); // Original array of series (not filtered)
     const [episodes, setEpisodes] = useState([]);
     const [serie, setSerie] = useState(null);
 
@@ -49,7 +49,7 @@ function Library() {
 
             const sortedSeries = [...sortManager.sortSeriesByField(seriesInLibrary, filters.sort.name, filters.sort.flag)];
             const filteredSeries = [...filterManager.filterSeriesByFilters(sortedSeries, filters.filter)];
-            
+
             setSubSeries(sortedSeries);
             setFilteredSeries(filteredSeries);
         } catch (error) {
