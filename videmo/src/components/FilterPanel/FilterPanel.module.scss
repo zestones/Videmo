@@ -1,0 +1,96 @@
+.filterButton {
+    background: none;
+    border: none;
+    color: var(--primary-text-color);
+    
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+
+    cursor: pointer;
+    margin: 0 7px;
+    padding: 0.5rem !important;
+
+    transition-duration: 0.4s;
+
+    &:hover {
+        animation: pulse 2s infinite;
+        background-color: var(--secondary-color) !important;
+    }
+
+    @keyframes pulse {
+        0% {
+            transform: scale(1);
+        }
+
+        50% {
+            transform: scale(1.1);
+        }
+
+        100% {
+            transform: scale(1);
+        }
+    }
+
+    .filterIcon {
+        display: flex;
+        align-items: center;
+        font-size: 1.7rem;
+    }
+}
+
+.filterPanel {
+    position: fixed;
+    bottom: 0;
+    left: calc(50% + var(--navigation-width) / 2);
+
+    transform: translateX(-50%) translateY(100%);
+
+    width: 85%;
+    height: 250px;
+
+    overflow: hidden;
+    overflow-y: auto;
+
+    background-color: var(--primary-color);
+    transition: transform 0.3s ease-in-out;
+
+    z-index: 999;
+
+    border-radius: 10px 10px 0 0;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+
+    &.open {
+        transform: translateX(-50%) translateY(0);
+    }
+
+    .tabs {
+        display: flex;
+        justify-content: space-around;
+        border-bottom: 1px solid var(--secondary-color);
+    }
+
+    .tab {
+        padding: 10px 20px;
+        cursor: pointer;
+
+        &.active {
+            border-bottom: 6px solid var(--selection-color);
+            border-radius: 4px;
+        }
+    }
+
+    .content {
+        padding: 20px;
+    }
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}

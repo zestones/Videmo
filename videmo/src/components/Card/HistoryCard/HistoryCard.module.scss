@@ -63,7 +63,7 @@
 
             &:hover {
                 cursor: pointer;
-                color: var(--blue-1);
+                color: var(--selection-color);
             }
         }
 
@@ -73,7 +73,7 @@
 
             &:hover {
                 cursor: pointer;
-                color: var(--blue-2);
+                color: var(--selection-color);
             }
         }
 
@@ -82,7 +82,7 @@
             align-items: flex-end;
 
             font-size: 0.9rem;
-            color: var(--gray-4);
+            color: var(--secondary-text-color);
         }
     }
 
@@ -91,12 +91,12 @@
         margin-right: 35px;
         font-size: 1.9rem;
 
-        color: var(--red-1);
+        color: var(--danger-color-hover);
         transition: all 0.2s ease-in-out;
 
         &:hover {
             transform: scale(1.2);
-            color: var(--red-6);
+            color: var(--danger-color);
         }
 
         cursor: pointer;

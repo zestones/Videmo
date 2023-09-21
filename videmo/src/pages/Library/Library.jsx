@@ -7,9 +7,11 @@ import { LIBRARY_STRING } from "../../utilities/utils/Constants";
 // Api 
 import SerieApi from "../../services/api/serie/SerieApi";
 import TrackApi from "../../services/api/track/TrackApi";
+import CategoryFilterApi from "../../services/api/category/CategoryFilterApi";
 
 // Utilities
 import SortManager from "../../utilities/sortManager/SortManager";
+import FilterManager from "../../utilities/filterManager/FilterManager";
 
 // Components
 import SeriesDisplay from "../../components/SeriesDisplay/SeriesDisplay";
@@ -23,8 +25,9 @@ function Library() {
     // State initialization
     const [navigationHistory, setNavigationHistory] = useState([]);
     const [currentCategory, setCurrentCategory] = useState();
+    const [filteredSeries, setFilteredSeries] = useState(); // Filtered array of series (used to display)
     const [searchValue, setSearchValue] = useState("");
-    const [subSeries, setSubSeries] = useState([]);
+    const [subSeries, setSubSeries] = useState([]); // Original array of series (not filtered)
     const [episodes, setEpisodes] = useState([]);
     const [serie, setSerie] = useState(null);
 
@@ -32,20 +35,38 @@ function Library() {
     const serieApi = useMemo(() => new SerieApi(), []);
     const trackApi = useMemo(() => new TrackApi(), []);
     const sortManager = useMemo(() => new SortManager(), []);
+    const filterManager = useMemo(() => new FilterManager(), []);
+    const categoryFilterApi = useMemo(() => new CategoryFilterApi(), []);
+
 
     // Initialization of the notification hook
     const { showNotification } = useNotification();
 
-    const retrieveAllSeries = useCallback(() => {
-        serieApi.readAllSeriesByCategory(currentCategory?.id)
-            .then((seriesInLibrary) => setSubSeries(seriesInLibrary))
-            .catch((error) => showNotification("error", `Error retrieving series: ${error.message}`));
-    }, [serieApi, currentCategory, showNotification]);
+    const retrieveAllSeries = useCallback(async () => {
+        try {
+            const seriesInLibrary = await serieApi.readAllSeriesByCategory(currentCategory?.id);
+            const filters = await categoryFilterApi.getFiltersByCategoryId(currentCategory.id);
 
+            const sortedSeries = [...sortManager.sortSeriesByField(seriesInLibrary, filters.sort.name, filters.sort.flag)];
+            const filteredSeries = [...filterManager.filterSeriesByFilters(sortedSeries, filters.filter)];
+
+            setSubSeries(sortedSeries);
+            setFilteredSeries(filteredSeries);
+        } catch (error) {
+            showNotification("error", `Error retrieving series: ${error.message}`);
+            console.error(error);
+        }
+    }, [serieApi, currentCategory, sortManager, filterManager, categoryFilterApi, showNotification]);
+
+    // Used to update the series when the number of episodes change
     const retrieveAllSeriesByLinks = (links) => {
-        if(!links) return;
+        if (!links) return;
         serieApi.readAllSeriesByLinks(links)
-            .then((series) => setSubSeries(subSeries.map((serie) => series.find((s) => s.link === serie.link) || serie)))
+            .then((series) => {
+                const map = subSeries.map((serie) => series.find((s) => s.link === serie.link) || serie);
+                setSubSeries(map);
+                setFilteredSeries(map);
+            })
             .catch((error) => showNotification("error", `Error retrieving series: ${error.message}`));
     }
 
@@ -56,7 +77,6 @@ function Library() {
         setEpisodes([]);
         retrieveAllSeries();
     }, [serieApi, currentCategory, retrieveAllSeries]);
-
 
     const onBackClick = async () => {
         try {
@@ -71,6 +91,7 @@ function Library() {
 
                 setSerie(parentSerie);
                 setSubSeries(childSeries);
+                setFilteredSeries(childSeries);
             }
 
             setEpisodes([]); // Clear episodes
@@ -98,6 +119,8 @@ function Library() {
 
             setSerie(clickedSerie);
             setSubSeries(subSeries);
+            setFilteredSeries(subSeries);
+
             setEpisodes(episodes);
             setNavigationHistory(newHistory);
             setSearchValue("");
@@ -107,9 +130,8 @@ function Library() {
         }
     }
 
-    const filterFolders = sortManager.filterByKeyword(searchValue, subSeries, 'basename', 'name');
+    const filterFolders = sortManager.filterByKeyword(searchValue, filteredSeries || subSeries, 'basename', 'name');
 
-    // TODO: add a filter option to sort by (name, date, genre, rating, etc.)
     return (
         <div className={styles.library}>
             <div className={styles.libraryContainer}>
@@ -117,7 +139,10 @@ function Library() {
                     title="Bilbliothèque"
                     onSearch={setSearchValue}
                     onBack={serie ? onBackClick : null}
-                    onRandom={() => subSeries.length > 0 && handleSerieSelection(subSeries[Math.floor(Math.random() * subSeries.length)])}
+                    onRandom={() => filteredSeries.length > 0 && handleSerieSelection(filteredSeries[Math.floor(Math.random() * filteredSeries.length)])}
+                    onFilter={setFilteredSeries}
+                    series={subSeries}
+                    currentCategory={currentCategory}
                 />
 
                 <CategoryHeader selectedCategory={currentCategory} onSelectCategory={setCurrentCategory} />

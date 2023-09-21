@@ -1,5 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+
+// Contexts
 import { NotificationProvider } from './components/Notification/NotificationProvider';
+import { useTheme } from './pages/More/Settings/ThemeSettings/ThemeContext';
+import { DisplayModeProvider } from './components/FilterPanel/DisplayOptions/DisplayModeContext';
+
 
 // External
 import SubscriptionsIcon from '@mui/icons-material/Subscriptions';
@@ -25,18 +30,25 @@ function App() {
 	const explore = { explore: { component: <Explore />, icon: ExploreIcon, label: "Explorer" } };
 	const history = { history: { component: <History />, icon: HistoryIcon, label: "Historique" } };
 	const settings = { more: { component: <Settings />, icon: MoreHorizIcon, label: "Plus" } };
+	const { theme } = useTheme();
 
 	const [activePage, setActivePage] = useState(Object.keys(library)[0]);
 	const navigationItems = { ...library, ...explore, ...history, ...settings };
 
+	useEffect(() => {
+		document.body.className = theme;
+	}, [theme]);
+
 	return (
-		<div className="App">
+		<div className={`App ${theme}`}>
 			<NotificationProvider>
-				<Navigation
-					navItems={navigationItems}
-					activePage={activePage}
-					onPageChange={setActivePage}
-				/>
+				<DisplayModeProvider>
+					<Navigation
+						navItems={navigationItems}
+						activePage={activePage}
+						onPageChange={setActivePage}
+					/>
+				</DisplayModeProvider>
 			</NotificationProvider>
 		</div>
 	);

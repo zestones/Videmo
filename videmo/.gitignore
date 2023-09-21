@@ -23,4 +23,5 @@ yarn-debug.log*
 yarn-error.log*
 
 videmo.db*
+videmo.test.db*
 __snapshots__

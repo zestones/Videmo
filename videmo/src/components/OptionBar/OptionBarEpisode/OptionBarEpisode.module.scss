@@ -1,0 +1,124 @@
+.episodeOptionBar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-direction: column;
+
+    position: fixed;
+
+    width: 50px;
+    height: 225px;
+
+    bottom: 50%;
+    transform: translateY(50%);
+
+    left: calc(var(--navigation-width));
+    z-index: 10;
+
+    background-color: var(--selection-color);
+    border-radius: 0 25px 25px 0;
+
+    .episodeOptionBarCheckboxContainer {
+        position: absolute;
+        top: 18px;
+
+        width: 100%;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        // center horizontally
+        transform: translateX(-50%);
+        left: 50%;
+
+
+        input[type="checkbox"] {
+            width: 23px;
+            height: 23px;
+
+            appearance: none;
+            border: 2px solid var(--secondary-text-color);
+            border-radius: 4px;
+
+            background-color: rgba(0, 0, 0, 0.5);
+            outline: none;
+
+            transition: all 0.2s ease-in-out;
+
+            &:checked {
+                background-color: rgba(88, 88, 88, 0.7);
+                border: 2px solid rgba(88, 88, 88, 0.7);
+                box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.5);
+
+                &::after {
+                    content: '';
+                    display: block;
+
+                    width: 10px;
+                    height: 5px;
+
+                    border: 2px solid var(--primary-text-color);
+                    border-top: none;
+                    border-right: none;
+
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+
+                    transform: translate(-50%, -50%) rotate(-45deg);
+                }
+            }
+
+            &:hover {
+                cursor: pointer;
+            }
+
+            &:focus {
+                box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.5);
+            }
+        }
+    }
+
+    .episodeOptionBarButtonsContainer {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        
+        gap: 15px;
+        margin-bottom: 35px;
+
+        .episodeOptionBarButton {
+            width: 100%;
+            height: 100%;
+
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary-text-color);
+
+            transition: background-color 0.2s ease-in-out;
+
+            &:hover {
+                color: rgba(0, 0, 0, 0.7);
+                cursor: pointer;
+            }
+        }
+    }
+}
+
+
+@keyframes checkmark {
+    from {
+        width: 0;
+        height: 0;
+    }
+
+    to {
+        width: 10px;
+        height: 5px;
+    }
+}

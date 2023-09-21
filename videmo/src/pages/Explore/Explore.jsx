@@ -36,7 +36,7 @@ function Explore() {
     const categoryApi = useMemo(() => new CategoryApi(), []);
     const trackApi = useMemo(() => new TrackApi(), []);
 
-
+    // TODO : refactor the mapping of the folder contents and the data from the database
     const retrieveSeriesInLibraryByExtension = useCallback((contents) => {
         categoryApi.readAllSeriesInLibraryByExtension(selectedExtension)
             .then((series) => setFolderContents(folderManager.mapFolderContentsWithMandatoryFields(contents, series, selectedExtension)))

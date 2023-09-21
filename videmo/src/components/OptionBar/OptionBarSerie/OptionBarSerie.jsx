@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { useNotification } from "../../components/Notification/NotificationProvider";
+import { useNotification } from "../../Notification/NotificationProvider";
 
 // External
 import LabelIcon from '@mui/icons-material/Label';
@@ -8,17 +8,17 @@ import RemoveDoneIcon from '@mui/icons-material/RemoveDone';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 
 // Components
-import Tooltip from "../Tooltip/Tooltip";
-import CategoryModal from "../CategoryModal/CategoryModal";
+import Tooltip from "../../Tooltip/Tooltip";
+import CategoryModal from "../../CategoryModal/CategoryModal";
 
 // Services
-import TrackApi from "../../services/api/track/TrackApi";
-import CategoryApi from "../../services/api/category/CategoryApi";
+import TrackApi from "../../../services/api/track/TrackApi";
+import CategoryApi from "../../../services/api/category/CategoryApi";
 
 // Styles
-import styles from "./OptionBar.module.scss";
+import styles from "./OptionBarSerie.module.scss";
 
-function OptionBar({ series, onClose, checked, onCheck, onCategoryChange, isCalledFromExplore }) {
+function OptionBarSerie({ series, onClose, checked, onCheck, onCategoryChange, isCalledFromExplore }) {
     // Services initialization
     const trackApi = useMemo(() => new TrackApi(), []);
     const categoryApi = useMemo(() => new CategoryApi(), []);
@@ -123,4 +123,4 @@ function OptionBar({ series, onClose, checked, onCheck, onCategoryChange, isCall
     );
 }
 
-export default OptionBar;
+export default OptionBarSerie;

@@ -6,7 +6,7 @@ import { HISTORY_STRING } from "../../utilities/utils/Constants";
 // Components
 import Header from "../../components/Header/Header";
 import VideoPlayer from "../../components/VideoPlayer/VideoPlayer";
-import SerieDisplay from "../../components/SeriesDisplay/SeriesDisplay";
+import SeriesDisplay from "../../components/SeriesDisplay/SeriesDisplay";
 import HistoryCard from "../../components/Card/HistoryCard/HistoryCard";
 
 // Services
@@ -134,8 +134,9 @@ function History() {
                     }
                 </>
             ) : (
-                <SerieDisplay
+                <SeriesDisplay
                     serie={selectedEntry.serie}
+                    linkedSeries={[]}
                     calledFrom={HISTORY_STRING}
                     setEpisodes={setEpisodes}
                     episodes={episodes}
