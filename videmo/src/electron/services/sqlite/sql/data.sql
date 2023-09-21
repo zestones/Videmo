@@ -14,7 +14,8 @@ INSERT INTO Category (name, order_id) VALUES ('TRASH', 12);
 
 -- Insert Filters
 INSERT INTO Filter (name) VALUES ('downloaded');
-INSERT INTO Filter (name) VALUES ('started');
+INSERT INTO Filter (name) VALUES ('watched');
+INSERT INTO Filter (name) VALUES ('not watched');
 INSERT INTO Filter (name) VALUES ('finished');
 
 -- Insert Sorts 

@@ -7,7 +7,6 @@ class SortApi {
             window.api.receive("/read/sorts/", (data) => data.success ? resolve(data.sorts) : reject(data.error));
         });
     }
-
 }
 
 export default SortApi;

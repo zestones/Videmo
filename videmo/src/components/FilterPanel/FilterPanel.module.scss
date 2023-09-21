@@ -83,51 +83,6 @@
     .content {
         padding: 20px;
     }
-
-    .filterTab {
-        animation: fadeIn 0.3s ease-in-out;
-
-        label {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-            cursor: pointer;
-
-            input[type="checkbox"] {
-                margin-right: 10px;
-                appearance: none;
-                
-                width: 20px;
-                height: 20px;
-                
-                border: 2px solid var(--selection-color);
-                border-radius: 3px;
-
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                background-color: transparent;
-
-                cursor: pointer;
-                transition: background-color 0.3s ease-in-out, border-color 0.3s ease-in-out;
-
-                &:checked {
-                    background-color: var(--selection-color);
-                    border-color: var(--selection-color);
-
-                    &:after {
-                        content: "";
-                        display: block;
-                        width: 5px;
-                        height: 10px;
-                        border: solid white;
-                        border-width: 0 2px 2px 0;
-                        transform: rotate(45deg);
-                    }
-                }
-            }
-        }
-    }
 }
 
 @keyframes fadeIn {

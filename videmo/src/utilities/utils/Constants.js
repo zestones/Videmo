@@ -15,5 +15,13 @@ export const SORTS_FIELDS = {
     NUMBER_OF_EPISODES: 'number of episodes',
 };
 
+// Filters fields
+export const FILTERS_FIELDS = {
+    DOWNOADED: 'downloaded',
+    UNWATCHED: 'unwatched',
+    WATCHED: 'watched',
+    FINISHED: 'finished',
+};
+
 // Display modes
 export const DISPLAY_OPTION_TYPE = { COMPACT: 1, SPACED: 2, LIST: 3 };
