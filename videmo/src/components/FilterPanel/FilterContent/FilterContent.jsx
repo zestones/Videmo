@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 
 
 // Constants
-import { FLAGS as FILTER_FLAGS, FILTERS_FIELDS } from "../../../utilities/utils/Constants";
+import { FLAGS as FILTER_FLAGS, TYPES as FILTERS_TYPES } from "../../../utilities/utils/Constants";
 
 // Api services
 import FilterApi from "../../../services/api/category/FilterApi";
@@ -19,8 +19,6 @@ function FilterContent({ currentCategory, onFilter }) {
 
     // State initialization
     const [checkboxStates, setCheckboxStates] = useState({});
-    const [selectedFilterField, setSelectedFilterField] = useState();
-    const [filterTyper, setFilterType] = useState();
     const [filters, setFilters] = useState([]);
 
     useEffect(() => {
@@ -30,21 +28,28 @@ function FilterContent({ currentCategory, onFilter }) {
 
         categoryFilterApi.getFiltersByCategoryId(currentCategory.id)
             .then((filters) => {
-                setSelectedFilterField(filters.filter.name);
-                setFilterType(filters.filter.flag);
+                const updatedCheckboxStates = {};
+                filters.filter.forEach((filter) => updatedCheckboxStates[filter.id] = filter.flag);
+                setCheckboxStates(updatedCheckboxStates);
             })
             .catch((err) => console.error(err));
     }, [filterApi, categoryFilterApi, currentCategory.id]);
 
     const handleCheckboxChange = (filterId) => {
-        setCheckboxStates((prevState) => {
-            const checkmark = prevState[filterId] === FILTER_FLAGS.EXCLUDE ? '' : FILTER_FLAGS.INCLUDE;
-            return {
-                ...prevState,
-                [filterId]: prevState[filterId] === FILTER_FLAGS.INCLUDE ? FILTER_FLAGS.EXCLUDE : checkmark
-            }
-        });
+        const updatedCheckboxStates = { ...checkboxStates };
+
+        if (updatedCheckboxStates[filterId] === FILTER_FLAGS.INCLUDE) updatedCheckboxStates[filterId] = FILTER_FLAGS.EXCLUDE;
+        else if (updatedCheckboxStates[filterId] === FILTER_FLAGS.EXCLUDE) updatedCheckboxStates[filterId] = FILTER_FLAGS.NONE;
+        else updatedCheckboxStates[filterId] = FILTER_FLAGS.INCLUDE;
+
+        const categoryFilter = { type: FILTERS_TYPES.FILTER, fields: [] }
+        categoryFilter.fields.push({ ...filters.find(filter => filter.id === filterId), flag: updatedCheckboxStates[filterId] })
+        categoryFilter.fields = filters.map(filter => ({ ...filter, flag: updatedCheckboxStates[filter.id] }));
+
+        categoryFilterApi.updateCategoryFilter(categoryFilter, currentCategory.id);
+        setCheckboxStates(updatedCheckboxStates);
     };
+
 
     return (
         <div className={styles.filterTab}>

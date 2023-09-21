@@ -4,7 +4,7 @@ export const LIBRARY_STRING = "Library";
 export const HISTORY_STRING = "History";
 
 // Sorts & Filters
-export const FLAGS = { ASC: 'ASC', DESC: 'DESC', INCLUDE: 'INCLUDE', EXCLUDE: 'EXCLUDE' };
+export const FLAGS = { ASC: 'ASC', DESC: 'DESC', INCLUDE: 'INCLUDE', EXCLUDE: 'EXCLUDE', NONE: 'NONE' };
 export const TYPES = { FILTER: 'filter', SORT: 'sort' };
 
 // Sorts fields

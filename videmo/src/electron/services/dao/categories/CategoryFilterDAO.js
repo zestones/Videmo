@@ -1,6 +1,7 @@
 const QueryExecutor = require('../../sqlite/QueryExecutor');
 const DataTypesConverter = require('../../../utilities/converter/DataTypesConverter.js');
 const SortDAO = require('./sortDAO');
+const FilterDAO = require('./filterDAO');
 
 class CategoryFilterDAO {
     constructor() {
@@ -8,8 +9,9 @@ class CategoryFilterDAO {
         this.dataTypesConverter = new DataTypesConverter();
 
         this.sortDAO = new SortDAO();
+        this.filterDAO = new FilterDAO();
 
-        this.FLAGS = { ASC: 'ASC', DESC: 'DESC', INCLUDE: 'INCLUDE', EXCLUDE: 'EXCLUDE' };
+        this.FLAGS = { ASC: 'ASC', DESC: 'DESC', INCLUDE: 'INCLUDE', EXCLUDE: 'EXCLUDE', NONE: 'NONE' };
         this.TYPES = { FILTER: 'filter', SORT: 'sort' };
     }
 
@@ -88,12 +90,24 @@ class CategoryFilterDAO {
 
     // Update category filter by category ID
     async updateCategoryFilter(categoryFilter, categoryId) {
+        const query = `UPDATE CategoryFilter SET flag = ? WHERE category_id = ? AND filter_id = ?`;
+        const params = [categoryFilter.flag, categoryId, categoryFilter.id];
+        return await this.queryExecutor.executeAndCommit(query, params);
+    }
+
+    // Update category filter by category ID
+    async updateCategoryFilters(categoryFilter, categoryId) {
         // 1. The category filter is of type sort
         if (categoryFilter.type === this.TYPES.SORT) {
             return await this.updateCategorySort(categoryFilter, categoryId);
         }
 
-        // TODO : 2. The category filter is of type filter
+        // 2. The category filter is of type filter
+        else if (categoryFilter.type === this.TYPES.FILTER) {
+            for (const filter of categoryFilter.fields) {
+                await this.updateCategoryFilter(filter, categoryId);
+            }
+        }
     }
 }
 
