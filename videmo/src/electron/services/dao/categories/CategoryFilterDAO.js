@@ -83,7 +83,7 @@ class CategoryFilterDAO {
         const sort = await this.sortDAO.getSortByName(categorySort.fields.pop());
 
         // We update the category filter
-        const query = `UPDATE CategoryFilter SET sort_id = ?, flag = ? WHERE category_id = ?`;
+        const query = `UPDATE CategoryFilter SET sort_id = ?, flag = ? WHERE category_id = ? AND filter_id IS NULL`;  
         const params = [sort.id, categorySort.flag, categoryId];
         return await this.queryExecutor.executeAndCommit(query, params);
     }

@@ -17,8 +17,8 @@ export const SORTS_FIELDS = {
 
 // Filters fields
 export const FILTERS_FIELDS = {
-    DOWNOADED: 'downloaded',
-    UNWATCHED: 'unwatched',
+    DOWNLOADED: 'downloaded',
+    UNWATCHED: 'not watched',
     WATCHED: 'watched',
     FINISHED: 'finished',
 };

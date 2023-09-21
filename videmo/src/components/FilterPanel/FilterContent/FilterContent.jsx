@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
 
-
 // Constants
 import { FLAGS as FILTER_FLAGS, TYPES as FILTERS_TYPES } from "../../../utilities/utils/Constants";
 
@@ -8,16 +7,21 @@ import { FLAGS as FILTER_FLAGS, TYPES as FILTERS_TYPES } from "../../../utilitie
 import FilterApi from "../../../services/api/category/FilterApi";
 import CategoryFilterApi from "../../../services/api/category/CategoryFilterApi";
 
+// Utilities
+import FilterManager from "../../../utilities/filterManager/FilterManager";
+
 // Styles
 import styles from "./FilterContent.module.scss";
 
 
-function FilterContent({ currentCategory, onFilter }) {
+function FilterContent({ onFilter, currentCategory, series }) {
     // Services initialization
     const categoryFilterApi = useMemo(() => new CategoryFilterApi(), []);
+    const filterManager = useMemo(() => new FilterManager(), []);
     const filterApi = useMemo(() => new FilterApi(), []);
 
     // State initialization
+    const [filteredSeries] = useState(series);
     const [checkboxStates, setCheckboxStates] = useState({});
     const [filters, setFilters] = useState([]);
 
@@ -47,7 +51,9 @@ function FilterContent({ currentCategory, onFilter }) {
         categoryFilter.fields = filters.map(filter => ({ ...filter, flag: updatedCheckboxStates[filter.id] }));
 
         categoryFilterApi.updateCategoryFilter(categoryFilter, currentCategory.id);
+
         setCheckboxStates(updatedCheckboxStates);
+        onFilter([...filterManager.filterSeriesByFilters(filteredSeries, categoryFilter.fields)]);
     };
 
 

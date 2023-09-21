@@ -60,6 +60,7 @@ const FilterPanel = ({ onFilter, series, currentCategory }) => {
                         <FilterContent
                             currentCategory={currentCategory}
                             onFilter={onFilter}
+                            series={series}
                         />
 
                     )}
