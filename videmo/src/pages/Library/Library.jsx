@@ -58,10 +58,15 @@ function Library() {
         }
     }, [serieApi, currentCategory, sortManager, filterManager, categoryFilterApi, showNotification]);
 
+    // Used to update the series when the number of episodes change
     const retrieveAllSeriesByLinks = (links) => {
         if (!links) return;
         serieApi.readAllSeriesByLinks(links)
-            .then((series) => setSubSeries(subSeries.map((serie) => series.find((s) => s.link === serie.link) || serie)))
+            .then((series) => {
+                const map = subSeries.map((serie) => series.find((s) => s.link === serie.link) || serie);
+                setSubSeries(map);
+                setFilteredSeries(map);
+            })
             .catch((error) => showNotification("error", `Error retrieving series: ${error.message}`));
     }
 
@@ -86,6 +91,7 @@ function Library() {
 
                 setSerie(parentSerie);
                 setSubSeries(childSeries);
+                setFilteredSeries(childSeries);
             }
 
             setEpisodes([]); // Clear episodes
@@ -113,6 +119,8 @@ function Library() {
 
             setSerie(clickedSerie);
             setSubSeries(subSeries);
+            setFilteredSeries(subSeries);
+
             setEpisodes(episodes);
             setNavigationHistory(newHistory);
             setSearchValue("");
@@ -122,7 +130,7 @@ function Library() {
         }
     }
 
-    const filterFolders = sortManager.filterByKeyword(searchValue, filteredSeries, 'basename', 'name');
+    const filterFolders = sortManager.filterByKeyword(searchValue, filteredSeries || subSeries, 'basename', 'name');
 
     return (
         <div className={styles.library}>
