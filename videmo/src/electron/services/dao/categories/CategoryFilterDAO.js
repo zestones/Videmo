@@ -1,7 +1,7 @@
 const QueryExecutor = require('../../sqlite/QueryExecutor');
 const DataTypesConverter = require('../../../utilities/converter/DataTypesConverter.js');
-const SortDAO = require('./sortDAO');
-const FilterDAO = require('./filterDAO');
+const SortDAO = require('./SortDAO');
+const FilterDAO = require('./FilterDAO');
 
 class CategoryFilterDAO {
     constructor() {
