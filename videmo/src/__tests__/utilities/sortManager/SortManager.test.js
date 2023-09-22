@@ -1,4 +1,4 @@
-import SortManager from "../../../utilities/sortManager/sortManager";
+import SortManager from "../../../utilities/sortManager/SortManager";
 
 describe('SortManager', () => {
     let sortManager;
