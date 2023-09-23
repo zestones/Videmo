@@ -56,15 +56,15 @@ ipcMain.on('/add/categories/to/serie/', async (event, arg) => {
 })
 
 // last opened category update
-ipcMain.on('/update/last/opened/category/', async (event, arg) => {
-    await new SerieCategoryDAO().updateLastOpenedCategory(arg.id)
+ipcMain.on('/update/last/opened/category/', (event, arg) => {
+    new SerieCategoryDAO().updateLastOpenedCategory(arg.id)
         .then(() => event.reply('/update/last/opened/category/', { success: true }))
         .catch((err) => event.reply('/update/last/opened/category/', { success: false, error: err }));
 })
 
 // Read last opened category
-ipcMain.on('/read/last/opened/category/', async (event) => {
-    await new SerieCategoryDAO().getLastOpenedCategory()
+ipcMain.on('/read/last/opened/category/', (event) => {
+    new SerieCategoryDAO().getLastOpenedCategory()
         .then((category) => event.reply('/read/last/opened/category/', { success: true, category: category }))
         .catch((err) => event.reply('/read/last/opened/category/', { success: false, error: err }));
 })
