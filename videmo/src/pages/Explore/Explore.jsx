@@ -8,6 +8,9 @@ import FolderManager from "../../utilities/folderManager/FolderManager";
 import SortManager from "../../utilities/sortManager/SortManager";
 import CategoryApi from "../../services/api/category/CategoryApi";
 import TrackApi from "../../services/api/track/TrackApi";
+// Sources
+import VostfreeApi from "../../services/api/sources/external/anime/fr/vostfree/VostfreeApi";
+
 
 // Pages
 import Source from "./Source/Source";
@@ -35,20 +38,36 @@ function Explore() {
     const sortManager = useMemo(() => new SortManager(), []);
     const categoryApi = useMemo(() => new CategoryApi(), []);
     const trackApi = useMemo(() => new TrackApi(), []);
+    const vostfreeApi = useMemo(() => new VostfreeApi(), []);
 
     // TODO : refactor the mapping of the folder contents and the data from the database
     const retrieveSeriesInLibraryByExtension = useCallback((contents) => {
         categoryApi.readAllSeriesInLibraryByExtension(selectedExtension)
-            .then((series) => setFolderContents(folderManager.mapFolderContentsWithMandatoryFields(contents, series, selectedExtension)))
+            .then((series) => {
+                const formattedSeries = folderManager.mapFolderContentsWithMandatoryFields(contents, series, selectedExtension);
+                console.log(formattedSeries);
+                setFolderContents(formattedSeries)
+            })
             .catch((error) => setError({ message: error.message, type: "error" }));
     }, [categoryApi, folderManager, selectedExtension]);
 
     useEffect(() => {
         if (!selectedExtension) return;
-        folderManager.retrieveFolderContents(selectedExtension.link)
-            .then((data) => retrieveSeriesInLibraryByExtension(data.contents))
-            .catch((error) => setError({ message: error.message, type: "error" }));
-    }, [folderManager, categoryApi, selectedExtension, retrieveSeriesInLibraryByExtension]);
+        console.log(selectedExtension);
+        if (selectedExtension.local) {
+            folderManager.retrieveFolderContents(selectedExtension.link)
+                .then((data) => retrieveSeriesInLibraryByExtension(data.contents))
+                .catch((error) => setError({ message: error.message, type: "error" }));
+        }
+        else {
+            vostfreeApi.scrapPopularAnime(1)
+                .then((data) => {
+                    console.log(data);
+                    setFolderContents(data);
+                })
+                .catch((error) => setError({ message: error.message, type: "error" }));
+        }
+    }, [folderManager, categoryApi, vostfreeApi, selectedExtension, retrieveSeriesInLibraryByExtension]);
 
     const handleBackClick = async () => {
         // If the series is null, then a click on the back button will reset the extension
@@ -56,7 +75,7 @@ function Explore() {
 
         try {
             // We retrieve the parent path of the current serie and the level of the serie
-            const link = await folderManager.retrieveParentPath(serie.link);
+            const link = folderManager.retrieveParentPath(serie.link);
             const level = await folderManager.retrieveLevel(selectedExtension.link, link);
             // We search for folders or files based on the extension, the level and the parent path
             checkAndHandleFolderContentsWithExtension(link, selectedExtension.id, level);
