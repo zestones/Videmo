@@ -8,14 +8,17 @@ class SibNet extends BaseExtractor {
     }
 
     async _get_data() {
-        const resp = await axios.get(this.url);
-        const text = await resp.text();
-        const link = "https://video.sibnet.ru" + text.match(/src:\s+?"(.*?mp4)"/)[1];
-
-        return {
-            'stream_url': link,
-            'referer': this.url
-        };
+        try {
+            const resp = await axios.get(this.url);
+            const link = "https://video.sibnet.ru" + resp.data.match(/src:\s+?"(.*?mp4)"/)[1];
+    
+            return {
+                'stream_url': link,
+                'referer': this.url
+            };
+        } catch (error) {
+            console.error("error: ", error)
+        }
     }
 }
 
