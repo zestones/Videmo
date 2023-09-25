@@ -16,6 +16,18 @@ class SerieDAO {
         return await this.getSerieByLink(serie.link);
     }
 
+    // Create series in batch if missing
+    async createSeriesIfMissing(series) {
+        const sql = `INSERT OR IGNORE INTO Serie (basename, name, image, link, extension_id, parent_id, inLibrary) VALUES (?, ?, ?, ?, ?, ?, ?)`;
+        const params = [];
+
+        for (const serie of series) {
+            params.push([serie.basename, serie?.name, serie?.image, serie.link, serie.extension_id, serie?.parent_id, this.dataTypesConverter.convertBooleanToInteger(serie.inLibrary)]);
+        }
+
+        await this.queryExecutor.executeManyAndCommit(sql, params);
+    }
+
     // Read all series
     async getAllSeries() {
         const sql = `SELECT * FROM Serie`;
@@ -174,7 +186,7 @@ class SerieDAO {
                 Genre.name AS genre_name
             FROM Serie
             INNER JOIN SerieCategory ON Serie.id = SerieCategory.serie_id
-            INNER JOIN SerieInfos ON Serie.id = SerieInfos.serie_id
+            LEFT JOIN SerieInfos ON Serie.id = SerieInfos.serie_id
             LEFT JOIN SerieGenre ON SerieInfos.serie_id = SerieGenre.serie_id
             LEFT JOIN Genre ON SerieGenre.genre_id = Genre.id
             WHERE SerieCategory.category_id = ?

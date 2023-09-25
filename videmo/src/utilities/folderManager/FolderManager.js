@@ -200,7 +200,7 @@ class FolderManager {
      */
     mapFolderContentsWithMandatoryFields(contents, series, extension) {
         return contents.map((folderContent) => {
-            folderContent.basename = this.retrieveBaseName(folderContent.link);
+            if (!folderContent.basename) folderContent.basename = this.retrieveParentBaseName(folderContent.link);
             folderContent.name = folderContent.basename;
             folderContent.inLibrary = series.some((serie) => serie.link === folderContent.link && serie.inLibrary);
             folderContent.extension_id = extension.id;

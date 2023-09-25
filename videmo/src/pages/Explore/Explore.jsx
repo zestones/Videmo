@@ -31,7 +31,7 @@ function Explore() {
     const [searchValue, setSearchValue] = useState("");
     const [searchResults, setSearchResults] = useState([]);
     const [episodes, setEpisodes] = useState([]);
-    const [history, setHistory] = useState([{}]); // {serie, episodes}
+    const [history, setHistory] = useState([{}]);
     const [serie, setSerie] = useState(null);
     const [error, setError] = useState(null);
 
@@ -61,18 +61,20 @@ function Explore() {
                 .catch((error) => setError({ message: error.message, type: "error" }));
         }
         else {
+            // TODO : create a Manager Class for the external sources
             vostfreeApi.scrapPopularAnime(1)
                 .then((data) => {
-                    setHistory([{ content: data, serie: null, episodes: [] }]);
-                    setFolderContents(data)
-                    console.log(data);
+                    const formattedSeries = folderManager.mapFolderContentsWithMandatoryFields(data, [], selectedExtension);
+                    setHistory([{ content: formattedSeries, serie: null, episodes: [] }]);
+                    setFolderContents(formattedSeries)
+                    console.log(formattedSeries);
                 })
                 .catch((error) => setError({ message: error.message, type: "error" }));
         }
     }, [folderManager, categoryApi, vostfreeApi, selectedExtension, retrieveSeriesInLibraryByExtension]);
 
+    // TODO : Implement the same logic for the Library page
     const handleBackClick = () => {
-
         if (!serie) {
             setSelectedExtension(null)
             setHistory([{}]);
@@ -88,8 +90,9 @@ function Explore() {
                 if (selectedExtension.local) retrieveSeriesInLibraryByExtension(folderContents);
                 else {
                     vostfreeApi.scrapPopularAnime(1).then((data) => {
-                        setFolderContents(data);
-                        setHistory([{ content: data, serie: null, episodes: [] }]);
+                        const formattedSeries = folderManager.mapFolderContentsWithMandatoryFields(data, [], selectedExtension);
+                        setFolderContents(formattedSeries);
+                        setHistory([{ content: formattedSeries, serie: null, episodes: [] }]);
                         setEpisodes([]);
                     });
                 }
@@ -204,6 +207,7 @@ function Explore() {
                     />
                     <SeriesDisplay
                         linkedSeries={searchValue !== "" ? searchResults : folderContents}
+                        extension={selectedExtension}
                         episodes={episodes}
                         serie={serie}
                         onPlayClick={handlePlayClick}

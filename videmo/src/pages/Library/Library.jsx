@@ -45,6 +45,9 @@ function Library() {
     const retrieveAllSeries = useCallback(async () => {
         try {
             const seriesInLibrary = await serieApi.readAllSeriesByCategory(currentCategory?.id);
+            console.log("seriesInLibrary", seriesInLibrary);
+            console.log("currentCategory", currentCategory);
+
             const filters = await categoryFilterApi.getFiltersByCategoryId(currentCategory.id);
 
             const sortedSeries = [...sortManager.sortSeriesByField(seriesInLibrary, filters.sort.name, filters.sort.flag)];
