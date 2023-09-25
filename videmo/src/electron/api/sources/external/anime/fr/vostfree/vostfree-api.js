@@ -1,15 +1,12 @@
 const { ipcMain } = require('electron');
-const axios = require('axios');
-const fetch = require('node-fetch');
 
 const Vostfree = require('../../../../../../services/sources/external/anime/fr/vostfree/Vostfree');
 const SibNet = require('../../../../../../services/sources/external/lib/extractors/sibnet/SibNet');
 
-const vostfree = new Vostfree();
 
 ipcMain.on('/read/vostfree/popular/anime', async (event, args) => {
     try {
-        const animeList = await vostfree.getPopularAnime(args.page);
+        const animeList = await new Vostfree().getPopularAnime(args.page);
         event.reply('/read/vostfree/popular/anime', { success: true, animeList: animeList });
     } catch (error) {
         event.reply('/read/vostfree/popular/anime', { success: false, error: error });
@@ -18,10 +15,19 @@ ipcMain.on('/read/vostfree/popular/anime', async (event, args) => {
 
 ipcMain.on('/read/vostfree/anime/episodes', async (event, args) => {
     try {
-        const episodes = await vostfree.scrapeEpisodes(args.url);
+        const episodes = await new Vostfree().scrapeEpisodes(args.url);
         event.reply('/read/vostfree/anime/episodes', { success: true, episodes: episodes });
     } catch (error) {
         event.reply('/read/vostfree/anime/episodes', { success: false, error: error });
+    }
+});
+
+ipcMain.on('/search/vostfree/anime', async (event, args) => {
+    try {
+        const animeList = await new Vostfree().search(args.query);
+        event.reply('/search/vostfree/anime', { success: true, animeList: animeList });
+    } catch (error) {
+        event.reply('/search/vostfree/anime', { success: false, error: error });
     }
 });
 

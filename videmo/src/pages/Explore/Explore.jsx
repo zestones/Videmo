@@ -29,6 +29,7 @@ function Explore() {
     const [selectedExtension, setSelectedExtension] = useState(null);
     const [folderContents, setFolderContents] = useState([]);
     const [searchValue, setSearchValue] = useState("");
+    const [searchResults, setSearchResults] = useState([]);
     const [episodes, setEpisodes] = useState([]);
     const [serie, setSerie] = useState(null);
     const [error, setError] = useState(null);
@@ -53,7 +54,6 @@ function Explore() {
 
     useEffect(() => {
         if (!selectedExtension) return;
-        console.log(selectedExtension);
         if (selectedExtension.local) {
             folderManager.retrieveFolderContents(selectedExtension.link)
                 .then((data) => retrieveSeriesInLibraryByExtension(data.contents))
@@ -61,10 +61,7 @@ function Explore() {
         }
         else {
             vostfreeApi.scrapPopularAnime(1)
-                .then((data) => {
-                    console.log(data);
-                    setFolderContents(data);
-                })
+                .then((data) => setFolderContents(data))
                 .catch((error) => setError({ message: error.message, type: "error" }));
         }
     }, [folderManager, categoryApi, vostfreeApi, selectedExtension, retrieveSeriesInLibraryByExtension]);
@@ -130,7 +127,6 @@ function Explore() {
 
     // When a serie is clicked, retrieve its contents
     const handlePlayClick = async (clickedSerie) => {
-        console.log("handlePlayClick", clickedSerie);
         if (selectedExtension.local) await handleLocalSourceExtension(clickedSerie);
         else handleRemoteSourceExtension(clickedSerie);
     };
@@ -142,7 +138,7 @@ function Explore() {
             if (data.contents.length === 0) {
                 const data = await folderManager.retrieveFilesInFolder(link);
                 const retrievedEpisodes = await trackApi.readAllEpisodesBySerieLink(link);
-                console.log("retrieved Episodes", retrievedEpisodes)
+
                 setEpisodes(trackApi.mapSerieEpisodeWithDatabaseEpisode(data, retrievedEpisodes));
                 setFolderContents([]);
             } else {
@@ -156,7 +152,17 @@ function Explore() {
         }
     };
 
-    const filterFolders = sortManager.filterByKeyword(searchValue, folderContents, 'basename');
+    const handleSearch = async (searchValue) => {
+        setSearchValue(searchValue);
+        try {
+            if (selectedExtension.local) setSearchResults(sortManager.filterByKeyword(searchValue, folderContents, 'basename'));
+            else setSearchResults(await vostfreeApi.searchAnime(searchValue));
+        } catch (error) {
+            setError({ message: error.message, type: "error" })
+            console.error(error);
+        }
+    };
+
 
     return (
         <div className={styles.explore}>
@@ -167,12 +173,12 @@ function Explore() {
                 <>
                     <Header
                         title={selectedExtension.name}
-                        onSearch={setSearchValue}
+                        onSearch={handleSearch}
                         onBack={handleBackClick}
                         onRandom={() => folderContents.length > 0 && handlePlayClick(folderContents[Math.floor(Math.random() * folderContents.length)])}
                     />
                     <SeriesDisplay
-                        linkedSeries={filterFolders}
+                        linkedSeries={searchValue !== "" ? searchResults : folderContents}
                         episodes={episodes}
                         serie={serie}
                         onPlayClick={handlePlayClick}

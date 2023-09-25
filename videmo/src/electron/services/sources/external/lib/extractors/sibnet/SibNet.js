@@ -1,5 +1,4 @@
 const BaseExtractor = require('../BaseExtractor');
-const fetch = require('node-fetch');
 const axios = require('axios');
 
 
@@ -9,7 +8,7 @@ class SibNet extends BaseExtractor {
     }
 
     async _get_data() {
-        const resp = await fetch(this.url);
+        const resp = await axios.get(this.url);
         const text = await resp.text();
         const link = "https://video.sibnet.ru" + text.match(/src:\s+?"(.*?mp4)"/)[1];
 

@@ -1,12 +1,13 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
 
-
 class Vostfree {
     constructor() {
         this.name = 'Vostfree';
         this.baseUrl = 'https://vostfree.ws';
         this.lang = 'fr';
+
+        this.searchEnpoint = `${this.baseUrl}?do=search&subaction=search&story=`;
     }
 
     async getPopularAnime(page) {
@@ -26,35 +27,6 @@ class Vostfree {
         return animeList;
     }
 
-    // async getAnimeEpisodes(url) {
-    //     return axios.get(url)
-    //         .then(response => {
-    //             const $ = cheerio.load(response.data);
-    //             const episodes = [];
-
-    //             $('select.new_player_selector option').each((_, element) => {
-    //                 const epNum = $(element).text().replace('Episode', '').trim();
-
-    //                 if ($(element).text() === 'Film') {
-    //                     episodes.push({
-    //                         episode_number: 1,
-    //                         name: 'Film',
-    //                         url: `?episode:0/${url}`
-    //                     });
-    //                 } else {
-    //                     episodes.push({
-    //                         episode_number: parseFloat(epNum),
-    //                         name: `Épisode ${epNum}`,
-    //                         url: url
-    //                     });
-    //                 }
-    //             });
-
-    //             return episodes;
-    //         })
-    //         .catch(error => console.error(error));
-    // }
-
     #getLink(_id, server) {
         if (server === 'sibnet') {
             return `https://video.sibnet.ru/shell.php?videoid=${_id}`;
@@ -64,10 +36,11 @@ class Vostfree {
     }
 
     async scrapeEpisodes(url) {
-        const server  = 'sibnet'; // TODO : get server from config
+        const server = 'sibnet'; // TODO : get server from config
 
         const servers = ['sibnet', 'uqload'];
         const response = await axios.get(url);
+
         const $ = cheerio.load(response.data);
         const players = $('div[id*=buttons]');
         const links = [];
@@ -91,6 +64,19 @@ class Vostfree {
         }
 
         return links;
+    }
+
+    async search(query) {
+        const response = await axios.post(`${this.searchEnpoint}${query}`);
+
+        const $ = cheerio.load(response.data);
+        const results = $('div.search-result');
+
+        return results.map((_, result) => ({
+            basename: $(result).find('div.info div.title a').text().trim().replace(/\s+FRENCH\s+$/, ''),
+            link:  $(result).find('div.info div.title a').attr('href'),
+            image: `${this.baseUrl}${$(result).find('span.image img').attr('src')}`,
+        })).get();
     }
 
 }

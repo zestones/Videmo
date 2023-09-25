@@ -71,7 +71,6 @@ function EpisodeCard({ serie, episode, setEpisodes, checked, setChecked, exactly
     };
 
     const handleOnPlayClick = async () => {
-        console.log(serie.extension)
         if (!serie.extension.local) {
             try {
                 const stream = await vostfreeApi.extractEpisode(currentEpisode.link);

@@ -1,8 +1,6 @@
 
-const desktop_headers = {
-    'user-agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:88.0.1) \
-    Gecko/20100101 Firefox/88.0.1"
-}
+const desktop_headers = { 'user-agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:88.0.1) Gecko/20100101 Firefox/88.0.1" }
+
 
 class BaseExtractor {
     constructor(url, quality = null, headers = null) {
@@ -15,14 +13,10 @@ class BaseExtractor {
             headers = {};
         }
 
-        // TODO: Maybe quality should be only delt with inside epiosde(?)
         this.quality = quality;
 
-        if (headers) {
-            this.headers = headers;
-        } else {
-            this.headers = desktop_headers;
-        }
+        if (headers) this.headers = headers;
+        else this.headers = desktop_headers;
 
         this._stream_url = null;
         this._referer = this.headers.Referer || '';

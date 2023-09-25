@@ -15,6 +15,14 @@ class Vostfree {
             window.api.receive('/read/vostfree/anime/episodes', (data) => data.success ? resolve(data.episodes) : reject(data.error));
         });
     }
+    
+    searchAnime(query) {
+        window.api.send('/search/vostfree/anime', { query: query });
+
+        return new Promise((resolve, reject) => {
+            window.api.receive('/search/vostfree/anime', (data) => data.success ? resolve(data.animeList) : reject(data.error));
+        });
+    }
 
     extractEpisode(url, quality = null, headers = null) {
         window.api.send('/extract/vostfree/episode', { url: url, quality: quality, headers: headers });
