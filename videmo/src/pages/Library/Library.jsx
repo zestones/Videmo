@@ -106,6 +106,7 @@ function Library() {
     };
 
     const handleSerieSelection = async (clickedSerie) => {
+        console.log("handleSerieSelection", clickedSerie);
         try {
             let subSeries = [];
             let episodes = [];

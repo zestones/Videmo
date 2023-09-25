@@ -4,6 +4,8 @@
 const electron = require('electron');
 const Menu = electron.Menu;
 const path = require('path');
+const { server } = require('./express-server'); // Ensure the import matches the export
+
 
 // Update the electron app automatically when a new version is available on GitHub releases
 // The update is done using the update-electron-app package
@@ -101,6 +103,10 @@ app.whenReady().then(() => {
     });
 });
 
+const PORT = 4000;
+server.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});
 
 // Import the IPC main event handlers for the renderer process (see preload.js)
 // handle the queries to the database using SQLite and the QueryExecutor class from the sqlite folder

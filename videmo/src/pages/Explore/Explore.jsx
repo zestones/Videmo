@@ -73,12 +73,13 @@ function Explore() {
         // If the series is null, then a click on the back button will reset the extension
         if (!serie) return setSelectedExtension(null);
 
+        // TODO : Handle remote and local sources
         try {
             // We retrieve the parent path of the current serie and the level of the serie
             const link = folderManager.retrieveParentPath(serie.link);
             const level = await folderManager.retrieveLevel(selectedExtension.link, link);
             // We search for folders or files based on the extension, the level and the parent path
-            checkAndHandleFolderContentsWithExtension(link, selectedExtension.id, level);
+            retrieveAndSetFolderContents(link, selectedExtension.id, level);
 
             // Then we update the serie with the new data
             let serieUpdates = {};
@@ -101,26 +102,47 @@ function Explore() {
         retrieveSeriesInLibraryByExtension(folderContents);
     };
 
-    // When a serie is clicked, retrieve its contents
-    const handlePlayClick = async (details) => {
+
+    const handleLocalSourceExtension = async (clickedSerie) => {
         try {
-            const level = await folderManager.retrieveLevel(selectedExtension.link, details.link);
-            checkAndHandleFolderContentsWithExtension(details.link, details.extension_id, level);
-            setSerie({ ...details, name: folderManager.retrieveBaseName(details.link), extension_id: selectedExtension.id });
+            const level = await folderManager.retrieveLevel(selectedExtension.link, clickedSerie.link);
+            retrieveAndSetFolderContents(clickedSerie.link, clickedSerie.extension_id, level);
+            setSerie({ ...clickedSerie, name: folderManager.retrieveBaseName(clickedSerie.link), extension_id: selectedExtension.id });
             setSearchValue("");
         } catch (error) {
             setError({ message: error.message, type: "error" })
             console.error(error);
         }
+    }
+
+    const handleRemoteSourceExtension = async (clickedSerie) => {
+        try {
+            const data = await vostfreeApi.scrapAnimeEpisodes(clickedSerie.link);
+            setEpisodes(data.map((url, index) => ({ link: url, name: `Episode ${index + 1}` })));
+            setFolderContents([]);
+            setSerie({ ...clickedSerie, extension: selectedExtension, extension_id: selectedExtension.id });
+            setSearchValue("");
+        } catch (error) {
+            setError({ message: error.message, type: "error" })
+            console.error(error);
+        }
+    }
+
+    // When a serie is clicked, retrieve its contents
+    const handlePlayClick = async (clickedSerie) => {
+        console.log("handlePlayClick", clickedSerie);
+        if (selectedExtension.local) await handleLocalSourceExtension(clickedSerie);
+        else handleRemoteSourceExtension(clickedSerie);
     };
 
     // TODO : Handle remote and local sources
-    const checkAndHandleFolderContentsWithExtension = async (link, extension_id, level = 0) => {
+    const retrieveAndSetFolderContents = async (link, extension_id, level = 0) => {
         try {
             const data = await folderManager.retrieveFolderContents(link, level);
             if (data.contents.length === 0) {
                 const data = await folderManager.retrieveFilesInFolder(link);
                 const retrievedEpisodes = await trackApi.readAllEpisodesBySerieLink(link);
+                console.log("retrieved Episodes", retrievedEpisodes)
                 setEpisodes(trackApi.mapSerieEpisodeWithDatabaseEpisode(data, retrievedEpisodes));
                 setFolderContents([]);
             } else {

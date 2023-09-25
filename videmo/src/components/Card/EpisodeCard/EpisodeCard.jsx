@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 // External
 import BookmarkIcon from '@mui/icons-material/Bookmark';
@@ -14,6 +14,7 @@ import Utils from "../../../utilities/utils/Utils";
 
 // Services
 import TrackApi from "../../../services/api/track/TrackApi";
+import VostfreeApi from "../../../services/api/sources/external/anime/fr/vostfree/VostfreeApi";
 
 // Components
 import VideoPlayer from "../../VideoPlayer/VideoPlayer";
@@ -24,15 +25,18 @@ import styles from "./EpisodeCard.module.scss";
 
 function EpisodeCard({ serie, episode, setEpisodes, checked, setChecked, exactlyOneChecked, setAllCheckedUnderIndex }) {
     // Services initialization
-    const [folderManager] = useState(() => new FolderManager());
-    const [trackApi] = useState(() => new TrackApi());
-    const [utils] = useState(() => new Utils());
+    const folderManager = useMemo(() => new FolderManager(), []);
+    const vostfreeApi = useMemo(() => new VostfreeApi(), []);
+    const trackApi = useMemo(() => new TrackApi(), []);
+    const utils = useMemo(() => new Utils(), []);
 
     // State initialization
     const [openVideoPlayer, setOpenVideoPlayer] = useState(false);
     const [currentEpisode, setCurrentEpisode] = useState(episode);
 
-    useEffect(() => setCurrentEpisode(episode), [episode]);
+    useEffect(() => {
+        setCurrentEpisode(episode)
+    }, [episode]);
 
     const handleBookmarkClick = () => {
         const updatedEpisode = { ...currentEpisode, bookmarked: !currentEpisode.bookmarked };
@@ -66,6 +70,31 @@ function EpisodeCard({ serie, episode, setEpisodes, checked, setChecked, exactly
         updateCurrentEpisode(false, currentEpisode.played_time);
     };
 
+    const handleOnPlayClick = async () => {
+        console.log(serie.extension)
+        if (!serie.extension.local) {
+            try {
+                const stream = await vostfreeApi.extractEpisode(currentEpisode.link);
+                const updatedEpisode = { ...currentEpisode, stream: stream };
+                setCurrentEpisode(updatedEpisode);
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        setOpenVideoPlayer(true);
+    };
+
+
+    const videoPlayer = useMemo(() => {
+        return (
+            <VideoPlayer
+                episode={currentEpisode}
+                startTime={!currentEpisode.played_time ? 0 : currentEpisode.played_time}
+                onCloseVideoPlayer={handleCloseVideoPlayer}
+            />
+        )
+    }, [currentEpisode, handleCloseVideoPlayer]);
 
     return (
         <li
@@ -93,7 +122,7 @@ function EpisodeCard({ serie, episode, setEpisodes, checked, setChecked, exactly
                 <div className={styles.cardButtonsContainer}>
                     {(!checked && !exactlyOneChecked) && (
                         <>
-                            <PlayArrowIcon className={styles.cardButton} onClick={() => setOpenVideoPlayer(true)} />
+                            <PlayArrowIcon className={styles.cardButton} onClick={handleOnPlayClick} />
                             <OpenInNewIcon className={styles.cardButton} onClick={handleOpenLocalVideoPlayer} />
                             <BookmarkIcon className={`${styles.cardButton} ${currentEpisode.bookmarked ? styles.bookmarked : ""}`} onClick={handleBookmarkClick} />
                         </>
@@ -107,13 +136,7 @@ function EpisodeCard({ serie, episode, setEpisodes, checked, setChecked, exactly
                     {(checked && exactlyOneChecked) && <KeyboardDoubleArrowDownIcon className={styles.cardButton} onClick={setAllCheckedUnderIndex} />}
                 </div>
             </div>
-            {openVideoPlayer && (
-                <VideoPlayer
-                    link={currentEpisode.link}
-                    startTime={!currentEpisode.played_time ? 0 : currentEpisode.played_time}
-                    onCloseVideoPlayer={handleCloseVideoPlayer}
-                />
-            )}
+            {openVideoPlayer && videoPlayer}
         </li>
     );
 }
