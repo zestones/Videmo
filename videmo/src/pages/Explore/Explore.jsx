@@ -121,8 +121,6 @@ function Explore() {
     // TODO : Implement the same logic for the Library page
     const handleBackClick = () => {
         window.scrollTo(0, 0);
-        window.removeEventListener("scroll", debouncedHandleScroll);
-        window.removeEventListener("scroll", handleScroll);
 
         if (!serie) {
             setSelectedExtension(null)
@@ -220,8 +218,6 @@ function Explore() {
     };
 
     const handlePlayClick = async (clickedSerie) => {
-        window.removeEventListener("scroll", handleScroll);
-
         if (selectedExtension.local) await handleLocalSourceExtension(clickedSerie);
         else handleRemoteSourceExtension(clickedSerie);
     };
@@ -255,7 +251,7 @@ function Explore() {
                         onRandom={() => (selectedExtension.local && folderContents.length > 0) && handlePlayClick(folderContents[Math.floor(Math.random() * folderContents.length)])}
                     />
                     <SeriesDisplay
-                        linkedSeries={folderContents}
+                        linkedSeries={episodes.length ? [] : folderContents}
                         extension={selectedExtension}
                         episodes={episodes}
                         serie={serie}

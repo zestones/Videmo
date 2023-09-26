@@ -14,11 +14,11 @@ import io from 'socket.io-client';
 function VideoPlayer({ episode, startTime, onCloseVideoPlayer }) {
     // State initialization
     const [isPlayerHovered, setIsPlayerHovered] = useState(false);
-    const [playedTime, setPlayedTime] = useState(0); 
+    const [playedTime, setPlayedTime] = useState(0);
     const isSeekingToStartTime = useRef(false);
     const [videoRef] = useState(React.createRef());
     // Set the video url to "/" to avoid display the video player before the video is ready
-    const [videoUrl, setVideoUrl] = useState("/"); 
+    const [videoUrl, setVideoUrl] = useState("/");
 
     useEffect(() => {
         if (!episode.stream) {
@@ -96,7 +96,7 @@ function VideoPlayer({ episode, startTime, onCloseVideoPlayer }) {
                 />
 
                 {isPlayerHovered && (
-                    <>
+                    <div className={styles.videoPlayer__customControls}>
                         <div className={styles.videoPlayer__closeContainer}>
                             <div className={styles.videoPlayer__close} onClick={() => onCloseVideoPlayer(playedTime)}>
                                 <CloseIcon />
@@ -105,7 +105,7 @@ function VideoPlayer({ episode, startTime, onCloseVideoPlayer }) {
                         <div className={styles.videoPlayer__skipButton} onClick={handleSkipForward}>
                             Passer <KeyboardDoubleArrowRightIcon className={styles.videoPlayer__skipButtonIcon} />
                         </div>
-                    </>
+                    </div>
                 )}
             </div>
         </div>
