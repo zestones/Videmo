@@ -14,10 +14,11 @@ import io from 'socket.io-client';
 function VideoPlayer({ episode, startTime, onCloseVideoPlayer }) {
     // State initialization
     const [isPlayerHovered, setIsPlayerHovered] = useState(false);
-    const [playedTime, setPlayedTime] = useState(0); // Local state to store the played time
-    const isSeekingToStartTime = useRef(false); // Use a ref to track if seeking to startTime has already happened
+    const [playedTime, setPlayedTime] = useState(0); 
+    const isSeekingToStartTime = useRef(false);
     const [videoRef] = useState(React.createRef());
-    const [videoUrl, setVideoUrl] = useState(null);
+    // Set the video url to "/" to avoid display the video player before the video is ready
+    const [videoUrl, setVideoUrl] = useState("/"); 
 
     useEffect(() => {
         if (!episode.stream) {
@@ -63,7 +64,6 @@ function VideoPlayer({ episode, startTime, onCloseVideoPlayer }) {
 
     const handlePlayerReady = () => {
         if (startTime && !isSeekingToStartTime.current) {
-            // Seek to the specified startTime when the player is ready and has not already sought to the startTime
             videoRef.current.seekTo(startTime);
             isSeekingToStartTime.current = true; // Set the flag to true to avoid seeking again
         }
@@ -85,11 +85,11 @@ function VideoPlayer({ episode, startTime, onCloseVideoPlayer }) {
                 <ReactPlayer
                     ref={videoRef} // Set the ref to the playerRef
                     url={videoUrl}
-                    controls // Display native controls
+                    controls
                     width="100%"
                     height="auto"
-                    playing // Start playing the video as soon as it is loaded
-                    pip // Picture in Picture mode
+                    playing
+                    pip
                     onProgress={(progress) => setPlayedTime(progress.playedSeconds)} // Update the local state with the current played time while the player is open
                     onEnded={() => onCloseVideoPlayer(playedTime, true)} // Update the played time in the database when the video is finished
                     onReady={handlePlayerReady} // Set the start time to the episode played time

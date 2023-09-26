@@ -84,17 +84,6 @@ function EpisodeCard({ serie, episode, setEpisodes, checked, setChecked, exactly
         setOpenVideoPlayer(true);
     };
 
-
-    const videoPlayer = useMemo(() => {
-        return (
-            <VideoPlayer
-                episode={currentEpisode}
-                startTime={!currentEpisode.played_time ? 0 : currentEpisode.played_time}
-                onCloseVideoPlayer={handleCloseVideoPlayer}
-            />
-        )
-    }, [currentEpisode, handleCloseVideoPlayer]);
-
     return (
         <li
             className={`${styles.card} 
@@ -135,7 +124,14 @@ function EpisodeCard({ serie, episode, setEpisodes, checked, setChecked, exactly
                     {(checked && exactlyOneChecked) && <KeyboardDoubleArrowDownIcon className={styles.cardButton} onClick={setAllCheckedUnderIndex} />}
                 </div>
             </div>
-            {openVideoPlayer && videoPlayer}
+            
+            {openVideoPlayer && (
+                <VideoPlayer
+                    episode={currentEpisode}
+                    startTime={!currentEpisode.played_time ? 0 : currentEpisode.played_time}
+                    onCloseVideoPlayer={handleCloseVideoPlayer}
+                />
+            )}
         </li>
     );
 }
