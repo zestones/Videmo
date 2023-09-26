@@ -81,6 +81,12 @@ function Explore() {
                     .then((series) => {
                         const formattedSeries = folderManager.mapFolderContentsWithMandatoryFields(nextPage, series, selectedExtension);
                         setFolderContents((prevContents) => [...prevContents, ...formattedSeries]);
+                        setHistory((prevHistory) => {
+                            const newHistory = [...prevHistory];
+                            newHistory[0].content = [...newHistory[0].content, ...formattedSeries];
+                            return newHistory;
+                        });
+
                         setCurrentPage(currentPage + 1);
                         setLoading(false);
                     })
@@ -130,26 +136,11 @@ function Explore() {
 
         if (history.length > 0) {
             history.pop();
-
-            // If the history is empty, reset to the root
-            if (history.length === 0) {
-                setSerie(null);
-                if (selectedExtension.local) retrieveSeriesInLibraryByExtension(folderContents);
-                else {
-                    vostfreeApi.scrapPopularAnime(1).then((data) => {
-                        const formattedSeries = folderManager.mapFolderContentsWithMandatoryFields(data, [], selectedExtension);
-                        setFolderContents(formattedSeries);
-                        setHistory([{ content: formattedSeries, serie: null, episodes: [] }]);
-                        setEpisodes([]);
-                    });
-                }
-            } else {
-                // Navigate back to the previous folder
-                const parentEntry = history[history.length - 1];
-                setSerie(parentEntry.serie);
-                setFolderContents(parentEntry.content);
-                setEpisodes(parentEntry.episodes);
-            }
+            // Navigate back to the previous folder
+            const parentEntry = history[history.length - 1];
+            setSerie(parentEntry.serie);
+            setFolderContents(parentEntry.content);
+            setEpisodes(parentEntry.episodes);
         }
     };
 
