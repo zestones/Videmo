@@ -45,7 +45,6 @@ function Explore() {
         categoryApi.readAllSeriesInLibraryByExtension(selectedExtension)
             .then((series) => {
                 const formattedSeries = folderManager.mapFolderContentsWithMandatoryFields(contents, series, selectedExtension);
-                console.log(formattedSeries);
                 setHistory([{ content: formattedSeries, serie: null, episodes: [] }]);
                 setFolderContents(formattedSeries)
             })

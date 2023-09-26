@@ -62,9 +62,9 @@ ipcMain.on('/add/categories/to/serie/', async (event, arg) => {
             // Create the series that are not present in the database
             await serieDAO.createSeriesIfMissing(arg.series);
             for (const serie of arg.series) {
-                // We scrap the serie
+                // We scrap the serie episodes
                 const episodes = await new Vostfree().scrapeEpisodes(serie.link);
-                // change the array of episodes to an array of episodes with the link, name, played_time, bookmarked, viewed, hash
+                // Initialize the episodes with default values
                 episodes.forEach(episode => {
                     episode.played_time = 0;
                     episode.bookmarked = false;

@@ -33,11 +33,8 @@ app.use(express.static(path.join(__dirname, 'build')));
 
 // Handle incoming socket connections
 io.on('connection', (socket) => {
-    console.log('Client connected');
-
     socket.on('fetch-video', async ({ videoUrl, referer }) => {
         try {
-            console.log('Fetching video:', videoUrl);
             // Fetch the video from the external source
             const response = await axios.get(videoUrl, {
                 headers: {
@@ -59,7 +56,6 @@ io.on('connection', (socket) => {
             });
 
             console.log('Sending video stream to client');
-            console.log('response.data: ', response.data)
             console.log('response.data.Url: ', response.data.responseUrl)
 
             // Send the response url to the client

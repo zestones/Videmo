@@ -15,15 +15,22 @@ function VideoPlayer({ episode, startTime, onCloseVideoPlayer }) {
     // State initialization
     const [isPlayerHovered, setIsPlayerHovered] = useState(false);
     const [playedTime, setPlayedTime] = useState(0); // Local state to store the played time
-
-    const [videoUrl, setVideoUrl] = useState('');
+    const isSeekingToStartTime = useRef(false); // Use a ref to track if seeking to startTime has already happened
     const [videoRef] = useState(React.createRef());
-
+    const [videoUrl, setVideoUrl] = useState(null);
 
     useEffect(() => {
-        const socket = io('http://localhost:4000'); // Replace with your Electron server URL
+        if (!episode.stream) {
+            setVideoUrl(episode.link);
+        }
+    }, [episode]);
 
-        const videoUrl = episode.stream.stream_url; 
+    useEffect(() => {
+        if (!episode.stream) return;
+
+        const socket = io('http://localhost:4000'); // TODO - Move to config file
+
+        const videoUrl = episode.stream.stream_url;
         const referer = episode.stream.referer;
 
         socket.on('connect', () => {
@@ -34,15 +41,10 @@ function VideoPlayer({ episode, startTime, onCloseVideoPlayer }) {
         socket.emit('fetch-video', { videoUrl, referer });
 
         socket.on('video-stream', (response) => {
-            // Append video data to the video element
-            if (videoRef.current) {
-                console.log('Video streaming started', response);
-                videoRef.current.src = response.url;
-            }
+            if (videoRef.current) setVideoUrl(response.url);
         });
 
         socket.on('video-end', () => {
-            // Video streaming has ended
             console.log('Video streaming ended');
         });
 
@@ -52,6 +54,26 @@ function VideoPlayer({ episode, startTime, onCloseVideoPlayer }) {
         };
     }, [videoRef, episode]);
 
+    useEffect(() => {
+        return () => {
+            // Reset the flag when the component is unmounted to allow seeking to startTime on next mount
+            isSeekingToStartTime.current = false;
+        };
+    }, []);
+
+    const handlePlayerReady = () => {
+        if (startTime && !isSeekingToStartTime.current) {
+            // Seek to the specified startTime when the player is ready and has not already sought to the startTime
+            videoRef.current.seekTo(startTime);
+            isSeekingToStartTime.current = true; // Set the flag to true to avoid seeking again
+        }
+    };
+
+    const handleSkipForward = () => {
+        // Skip forward 1 minute and 30 seconds (90 seconds)
+        const newTime = Math.min(videoRef.current.getDuration(), playedTime + 90);
+        videoRef.current.seekTo(newTime);
+    };
 
     return (
         <div className={styles.videoPlayer}>
@@ -60,22 +82,30 @@ function VideoPlayer({ episode, startTime, onCloseVideoPlayer }) {
                 onMouseEnter={() => setIsPlayerHovered(true)}
                 onMouseLeave={() => setIsPlayerHovered(false)}
             >
-                <div className="App">
-                    {console.log("render : ", videoUrl.url)}
-                    <video
-                        ref={videoRef}
-                        width="100%"
-                        height="auto"
-                        controls
-                        autoPlay />
-                </div>
+                <ReactPlayer
+                    ref={videoRef} // Set the ref to the playerRef
+                    url={videoUrl}
+                    controls // Display native controls
+                    width="100%"
+                    height="auto"
+                    playing // Start playing the video as soon as it is loaded
+                    pip // Picture in Picture mode
+                    onProgress={(progress) => setPlayedTime(progress.playedSeconds)} // Update the local state with the current played time while the player is open
+                    onEnded={() => onCloseVideoPlayer(playedTime, true)} // Update the played time in the database when the video is finished
+                    onReady={handlePlayerReady} // Set the start time to the episode played time
+                />
 
                 {isPlayerHovered && (
-                    <div className={styles.videoPlayer__closeContainer}>
-                        <div className={styles.videoPlayer__close} onClick={() => onCloseVideoPlayer(playedTime)}>
-                            <CloseIcon />
+                    <>
+                        <div className={styles.videoPlayer__closeContainer}>
+                            <div className={styles.videoPlayer__close} onClick={() => onCloseVideoPlayer(playedTime)}>
+                                <CloseIcon />
+                            </div>
                         </div>
-                    </div>
+                        <div className={styles.videoPlayer__skipButton} onClick={handleSkipForward}>
+                            Passer <KeyboardDoubleArrowRightIcon className={styles.videoPlayer__skipButtonIcon} />
+                        </div>
+                    </>
                 )}
             </div>
         </div>
