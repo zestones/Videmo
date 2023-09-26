@@ -30,10 +30,31 @@ function App() {
 	const explore = { explore: { component: <Explore />, icon: ExploreIcon, label: "Explorer" } };
 	const history = { history: { component: <History />, icon: HistoryIcon, label: "Historique" } };
 	const settings = { more: { component: <Settings />, icon: MoreHorizIcon, label: "Plus" } };
+
 	const { theme } = useTheme();
+	const [pageHeight, setPageHeight] = useState(0);
 
 	const [activePage, setActivePage] = useState(Object.keys(library)[0]);
 	const navigationItems = { ...library, ...explore, ...history, ...settings };
+
+
+	useEffect(() => {
+		const handleResize = () => {
+			setPageHeight(document.documentElement.scrollHeight);
+		};
+
+		window.addEventListener('resize', handleResize);
+		setPageHeight(document.documentElement.scrollHeight);
+
+		return () => {
+			window.removeEventListener('resize', handleResize);
+		};
+	}, []);
+
+	useEffect(() => {
+		window.scrollTo({ top: 0, behavior: 'auto' });
+	}, [pageHeight]);
+
 
 	useEffect(() => {
 		document.body.className = theme;

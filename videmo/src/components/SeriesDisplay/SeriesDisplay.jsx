@@ -190,7 +190,7 @@ function SeriesDisplay({ serie, linkedSeries, episodes, onPlayClick, onRefresh, 
             <div className={styles.seriesContainer}>
                 {linkedSeries.map((linkedSerie, index) => (
                     <SerieCard
-                        key={linkedSerie.link}
+                        key={index}
                         serie={linkedSerie}
                         onPlayClick={onPlayClick}
                         onMoreClick={onRefresh}
@@ -202,27 +202,6 @@ function SeriesDisplay({ serie, linkedSeries, episodes, onPlayClick, onRefresh, 
                     />
                 ))}
             </div>
-
-            {isOptionBarActive && (
-                <OptionBarSerie
-                    series={linkedSeries.filter((_, index) => checkedSeries[index])}
-                    onClose={handleCloseOptionBar}
-                    checked={checkAllSeries}
-                    onCheck={handleCheckAllSeries}
-                    onCategoryChange={onRefresh}
-                    isCalledFromExplore={calledFrom === EXPLORE_STRING}
-                />
-            )}
-
-            {isEpisodeOptionBarActive && (
-                <OptionBarEpisode
-                    serie={serie}
-                    episodes={episodes.filter((_, index) => checkedEpisodes[index])}
-                    onClose={handleCloseOptionBarEpisode}
-                    checked={checkAllEpisodes}
-                    onCheck={handleCheckAllEpisode}
-                />
-            )}
 
             <div className={styles.episodesContainer}>
                 {episodes.map((episode, index) => (
@@ -245,6 +224,27 @@ function SeriesDisplay({ serie, linkedSeries, episodes, onPlayClick, onRefresh, 
                     </button>
                 )}
             </div>
+
+            {isOptionBarActive && (
+                <OptionBarSerie
+                    series={linkedSeries.filter((_, index) => checkedSeries[index])}
+                    onClose={handleCloseOptionBar}
+                    checked={checkAllSeries}
+                    onCheck={handleCheckAllSeries}
+                    onCategoryChange={onRefresh}
+                    isCalledFromExplore={calledFrom === EXPLORE_STRING}
+                />
+            )}
+
+            {isEpisodeOptionBarActive && (
+                <OptionBarEpisode
+                    serie={serie}
+                    episodes={episodes.filter((_, index) => checkedEpisodes[index])}
+                    onClose={handleCloseOptionBarEpisode}
+                    checked={checkAllEpisodes}
+                    onCheck={handleCheckAllEpisode}
+                />
+            )}
 
             {openVideoPlayer && (
                 <VideoPlayer

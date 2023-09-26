@@ -3,14 +3,17 @@ import React, { useState, useEffect, useCallback, useMemo } from "react";
 // Constants
 import { EXPLORE_STRING } from "../../utilities/utils/Constants";
 
+// External
+import debounce from 'lodash.debounce';
+
 // Services & Api
 import FolderManager from "../../utilities/folderManager/FolderManager";
 import SortManager from "../../utilities/sortManager/SortManager";
 import CategoryApi from "../../services/api/category/CategoryApi";
 import TrackApi from "../../services/api/track/TrackApi";
+
 // Sources
 import VostfreeApi from "../../services/api/sources/external/anime/fr/vostfree/VostfreeApi";
-
 
 // Pages
 import Source from "./Source/Source";
@@ -28,11 +31,13 @@ function Explore() {
     // State initialization
     const [selectedExtension, setSelectedExtension] = useState(null);
     const [folderContents, setFolderContents] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [loading, setLoading] = useState(false);
     const [episodes, setEpisodes] = useState([]);
     const [history, setHistory] = useState([{}]);
     const [serie, setSerie] = useState(null);
     const [error, setError] = useState(null);
-    
+
     // Utilities and services initialization
     const folderManager = useMemo(() => new FolderManager(), []);
     const sortManager = useMemo(() => new SortManager(), []);
@@ -53,12 +58,12 @@ function Explore() {
 
     useEffect(() => {
         if (!selectedExtension) return;
+
         if (selectedExtension.local) {
             folderManager.retrieveFolderContents(selectedExtension.link)
                 .then((data) => retrieveSeriesInLibraryByExtension(data.contents))
                 .catch((error) => setError({ message: error.message, type: "error" }));
-        }
-        else {
+        } else {
             // TODO : create a Manager Class for the external sources
             vostfreeApi.scrapPopularAnime(1)
                 .then((data) => retrieveSeriesInLibraryByExtension(data))
@@ -66,8 +71,58 @@ function Explore() {
         }
     }, [folderManager, categoryApi, vostfreeApi, selectedExtension, retrieveSeriesInLibraryByExtension]);
 
+    const fetchNextPage = useCallback(() => {
+        if (loading) return;
+        setLoading(true);
+
+
+        vostfreeApi.scrapPopularAnime(currentPage + 1)
+            .then((nextPage) => {
+                categoryApi.readAllSeriesInLibraryByExtension(selectedExtension)
+                    .then((series) => {
+                        const formattedSeries = folderManager.mapFolderContentsWithMandatoryFields(nextPage, series, selectedExtension);
+                        setFolderContents((prevContents) => [...prevContents, ...formattedSeries]);
+                        setCurrentPage(currentPage + 1);
+                        setLoading(false);
+                    })
+                    .catch((error) => {
+                        setLoading(false);
+                        setError({ message: error.message, type: "error" });
+                    });
+            })
+            .catch((error) => {
+                setLoading(false);
+                setError({ message: error.message, type: "error" });
+            });
+    }, [vostfreeApi, categoryApi, folderManager, selectedExtension, currentPage, loading]);
+
+    const handleScroll = useCallback(() => {
+        const windowHeight = window.innerHeight;
+        const documentHeight = document.documentElement.scrollHeight;
+        const scrollTop = window.scrollY || document.documentElement.scrollTop;
+
+        // Check if the user is near the bottom of the page
+        if (windowHeight + scrollTop >= documentHeight - 100) {
+            fetchNextPage(); // Fetch the next page when near the bottom
+        }
+    }, [fetchNextPage]);
+
+    const debouncedHandleScroll = debounce(handleScroll, 200);
+
+    useEffect(() => {
+        window.addEventListener("scroll", debouncedHandleScroll);
+
+        // Remove the event listener when the component unmounts
+        return () => {
+            window.removeEventListener("scroll", debouncedHandleScroll);
+        };
+    }, [selectedExtension, serie, debouncedHandleScroll]);
+
+
     // TODO : Implement the same logic for the Library page
     const handleBackClick = () => {
+        window.scrollTo(0, 0);
+
         if (!serie) {
             setSelectedExtension(null)
             setHistory([{}]);
@@ -164,6 +219,8 @@ function Explore() {
     };
 
     const handlePlayClick = async (clickedSerie) => {
+        window.removeEventListener("scroll", handleScroll);
+
         if (selectedExtension.local) await handleLocalSourceExtension(clickedSerie);
         else handleRemoteSourceExtension(clickedSerie);
     };
@@ -206,6 +263,12 @@ function Explore() {
                         calledFrom={EXPLORE_STRING}
                         setEpisodes={setEpisodes}
                     />
+
+                    {loading && (
+                        <div className={styles.loading}>
+                            <div className={styles.loader}></div>
+                        </div>
+                    )}
                 </>
             )}
         </div>
