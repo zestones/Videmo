@@ -101,8 +101,10 @@ function DetailsContainer({ serie, calledFrom }) {
 			setIsLoading(true);
 			setShowOptionPanel(false);
 			const infos = await aniList.searchAnimeInfosName(serie.basename);
-			await serieInfosApi.updateSerieInfos(serie.link, infos);
-			serieDataRef.current = { ...serie, infos: infos };
+			if (infos) {
+				await serieInfosApi.updateSerieInfos(serie.link, infos);
+				serieDataRef.current = { ...serie, infos: infos };
+			}
 		} catch (error) {
 			showNotification('error', error.message);
 		} finally {

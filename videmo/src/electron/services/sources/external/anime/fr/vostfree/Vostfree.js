@@ -63,7 +63,12 @@ class Vostfree {
             }
         }
 
-        return links;
+        // Format the links to an episodes object :
+        
+        return links.map((link, index) => ({
+            link: link,
+            name: `Episode ${index + 1}`
+        }));
     }
 
     async search(query) {

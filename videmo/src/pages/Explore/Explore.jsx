@@ -28,13 +28,11 @@ function Explore() {
     // State initialization
     const [selectedExtension, setSelectedExtension] = useState(null);
     const [folderContents, setFolderContents] = useState([]);
-    const [searchValue, setSearchValue] = useState("");
-    const [searchResults, setSearchResults] = useState([]);
     const [episodes, setEpisodes] = useState([]);
     const [history, setHistory] = useState([{}]);
     const [serie, setSerie] = useState(null);
     const [error, setError] = useState(null);
-
+    
     // Utilities and services initialization
     const folderManager = useMemo(() => new FolderManager(), []);
     const sortManager = useMemo(() => new SortManager(), []);
@@ -47,6 +45,7 @@ function Explore() {
         categoryApi.readAllSeriesInLibraryByExtension(selectedExtension)
             .then((series) => {
                 const formattedSeries = folderManager.mapFolderContentsWithMandatoryFields(contents, series, selectedExtension);
+                console.log(formattedSeries);
                 setHistory([{ content: formattedSeries, serie: null, episodes: [] }]);
                 setFolderContents(formattedSeries)
             })
@@ -63,12 +62,7 @@ function Explore() {
         else {
             // TODO : create a Manager Class for the external sources
             vostfreeApi.scrapPopularAnime(1)
-                .then((data) => {
-                    const formattedSeries = folderManager.mapFolderContentsWithMandatoryFields(data, [], selectedExtension);
-                    setHistory([{ content: formattedSeries, serie: null, episodes: [] }]);
-                    setFolderContents(formattedSeries)
-                    console.log(formattedSeries);
-                })
+                .then((data) => retrieveSeriesInLibraryByExtension(data))
                 .catch((error) => setError({ message: error.message, type: "error" }));
         }
     }, [folderManager, categoryApi, vostfreeApi, selectedExtension, retrieveSeriesInLibraryByExtension]);
@@ -118,8 +112,6 @@ function Explore() {
             const serie = { ...clickedSerie, name: folderManager.retrieveBaseName(clickedSerie.link), extension_id: selectedExtension.id };
             setHistory((prevHistory) => [...prevHistory, { content: history.content, serie: serie, episodes: history.episodes }]);
             setSerie(serie);
-
-            setSearchValue("");
         } catch (error) {
             setError({ message: error.message, type: "error" })
             console.error(error);
@@ -128,17 +120,14 @@ function Explore() {
 
     const handleRemoteSourceExtension = async (clickedSerie) => {
         try {
-            const data = await vostfreeApi.scrapAnimeEpisodes(clickedSerie.link);
-            const episodes = data.map((url, index) => ({ link: url, name: `Episode ${index + 1}` }));
-            console.log(episodes);
+            const episodes = await vostfreeApi.scrapAnimeEpisodes(clickedSerie.link);
+
             setEpisodes(episodes);
             setFolderContents([]);
 
             const serie = { ...clickedSerie, extension: selectedExtension, extension_id: selectedExtension.id };
             setHistory((prevHistory) => [...prevHistory, { content: [], serie: serie, episodes: episodes }]);
             setSerie(serie);
-
-            setSearchValue("");
         } catch (error) {
             setError({ message: error.message, type: "error" })
             console.error(error);
@@ -181,16 +170,19 @@ function Explore() {
     };
 
     const handleSearch = async (searchValue) => {
-        setSearchValue(searchValue);
         try {
-            if (selectedExtension.local) setSearchResults(sortManager.filterByKeyword(searchValue, folderContents, 'basename'));
-            else setSearchResults(await vostfreeApi.searchAnime(searchValue));
+            if (selectedExtension.local) setFolderContents(sortManager.filterByKeyword(searchValue, folderContents, 'basename'));
+            else {
+                const searchResult = await vostfreeApi.searchAnime(searchValue);
+                const seriesInLibrary = await categoryApi.readAllSeriesInLibraryByExtension(selectedExtension);
+                const formattedSeries = folderManager.mapFolderContentsWithMandatoryFields(searchResult, seriesInLibrary, selectedExtension);
+                setFolderContents(formattedSeries);
+            }
         } catch (error) {
             setError({ message: error.message, type: "error" })
             console.error(error);
         }
     };
-
 
     return (
         <div className={styles.explore}>
@@ -203,10 +195,10 @@ function Explore() {
                         title={selectedExtension.name}
                         onSearch={handleSearch}
                         onBack={handleBackClick}
-                        onRandom={() => folderContents.length > 0 && handlePlayClick(folderContents[Math.floor(Math.random() * folderContents.length)])}
+                        onRandom={() => (selectedExtension.local && folderContents.length > 0) && handlePlayClick(folderContents[Math.floor(Math.random() * folderContents.length)])}
                     />
                     <SeriesDisplay
-                        linkedSeries={searchValue !== "" ? searchResults : folderContents}
+                        linkedSeries={folderContents}
                         extension={selectedExtension}
                         episodes={episodes}
                         serie={serie}

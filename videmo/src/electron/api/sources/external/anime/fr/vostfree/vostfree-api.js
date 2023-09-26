@@ -34,7 +34,6 @@ ipcMain.on('/search/vostfree/anime', async (event, args) => {
 
 ipcMain.on('/extract/vostfree/episode', async (event, args) => {
     try {
-        console.log("args: ", args.url)
         const extractor = new SibNet(args.url, args.quality, args.headers);
         await extractor.get_data();
 
@@ -43,7 +42,7 @@ ipcMain.on('/extract/vostfree/episode', async (event, args) => {
             referer: extractor.referer,
             meta: extractor.meta,
         };
-        console.log("episode: ", episode)
+
         event.reply('/extract/vostfree/episode', { success: true, episode: JSON.stringify(episode) });
     } catch (error) {
         event.reply('/extract/vostfree/episode', { success: false, error: error });

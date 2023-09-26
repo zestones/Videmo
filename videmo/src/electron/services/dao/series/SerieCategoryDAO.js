@@ -130,8 +130,6 @@ class SerieCategoryDAO {
     async updateSerieCategories(series, serieCategories) {
 
         const serieLinks = series.map((serie) => serie.link);
-        // Create the series that are not present in the database
-        await this.serieDAO.createSeriesIfMissing(series);
 
         // Clear existing categories for the series in the SerieCategory table
         await this.deleteSerieCategoryBySerieLinks(serieLinks);
