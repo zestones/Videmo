@@ -75,7 +75,6 @@ function Explore() {
         if (loading) return;
         setLoading(true);
 
-
         vostfreeApi.scrapPopularAnime(currentPage + 1)
             .then((nextPage) => {
                 categoryApi.readAllSeriesInLibraryByExtension(selectedExtension)
@@ -102,10 +101,10 @@ function Explore() {
         const scrollTop = window.scrollY || document.documentElement.scrollTop;
 
         // Check if the user is near the bottom of the page
-        if (windowHeight + scrollTop >= documentHeight - 100) {
+        if (!serie && windowHeight + scrollTop >= documentHeight - 100) {
             fetchNextPage(); // Fetch the next page when near the bottom
         }
-    }, [fetchNextPage]);
+    }, [serie, fetchNextPage]);
 
     const debouncedHandleScroll = debounce(handleScroll, 200);
 
@@ -116,12 +115,14 @@ function Explore() {
         return () => {
             window.removeEventListener("scroll", debouncedHandleScroll);
         };
-    }, [selectedExtension, serie, debouncedHandleScroll]);
+    }, [selectedExtension, debouncedHandleScroll]);
 
 
     // TODO : Implement the same logic for the Library page
     const handleBackClick = () => {
         window.scrollTo(0, 0);
+        window.removeEventListener("scroll", debouncedHandleScroll);
+        window.removeEventListener("scroll", handleScroll);
 
         if (!serie) {
             setSelectedExtension(null)
