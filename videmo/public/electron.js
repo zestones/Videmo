@@ -4,7 +4,7 @@
 const electron = require('electron');
 const Menu = electron.Menu;
 const path = require('path');
-const { server } = require('./express-server'); // Ensure the import matches the export
+const { server } = require('../src/electron/server/express-server');
 
 
 // Update the electron app automatically when a new version is available on GitHub releases

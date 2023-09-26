@@ -60,7 +60,7 @@ io.on('connection', (socket) => {
 
             // Send the response url to the client
             socket.emit('video-stream', { url: response.data.responseUrl });
-            
+
         } catch (error) {
             console.error('Error fetching video:', error);
         }
