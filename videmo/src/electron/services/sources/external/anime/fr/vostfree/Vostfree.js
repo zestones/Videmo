@@ -63,12 +63,10 @@ class Vostfree {
             }
         }
 
-        // Format the links to an episodes object :
-        
         return links.map((link, index) => ({
             link: link,
             name: `Episode ${index + 1}`
-        }));
+        })).reverse();
     }
 
     async search(query) {
@@ -79,7 +77,7 @@ class Vostfree {
 
         return results.map((_, result) => ({
             basename: $(result).find('div.info div.title a').text().trim().replace(/\s+FRENCH\s+$/, ''),
-            link:  $(result).find('div.info div.title a').attr('href'),
+            link: $(result).find('div.info div.title a').attr('href'),
             image: `${this.baseUrl}${$(result).find('span.image img').attr('src')}`,
         })).get();
     }
