@@ -128,7 +128,7 @@ class SerieHistoryDAO {
     // Update serie track and history
     async updateSerieTrackAndHistory(serie, episode, timestamp) {
         // We start by updating the serie track
-        await this.serieTrackDAO.updateSerieTrack(serie, episode);
+        await this.serieTrackDAO.updateSerieTrack(serie, JSON.stringify([JSON.parse(episode)]));
 
         // And then we update the history
         return this.#manageSerieHistory(JSON.parse(episode), timestamp);

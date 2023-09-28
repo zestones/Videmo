@@ -65,7 +65,7 @@ class SerieTrackDAO {
     async updateSerieTrack(serie, episodes) {
         const serieParsedObject = JSON.parse(serie);
         const episodeParsedObject = JSON.parse(episodes);
-
+        
         const retrievedSerie = await this.#getOrCreateSerie(serieParsedObject);
 
         for (const episode of episodeParsedObject) {
