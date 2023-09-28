@@ -19,7 +19,7 @@ class Vostfree {
             const anime = {
                 link: $(element).find('div.movie-poster div.play a').attr('href'),
                 image: this.baseUrl + $(element).find('div.movie-poster span.image img').attr('src'),
-                basename: $(element).find('div.movie-poster div.info.hidden div.title').text(),
+                basename: $(element).find('div.movie-poster div.info.hidden div.title').text().trim().replace(/\s+/g, ' ').replace(/\s+(FRENCH|VOSTFR)\s*$/, ''),
             };
             animeList.push(anime);
         });
@@ -75,11 +75,16 @@ class Vostfree {
         const $ = cheerio.load(response.data);
         const results = $('div.search-result');
 
-        return results.map((_, result) => ({
-            basename: $(result).find('div.info div.title a').text().trim().replace(/\s+FRENCH\s+$/, ''),
-            link: $(result).find('div.info div.title a').attr('href'),
-            image: `${this.baseUrl}${$(result).find('span.image img').attr('src')}`,
-        })).get();
+        return results.map((_, result) => {
+            const basename = $(result).find('div.info div.title a').text().trim().replace(/\s+/g, ' ');
+            const cleanedBasename = basename.replace(/\s+(FRENCH|VOSTFR)\s*$/, '');
+
+            return {
+                basename: cleanedBasename,
+                link: $(result).find('div.info div.title a').attr('href'),
+                image: `${this.baseUrl}${$(result).find('span.image img').attr('src')}`,
+            };
+        }).get();
     }
 
 }
