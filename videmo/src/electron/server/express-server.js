@@ -39,17 +39,7 @@ io.on('connection', (socket) => {
             const response = await axios.get(videoUrl, {
                 headers: {
                     'Referer': referer,
-                    'Accept-Encoding': 'identity;q=1, *;q=0',
-                    'Accept-Language': 'fr-FR,fr;q=0.9,ar-DZ;q=0.8,ar;q=0.7,en-US;q=0.6,en;q=0.5',
-                    'Connection': 'keep-alive',
                     'Host': 'video.sibnet.ru',
-                    'Range': 'bytes=0-',
-                    'Sec-Ch-Ua': '"Chromium";v="116", "Not)A;Brand";v="24", "Google Chrome";v="116"',
-                    'Sec-Ch-Ua-Mobile': '?0',
-                    'Sec-Ch-Ua-Platform': '"Windows"',
-                    'Sec-Fetch-Dest': 'video',
-                    'Sec-Fetch-Mode': 'no-cors',
-                    'Sec-Fetch-Site': 'same-origin',
                     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36',
                 },
                 responseType: 'stream',

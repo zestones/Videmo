@@ -39,12 +39,16 @@ describe("SearchBar", () => {
 
         const searchInputElement = screen.getByPlaceholderText("Rechercher");
         fireEvent.change(searchInputElement, { target: { value: "test" } });
+        // trigger the on key down event
+        fireEvent.keyDown(searchInputElement, { key: 'Enter', code: 'Enter' });
 
         expect(mockOnSearch).toHaveBeenCalledTimes(1);
         expect(mockOnSearch).toHaveBeenCalledWith("test");
 
         // Clearing the search input value should call onSearch with an empty string
         fireEvent.change(searchInputElement, { target: { value: "" } });
+        // trigger the on key down event
+        fireEvent.keyDown(searchInputElement, { key: 'Enter', code: 'Enter' });
 
         expect(mockOnSearch).toHaveBeenCalledTimes(2);
         expect(mockOnSearch).toHaveBeenCalledWith("");
