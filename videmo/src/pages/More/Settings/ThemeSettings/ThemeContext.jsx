@@ -16,7 +16,7 @@ export function ThemeProvider({ children }) {
         themeApi
             .readActiveTheme()
             .then((theme) => setTheme(theme.name))
-            .catch((err) => console.log(err));
+            .catch((err) => console.error(err));
     }, [themeApi]);
 
     const updateTheme = (newTheme) => setTheme(newTheme);

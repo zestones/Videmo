@@ -18,6 +18,7 @@ import OptionBarEpisode from "../OptionBar/OptionBarEpisode/OptionBarEpisode";
 import TrackApi from "../../services/api/track/TrackApi";
 import FolderManager from "../../utilities/folderManager/FolderManager";
 import ExtensionApi from "../../services/api/extension/ExtensionApi";
+import Vostfree from "../../services/api/sources/external/anime/fr/vostfree/VostfreeApi";
 
 // Styles
 import styles from "./SeriesDisplay.module.scss";
@@ -29,6 +30,7 @@ function SeriesDisplay({ serie, linkedSeries, episodes, onPlayClick, onRefresh, 
     const trackApi = useMemo(() => new TrackApi(), []);
     const folderManager = useMemo(() => new FolderManager(), []);
     const extensionApi = useMemo(() => new ExtensionApi(), []);
+    const vostfreeApi = useMemo(() => new Vostfree(), []);
 
     // State initialization
     const [openVideoPlayer, setOpenVideoPlayer] = useState(false);
@@ -55,6 +57,14 @@ function SeriesDisplay({ serie, linkedSeries, episodes, onPlayClick, onRefresh, 
         setIsEpisodeOptionBarActive(false);
     }, [episodes, setCheckedEpisodes]);
 
+    useEffect(() => {
+        if ((!linkedSeries || linkedSeries.length === 0) && serie) {
+            extensionApi.readExtensionById(serie.extension_id)
+                .then((extension) => serie.extension = extension)
+                .catch((error) => console.error(error));
+        }
+    }, [serie, linkedSeries, extensionApi]);
+
     const updateCurrentEpisode = useCallback((playedTime = 0, viewed = false) => {
         const updatedEpisode = { ...resumeEpisode, played_time: playedTime, viewed: viewed };
         trackApi.updatePlayedTime(serie, updatedEpisode, new Date().getTime());
@@ -78,7 +88,17 @@ function SeriesDisplay({ serie, linkedSeries, episodes, onPlayClick, onRefresh, 
 
             try {
                 const extension = await extensionApi.readExtensionById(serie.extension_id);
-                if (!extension.local) setOpenVideoPlayer(true);
+                if (!extension.local) {
+                    try {
+                        const stream = await vostfreeApi.extractEpisode(resumeEpisode.link);
+                        const updatedEpisode = { ...resumeEpisode, stream: stream };
+                        setResumeEpisode(updatedEpisode);
+                    } catch (error) {
+                        console.error(error);
+                    }
+
+                    setOpenVideoPlayer(true);
+                }
                 else handleOpenLocalVideoPlayer(resumeEpisode);
             } catch (error) {
                 console.error(error);
@@ -170,7 +190,7 @@ function SeriesDisplay({ serie, linkedSeries, episodes, onPlayClick, onRefresh, 
             <div className={styles.seriesContainer}>
                 {linkedSeries.map((linkedSerie, index) => (
                     <SerieCard
-                        key={linkedSerie.link}
+                        key={index}
                         serie={linkedSerie}
                         onPlayClick={onPlayClick}
                         onMoreClick={onRefresh}
@@ -182,27 +202,6 @@ function SeriesDisplay({ serie, linkedSeries, episodes, onPlayClick, onRefresh, 
                     />
                 ))}
             </div>
-
-            {isOptionBarActive && (
-                <OptionBarSerie
-                    series={linkedSeries.filter((_, index) => checkedSeries[index])}
-                    onClose={handleCloseOptionBar}
-                    checked={checkAllSeries}
-                    onCheck={handleCheckAllSeries}
-                    onCategoryChange={onRefresh}
-                    isCalledFromExplore={calledFrom === EXPLORE_STRING}
-                />
-            )}
-
-            {isEpisodeOptionBarActive && (
-                <OptionBarEpisode
-                    serie={serie}
-                    episodes={episodes.filter((_, index) => checkedEpisodes[index])}
-                    onClose={handleCloseOptionBarEpisode}
-                    checked={checkAllEpisodes}
-                    onCheck={handleCheckAllEpisode}
-                />
-            )}
 
             <div className={styles.episodesContainer}>
                 {episodes.map((episode, index) => (
@@ -226,9 +225,30 @@ function SeriesDisplay({ serie, linkedSeries, episodes, onPlayClick, onRefresh, 
                 )}
             </div>
 
+            {isOptionBarActive && (
+                <OptionBarSerie
+                    series={linkedSeries.filter((_, index) => checkedSeries[index])}
+                    onClose={handleCloseOptionBar}
+                    checked={checkAllSeries}
+                    onCheck={handleCheckAllSeries}
+                    onCategoryChange={onRefresh}
+                    isCalledFromExplore={calledFrom === EXPLORE_STRING}
+                />
+            )}
+
+            {isEpisodeOptionBarActive && (
+                <OptionBarEpisode
+                    serie={serie}
+                    episodes={episodes.filter((_, index) => checkedEpisodes[index])}
+                    onClose={handleCloseOptionBarEpisode}
+                    checked={checkAllEpisodes}
+                    onCheck={handleCheckAllEpisode}
+                />
+            )}
+
             {openVideoPlayer && (
                 <VideoPlayer
-                    link={resumeEpisode.link}
+                    episode={resumeEpisode}
                     startTime={!resumeEpisode.played_time ? 0 : resumeEpisode.played_time}
                     onCloseVideoPlayer={handleCloseVideoPlayer}
                 />

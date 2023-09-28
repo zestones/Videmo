@@ -4,6 +4,8 @@
 const electron = require('electron');
 const Menu = electron.Menu;
 const path = require('path');
+const { server } = require('../src/electron/server/express-server');
+
 
 // Update the electron app automatically when a new version is available on GitHub releases
 // The update is done using the update-electron-app package
@@ -101,6 +103,10 @@ app.whenReady().then(() => {
     });
 });
 
+const PORT = 4000;
+server.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});
 
 // Import the IPC main event handlers for the renderer process (see preload.js)
 // handle the queries to the database using SQLite and the QueryExecutor class from the sqlite folder
@@ -120,6 +126,9 @@ require(path.resolve(__dirname, '..', 'src', 'electron', 'api', 'filter-api'));
 require(path.resolve(__dirname, '..', 'src', 'electron', 'api', 'theme-api'));
 require(path.resolve(__dirname, '..', 'src', 'electron', 'api', 'display-settings-api'));
 require(path.resolve(__dirname, '..', 'src', 'electron', 'api', 'display-mode-api'));
+
+// Sources Api
+require(path.resolve(__dirname, '..', 'src', 'electron', 'api', 'sources', 'external', 'anime', 'fr', 'vostfree', 'vostfree-api'));
 
 // handle local file system requests using the endpoint defined inside the local-file-service file from the sources/local folder
 // The local-file-service file is responsible for reading the local file system and returning the data to the renderer process
