@@ -46,7 +46,12 @@ class ExtensionsDAO {
         const params = [this.dataTypesConverter.convertBooleanToInteger(true)];
 
         const extensions = await this.queryExecutor.executeAndFetchAll(sql, params);
-        return extensions.map((extension) => this.#convertExtensionBooleanValues(extension));
+        extensions.forEach((extension) => this.#convertExtensionBooleanValues(extension));
+
+        // Sort extensions by local and extern sources
+        const localExtensions = extensions.filter((extension) => extension.local);
+        const externExtensions = extensions.filter((extension) => !extension.local);
+        return { local: localExtensions, external: externExtensions }
     }
 
     // Update extension by ID
