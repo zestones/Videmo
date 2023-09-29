@@ -155,6 +155,7 @@ function Explore() {
     }, [debouncedHandleScroll]);
 
     useEffect(() => {
+        if (selectedExtension?.local) return;
         attachScrollListener();
 
         // Remove the event listener when the component unmounts
