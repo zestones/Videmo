@@ -153,7 +153,7 @@ class Tree {
             // retrieve the parent of tree.link
             const parentSerie = await this.serieDAO.getSerieByLink(extensionLink + path.sep + parentLink);
             const baseLink = extensionLink + path.sep + tree.link.split(path.sep)[0]; // We add the root folder
-            
+
             const depth = this.folderManager.retrieveLevel(baseLink, link);
             await this.insertTree(tree.node, baseLink, extensionId, parentSerie.basename, parentSerie.id, link, depth);
 
