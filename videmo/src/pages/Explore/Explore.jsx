@@ -238,10 +238,12 @@ function Explore() {
 
     const handleOptionClick = async (mode) => {
         try {
+            window.scrollTo(0, 0);
             const series = await sourceManager.scrapAnime(selectedExtension.name, 1, mode);
+
             retrieveSeriesInLibraryByExtension(series);
-            setCurrentPage(1);
             setActiveOption(mode);
+            setCurrentPage(1);
         } catch (error) {
             setError({ message: error.message, type: "error" })
         }
