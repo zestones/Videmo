@@ -140,7 +140,7 @@
 
             top: 50px;
             right: 0;
-            
+
             width: 200px;
 
             background-color: var(--primary-color);
@@ -154,15 +154,15 @@
 
                 width: 0;
                 height: 0;
-                
+
                 border-left: 10px solid transparent;
                 border-right: 10px solid transparent;
-                border-bottom: 10px solid var(--secondary-color);
+                border-bottom: 10px solid var(--primary-color);
             }
 
             &.active {
                 animation: optionsPanel 0.2s ease-in-out forwards;
-                transform-origin: top right; 
+                transform-origin: top right;
                 display: block;
 
                 @keyframes optionsPanel {
@@ -194,7 +194,7 @@
                     height: 100%;
 
                     padding: 15px;
-                    border-radius: 5px;
+                    border-radius: 10px;
 
                     &:hover {
                         background-color: var(--tertiary-color);

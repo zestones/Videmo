@@ -261,6 +261,7 @@ function Explore() {
                         title={selectedExtension.name}
                         onSearch={handleSearch}
                         onBack={handleBackClick}
+                        onViewMode={() => { }}
                     />
 
                     {(!selectedExtension.local && !serie) && (
