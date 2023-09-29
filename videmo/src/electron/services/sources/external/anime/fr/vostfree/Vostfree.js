@@ -43,14 +43,19 @@ class Vostfree {
 
         const $ = cheerio.load(response.data);
         const players = $('div[id*=buttons]');
-        const links = [];
+        const episodes = [];
 
         for (let i = 0; i < players.length; i++) {
             const player = players.eq(i);
+
+            const name = `Episode ${player.attr('id').split('_')[1]}`;
             let current = player.find(`div.new_player_${server}`);
 
             if (current.length) {
-                links.push(this.#getLink($(`div[id=content_${current.attr('id')}]`).text(), server));
+                episodes.push({
+                    link: this.#getLink($(`div[id=content_${current.attr('id')}]`).text(), server),
+                    name: name
+                });
                 continue;
             }
 
@@ -58,15 +63,15 @@ class Vostfree {
             current = player.find(`div.new_player_${alternateServer}`);
 
             if (current.length) {
-                links.push(this.#getLink($(`div[id=content_${current.attr('id')}]`).text(), alternateServer));
+                episodes.push({
+                    link: this.#getLink($(`div[id=content_${current.attr('id')}]`).text(), alternateServer),
+                    name: name
+                });
                 continue;
             }
         }
 
-        return links.map((link, index) => ({
-            link: link,
-            name: `Episode ${index + 1}`
-        })).reverse();
+        return episodes.reverse();
     }
 
     async search(query) {
