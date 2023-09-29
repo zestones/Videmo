@@ -13,6 +13,15 @@ ipcMain.on('/read/vostfree/popular/anime', async (event, args) => {
     }
 });
 
+ipcMain.on('/read/vostfree/recent/anime', async (event, args) => {
+    try {
+        const animeList = await new Vostfree().getRecentAnime(args.page);
+        event.reply('/read/vostfree/recent/anime', { success: true, animeList: animeList });
+    } catch (error) {
+        event.reply('/read/vostfree/recent/anime', { success: false, error: error });
+    }
+});
+
 ipcMain.on('/read/vostfree/anime/episodes', async (event, args) => {
     try {
         const episodes = await new Vostfree().scrapeEpisodes(args.url);

@@ -4,6 +4,7 @@
 
     border-radius: 10px;
     background-color: var(--secondary-color);
+    margin-top: calc(var(--header-height) + 15px);
 
     .tabs {
         display: flex;

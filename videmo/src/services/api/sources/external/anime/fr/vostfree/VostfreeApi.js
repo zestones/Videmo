@@ -1,10 +1,22 @@
-class Vostfree {
+export default class Vostfree {
+    constructor() {
+        this.name = 'vostfree';
+        this.lang = 'fr';
+    }
 
     scrapPopularAnime(page) {
         window.api.send('/read/vostfree/popular/anime', { page: page });
 
         return new Promise((resolve, reject) => {
             window.api.receive('/read/vostfree/popular/anime', (data) => data.success ? resolve(data.animeList) : reject(data.error));
+        });
+    }
+
+    scrapRecentAnime(page) {
+        window.api.send('/read/vostfree/recent/anime', { page: page });
+
+        return new Promise((resolve, reject) => {
+            window.api.receive('/read/vostfree/recent/anime', (data) => data.success ? resolve(data.animeList) : reject(data.error));
         });
     }
 
@@ -15,7 +27,7 @@ class Vostfree {
             window.api.receive('/read/vostfree/anime/episodes', (data) => data.success ? resolve(data.episodes) : reject(data.error));
         });
     }
-    
+
     searchAnime(query) {
         window.api.send('/search/vostfree/anime', { query: query });
 
@@ -32,5 +44,3 @@ class Vostfree {
         });
     }
 }
-
-export default Vostfree;

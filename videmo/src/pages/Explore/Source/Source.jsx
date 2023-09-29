@@ -30,7 +30,6 @@ function Source({ handleSelectedExtension }) {
     useEffect(() => {
         extensionApi.readExtension()
             .then((data) => {
-                console.log(data);
                 setLocalExtensions(data.local)
                 setRemoteExtensions(data.external)
             })
