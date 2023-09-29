@@ -67,7 +67,10 @@ function Explore() {
             // TODO : create a Manager Class for the external sources
             vostfreeApi.scrapPopularAnime(1)
                 .then((data) => retrieveSeriesInLibraryByExtension(data))
-                .catch((error) => setError({ message: error.message, type: "error" }));
+                .catch((error) => {
+                    setError({ message: error.message, type: "error" })
+                    console.error(error);
+                });
         }
     }, [folderManager, categoryApi, vostfreeApi, selectedExtension, retrieveSeriesInLibraryByExtension]);
 
@@ -93,10 +96,12 @@ function Explore() {
                     .catch((error) => {
                         setLoading(false);
                         setError({ message: error.message, type: "error" });
+                        console.error("Error while reading all series by etension: ", error);
                     });
             })
             .catch((error) => {
                 setLoading(false);
+                console.error("Error while fetching the next page : ", error);
                 setError({ message: error.message, type: "error" });
             });
     }, [vostfreeApi, categoryApi, folderManager, selectedExtension, currentPage, loading]);
@@ -107,10 +112,10 @@ function Explore() {
         const scrollTop = window.scrollY || document.documentElement.scrollTop;
 
         // Check if the user is near the bottom of the page
-        if (!serie && windowHeight + scrollTop >= documentHeight - 100) {
+        if (!serie && selectedExtension && windowHeight + scrollTop >= documentHeight - 100) {
             fetchNextPage(); // Fetch the next page when near the bottom
         }
-    }, [serie, fetchNextPage]);
+    }, [serie, selectedExtension, fetchNextPage]);
 
     const debouncedHandleScroll = debounce(handleScroll, 200);
 
@@ -136,11 +141,11 @@ function Explore() {
 
         if (history.length > 0) {
             history.pop();
-            // Navigate back to the previous folder
             const parentEntry = history[history.length - 1];
+
             setSerie(parentEntry.serie);
-            setFolderContents(parentEntry.content);
             setEpisodes(parentEntry.episodes);
+            setFolderContents(parentEntry.content);
         }
     };
 
