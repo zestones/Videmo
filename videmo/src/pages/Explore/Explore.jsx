@@ -96,12 +96,10 @@ function Explore() {
                     .catch((error) => {
                         setLoading(false);
                         setError({ message: error.message, type: "error" });
-                        console.error("Error while reading all series by etension: ", error);
                     });
             })
             .catch((error) => {
                 setLoading(false);
-                console.error("Error while fetching the next page : ", error);
                 setError({ message: error.message, type: "error" });
             });
     }, [vostfreeApi, categoryApi, folderManager, selectedExtension, currentPage, loading]);
@@ -116,18 +114,6 @@ function Explore() {
             fetchNextPage(); // Fetch the next page when near the bottom
         }
     }, [serie, selectedExtension, fetchNextPage]);
-
-    const debouncedHandleScroll = debounce(handleScroll, 200);
-
-    useEffect(() => {
-        window.addEventListener("scroll", debouncedHandleScroll);
-
-        // Remove the event listener when the component unmounts
-        return () => {
-            window.removeEventListener("scroll", debouncedHandleScroll);
-        };
-    }, [selectedExtension, debouncedHandleScroll]);
-
 
     // TODO : Implement the same logic for the Library page
     const handleBackClick = () => {
@@ -147,11 +133,34 @@ function Explore() {
             setEpisodes(parentEntry.episodes);
             setFolderContents(parentEntry.content);
         }
-    };
+    }
 
-    const refreshFolderContents = () => {
-        retrieveSeriesInLibraryByExtension(folderContents);
-    };
+    const handlePlayClick = async (clickedSerie) => {
+        detachScrollListener();
+
+        if (selectedExtension.local) await handleLocalSourceExtension(clickedSerie);
+        else handleRemoteSourceExtension(clickedSerie);
+    }
+
+    const debouncedHandleScroll = debounce(handleScroll, 200);
+    const attachScrollListener = useCallback(() => {
+        window.addEventListener("scroll", debouncedHandleScroll);
+    }, [debouncedHandleScroll]);
+
+    const detachScrollListener = useCallback(() => {
+        window.removeEventListener("scroll", debouncedHandleScroll);
+    }, [debouncedHandleScroll]);
+
+    useEffect(() => {
+        attachScrollListener();
+
+        // Remove the event listener when the component unmounts
+        return () => {
+            detachScrollListener();
+        };
+    }, [selectedExtension, debouncedHandleScroll, attachScrollListener, detachScrollListener]);
+
+    const refreshFolderContents = () => retrieveSeriesInLibraryByExtension(folderContents);
 
     const handleLocalSourceExtension = async (clickedSerie) => {
         try {
@@ -211,12 +220,7 @@ function Explore() {
             setError({ message: error.message, type: "error" })
             console.error(error);
         }
-    };
-
-    const handlePlayClick = async (clickedSerie) => {
-        if (selectedExtension.local) await handleLocalSourceExtension(clickedSerie);
-        else handleRemoteSourceExtension(clickedSerie);
-    };
+    }
 
     const handleSearch = async (searchValue) => {
         try {
@@ -231,7 +235,7 @@ function Explore() {
             setError({ message: error.message, type: "error" })
             console.error(error);
         }
-    };
+    }
 
     return (
         <div className={styles.explore}>
@@ -246,6 +250,7 @@ function Explore() {
                         onBack={handleBackClick}
                         onRandom={() => (selectedExtension.local && folderContents.length > 0) && handlePlayClick(folderContents[Math.floor(Math.random() * folderContents.length)])}
                     />
+
                     <SeriesDisplay
                         linkedSeries={episodes.length ? [] : folderContents}
                         extension={selectedExtension}
