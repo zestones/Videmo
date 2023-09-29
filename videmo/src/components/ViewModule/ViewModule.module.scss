@@ -1,0 +1,75 @@
+.viewModule {
+    background: none;
+    border: none;
+    color: var(--primary-text-color);
+
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+
+    cursor: pointer;
+    margin: 0 7px;
+    padding: 0.5rem !important;
+
+    transition-duration: 0.4s;
+
+    &:hover {
+        animation: pulse 2s infinite;
+        background-color: var(--secondary-color) !important;
+    }
+
+    @keyframes pulse {
+        0% {
+            transform: scale(1);
+        }
+
+        50% {
+            transform: scale(1.1);
+        }
+
+        100% {
+            transform: scale(1);
+        }
+    }
+
+    .viewModuleIcon {
+        display: flex;
+        align-items: center;
+        font-size: 1.7rem;
+    }
+}
+
+.modal {
+    position: absolute;
+    display: none;
+
+    z-index: 1;
+
+    top: 50px;
+    right: 50px;
+
+    width: 250px;
+
+    background-color: var(--tertiary-color);
+    border-radius: 10px;
+
+    padding: 10px;
+
+    &.open {
+        animation: optionsPanel 0.2s ease-in-out forwards;
+        transform-origin: top right;
+        display: block;
+
+        @keyframes optionsPanel {
+            0% {
+                opacity: 0;
+                transform: translateY(-10px) scaleY(0);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0) scaleY(1);
+            }
+        }
+    }
+}
