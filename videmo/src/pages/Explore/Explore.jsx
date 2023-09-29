@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 
 // Constants
-import { EXPLORE_STRING } from "../../utilities/utils/Constants";
+import { EXPLORE_STRING, EXPLORE_MODES } from "../../utilities/utils/Constants";
 
 // External
 import NewReleasesIcon from '@mui/icons-material/NewReleases';
@@ -16,7 +16,7 @@ import CategoryApi from "../../services/api/category/CategoryApi";
 import TrackApi from "../../services/api/track/TrackApi";
 
 // Sources
-import VostfreeApi from "../../services/api/sources/external/anime/fr/vostfree/VostfreeApi";
+import SourceManager from "../../services/api/sources/SourceManager";
 
 // Pages
 import Source from "./Source/Source";
@@ -33,11 +33,11 @@ import styles from "./Explore.module.scss";
 function Explore() {
     // State initialization
     const [selectedExtension, setSelectedExtension] = useState(null);
+    const [activeOption, setActiveOption] = useState(EXPLORE_MODES.POPULAR);
     const [folderContents, setFolderContents] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [loading, setLoading] = useState(false);
     const [episodes, setEpisodes] = useState([]);
-    const [activeOption, setActiveOption] = useState("popular");
     const [history, setHistory] = useState([{}]);
     const [serie, setSerie] = useState(null);
     const [error, setError] = useState(null);
@@ -47,7 +47,7 @@ function Explore() {
     const sortManager = useMemo(() => new SortManager(), []);
     const categoryApi = useMemo(() => new CategoryApi(), []);
     const trackApi = useMemo(() => new TrackApi(), []);
-    const vostfreeApi = useMemo(() => new VostfreeApi(), []);
+    const sourceManager = useMemo(() => new SourceManager(), []);
 
     // TODO : refactor the mapping of the folder contents and the data from the database
     const retrieveSeriesInLibraryByExtension = useCallback((contents) => {
@@ -68,32 +68,31 @@ function Explore() {
                 .then((data) => retrieveSeriesInLibraryByExtension(data.contents))
                 .catch((error) => setError({ message: error.message, type: "error" }));
         } else {
-            // TODO : create a Manager Class for the external sources
-            vostfreeApi.scrapPopularAnime(1)
+            sourceManager.scrapAnime(selectedExtension.name, 1, EXPLORE_MODES.POPULAR)
                 .then((data) => retrieveSeriesInLibraryByExtension(data))
                 .catch((error) => {
                     setError({ message: error.message, type: "error" })
                     console.error(error);
                 });
         }
-    }, [folderManager, categoryApi, vostfreeApi, selectedExtension, retrieveSeriesInLibraryByExtension]);
+    }, [folderManager, categoryApi, sourceManager, selectedExtension, retrieveSeriesInLibraryByExtension]);
 
     const fetchNextPage = useCallback(() => {
         if (loading) return;
         setLoading(true);
 
-        vostfreeApi.scrapPopularAnime(currentPage + 1)
+        sourceManager.scrapAnime(selectedExtension.name, currentPage + 1, activeOption)
             .then((nextPage) => {
                 categoryApi.readAllSeriesInLibraryByExtension(selectedExtension)
                     .then((series) => {
                         const formattedSeries = folderManager.mapFolderContentsWithMandatoryFields(nextPage, series, selectedExtension);
-                        setFolderContents((prevContents) => [...prevContents, ...formattedSeries]);
                         setHistory((prevHistory) => {
                             const newHistory = [...prevHistory];
                             newHistory[0].content = [...newHistory[0].content, ...formattedSeries];
                             return newHistory;
                         });
 
+                        setFolderContents((prevContents) => [...prevContents, ...formattedSeries]);
                         setCurrentPage(currentPage + 1);
                         setLoading(false);
                     })
@@ -106,7 +105,7 @@ function Explore() {
                 setLoading(false);
                 setError({ message: error.message, type: "error" });
             });
-    }, [vostfreeApi, categoryApi, folderManager, selectedExtension, currentPage, loading]);
+    }, [sourceManager, activeOption, categoryApi, folderManager, selectedExtension, currentPage, loading]);
 
     const handleScroll = useCallback(() => {
         const windowHeight = window.innerHeight;
@@ -182,12 +181,13 @@ function Explore() {
 
     const handleRemoteSourceExtension = async (clickedSerie) => {
         try {
-            const episodes = await vostfreeApi.scrapAnimeEpisodes(clickedSerie.link);
+            const episodes = await sourceManager.scrapAnimeEpisodes(selectedExtension.name, clickedSerie.link);
 
             setEpisodes(episodes);
             setFolderContents([]);
 
             const serie = { ...clickedSerie, extension: selectedExtension, extension_id: selectedExtension.id };
+            console.log("history : ", history);
             setHistory((prevHistory) => [...prevHistory, { content: [], serie: serie, episodes: episodes }]);
             setSerie(serie);
         } catch (error) {
@@ -230,7 +230,7 @@ function Explore() {
         try {
             if (selectedExtension.local) setFolderContents(sortManager.filterByKeyword(searchValue, folderContents, 'basename'));
             else {
-                const searchResult = await vostfreeApi.searchAnime(searchValue);
+                const searchResult = await sourceManager.searchAnime(searchValue);
                 const seriesInLibrary = await categoryApi.readAllSeriesInLibraryByExtension(selectedExtension);
                 const formattedSeries = folderManager.mapFolderContentsWithMandatoryFields(searchResult, seriesInLibrary, selectedExtension);
                 setFolderContents(formattedSeries);
@@ -241,42 +241,43 @@ function Explore() {
         }
     }
 
-    const handlePopularClick = () => {
-        console.log("Popular");
-        setActiveOption("popular");
-    }
+    const handleOptionClick = (mode) => {
+        sourceManager.scrapAnime(selectedExtension.name, 1, mode)
+            .then((data) => {
+                retrieveSeriesInLibraryByExtension(data);
+                setCurrentPage(1);
+            })
+            .catch((error) => setError({ message: error.message, type: "error" }));
 
-    const handleRecentClick = () => {
-        console.log("Recent");
-        setActiveOption("recent");
+        setActiveOption(mode);
     }
 
     return (
-        <div className={styles.explore}>
+        <>
             {error && <Notification message={error.message} type={error.type} onClose={setError} />}
             {!selectedExtension ? (
                 <Source handleSelectedExtension={setSelectedExtension} />
             ) : (
-                <>
+                <div className={`${styles.explore} ${(serie || selectedExtension.local) ? styles.spaceOption : ""}`}>
+
                     <Header
                         title={selectedExtension.name}
                         onSearch={handleSearch}
                         onBack={handleBackClick}
-                        onRandom={() => (selectedExtension.local && folderContents.length > 0) && handlePlayClick(folderContents[Math.floor(Math.random() * folderContents.length)])}
                     />
 
-                    {!selectedExtension.local && (
+                    {(!selectedExtension.local && !serie) && (
                         <div className={styles.optionsHeader}>
                             <div
-                                onClick={handlePopularClick}
-                                className={`${styles.option} ${activeOption === "popular" ? styles.active : ""}`}
+                                onClick={() => handleOptionClick(EXPLORE_MODES.POPULAR)}
+                                className={`${styles.option} ${activeOption === EXPLORE_MODES.POPULAR ? styles.active : ""}`}
                             >
                                 <FavoriteIcon />
                                 <span className={styles.label}>Popular</span>
                             </div>
                             <div
-                                onClick={handleRecentClick}
-                                className={`${styles.option} ${activeOption === "recent" ? styles.active : ""}`}
+                                onClick={() => handleOptionClick(EXPLORE_MODES.RECENT)}
+                                className={`${styles.option} ${activeOption === EXPLORE_MODES.RECENT ? styles.active : ""}`}
                             >
                                 <NewReleasesIcon />
                                 <span className={styles.label}>Recent</span>
@@ -300,9 +301,9 @@ function Explore() {
                             <div className={styles.loader}></div>
                         </div>
                     )}
-                </>
+                </div>
             )}
-        </div>
+        </>
     );
 }
 

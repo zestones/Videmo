@@ -1,15 +1,26 @@
 .explore {
-    margin-top: calc(var(--header-height) + 15px);
+    position: absolute;
+    margin-top: calc(var(--header-height) + 60px);
+
+    &.spaceOption {
+        margin-top: calc(var(--header-height) + 15px);
+    }
 
     .optionsHeader {
+        position: fixed;
+        z-index: 9;
+        top: var(--header-height);
+
         display: flex;
         align-items: center;
         justify-content: flex-start;
 
+        width: 100%;
         margin: 0 auto;
-        padding: 0 24px 7px 24px;
+        padding: 12px 24px 12px 24px;
 
         border-bottom: 1px solid var(--secondary-text-color);
+        background-color: var(--tertiary-color);
 
         .option {
             display: flex;
@@ -19,7 +30,6 @@
 
             background-color: var(--secondary-color);
             border-radius: 5px;
-            border: 1px solid var(--selection-color);
             margin-right: 22px;
 
             .label {
@@ -35,6 +45,10 @@
 
             &.active {
                 background-color: var(--selection-color);
+            }
+
+            &:not(.active) {
+                border: 1px solid var(--secondary-text-color);
             }
         }
 
