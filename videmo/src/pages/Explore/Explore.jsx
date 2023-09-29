@@ -4,7 +4,10 @@ import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { EXPLORE_STRING } from "../../utilities/utils/Constants";
 
 // External
+import NewReleasesIcon from '@mui/icons-material/NewReleases';
+import FavoriteIcon from '@mui/icons-material/Favorite';
 import debounce from 'lodash.debounce';
+
 
 // Services & Api
 import FolderManager from "../../utilities/folderManager/FolderManager";
@@ -34,6 +37,7 @@ function Explore() {
     const [currentPage, setCurrentPage] = useState(1);
     const [loading, setLoading] = useState(false);
     const [episodes, setEpisodes] = useState([]);
+    const [activeOption, setActiveOption] = useState("popular");
     const [history, setHistory] = useState([{}]);
     const [serie, setSerie] = useState(null);
     const [error, setError] = useState(null);
@@ -237,6 +241,16 @@ function Explore() {
         }
     }
 
+    const handlePopularClick = () => {
+        console.log("Popular");
+        setActiveOption("popular");
+    }
+
+    const handleRecentClick = () => {
+        console.log("Recent");
+        setActiveOption("recent");
+    }
+
     return (
         <div className={styles.explore}>
             {error && <Notification message={error.message} type={error.type} onClose={setError} />}
@@ -250,6 +264,25 @@ function Explore() {
                         onBack={handleBackClick}
                         onRandom={() => (selectedExtension.local && folderContents.length > 0) && handlePlayClick(folderContents[Math.floor(Math.random() * folderContents.length)])}
                     />
+
+                    {!selectedExtension.local && (
+                        <div className={styles.optionsHeader}>
+                            <div
+                                onClick={handlePopularClick}
+                                className={`${styles.option} ${activeOption === "popular" ? styles.active : ""}`}
+                            >
+                                <FavoriteIcon />
+                                <span className={styles.label}>Popular</span>
+                            </div>
+                            <div
+                                onClick={handleRecentClick}
+                                className={`${styles.option} ${activeOption === "recent" ? styles.active : ""}`}
+                            >
+                                <NewReleasesIcon />
+                                <span className={styles.label}>Recent</span>
+                            </div>
+                        </div>
+                    )}
 
                     <SeriesDisplay
                         linkedSeries={episodes.length ? [] : folderContents}
