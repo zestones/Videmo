@@ -191,7 +191,6 @@ function Explore() {
             return historyEntry;
         } catch (error) {
             setError({ message: error.message, type: "error" })
-            console.error(error);
         }
     }
 
@@ -205,7 +204,6 @@ function Explore() {
             setSerie(serie);
         } catch (error) {
             setError({ message: error.message, type: "error" })
-            console.error(error);
         }
     }
 
@@ -221,7 +219,6 @@ function Explore() {
             setSerie(serie);
         } catch (error) {
             setError({ message: error.message, type: "error" })
-            console.error(error);
         }
     }
 
@@ -241,13 +238,12 @@ function Explore() {
 
     const handleOptionClick = async (mode) => {
         try {
-            const series = sourceManager.scrapAnime(selectedExtension.name, 1, mode);
+            const series = await sourceManager.scrapAnime(selectedExtension.name, 1, mode);
             retrieveSeriesInLibraryByExtension(series);
             setCurrentPage(1);
             setActiveOption(mode);
         } catch (error) {
             setError({ message: error.message, type: "error" })
-            console.error(error);
         }
     }
 
