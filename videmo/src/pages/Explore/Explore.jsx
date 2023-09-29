@@ -165,37 +165,6 @@ function Explore() {
 
     const refreshFolderContents = () => retrieveSeriesInLibraryByExtension(folderContents);
 
-    const handleLocalSourceExtension = async (clickedSerie) => {
-        try {
-            const level = await folderManager.retrieveLevel(selectedExtension.link, clickedSerie.link);
-            const history = await retrieveAndSetFolderContents(clickedSerie.link, clickedSerie.extension_id, level);
-
-            const serie = { ...clickedSerie, name: folderManager.retrieveBaseName(clickedSerie.link), extension_id: selectedExtension.id };
-            setHistory((prevHistory) => [...prevHistory, { content: history.content, serie: serie, episodes: history.episodes }]);
-            setSerie(serie);
-        } catch (error) {
-            setError({ message: error.message, type: "error" })
-            console.error(error);
-        }
-    }
-
-    const handleRemoteSourceExtension = async (clickedSerie) => {
-        try {
-            const episodes = await sourceManager.scrapAnimeEpisodes(selectedExtension.name, clickedSerie.link);
-
-            setEpisodes(episodes);
-            setFolderContents([]);
-
-            const serie = { ...clickedSerie, extension: selectedExtension, extension_id: selectedExtension.id };
-            console.log("history : ", history);
-            setHistory((prevHistory) => [...prevHistory, { content: [], serie: serie, episodes: episodes }]);
-            setSerie(serie);
-        } catch (error) {
-            setError({ message: error.message, type: "error" })
-            console.error(error);
-        }
-    }
-
     const retrieveAndSetFolderContents = async (link, extension_id, level = 0) => {
         try {
             let historyEntry;
@@ -226,6 +195,36 @@ function Explore() {
         }
     }
 
+    const handleLocalSourceExtension = async (clickedSerie) => {
+        try {
+            const level = await folderManager.retrieveLevel(selectedExtension.link, clickedSerie.link);
+            const history = await retrieveAndSetFolderContents(clickedSerie.link, clickedSerie.extension_id, level);
+
+            const serie = { ...clickedSerie, name: folderManager.retrieveBaseName(clickedSerie.link), extension_id: selectedExtension.id };
+            setHistory((prevHistory) => [...prevHistory, { content: history.content, serie: serie, episodes: history.episodes }]);
+            setSerie(serie);
+        } catch (error) {
+            setError({ message: error.message, type: "error" })
+            console.error(error);
+        }
+    }
+
+    const handleRemoteSourceExtension = async (clickedSerie) => {
+        try {
+            const episodes = await sourceManager.scrapAnimeEpisodes(selectedExtension.name, clickedSerie.link);
+
+            setEpisodes(episodes);
+            setFolderContents([]);
+
+            const serie = { ...clickedSerie, extension: selectedExtension, extension_id: selectedExtension.id };
+            setHistory((prevHistory) => [...prevHistory, { content: [], serie: serie, episodes: episodes }]);
+            setSerie(serie);
+        } catch (error) {
+            setError({ message: error.message, type: "error" })
+            console.error(error);
+        }
+    }
+
     const handleSearch = async (searchValue) => {
         try {
             if (selectedExtension.local) setFolderContents(sortManager.filterByKeyword(searchValue, folderContents, 'basename'));
@@ -237,19 +236,19 @@ function Explore() {
             }
         } catch (error) {
             setError({ message: error.message, type: "error" })
-            console.error(error);
         }
     }
 
-    const handleOptionClick = (mode) => {
-        sourceManager.scrapAnime(selectedExtension.name, 1, mode)
-            .then((data) => {
-                retrieveSeriesInLibraryByExtension(data);
-                setCurrentPage(1);
-            })
-            .catch((error) => setError({ message: error.message, type: "error" }));
-
-        setActiveOption(mode);
+    const handleOptionClick = async (mode) => {
+        try {
+            const series = sourceManager.scrapAnime(selectedExtension.name, 1, mode);
+            retrieveSeriesInLibraryByExtension(series);
+            setCurrentPage(1);
+            setActiveOption(mode);
+        } catch (error) {
+            setError({ message: error.message, type: "error" })
+            console.error(error);
+        }
     }
 
     return (
