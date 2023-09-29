@@ -107,22 +107,25 @@ function SerieCard({ serie, onPlayClick, onMoreClick, isCalledFromExplore, isCal
                                     <PlayArrowIcon />
                                 </span>
                             </span>
-                            <span
-                                className={styles.iconContainer + " " + styles.checkboxIcon}
-                                onClick={(event) => {
-                                    event.stopPropagation();
-                                    setChecked(!checked);
-                                }}
-                            >
-                                <input
-                                    type="checkbox"
-                                    checked={checked}
-                                    onChange={(event) => {
+
+                            {isCalledFromLibrary && (
+                                <span
+                                    className={styles.iconContainer + " " + styles.checkboxIcon}
+                                    onClick={(event) => {
                                         event.stopPropagation();
                                         setChecked(!checked);
                                     }}
-                                />
-                            </span>
+                                >
+                                    <input
+                                        type="checkbox"
+                                        checked={checked}
+                                        onChange={(event) => {
+                                            event.stopPropagation();
+                                            setChecked(!checked);
+                                        }}
+                                    />
+                                </span>
+                            )}
                         </div>
                     </div>
                 </div>
