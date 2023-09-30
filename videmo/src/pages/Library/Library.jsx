@@ -136,7 +136,7 @@ function Library() {
 
     const handleUpdateSeries = async () => {
         try {
-            sourceManager.updateSeries(subSeries);
+            sourceManager.updateSeries(serie ? [serie] : subSeries);
         } catch (error) {
             showNotification("error", `Error updating series: ${error.message}`);
             console.error(error);

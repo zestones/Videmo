@@ -144,9 +144,11 @@ class Tree {
         } else if (tree.type === this.type.FILE) {
             const episodeLink = this.folderManager.accessFileWithCustomProtocol(baseLink + path.sep + tree.name);
             const episode = await this.serieEpisodeDAO.getEpisodeByLink(episodeLink);
+            const track = await this.serieTrackDAO.getSerieTrackByEpisodeId(episode.id);
 
             await this.serieEpisodeDAO.deleteEpisodeById(episode.id);
             await this.serieTrackDAO.deleteSerieTrackByEpisodeId(episode.id);
+            if (episode.viewed) await this.serieInfosDAO.updateNumberOfEpisodesViewedWithIncrement(track.serie_id, -1);
         }
     }
 
