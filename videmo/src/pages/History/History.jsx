@@ -35,8 +35,8 @@ function History() {
     const [episodes, setEpisodes] = useState([]);
 
 
+    // Fetch the history
     useEffect(() => {
-        // Fetch the history
         historyApi.retrieveAllEpisodeAndSerieHistory()
             .then((data) => setHistory(data))
             .catch((error) => console.error(error));
@@ -70,7 +70,7 @@ function History() {
         setShowVideoPlayer(false);
 
         if (episodeFinished) {
-            const updatedEpisode = { ...selectedEntry.episode, viewed: !selectedEntry.serie.currentEpisode.viewed, played_time: 0 };
+            const updatedEpisode = { ...selectedEntry.episode, viewed: !selectedEntry.episode.viewed, played_time: 0 };
             trackApi.addEpisodeToViewed(updatedEpisode, updatedEpisode);
         }
 
@@ -128,7 +128,7 @@ function History() {
                     </div>
                     {showVideoPlayer &&
                         <VideoPlayer
-                            link={selectedEntry.episode.link}
+                            episode={selectedEntry.episode}
                             startTime={selectedEntry.episode.played_time}
                             onCloseVideoPlayer={handleCloseVideoPlayer} />
                     }

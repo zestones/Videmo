@@ -24,7 +24,7 @@
     }
 
     &.checked {
-        border: 3px solid var(--highlight-color); 
+        border: 3px solid var(--highlight-color);
         transform: scale(0.99);
         transition: transform 0.3s ease-in-out;
     }
@@ -63,7 +63,7 @@
                         display: block;
                         width: 5px;
                         height: 10px;
-                        
+
                         border: solid white;
                         border-width: 0 3px 3px 0;
                         transform: rotate(45deg);

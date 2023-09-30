@@ -8,9 +8,10 @@ import { DisplayModeProvider } from './components/FilterPanel/DisplayOptions/Dis
 
 // External
 import SubscriptionsIcon from '@mui/icons-material/Subscriptions';
+import NewReleasesIcon from '@mui/icons-material/NewReleases';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import ExploreIcon from '@mui/icons-material/Explore';
 import HistoryIcon from '@mui/icons-material/History';
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 
 // Components
 import Navigation from './components/Navigation/Navigation';
@@ -20,6 +21,7 @@ import Settings from './pages/More/Settings/Settings';
 import Explore from './pages/Explore/Explore';
 import Library from './pages/Library/Library';
 import History from './pages/History/History';
+import Update from './pages/Update/Update';
 
 // Styles
 import './App.css';
@@ -30,12 +32,13 @@ function App() {
 	const explore = { explore: { component: <Explore />, icon: ExploreIcon, label: "Explorer" } };
 	const history = { history: { component: <History />, icon: HistoryIcon, label: "Historique" } };
 	const settings = { more: { component: <Settings />, icon: MoreHorizIcon, label: "Plus" } };
+	const update = { update: { component: <Update />, icon: NewReleasesIcon, label: "Nouveautés" } };
 
 	const { theme } = useTheme();
 	const [pageHeight, setPageHeight] = useState(0);
 
 	const [activePage, setActivePage] = useState(Object.keys(library)[0]);
-	const navigationItems = { ...library, ...explore, ...history, ...settings };
+	const navigationItems = { ...library, ...update, ...history, ...explore, ...settings };
 
 
 	useEffect(() => {

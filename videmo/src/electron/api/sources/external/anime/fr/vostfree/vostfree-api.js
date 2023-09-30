@@ -36,7 +36,6 @@ ipcMain.on('/read/vostfree/anime/episodes', async (event, args) => {
 ipcMain.on('/search/vostfree/anime', async (event, args) => {
     try {
         const animeList = await new Vostfree().search(args.query);
-        console.log(animeList);
         event.reply('/search/vostfree/anime', { success: true, animeList: animeList });
     } catch (error) {
         event.reply('/search/vostfree/anime', { success: false, error: error });
