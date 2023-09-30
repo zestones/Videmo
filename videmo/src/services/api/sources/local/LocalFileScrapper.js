@@ -1,7 +1,7 @@
 
 class LocalFileScrapper {
 
-    scrapSerie(serie) {
+    updateAnime(serie) {
         // Send the folder path to the main Electron process
         window.api.send("/scrap/local/serie/", { serie: JSON.stringify(serie) });
 

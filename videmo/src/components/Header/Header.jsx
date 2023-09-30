@@ -1,5 +1,8 @@
 import React from "react";
 
+// External
+import SyncIcon from '@mui/icons-material/Sync';
+
 // Components
 import SearchBar from "../SearchBar/SearchBar";
 import BackArrow from "../BackArrow/BackArrow";
@@ -19,7 +22,8 @@ function Header({ title,
     onFilter = null,
     onBack = null,
     onDelete = null,
-    onViewMode = null
+    onViewMode = null,
+    onUpdate = null
 }) {
     return (
         <header className={styles.header}>
@@ -34,6 +38,7 @@ function Header({ title,
                 {onRandom && <RandomButton onClick={onRandom} />}
                 {onDelete && <DeleteButton onClick={onDelete} />}
                 {onViewMode && <ViewModule />}
+                {onUpdate && <button onClick={onUpdate}><SyncIcon /></button>}
             </div>
         </header>
     );

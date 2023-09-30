@@ -9,6 +9,9 @@ import SerieApi from "../../services/api/serie/SerieApi";
 import TrackApi from "../../services/api/track/TrackApi";
 import CategoryFilterApi from "../../services/api/category/CategoryFilterApi";
 
+// Source
+import SourceManager from "../../services/api/sources/SourceManager";
+
 // Utilities
 import SortManager from "../../utilities/sortManager/SortManager";
 import FilterManager from "../../utilities/filterManager/FilterManager";
@@ -36,6 +39,7 @@ function Library() {
     const trackApi = useMemo(() => new TrackApi(), []);
     const sortManager = useMemo(() => new SortManager(), []);
     const filterManager = useMemo(() => new FilterManager(), []);
+    const sourceManager = useMemo(() => new SourceManager(), []);
     const categoryFilterApi = useMemo(() => new CategoryFilterApi(), []);
 
 
@@ -130,6 +134,15 @@ function Library() {
         }
     }
 
+    const handleUpdateSeries = async () => {
+        try {
+            sourceManager.updateSeries(subSeries);
+        } catch (error) {
+            showNotification("error", `Error updating series: ${error.message}`);
+            console.error(error);
+        }
+    }
+
     const filterFolders = sortManager.filterByKeyword(searchValue, filteredSeries || subSeries, 'basename', 'name');
 
     return (
@@ -141,6 +154,7 @@ function Library() {
                     onBack={serie ? onBackClick : null}
                     onRandom={() => filteredSeries.length > 0 && handleSerieSelection(filteredSeries[Math.floor(Math.random() * filteredSeries.length)])}
                     onFilter={setFilteredSeries}
+                    onUpdate={handleUpdateSeries}
                     series={subSeries}
                     currentCategory={currentCategory}
                 />

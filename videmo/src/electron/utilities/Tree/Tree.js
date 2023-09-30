@@ -7,6 +7,7 @@ const SerieTrackDAO = require('../../services/dao/series/SerieTrackDAO');
 const SerieEpisodeDAO = require('../../services/dao/series/SerieEpisodeDAO');
 const ExtensionsDAO = require('../../services/dao/settings/ExtensionsDAO');
 const SerieInfosDAO = require('../../services/dao/series/SerieInfosDAO');
+const SerieUpdateDAO = require('../../services/dao/series/SerieUpdateDAO');
 
 
 class Tree {
@@ -20,6 +21,7 @@ class Tree {
         this.serieTrackDAO = new SerieTrackDAO();
         this.serieEpisodeDAO = new SerieEpisodeDAO();
         this.serieInfosDAO = new SerieInfosDAO();
+        this.serieUpdateDAO = new SerieUpdateDAO();
 
         this.folderManager = new FolderManager();
     }
@@ -123,6 +125,9 @@ class Tree {
 
         const childEpisode = await this.serieEpisodeDAO.createEpisode(episode);
         await this.serieTrackDAO.createSerieTrack(serieId, childEpisode.id);
+
+        const serie = await this.serieDAO.getSerieById(serieId);
+        if (serie.inLibrary) await this.serieUpdateDAO.insertNewUpdate(serieId, childEpisode.id);
     }
 
     async removeTree(tree, baseLink) {
@@ -137,8 +142,8 @@ class Tree {
 
             await this.serieDAO.deleteSerieById(serie.id);
         } else if (tree.type === this.type.FILE) {
-            const test = this.folderManager.accessFileWithCustomProtocol(baseLink + path.sep + tree.name);
-            const episode = await this.serieEpisodeDAO.getEpisodeByLink(test);
+            const episodeLink = this.folderManager.accessFileWithCustomProtocol(baseLink + path.sep + tree.name);
+            const episode = await this.serieEpisodeDAO.getEpisodeByLink(episodeLink);
 
             await this.serieEpisodeDAO.deleteEpisodeById(episode.id);
             await this.serieTrackDAO.deleteSerieTrackByEpisodeId(episode.id);

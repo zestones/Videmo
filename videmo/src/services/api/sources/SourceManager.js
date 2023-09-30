@@ -1,10 +1,14 @@
 import VostfreeApi from './external/anime/fr/vostfree/VostfreeApi.js'
+
+import LocalFileScrapper from './local/LocalFileScrapper.js'
+
 import { EXPLORE_MODES } from '../../../utilities/utils/Constants.js'
 
 export default class SourceManager {
     constructor() {
         this.sources = {
-            vostfree: new VostfreeApi()
+            vostfree: new VostfreeApi(),
+            local: new LocalFileScrapper()
         }
     }
 
@@ -22,5 +26,13 @@ export default class SourceManager {
 
     async extractEpisode(source, url, quality = null, headers = null) {
         return await this.sources[source.toLowerCase()].extractEpisode(url, quality, headers);
+    }
+
+    async updateSeries(series) {
+        const localSeries = series.filter((serie) => serie.extension.local);
+        const remoteSeries = series.filter((serie) => !serie.extension.local);
+
+        localSeries.forEach(serie => this.sources["local"].updateAnime(serie));
+        remoteSeries.forEach(serie => this.sources[serie.extension.name.toLowerCase()].updateAnime(serie));
     }
 }
