@@ -4,7 +4,7 @@ export const LIBRARY_STRING = "Library";
 export const HISTORY_STRING = "History";
 
 // Explore page modes
-export const EXPLORE_MODES = { POPULAR: 'popular', RECENT: 'recent' };
+export const EXPLORE_MODES = { POPULAR: 'popular', RECENT: 'recent', FILTER: 'filter' };
 
 // Sorts & Filters
 export const FLAGS = { ASC: 'ASC', DESC: 'DESC', INCLUDE: 'INCLUDE', EXCLUDE: 'EXCLUDE', NONE: 'NONE' };
