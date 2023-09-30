@@ -7,6 +7,7 @@ import RandomButton from "../RandButton/RandButton";
 import DeleteButton from "../DeleteButton/DeleteButton";
 import FilterPanel from "../FilterPanel/FilterPanel";
 import ViewModule from "../ViewModule/ViewModule";
+import UpdateButton from "../UpdateButton/UpdateButton";
 
 // Styles
 import styles from "./Header.module.scss";
@@ -19,7 +20,9 @@ function Header({ title,
     onFilter = null,
     onBack = null,
     onDelete = null,
-    onViewMode = null
+    onViewMode = null,
+    onUpdate = null,
+    progress
 }) {
     return (
         <header className={styles.header}>
@@ -34,6 +37,7 @@ function Header({ title,
                 {onRandom && <RandomButton onClick={onRandom} />}
                 {onDelete && <DeleteButton onClick={onDelete} />}
                 {onViewMode && <ViewModule />}
+                {onUpdate && <UpdateButton onClick={onUpdate} progress={progress} />}
             </div>
         </header>
     );

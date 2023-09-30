@@ -33,6 +33,13 @@ class SerieTrackDAO {
         return await this.queryExecutor.executeAndFetchOne(sql, params);
     }
 
+    // Get track by episode id
+    async getSerieTrackByEpisodeId(episodeId) {
+        const sql = `SELECT * FROM Track WHERE episode_id = ?`;
+        const params = [episodeId];
+        return await this.queryExecutor.executeAndFetchOne(sql, params);
+    }
+
     // Get all track of a serie if it exists or create it
     async #getOrCreateSerie(serieParsedObject) {
         let retrievedSerie = await this.serieDAO.getSerieByLink(serieParsedObject.link);
@@ -65,7 +72,7 @@ class SerieTrackDAO {
     async updateSerieTrack(serie, episodes) {
         const serieParsedObject = JSON.parse(serie);
         const episodeParsedObject = JSON.parse(episodes);
-        
+
         const retrievedSerie = await this.#getOrCreateSerie(serieParsedObject);
 
         for (const episode of episodeParsedObject) {

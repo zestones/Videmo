@@ -112,7 +112,9 @@ CREATE TABLE IF NOT EXISTS History (
 CREATE TABLE IF NOT EXISTS UpdatedSerie (
   id INTEGER PRIMARY KEY,
   serie_id INTEGER,
-  FOREIGN KEY (serie_id) REFERENCES Serie (id)
+  episode_id INTEGER,
+  FOREIGN KEY (serie_id) REFERENCES Serie (id),
+  FOREIGN KEY (episode_id) REFERENCES Episode (id)
 );
 
 -- Create the CategoryFilter table

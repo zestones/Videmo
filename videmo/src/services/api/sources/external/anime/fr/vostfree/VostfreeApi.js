@@ -43,4 +43,12 @@ export default class Vostfree {
             window.api.receive('/extract/vostfree/episode', (data) => data.success ? resolve(JSON.parse(data.episode)) : reject(data.error));
         });
     }
+
+    updateAnime(serie) {
+        window.api.send('/update/vostfree/anime', { serie: JSON.stringify(serie) });
+
+        return new Promise((resolve, reject) => {
+            window.api.receive('/update/vostfree/anime', (data) => data.success ? resolve(data.success) : reject(data.error));
+        });
+    }
 }
