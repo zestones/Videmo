@@ -5,6 +5,7 @@ import { EXPLORE_STRING, EXPLORE_MODES } from "../../utilities/utils/Constants";
 
 // External
 import NewReleasesIcon from '@mui/icons-material/NewReleases';
+import FilterListIcon from '@mui/icons-material/FilterList';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import debounce from 'lodash.debounce';
 
@@ -78,7 +79,7 @@ function Explore() {
     }, [folderManager, categoryApi, sourceManager, selectedExtension, retrieveSeriesInLibraryByExtension]);
 
     const fetchNextPage = useCallback(() => {
-        if (loading) return;
+        if (loading || activeOption === EXPLORE_MODES.FILTER) return;
         setLoading(true);
 
         sourceManager.scrapAnime(selectedExtension.name, currentPage + 1, activeOption)
@@ -227,11 +228,13 @@ function Explore() {
         try {
             if (selectedExtension.local) setFolderContents(sortManager.filterByKeyword(searchValue, folderContents, 'basename'));
             else {
-                const searchResult = await sourceManager.searchAnime(searchValue);
+                const searchResult = await sourceManager.searchAnime(selectedExtension.name, searchValue);
                 const seriesInLibrary = await categoryApi.readAllSeriesInLibraryByExtension(selectedExtension);
                 const formattedSeries = folderManager.mapFolderContentsWithMandatoryFields(searchResult, seriesInLibrary, selectedExtension);
                 setFolderContents(formattedSeries);
             }
+
+            setActiveOption(EXPLORE_MODES.FILTER);
         } catch (error) {
             setError({ message: error.message, type: "error" })
         }
@@ -280,6 +283,14 @@ function Explore() {
                             >
                                 <NewReleasesIcon />
                                 <span className={styles.label}>Recent</span>
+                            </div>
+
+                            <div
+                                onClick={() => setActiveOption(EXPLORE_MODES.FILTER)}
+                                className={`${styles.option} ${activeOption === EXPLORE_MODES.FILTER ? styles.active : ""}`}
+                            >
+                                <FilterListIcon />
+                                <span className={styles.label}>Filter</span>
                             </div>
                         </div>
                     )}
