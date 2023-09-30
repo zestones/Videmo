@@ -32,7 +32,14 @@ export default class SourceManager {
         const localSeries = series.filter((serie) => serie.extension.local);
         const remoteSeries = series.filter((serie) => !serie.extension.local);
 
-        localSeries.forEach(serie => this.sources["local"].updateAnime(serie));
-        remoteSeries.forEach(serie => this.sources[serie.extension.name.toLowerCase()].updateAnime(serie));
+        const localPromises = localSeries.map((serie) =>
+            this.sources["local"].updateAnime(serie)
+        );
+
+        const remotePromises = remoteSeries.map((serie) =>
+            this.sources[serie.extension.name.toLowerCase()].updateAnime(serie)
+        );
+
+        return await Promise.all([...localPromises, ...remotePromises]);
     }
 }

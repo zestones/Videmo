@@ -1,8 +1,5 @@
 import React from "react";
 
-// External
-import SyncIcon from '@mui/icons-material/Sync';
-
 // Components
 import SearchBar from "../SearchBar/SearchBar";
 import BackArrow from "../BackArrow/BackArrow";
@@ -10,6 +7,7 @@ import RandomButton from "../RandButton/RandButton";
 import DeleteButton from "../DeleteButton/DeleteButton";
 import FilterPanel from "../FilterPanel/FilterPanel";
 import ViewModule from "../ViewModule/ViewModule";
+import UpdateButton from "../UpdateButton/UpdateButton";
 
 // Styles
 import styles from "./Header.module.scss";
@@ -23,7 +21,8 @@ function Header({ title,
     onBack = null,
     onDelete = null,
     onViewMode = null,
-    onUpdate = null
+    onUpdate = null,
+    progress
 }) {
     return (
         <header className={styles.header}>
@@ -38,7 +37,7 @@ function Header({ title,
                 {onRandom && <RandomButton onClick={onRandom} />}
                 {onDelete && <DeleteButton onClick={onDelete} />}
                 {onViewMode && <ViewModule />}
-                {onUpdate && <button onClick={onUpdate}><SyncIcon /></button>}
+                {onUpdate && <UpdateButton onClick={onUpdate} progress={progress} />}
             </div>
         </header>
     );

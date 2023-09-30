@@ -27,12 +27,15 @@ import styles from "./Library.module.scss";
 function Library() {
     // State initialization
     const [navigationHistory, setNavigationHistory] = useState([]);
+    const [updateCategoryName, setUpdateCategoryName] = useState();
     const [currentCategory, setCurrentCategory] = useState();
+    const [updateProgress, setUpdateProgress] = useState(0);
     const [filteredSeries, setFilteredSeries] = useState(); // Filtered array of series (used to display)
     const [searchValue, setSearchValue] = useState("");
     const [subSeries, setSubSeries] = useState([]); // Original array of series (not filtered)
     const [episodes, setEpisodes] = useState([]);
     const [serie, setSerie] = useState(null);
+
 
     // API initialization
     const serieApi = useMemo(() => new SerieApi(), []);
@@ -74,6 +77,16 @@ function Library() {
             .catch((error) => showNotification("error", `Error retrieving series: ${error.message}`));
     }
 
+    // Used to update the series when the update triggered
+    useEffect(() => {
+        if (updateProgress === 100) {
+            if (currentCategory.name === updateCategoryName) retrieveAllSeries();
+            setUpdateProgress(0);
+            showNotification("success", "Update completed");
+        }
+    }, [updateProgress, showNotification, currentCategory, updateCategoryName, retrieveAllSeries]);
+
+    // Used to update the series when the category change
     useEffect(() => {
         if (!currentCategory) return;
 
@@ -136,7 +149,18 @@ function Library() {
 
     const handleUpdateSeries = async () => {
         try {
-            sourceManager.updateSeries(serie ? [serie] : subSeries);
+            setUpdateCategoryName(currentCategory.name);
+            const totalSeries = serie ? [serie] : subSeries;
+            let completedSeries = 0;
+
+            for (const series of totalSeries) {
+                await sourceManager.updateSeries([series]);
+                completedSeries++;
+                const progressPercentage = Math.floor((completedSeries / totalSeries.length) * 100);
+                setUpdateProgress(progressPercentage);
+            }
+
+            setUpdateProgress(100);
         } catch (error) {
             showNotification("error", `Error updating series: ${error.message}`);
             console.error(error);
@@ -155,11 +179,13 @@ function Library() {
                     onRandom={() => filteredSeries.length > 0 && handleSerieSelection(filteredSeries[Math.floor(Math.random() * filteredSeries.length)])}
                     onFilter={setFilteredSeries}
                     onUpdate={handleUpdateSeries}
+                    progress={updateProgress}
                     series={subSeries}
                     currentCategory={currentCategory}
                 />
 
                 <CategoryHeader selectedCategory={currentCategory} onSelectCategory={setCurrentCategory} />
+
                 <SeriesDisplay
                     linkedSeries={filterFolders}
                     episodes={episodes}
