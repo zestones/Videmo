@@ -35,28 +35,9 @@ function App() {
 	const update = { update: { component: <Update />, icon: NewReleasesIcon, label: "Nouveautés" } };
 
 	const { theme } = useTheme();
-	const [pageHeight, setPageHeight] = useState(0);
 
 	const [activePage, setActivePage] = useState(Object.keys(library)[0]);
-	const navigationItems = { ...library, ...update, ...history, ...explore, ...settings };
-
-
-	useEffect(() => {
-		const handleResize = () => {
-			setPageHeight(document.documentElement.scrollHeight);
-		};
-
-		window.addEventListener('resize', handleResize);
-		setPageHeight(document.documentElement.scrollHeight);
-
-		return () => {
-			window.removeEventListener('resize', handleResize);
-		};
-	}, []);
-
-	useEffect(() => {
-		window.scrollTo({ top: 0, behavior: 'auto' });
-	}, [pageHeight]);
+	const navigationItems = { ...library, ...update, ...explore, ...history, ...settings };
 
 
 	useEffect(() => {

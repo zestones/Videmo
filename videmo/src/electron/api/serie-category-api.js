@@ -36,9 +36,6 @@ ipcMain.on('/add/categories/to/serie/', async (event, arg) => {
 
     const extension = await extensionDAO.getExtensionById(arg.series[0].extension_id);
 
-    // TODO : SHOULD ADD A CHECK TO SEE IF THE SERIE IS A LOCAL SERIE
-    // TODO : DISABLE BATCH MDOFICATION OF THE SERIES FROM THE EXPLORER PAGE
-
     // We scrap the serie if needed (if we are inside the explorer page)
     if (arg.shouldUpdateSeries) {
         if (extension.local) {
@@ -58,7 +55,6 @@ ipcMain.on('/add/categories/to/serie/', async (event, arg) => {
             }
         } else {
             // TODO : Add a Manager to manage the scrapers
-
             // Create the series that are not present in the database
             await serieDAO.createSeriesIfMissing(arg.series);
             for (const serie of arg.series) {

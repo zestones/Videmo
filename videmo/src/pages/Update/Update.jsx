@@ -15,6 +15,7 @@ import Utils from "../../utilities/utils/Utils";
 
 // Styles
 import styles from "./Update.module.scss";
+import UpdateCard from "../../components/Card/UpdateCard/UpdateCard";
 
 
 function Update() {
@@ -33,7 +34,10 @@ function Update() {
 
     useEffect(() => {
         serieUpdateApi.readAllUpdateEntries()
-            .then((entries) => setEntries(entries))
+            .then((entries) => {
+                console.log(entries);
+                setEntries(entries);
+            })
             .catch((error) => console.log(error));
     }, [serieUpdateApi]);
 
@@ -72,7 +76,6 @@ function Update() {
         const updatedEpisode = { ...selectedEntry.episode, played_time: playedTime };
         trackApi.updatePlayedTime(selectedEntry.serie, updatedEpisode, new Date().getTime());
 
-        console.log("entries", entries);
         setEntries(entries.map((entry) => {
             if (entry.serie.id === selectedEntry.serie.id && entry.episode.id === selectedEntry.episode.id) {
                 return { ...entry, episode: updatedEpisode };
@@ -99,24 +102,14 @@ function Update() {
                             const isNewDateLabel = currentDateLabel !== prevDateLabel;
 
                             return (
-                                <>
-                                    {isNewDateLabel && <p className={styles.dateLabel}>{currentDateLabel}</p>}
-                                    <div
-                                        className={`${styles.entry}
-                                        ${entry.episode.viewed ? styles.viewed : ''}
-                                        ${entry.episode.bookmarked ? styles.bookmarked : ''}`}
-                                        key={entry.episode.link}>
-                                        <div className={styles.serieInfo} onClick={() => handleSerieImageClick(entry)}>
-                                            <img src={entry.serie.image} alt={entry.serie.name} className={styles.serieImage} />
-                                        </div>
-                                        <div className={styles.episodeInfos}>
-                                            <div className={styles.serieName}>{entry.serie.name}</div>
-                                            <div className={styles.episodeName} onClick={() => handleSerieNameClick(entry)}>
-                                                {entry.episode.name}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </>
+                                <UpdateCard
+                                    isNewDateLabel={isNewDateLabel}
+                                    currentDateLabel={currentDateLabel}
+                                    entry={entry}
+                                    handleSerieImageClick={handleSerieImageClick}
+                                    handleSerieNameClick={handleSerieNameClick}
+                                    key={entry.episode.link}
+                                />
                             )
                         })}
                     </div>
