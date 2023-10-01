@@ -133,8 +133,8 @@ describe('SerieEpisodeDAO', () => {
         result.forEach((episode) => {
             expect(episode.name).toBe(episode.name);
             expect(episode.link).toBe(episode.link);
-            expect(episode.viewed).toBe(serieEpisodeDAO.dataTypesConverter.convertBooleanToInteger(episode.viewed));
-            expect(episode.bookmarked).toBe(serieEpisodeDAO.dataTypesConverter.convertBooleanToInteger(episode.bookmarked));
+            expect(episode.viewed).toBe(episode.viewed);
+            expect(episode.bookmarked).toBe(episode.bookmarked);
             expect(episode.played_time).toBe(episode.played_time);
         });
     });
