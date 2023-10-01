@@ -1,4 +1,5 @@
 const SerieEpisodeDAO = require('../dao/series/SerieEpisodeDAO');
+const SerieUpdateDAO = require('../dao/series/SerieUpdateDAO');
 const ExtensionDAO = require('../dao/settings/ExtensionsDAO');
 const SerieInfosDAO = require('../dao/series/SerieInfosDAO');
 const SerieTrackDAO = require('../dao/series/SerieTrackDAO');
@@ -17,17 +18,36 @@ class SourceManager {
         this.extensionDAO = new ExtensionDAO();
         this.serieTrackDAO = new SerieTrackDAO();
         this.serieInfosDAO = new SerieInfosDAO();
+        this.serieUpdateDAO = new SerieUpdateDAO();
         this.serieEpisodeDAO = new SerieEpisodeDAO();
     }
 
-    // TODO : rename this to scrap and inject data in the database
-    async scrapAnime(series) {
-        const extension = await this.extensionDAO.getExtensionById(series[0].extension_id);
-        if (extension.local) await this.#scrapLocalSource(extension, series);
-        else await this.#scrapRemoteSource(extension, series);
+    async scrapAnime(source, page, mode) {
+        return await this.sources[source.name.toLowerCase()][`get${mode.charAt(0).toUpperCase() + mode.slice(1)}Anime`](page);
     }
 
-    async #scrapLocalSource(extension, series) {
+    async scrapAnimeEpisodes(source, url) {
+        return await this.sources[source.name.toLowerCase()].scrapeEpisodes(url);
+    }
+
+    async searchAnime(source, query) {
+        return await this.sources[source.name.toLowerCase()].search(query);
+    }
+
+    async updateAnime(serie) {
+        const extension = await this.extensionDAO.getExtensionById(serie.extension_id);
+
+        const episodes = await this.sources[extension.name.toLowerCase()].scrapeEpisodes(serie.link);
+        await this.serieUpdateDAO.updateSerieEpisodes(serie, episodes);
+    }
+
+    async scrapAndInsertAnime(series) {
+        const extension = await this.extensionDAO.getExtensionById(series[0].extension_id);
+        if (extension.local) await this.#scrapAndInsertLocalSource(extension, series);
+        else await this.#scrapAndInsertRemoteSource(extension, series);
+    }
+
+    async #scrapAndInsertLocalSource(extension, series) {
         // We scrap the series
         for (const serie of series) {
 
@@ -43,7 +63,7 @@ class SourceManager {
         }
     }
 
-    async #scrapRemoteSource(extension, series) {
+    async #scrapAndInsertRemoteSource(extension, series) {
         // Create the series that are not present in the database
         await this.serieDAO.createSeriesIfMissing(series);
         for (const serie of series) {
