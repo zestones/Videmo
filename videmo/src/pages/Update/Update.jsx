@@ -34,10 +34,7 @@ function Update() {
 
     useEffect(() => {
         serieUpdateApi.readAllUpdateEntries()
-            .then((entries) => {
-                console.log(entries);
-                setEntries(entries);
-            })
+            .then((entries) => setEntries(entries))
             .catch((error) => console.log(error));
     }, [serieUpdateApi]);
 

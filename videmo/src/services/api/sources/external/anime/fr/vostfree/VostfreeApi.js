@@ -1,3 +1,6 @@
+
+// TODO : this class is not needed anymore, rename it to remote source api
+// TODO : change the api calls to send the source (extension) name along with the data
 export default class Vostfree {
     constructor() {
         this.name = 'vostfree';

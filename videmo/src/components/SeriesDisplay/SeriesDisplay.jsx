@@ -190,7 +190,7 @@ function SeriesDisplay({ serie, linkedSeries, onPlayClick, onRefresh, calledFrom
             <div className={styles.seriesContainer}>
                 {linkedSeries.map((linkedSerie, index) => (
                     <SerieCard
-                        key={index}
+                        key={linkedSerie.link}
                         serie={linkedSerie}
                         onPlayClick={onPlayClick}
                         onMoreClick={onRefresh}

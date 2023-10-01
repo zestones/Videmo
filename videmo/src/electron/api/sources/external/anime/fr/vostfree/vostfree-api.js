@@ -5,6 +5,9 @@ const SibNet = require('../../../../../../services/sources/external/lib/extracto
 
 const SerieUpdateDAO = require('../../../../../../services/dao/series/SerieUpdateDAO');
 
+// TODO : move this to the SourceManager
+// TODO : rename file to source-api.js
+
 
 ipcMain.on('/read/vostfree/popular/anime', async (event, args) => {
     try {
@@ -43,6 +46,7 @@ ipcMain.on('/search/vostfree/anime', async (event, args) => {
 });
 
 
+// TODO : move this to the SourceManager
 ipcMain.on('/extract/vostfree/episode', async (event, args) => {
     try {
         const extractor = new SibNet(args.url, args.quality, args.headers);
@@ -61,6 +65,7 @@ ipcMain.on('/extract/vostfree/episode', async (event, args) => {
 });
 
 
+// TODO : move this to the SourceManager
 ipcMain.on('/update/vostfree/anime', async (event, args) => {
     try {
         const serie = JSON.parse(args.serie);

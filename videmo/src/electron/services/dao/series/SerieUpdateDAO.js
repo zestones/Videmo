@@ -75,7 +75,6 @@ class SerieUpdateDAO {
 
     // update serie episodes
     async updateSerieEpisodes(serie, episodes) {
-
         const databaseEpisodes = await new SerieEpisodeDAO().getAllEpisodesBySerieId(serie.id);
         const newEpisodes = episodes.filter(episode => !databaseEpisodes.some(databaseEpisode => databaseEpisode.link === episode.link));
         const deletedEpisodes = databaseEpisodes.filter(databaseEpisode => !episodes.some(episode => episode.link === databaseEpisode.link));
