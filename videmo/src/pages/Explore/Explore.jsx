@@ -69,12 +69,9 @@ function Explore() {
                 .then((data) => retrieveSeriesInLibraryByExtension(data.contents))
                 .catch((error) => setError({ message: error.message, type: "error" }));
         } else {
-            sourceManager.scrapAnime(selectedExtension.name, 1, EXPLORE_MODES.POPULAR)
+            sourceManager.scrapAnime(selectedExtension, 1, EXPLORE_MODES.POPULAR)
                 .then((data) => retrieveSeriesInLibraryByExtension(data))
-                .catch((error) => {
-                    setError({ message: error.message, type: "error" })
-                    console.error(error);
-                });
+                .catch((error) => setError({ message: error.message, type: "error" }));
         }
     }, [folderManager, categoryApi, sourceManager, selectedExtension, retrieveSeriesInLibraryByExtension]);
 
@@ -82,7 +79,7 @@ function Explore() {
         if (loading || activeOption === EXPLORE_MODES.FILTER) return;
         setLoading(true);
 
-        sourceManager.scrapAnime(selectedExtension.name, currentPage + 1, activeOption)
+        sourceManager.scrapAnime(selectedExtension, currentPage + 1, activeOption)
             .then((nextPage) => {
                 categoryApi.readAllSeriesInLibraryByExtension(selectedExtension)
                     .then((series) => {
@@ -211,7 +208,7 @@ function Explore() {
 
     const handleRemoteSourceExtension = async (clickedSerie) => {
         try {
-            const episodes = await sourceManager.scrapAnimeEpisodes(selectedExtension.name, clickedSerie.link);
+            const episodes = await sourceManager.scrapAnimeEpisodes(selectedExtension, clickedSerie.link);
 
             setEpisodes(episodes);
             setFolderContents([]);
@@ -228,7 +225,7 @@ function Explore() {
         try {
             if (selectedExtension.local) setFolderContents(sortManager.filterByKeyword(searchValue, folderContents, 'basename'));
             else {
-                const searchResult = await sourceManager.searchAnime(selectedExtension.name, searchValue);
+                const searchResult = await sourceManager.searchAnime(selectedExtension, searchValue);
                 const seriesInLibrary = await categoryApi.readAllSeriesInLibraryByExtension(selectedExtension);
                 const formattedSeries = folderManager.mapFolderContentsWithMandatoryFields(searchResult, seriesInLibrary, selectedExtension);
                 setFolderContents(formattedSeries);
@@ -243,7 +240,7 @@ function Explore() {
     const handleOptionClick = async (mode) => {
         try {
             window.scrollTo(0, 0);
-            const series = await sourceManager.scrapAnime(selectedExtension.name, 1, mode);
+            const series = await sourceManager.scrapAnime(selectedExtension, 1, mode);
 
             retrieveSeriesInLibraryByExtension(series);
             setActiveOption(mode);

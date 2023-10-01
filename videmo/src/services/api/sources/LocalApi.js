@@ -1,5 +1,5 @@
 
-class LocalFileScrapper {
+class LocalApi {
 
     updateAnime(serie) {
         // Send the folder path to the main Electron process
@@ -13,4 +13,4 @@ class LocalFileScrapper {
 
 }
 
-module.exports = LocalFileScrapper;
+module.exports = LocalApi;

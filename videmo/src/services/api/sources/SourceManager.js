@@ -1,33 +1,30 @@
-import VostfreeApi from './external/anime/fr/vostfree/VostfreeApi.js'
+import RemoteApi from './RemoteApi.js'
 
-import LocalFileScrapper from './local/LocalFileScrapper.js'
+import LocalApi from './LocalApi.js'
 
 import { EXPLORE_MODES } from '../../../utilities/utils/Constants.js'
 
 
-// TODO : refactor the class so it use only one remote source and one local source Api
 export default class SourceManager {
     constructor() {
-        this.sources = {
-            vostfree: new VostfreeApi(),
-            local: new LocalFileScrapper()
-        }
+        this.remote = new RemoteApi();
+        this.local = new LocalApi();
     }
 
-    async scrapAnime(source, page, mode = EXPLORE_MODES.POPULAR) {
-        return await this.sources[source.toLowerCase()][`scrap${mode.charAt(0).toUpperCase() + mode.slice(1)}Anime`](page);
+    async scrapAnime(extension, page, mode = EXPLORE_MODES.POPULAR) {
+        if (!extension.local) return await this.remote.scrapAnime(extension, page, mode);
     }
 
-    async scrapAnimeEpisodes(source, url) {
-        return await this.sources[source.toLowerCase()].scrapAnimeEpisodes(url);
+    async scrapAnimeEpisodes(extension, url) {
+        return await this.remote.scrapAnimeEpisodes(extension, url);
     }
 
-    async searchAnime(source, query) {
-        return await this.sources[source.toLowerCase()].searchAnime(query);
+    async searchAnime(extension, query) {
+        return await this.remote.searchAnime(extension, query);
     }
 
-    async extractEpisode(source, url, quality = null, headers = null) {
-        return await this.sources[source.toLowerCase()].extractEpisode(url, quality, headers);
+    async extractEpisode(extension, url, quality = null, headers = null) {
+        return await this.remote.extractEpisode(extension, url, quality, headers);
     }
 
     async updateSeries(series) {
@@ -35,11 +32,11 @@ export default class SourceManager {
         const remoteSeries = series.filter((serie) => !serie.extension.local);
 
         const localPromises = localSeries.map((serie) =>
-            this.sources["local"].updateAnime(serie)
+            this.local.updateAnime(serie)
         );
 
         const remotePromises = remoteSeries.map((serie) =>
-            this.sources[serie.extension.name.toLowerCase()].updateAnime(serie)
+            this.remote.updateAnime(serie)
         );
 
         return await Promise.all([...localPromises, ...remotePromises]);

@@ -14,7 +14,7 @@ import Utils from "../../../utilities/utils/Utils";
 
 // Services
 import TrackApi from "../../../services/api/track/TrackApi";
-import VostfreeApi from "../../../services/api/sources/external/anime/fr/vostfree/VostfreeApi";
+import SourceManager from "../../../services/api/sources/SourceManager";
 
 // Components
 import VideoPlayer from "../../VideoPlayer/VideoPlayer";
@@ -26,7 +26,7 @@ import styles from "./EpisodeCard.module.scss";
 function EpisodeCard({ serie, episode, setEpisodes, checked, setChecked, exactlyOneChecked, setAllCheckedUnderIndex }) {
     // Services initialization
     const folderManager = useMemo(() => new FolderManager(), []);
-    const vostfreeApi = useMemo(() => new VostfreeApi(), []);
+    const sourceManager = useMemo(() => new SourceManager(), []);
     const trackApi = useMemo(() => new TrackApi(), []);
     const utils = useMemo(() => new Utils(), []);
 
@@ -73,7 +73,7 @@ function EpisodeCard({ serie, episode, setEpisodes, checked, setChecked, exactly
     const handleOnPlayClick = async () => {
         if (!serie.extension.local) {
             try {
-                const stream = await vostfreeApi.extractEpisode(currentEpisode.link);
+                const stream = await sourceManager.extractEpisode(serie.extension, currentEpisode.link);
                 const updatedEpisode = { ...currentEpisode, stream: stream };
                 setCurrentEpisode(updatedEpisode);
             } catch (error) {
@@ -124,7 +124,7 @@ function EpisodeCard({ serie, episode, setEpisodes, checked, setChecked, exactly
                     {(checked && exactlyOneChecked) && <KeyboardDoubleArrowDownIcon className={styles.cardButton} onClick={setAllCheckedUnderIndex} />}
                 </div>
             </div>
-            
+
             {openVideoPlayer && (
                 <VideoPlayer
                     episode={currentEpisode}

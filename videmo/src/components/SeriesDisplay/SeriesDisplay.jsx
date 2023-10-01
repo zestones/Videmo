@@ -18,7 +18,7 @@ import OptionBarEpisode from "../OptionBar/OptionBarEpisode/OptionBarEpisode";
 import TrackApi from "../../services/api/track/TrackApi";
 import FolderManager from "../../utilities/folderManager/FolderManager";
 import ExtensionApi from "../../services/api/extension/ExtensionApi";
-import Vostfree from "../../services/api/sources/external/anime/fr/vostfree/VostfreeApi";
+import SourceManager from "../../services/api/sources/SourceManager";
 
 // Styles
 import styles from "./SeriesDisplay.module.scss";
@@ -30,7 +30,7 @@ function SeriesDisplay({ serie, linkedSeries, onPlayClick, onRefresh, calledFrom
     const trackApi = useMemo(() => new TrackApi(), []);
     const folderManager = useMemo(() => new FolderManager(), []);
     const extensionApi = useMemo(() => new ExtensionApi(), []);
-    const vostfreeApi = useMemo(() => new Vostfree(), []);
+    const sourceManager = useMemo(() => new SourceManager(), []);
 
     // State initialization
     const [openVideoPlayer, setOpenVideoPlayer] = useState(false);
@@ -90,7 +90,7 @@ function SeriesDisplay({ serie, linkedSeries, onPlayClick, onRefresh, calledFrom
                 const extension = await extensionApi.readExtensionById(serie.extension_id);
                 if (!extension.local) {
                     try {
-                        const stream = await vostfreeApi.extractEpisode(resumeEpisode.link);
+                        const stream = await sourceManager.extractEpisode(extension, resumeEpisode.link);
                         const updatedEpisode = { ...resumeEpisode, stream: stream };
                         setResumeEpisode(updatedEpisode);
                     } catch (error) {
