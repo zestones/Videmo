@@ -1,0 +1,11 @@
+.update {
+    display: flex;
+    flex-direction: column;
+
+    margin-top: var(--header-height);
+
+    .entriesContainer {
+        margin: 12px auto;
+        width: 95%;
+    }
+}

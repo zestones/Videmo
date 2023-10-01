@@ -149,6 +149,7 @@ class Tree {
             await this.serieEpisodeDAO.deleteEpisodeById(episode.id);
             await this.serieTrackDAO.deleteSerieTrackByEpisodeId(episode.id);
             if (episode.viewed) await this.serieInfosDAO.updateNumberOfEpisodesViewedWithIncrement(track.serie_id, -1);
+            await this.serieUpdateDAO.deleteSerieUpdateByEpisodeId(episode.id);
         }
     }
 

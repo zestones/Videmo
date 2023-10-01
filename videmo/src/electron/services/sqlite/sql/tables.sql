@@ -113,6 +113,7 @@ CREATE TABLE IF NOT EXISTS UpdatedSerie (
   id INTEGER PRIMARY KEY,
   serie_id INTEGER,
   episode_id INTEGER,
+  date DATETIME,
   FOREIGN KEY (serie_id) REFERENCES Serie (id),
   FOREIGN KEY (episode_id) REFERENCES Episode (id)
 );

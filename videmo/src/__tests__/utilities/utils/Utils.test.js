@@ -29,6 +29,7 @@ describe('Utils', () => {
     test('getDateFromTimestamp returns "Hier" for yesterday\'s date', () => {
         const yesterdayTimestamp = Date.now() - 86400000; // 86400000 ms = 1 day
         const formattedDate = utils.getDateFromTimestamp(yesterdayTimestamp);
+        console.log("formattedDate: ", formattedDate); // "Hier"
         expect(formattedDate).toBe('Hier');
     });
 

@@ -4,6 +4,8 @@ import LocalFileScrapper from './local/LocalFileScrapper.js'
 
 import { EXPLORE_MODES } from '../../../utilities/utils/Constants.js'
 
+
+// TODO : refactor the class so it use only one remote source and one local source Api
 export default class SourceManager {
     constructor() {
         this.sources = {

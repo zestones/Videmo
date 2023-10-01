@@ -42,9 +42,15 @@ class SerieEpisodeDAO {
         const sql = `SELECT Episode.* FROM Episode
                     INNER JOIN Track ON Episode.id = Track.episode_id
                     INNER JOIN Serie ON Serie.id = Track.serie_id
-                    WHERE Serie.link = ?`;
+                    WHERE Serie.link = ? ORDER BY CAST(SUBSTRING(Episode.name, 8) AS SIGNED);`;
         const params = [link];
-        return await this.queryExecutor.executeAndFetchAll(sql, params);
+
+        const result = await this.queryExecutor.executeAndFetchAll(sql, params);
+        return result.map(episode => {
+            episode.viewed = this.dataTypesConverter.convertIntegerToBoolean(episode.viewed);
+            episode.bookmarked = this.dataTypesConverter.convertIntegerToBoolean(episode.bookmarked);
+            return episode;
+        }).reverse();
     }
 
     // Get all episodes by a serie id

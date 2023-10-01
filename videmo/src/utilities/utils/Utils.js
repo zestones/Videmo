@@ -8,26 +8,19 @@ export default class Utils {
         const now = new Date();
         const entryDate = new Date(timestamp);
 
-        if (
-            entryDate.getDate() === now.getDate() &&
-            entryDate.getMonth() === now.getMonth() &&
-            entryDate.getFullYear() === now.getFullYear()
-        ) {
-            return 'Aujourd\'hui';
-        } else if (
-            entryDate.getDate() === now.getDate() - 1 &&
-            entryDate.getMonth() === now.getMonth() &&
-            entryDate.getFullYear() === now.getFullYear()
-        ) {
-            return 'Hier';
-        } else {
+        const timeDifference = Math.floor((now - entryDate) / (1000 * 60 * 60 * 24));
+
+        if (timeDifference === 0) return "Aujourd'hui";
+        else if (timeDifference === 1) return "Hier";
+        else {
+            // Use toLocaleDateString for any other date
             return entryDate.toLocaleDateString('fr-FR', {
                 year: 'numeric',
                 month: 'long',
                 day: 'numeric',
             });
         }
-    };
+    }
 
     getTimeFromTimestamp(timestamp) {
         const entryDate = new Date(timestamp);

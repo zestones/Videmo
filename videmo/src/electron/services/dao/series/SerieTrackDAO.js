@@ -43,11 +43,13 @@ class SerieTrackDAO {
     // Get all track of a serie if it exists or create it
     async #getOrCreateSerie(serieParsedObject) {
         let retrievedSerie = await this.serieDAO.getSerieByLink(serieParsedObject.link);
+
         if (!retrievedSerie) {
             await this.serieDAO.createSerie({ ...serieParsedObject, inLibrary: false });
             retrievedSerie = await this.serieDAO.getSerieByLink(serieParsedObject.link);
         }
         return retrievedSerie;
+
     }
 
     // Create or update an episode track
@@ -72,7 +74,6 @@ class SerieTrackDAO {
     async updateSerieTrack(serie, episodes) {
         const serieParsedObject = JSON.parse(serie);
         const episodeParsedObject = JSON.parse(episodes);
-
         const retrievedSerie = await this.#getOrCreateSerie(serieParsedObject);
 
         for (const episode of episodeParsedObject) {
@@ -91,7 +92,6 @@ class SerieTrackDAO {
                 }
             }
         }
-
     }
 
     // Update all series episodes viewed flag
