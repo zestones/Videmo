@@ -23,7 +23,7 @@ ipcMain.on('/update/serie/track/and/history/', (event, arg) => {
 // update all series episodes viewed flag
 ipcMain.on('/update/all/series/episodes/viewed/flag/', (event, arg) => {
     new SerieTrackDAO().updateAllSeriesEpisodesViewedFlag(arg.series, arg.viewed)
-        .then(() => event.reply('/update/all/series/episodes/viewed/flag/', { success: true}))
+        .then(() => event.reply('/update/all/series/episodes/viewed/flag/', { success: true }))
         .catch(error => event.reply('/update/all/series/episodes/viewed/flag/', { success: false, error }));
 })
 
@@ -45,14 +45,7 @@ ipcMain.on('/read/episode/by/link/', (event, arg) => {
 // Read episode by serie id and episode id
 ipcMain.on('/read/all/episodes/by/serie/link/', (event, arg) => {
     new SerieEpisodeDAO().getAllEpisodesBySerieLink(arg)
-        .then((retrievedEpisodes) => {
-            const dataTypesConverter = new DataTypesConverter();
-            retrievedEpisodes.forEach(episode => {
-                episode.viewed = dataTypesConverter.convertIntegerToBoolean(episode.viewed);
-                episode.bookmarked = dataTypesConverter.convertIntegerToBoolean(episode.bookmarked);
-            });
-            event.reply('/read/all/episodes/by/serie/link/', { success: true, episodes: retrievedEpisodes });
-        })
+        .then((retrievedEpisodes) => event.reply('/read/all/episodes/by/serie/link/', { success: true, episodes: retrievedEpisodes }))
         .catch(error => event.reply('/read/all/episodes/by/serie/link/', { success: false, error }));
 })
 

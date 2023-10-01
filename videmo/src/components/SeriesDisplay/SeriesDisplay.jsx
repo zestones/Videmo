@@ -25,7 +25,7 @@ import styles from "./SeriesDisplay.module.scss";
 
 // Context initialization
 
-function SeriesDisplay({ serie, linkedSeries, episodes, onPlayClick, onRefresh, calledFrom, setEpisodes }) {
+function SeriesDisplay({ serie, linkedSeries, onPlayClick, onRefresh, calledFrom, setEpisodes, episodes }) {
     // Services initialization
     const trackApi = useMemo(() => new TrackApi(), []);
     const folderManager = useMemo(() => new FolderManager(), []);

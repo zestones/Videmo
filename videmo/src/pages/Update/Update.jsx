@@ -1,8 +1,12 @@
 import React, { useEffect, useMemo, useState } from "react";
 
+// Constants
+import { UPDATE_STRING } from "../../utilities/utils/Constants";
+
 // Components
-import Header from "../../components/Header/Header";
+import SeriesDisplay from "../../components/SeriesDisplay/SeriesDisplay";
 import VideoPlayer from "../../components/VideoPlayer/VideoPlayer";
+import Header from "../../components/Header/Header";
 
 // Api
 import SerieUpdateApi from "../../services/api/serie/SerieUpdateApi";
@@ -23,6 +27,9 @@ function Update() {
     const [entries, setEntries] = useState([]);
     const [showVideoPlayer, setShowVideoPlayer] = useState(false);
     const [selectedEntry, setSelectedEntry] = useState(null);
+    const [showSerieDisplay, setShowSerieDisplay] = useState(false);
+    const [episodes, setEpisodes] = useState([]);
+
 
     useEffect(() => {
         serieUpdateApi.readAllUpdateEntries()
@@ -30,11 +37,27 @@ function Update() {
             .catch((error) => console.log(error));
     }, [serieUpdateApi]);
 
-
     // Handle click on serie name to show VideoPlayer
     const handleSerieNameClick = (serie) => {
         setSelectedEntry(serie);
         setShowVideoPlayer(true);
+    };
+
+    // Handle click on serie image to show SerieDisplay
+    const handleSerieImageClick = (entry) => {
+        trackApi.readAllEpisodesBySerieLink(entry.serie.link)
+            .then((data) => setEpisodes(data))
+            .catch((error) => console.error(error));
+
+        setSelectedEntry(entry);
+        setShowSerieDisplay(true);
+    };
+
+    // Handle click on back button
+    const handleBackClick = () => {
+        setShowSerieDisplay(false);
+        setSelectedEntry(null);
+        setEpisodes([]);
     };
 
     const handleCloseVideoPlayer = (playedTime, episodeFinished) => {
@@ -61,43 +84,57 @@ function Update() {
 
     return (
         <div className={styles.update}>
-            <Header title="Nouveautés" />
+            <Header
+                title="Nouveautés"
+                onBack={selectedEntry && showSerieDisplay ? handleBackClick : null}
+            />
 
-            <div className={styles.entriesContainer}>
-                {entries.map((entry, index) => {
-                    const currentDateLabel = utils.getDateFromTimestamp(entry.date);
-                    const prevEntry = index > 0 ? entries[index - 1] : null;
-                    const prevDateLabel = prevEntry ? utils.getDateFromTimestamp(prevEntry.date) : null;
-                    const isNewDateLabel = currentDateLabel !== prevDateLabel;
+            {!showSerieDisplay ? (
+                <>
+                    <div className={styles.entriesContainer}>
+                        {entries.map((entry, index) => {
+                            const currentDateLabel = utils.getDateFromTimestamp(entry.date);
+                            const prevEntry = index > 0 ? entries[index - 1] : null;
+                            const prevDateLabel = prevEntry ? utils.getDateFromTimestamp(prevEntry.date) : null;
+                            const isNewDateLabel = currentDateLabel !== prevDateLabel;
 
-                    return (
-                        <>
-                            {isNewDateLabel && <p className={styles.dateLabel}>{currentDateLabel}</p>}
-                            <div
-                                className={`${styles.entry}
-                                ${entry.episode.viewed ? styles.viewed : ''}
-                                ${entry.episode.bookmarked ? styles.bookmarked : ''}`}
-                                key={index}>
-                                <div className={styles.serieInfo}>
-                                    <img src={entry.serie.image} alt={entry.serie.name} className={styles.serieImage} />
-                                </div>
-                                <div className={styles.episodeInfos}>
-                                    <div className={styles.serieName}>{entry.serie.name}</div>
-                                    <div className={styles.episodeName} onClick={() => handleSerieNameClick(entry)}>
-                                        {entry.episode.name}
+                            return (
+                                <>
+                                    {isNewDateLabel && <p className={styles.dateLabel}>{currentDateLabel}</p>}
+                                    <div
+                                        className={`${styles.entry}
+                                        ${entry.episode.viewed ? styles.viewed : ''}
+                                        ${entry.episode.bookmarked ? styles.bookmarked : ''}`}
+                                        key={entry.episode.link}>
+                                        <div className={styles.serieInfo} onClick={() => handleSerieImageClick(entry)}>
+                                            <img src={entry.serie.image} alt={entry.serie.name} className={styles.serieImage} />
+                                        </div>
+                                        <div className={styles.episodeInfos}>
+                                            <div className={styles.serieName}>{entry.serie.name}</div>
+                                            <div className={styles.episodeName} onClick={() => handleSerieNameClick(entry)}>
+                                                {entry.episode.name}
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
-                        </>
-                    )
-                })}
-            </div>
-
-            {showVideoPlayer && (
-                <VideoPlayer
-                    episode={selectedEntry.episode}
+                                </>
+                            )
+                        })}
+                    </div>
+                    {showVideoPlayer && (
+                        <VideoPlayer
+                            episode={selectedEntry.episode}
+                            serie={selectedEntry.serie}
+                            onCloseVideoPlayer={handleCloseVideoPlayer}
+                        />
+                    )}
+                </>
+            ) : (
+                <SeriesDisplay
                     serie={selectedEntry.serie}
-                    onCloseVideoPlayer={handleCloseVideoPlayer}
+                    linkedSeries={[]}
+                    calledFrom={UPDATE_STRING}
+                    setEpisodes={setEpisodes}
+                    episodes={episodes}
                 />
             )}
         </div>

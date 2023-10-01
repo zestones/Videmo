@@ -63,7 +63,7 @@ class SerieUpdateDAO {
                     image: row.serie_image,
                     inLibrary: row.serie_inLibrary,
                     link: row.serie_link,
-                    extensionId: row.serie_extension_id,
+                    extension_id: row.serie_extension_id,
                 },
                 date: row.date,
             };
