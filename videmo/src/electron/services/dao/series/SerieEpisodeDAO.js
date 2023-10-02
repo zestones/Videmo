@@ -34,7 +34,13 @@ class SerieEpisodeDAO {
         const sql = `SELECT * FROM Episode WHERE link = ?`;
         const params = [link];
 
-        return await this.queryExecutor.executeAndFetchOne(sql, params);
+        const result = await this.queryExecutor.executeAndFetchOne(sql, params);
+        if (result) {
+            result.viewed = this.dataTypesConverter.convertIntegerToBoolean(result.viewed);
+            result.bookmarked = this.dataTypesConverter.convertIntegerToBoolean(result.bookmarked);
+        }
+
+        return result;
     }
 
     // Get all episodes by a serie link

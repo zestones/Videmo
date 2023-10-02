@@ -1,11 +1,10 @@
+import { makeRequest } from "../../../utilities/utils/Utils";
+
 class SortApi {
 
+    // Get all sorts entries
     getAllSortsEntries() {
-        window.api.send("/read/sorts/");
-
-        return new Promise((resolve, reject) => {
-            window.api.receive("/read/sorts/", (data) => data.success ? resolve(data.sorts) : reject(data.error));
-        });
+        return makeRequest("/read/sorts/");
     }
 }
 

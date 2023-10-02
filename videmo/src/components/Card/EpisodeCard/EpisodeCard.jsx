@@ -10,7 +10,7 @@ import KeyboardDoubleArrowDownIcon from '@mui/icons-material/KeyboardDoubleArrow
 
 // Utilities
 import FolderManager from "../../../utilities/folderManager/FolderManager";
-import Utils from "../../../utilities/utils/Utils";
+import { Utils } from "../../../utilities/utils/Utils";
 
 // Services
 import TrackApi from "../../../services/api/track/TrackApi";

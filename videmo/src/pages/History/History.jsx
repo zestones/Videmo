@@ -4,16 +4,16 @@ import React, { useState, useEffect, useMemo } from "react";
 import { HISTORY_STRING } from "../../utilities/utils/Constants";
 
 // Components
-import Header from "../../components/Header/Header";
-import VideoPlayer from "../../components/VideoPlayer/VideoPlayer";
 import SeriesDisplay from "../../components/SeriesDisplay/SeriesDisplay";
 import HistoryCard from "../../components/Card/HistoryCard/HistoryCard";
+import VideoPlayer from "../../components/VideoPlayer/VideoPlayer";
+import Header from "../../components/Header/Header";
 
 // Services
+import SortManager from "../../utilities/sortManager/SortManager";
 import HistoryApi from "../../services/api/track/HistoryApi";
 import TrackApi from "../../services/api/track/TrackApi";
-import Utils from "../../utilities/utils/Utils";
-import SortManager from "../../utilities/sortManager/SortManager";
+import { Utils } from "../../utilities/utils/Utils";
 
 // Styles
 import styles from "./History.module.scss";

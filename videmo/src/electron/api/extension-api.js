@@ -14,14 +14,14 @@ ipcMain.on('/create/extension/', async (event, arg) => {
     if (retrievedExtension !== undefined && !retrievedExtension.is_active) {
         await scrapper.scrap();
         await extensionDAO.updateExtensionIsActive(retrievedExtension.id, true);
-        event.reply('/create/extension/', { success: true, extension: { id: retrievedExtension.id, link: arg.link, name: arg.name, local: arg.local } })
+        event.reply('/create/extension/', { success: true, data: { id: retrievedExtension.id, link: arg.link, name: arg.name, local: arg.local } })
     } else {
         extensionDAO.createExtension(arg.link, arg.name, arg.local, false)
             .then(async (extension) => {
                 // Scrap all the tree structure and insert it into the database
                 await scrapper.scrap();
                 await extensionDAO.updateExtensionIsActive(extension.id, true);
-                event.reply('/create/extension/', { success: true, extension: extension })
+                event.reply('/create/extension/', { success: true, data: extension })
             })
             .catch((err) => event.reply('/create/extension/', { success: false, error: err }));
     }
@@ -30,7 +30,7 @@ ipcMain.on('/create/extension/', async (event, arg) => {
 // Read all extensions
 ipcMain.on('/read/all/extensions/', (event) => {
     new ExtensionsDAO().getAllActiveExtensions()
-        .then((extensions) => event.reply('/read/all/extensions/', { success: true, extensions: extensions }))
+        .then((extensions) => event.reply('/read/all/extensions/', { success: true, data: extensions }))
         .catch((err) => event.reply('/read/all/extensions/', { success: false, error: err }));
 })
 
@@ -40,7 +40,7 @@ ipcMain.on('/read/extension/by/id/', (event, arg) => {
         .then((extension) => {
             // convert local to boolean
             extension.local = new DataTypesConverter().convertIntegerToBoolean(extension?.local);
-            event.reply('/read/extension/by/id/', { success: true, extension: extension });
+            event.reply('/read/extension/by/id/', { success: true, data: extension });
         })
         .catch((err) => event.reply('/read/extension/by/id/', { success: false, error: err }));
 })
@@ -48,13 +48,13 @@ ipcMain.on('/read/extension/by/id/', (event, arg) => {
 // Update extension
 ipcMain.on('/update/extension/', (event, arg) => {
     new ExtensionsDAO().updateExtension(arg.extension)
-        .then(() => event.reply('/update/extension/', { success: true, extension: arg.extension }))
+        .then(() => event.reply('/update/extension/', { success: true, data: arg.extension }))
         .catch((err) => event.reply('/update/extension/', { success: false, error: err }));
 })
 
 // Delete extension
 ipcMain.on('/delete/extension/', (event, arg) => {
     new ExtensionsDAO().updateExtensionIsActive(arg.id, false)
-        .then(() => event.reply('/delete/extension/', { success: true, extension: { id: arg.id } }))
+        .then(() => event.reply('/delete/extension/', { success: true, data: { id: arg.id } }))
         .catch((err) => event.reply('/delete/extension/', { success: false, error: err }));
 })

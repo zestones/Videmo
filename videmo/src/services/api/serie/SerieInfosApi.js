@@ -1,18 +1,14 @@
-export default class SerieApi {
+import { makeRequest } from "../../../utilities/utils/Utils";
 
-    async readSerieInfosById(id) {
-        window.api.send("/read/serie-infos/by/id/", { id: id });
+export default class SerieInfosApi {
 
-        return new Promise((resolve, reject) => {
-            window.api.receive("/read/serie-infos/by/id/", (data) => data.success ? resolve(data.infos) : reject(data.error));
-        });
+    // Read serie infos by serie id
+    readSerieInfosById(id) {
+        return makeRequest("/read/serie-infos/by/id/", { id: id });
     }
 
+    // Update serie infos by serie link
     updateSerieInfos(link, infos) {
-        window.api.send("/update/serie-infos/", { link: link, infos: infos });
-
-        return new Promise((resolve, reject) => {
-            window.api.receive("/update/serie-infos/", (data) => data.success ? resolve() : reject(data.error));
-        });
+        return makeRequest("/update/serie-infos/", { link: link, infos: infos });
     }
 }
