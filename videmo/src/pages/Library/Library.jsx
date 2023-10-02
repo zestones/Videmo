@@ -80,11 +80,11 @@ function Library() {
     // Used to update the series when the update triggered
     useEffect(() => {
         if (updateProgress === 100) {
-            if (currentCategory.name === updateCategoryName) retrieveAllSeries();
+            if (currentCategory.name === updateCategoryName && !serie) retrieveAllSeries();
             setUpdateProgress(0);
             showNotification("success", "Update completed");
         }
-    }, [updateProgress, showNotification, currentCategory, updateCategoryName, retrieveAllSeries]);
+    }, [updateProgress, showNotification, currentCategory, updateCategoryName, serie, retrieveAllSeries]);
 
     // Used to update the series when the category change
     useEffect(() => {
