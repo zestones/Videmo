@@ -1,18 +1,18 @@
 const { ipcMain } = require('electron');
 
-const CategoriesDAO = require('../services/dao/settings/CategoriesDAO');
+const CategoriesDAO = require('../../services/dao/settings/CategoriesDAO');
 
 // Add new category
 ipcMain.on('/create/category/', (event, arg) => {
     new CategoriesDAO().createCategory(arg.name, arg.order_id)
-        .then((category) =>  event.reply('/create/category/', { success: true, category: category }))
+        .then((category) => event.reply('/create/category/', { success: true, data: category }))
         .catch((err) => event.reply('/create/category/', { success: false, error: err }));
 })
 
 // Read all categories
 ipcMain.on('/read/all/categories/', (event) => {
     new CategoriesDAO().getAllCategories()
-        .then((categories) => event.reply('/read/all/categories/', { success: true, categories: categories }))
+        .then((categories) => event.reply('/read/all/categories/', { success: true, data: categories }))
         .catch((err) => event.reply('/read/all/categories/', { success: false, error: err }));
 })
 
@@ -26,13 +26,13 @@ ipcMain.on('/update/category/', (event, arg) => {
 // Update categories order
 ipcMain.on('/update/categories/order/', (event, arg) => {
     new CategoriesDAO().updateCategoriesOrder(JSON.parse(arg.categories))
-        .then(() => event.reply('/update/categories/order/', { success: true, categories: arg.categories }))
+        .then(() => event.reply('/update/categories/order/', { success: true, data: arg.categories }))
         .catch((err) => event.reply('/update/categories/order/', { success: false, error: err }));
 })
 
 // Delete category by ID
 ipcMain.on('/delete/category/', (event, arg) => {
     new CategoriesDAO().deleteCategoryById(arg.id)
-        .then(() => event.reply('/delete/category/', { success: true, category: { id: arg.id } }))
+        .then(() => event.reply('/delete/category/', { success: true, data: { id: arg.id } }))
         .catch((err) => event.reply('/delete/category/', { success: false, error: err }));
 })

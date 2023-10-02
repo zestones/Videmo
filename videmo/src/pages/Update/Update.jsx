@@ -11,7 +11,7 @@ import Header from "../../components/Header/Header";
 // Api
 import SerieUpdateApi from "../../services/api/serie/SerieUpdateApi";
 import TrackApi from "../../services/api/track/TrackApi";
-import Utils from "../../utilities/utils/Utils";
+import { Utils } from "../../utilities/utils/Utils";
 
 // Styles
 import styles from "./Update.module.scss";
@@ -35,7 +35,7 @@ function Update() {
     useEffect(() => {
         serieUpdateApi.readAllUpdateEntries()
             .then((entries) => setEntries(entries))
-            .catch((error) => console.log(error));
+            .catch((error) => console.error(error));
     }, [serieUpdateApi]);
 
     // Handle click on serie name to show VideoPlayer

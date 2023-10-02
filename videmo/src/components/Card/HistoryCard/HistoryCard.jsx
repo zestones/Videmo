@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 
 // Services
-import Utils from '../../../utilities/utils/Utils';
+import { Utils } from '../../../utilities/utils/Utils';
 
 // Styles
 import styles from './HistoryCard.module.scss';

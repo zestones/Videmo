@@ -9,7 +9,7 @@ import LabelIcon from '@mui/icons-material/Label';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 
 // Services
-import Utils from '../../../utilities/utils/Utils';
+import { Utils } from '../../../utilities/utils/Utils';
 import AniListService from '../../../services/extenal/AniListService';
 
 // Components

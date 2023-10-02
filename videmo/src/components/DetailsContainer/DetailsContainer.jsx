@@ -84,13 +84,13 @@ function DetailsContainer({ serie, calledFrom }) {
 
 
 	useEffect(() => {
-		serieApi.readSerieBySerieObject(serie.link)
+		serieApi.readSerieByLink(serie.link)
 			.then((serie) => setAlreadyInLibrary(!!serie?.inLibrary))
 			.catch((error) => showNotification('error', error.message));
 	}, [serieApi, serie, showNotification]);
 
 	const refreshSerieState = () => {
-		serieApi.readSerieBySerieObject(serie.link)
+		serieApi.readSerieByLink(serie.link)
 			.then((serie) => setAlreadyInLibrary(!!serie.inLibrary))
 			.catch((error) => showNotification('error', error.message));
 	}

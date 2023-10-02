@@ -17,6 +17,7 @@ function VideoPlayer({ episode, startTime, onCloseVideoPlayer }) {
     const [playedTime, setPlayedTime] = useState(0);
     const isSeekingToStartTime = useRef(false);
     const [videoRef] = useState(React.createRef());
+
     // Set the video url to "/" to avoid display the video player before the video is ready
     const [videoUrl, setVideoUrl] = useState("/");
 
