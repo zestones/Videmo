@@ -1,7 +1,7 @@
 const { ipcMain } = require('electron');
-const DataTypesConverter = require('../utilities/converter/DataTypesConverter.js');
-const ExtensionsDAO = require('../services/dao/settings/ExtensionsDAO');
-const LocalFileScrapper = require('../services/sources/local/local-file-scrapper');
+const DataTypesConverter = require('../../utilities/converter/DataTypesConverter.js');
+const ExtensionsDAO = require('../../services/dao/settings/ExtensionsDAO.js');
+const LocalFileScrapper = require('../../services/sources/local/local-file-scrapper.js');
 
 
 // Add new extension

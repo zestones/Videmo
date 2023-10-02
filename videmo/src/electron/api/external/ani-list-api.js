@@ -1,6 +1,6 @@
 const { ipcMain } = require('electron');
 
-const AniListService = require('../services/external/AniListService');
+const AniListService = require('../../services/external/AniListService');
 
 // search a serie by name
 ipcMain.on('/ani-list/search/serie/by/name/', (event, arg) => {

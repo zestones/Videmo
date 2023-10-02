@@ -1,6 +1,6 @@
 const { ipcMain } = require('electron');
 
-const CategoriesDAO = require('../services/dao/settings/CategoriesDAO');
+const CategoriesDAO = require('../../services/dao/settings/CategoriesDAO');
 
 // Add new category
 ipcMain.on('/create/category/', (event, arg) => {

@@ -1,6 +1,6 @@
 const { ipcMain } = require('electron');
 
-const SerieHistoryDAO = require('../services/dao/series/SerieHistoryDAO');
+const SerieHistoryDAO = require('../../services/dao/series/SerieHistoryDAO');
 
 
 // Read serie and episode history

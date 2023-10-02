@@ -1,7 +1,7 @@
 const { ipcMain } = require('electron');
 
-const SerieCategoryDAO = require('../services/dao/series/SerieCategoryDAO');
-const SourceManager = require('../services/sources/SourceManager');
+const SerieCategoryDAO = require('../../services/dao/series/SerieCategoryDAO');
+const SourceManager = require('../../services/sources/SourceManager');
 
 
 // Read categories by serie id

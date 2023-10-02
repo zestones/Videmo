@@ -1,6 +1,6 @@
 const { ipcMain } = require('electron');
 
-const FilterDAO = require('../services/dao/categories/FilterDAO');
+const FilterDAO = require('../../services/dao/categories/FilterDAO');
 
 // Get all filters
 ipcMain.on('/read/filters/', (event, arg) => {

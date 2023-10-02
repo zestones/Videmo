@@ -1,6 +1,6 @@
 const { ipcMain } = require('electron');
 
-const SerieUpdateDAO = require('../services/dao/series/SerieUpdateDAO');
+const SerieUpdateDAO = require('../../services/dao/series/SerieUpdateDAO');
 
 
 // /read/all/update/entries/

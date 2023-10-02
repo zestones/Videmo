@@ -1,8 +1,8 @@
 const { ipcMain } = require('electron');
 
-const SerieTrackDAO = require('../services/dao/series/SerieTrackDAO');
-const SerieEpisodeDAO = require('../services/dao/series/SerieEpisodeDAO');
-const SerieHistoryDAO = require('../services/dao/series/SerieHistoryDAO');
+const SerieTrackDAO = require('../../services/dao/series/SerieTrackDAO');
+const SerieEpisodeDAO = require('../../services/dao/series/SerieEpisodeDAO');
+const SerieHistoryDAO = require('../../services/dao/series/SerieHistoryDAO');
 
 // update serie track
 ipcMain.on('/update/serie/track/', (event, arg) => {

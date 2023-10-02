@@ -1,6 +1,6 @@
 const { ipcMain } = require('electron');
 
-const DisplaySettingsDAO = require('../services/dao/settings/DisplaySettingsDAO');
+const DisplaySettingsDAO = require('../../services/dao/settings/DisplaySettingsDAO');
 
 // Read display option
 ipcMain.on('/read/display/mode/', (event) => {

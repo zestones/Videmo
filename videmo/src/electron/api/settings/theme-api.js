@@ -1,9 +1,9 @@
 const { ipcMain } = require('electron');
 
-const ThemeDAO = require('../services/dao/theme/ThemeDAO');
+const ThemeDAO = require('../../services/dao/theme/ThemeDAO');
 
 // Get all themes
-ipcMain.on('/read/all/themes/', (event, arg) => {
+ipcMain.on('/read/all/themes/', (event) => {
     new ThemeDAO().getThemes()
         .then((themes) => event.reply('/read/all/themes/', { success: true, data: themes }))
         .catch((err) => event.reply('/read/all/themes/', { success: false, error: err }));

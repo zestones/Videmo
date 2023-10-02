@@ -1,6 +1,6 @@
 const { ipcMain } = require('electron');
 
-const SerieDAO = require('../services/dao/series/SerieDAO');
+const SerieDAO = require('../../services/dao/series/SerieDAO');
 
 // Read all series by category id
 ipcMain.on('/read/all/series/by/category/', (event, arg) => {
