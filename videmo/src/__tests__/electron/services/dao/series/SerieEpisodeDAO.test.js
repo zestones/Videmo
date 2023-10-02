@@ -77,8 +77,8 @@ describe('SerieEpisodeDAO', () => {
         // Assert
         expect(result.name).toBe(episode.name);
         expect(result.link).toBe(episode.link);
-        expect(result.viewed).toBe(serieEpisodeDAO.dataTypesConverter.convertBooleanToInteger(episode.viewed));
-        expect(result.bookmarked).toBe(serieEpisodeDAO.dataTypesConverter.convertBooleanToInteger(episode.bookmarked));
+        expect(result.viewed).toBe(episode.viewed);
+        expect(result.bookmarked).toBe(episode.bookmarked);
         expect(result.played_time).toBe(episode.played_time);
     });
 
