@@ -24,7 +24,8 @@ class ExtensionsDAO {
         const sql = 'SELECT * FROM Extension WHERE id = ?';
         const params = [extensionId];
 
-        return await this.queryExecutor.executeAndFetchOne(sql, params);
+        const result = await this.queryExecutor.executeAndFetchOne(sql, params);
+        return this.#convertExtensionBooleanValues(result);
     }
 
     async getExtensionByLink(link) {

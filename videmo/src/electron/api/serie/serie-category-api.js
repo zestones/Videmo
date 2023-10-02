@@ -21,7 +21,7 @@ ipcMain.on('/read/serie-categories/by/serie/link/array/', (event, arg) => {
 // Add Serie to Category
 ipcMain.on('/add/categories/to/serie/', async (event, arg) => {
     // We scrap the serie if needed (if we are inside the explorer page)
-    if (arg.shouldUpdateSeries) new SourceManager().scrapAndInsertAnime(arg.series);
+    if (arg.shouldUpdateSeries) await new SourceManager().scrapAndInsertAnime(arg.series);
     await new SerieCategoryDAO().updateSerieCategories(arg.series, arg.associationSerieCategory)
         .then((categories) => event.reply('/add/categories/to/serie/', { success: true, data: categories }))
         .catch((err) => event.reply('/add/categories/to/serie/', { success: false, error: err }));

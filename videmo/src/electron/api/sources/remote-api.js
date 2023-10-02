@@ -5,7 +5,6 @@ const SibNet = require('../../services/sources/external/lib/extractors/sibnet/Si
 
 
 ipcMain.on('/read/remote/anime/', (event, args) => {
-    console.log("scrapAnime");
     new SourceManager().scrapAnime(args.extension, args.page, args.mode)
         .then((animeList) => event.reply('/read/remote/anime/', { success: true, data: animeList }))
         .catch((error) => event.reply('/read/remote/anime/', { success: false, error: error }));

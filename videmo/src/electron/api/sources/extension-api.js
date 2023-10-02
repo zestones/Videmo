@@ -1,5 +1,5 @@
 const { ipcMain } = require('electron');
-const DataTypesConverter = require('../../utilities/converter/DataTypesConverter.js');
+
 const ExtensionsDAO = require('../../services/dao/settings/ExtensionsDAO.js');
 const LocalFileScrapper = require('../../services/sources/local/local-file-scrapper.js');
 
@@ -37,11 +37,7 @@ ipcMain.on('/read/all/extensions/', (event) => {
 // Read extension by id
 ipcMain.on('/read/extension/by/id/', (event, arg) => {
     new ExtensionsDAO().getExtensionById(arg.id)
-        .then((extension) => {
-            // convert local to boolean
-            extension.local = new DataTypesConverter().convertIntegerToBoolean(extension?.local);
-            event.reply('/read/extension/by/id/', { success: true, data: extension });
-        })
+        .then((extension) => event.reply('/read/extension/by/id/', { success: true, data: extension }))
         .catch((err) => event.reply('/read/extension/by/id/', { success: false, error: err }));
 })
 

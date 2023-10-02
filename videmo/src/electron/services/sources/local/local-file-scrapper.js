@@ -72,13 +72,13 @@ class LocalFileScrapper {
 
         const localTree = this.tree.retrieveLocalTree(baseLink);
 
-        if (serie === undefined) {
-            await this.tree.insertTree(localTree, this.extensionLink);
+        if (!serie) {
+            await this.tree.insertTree(localTree, this.extensionLink, extension.id);
         } else {
             const databaseTree = await this.tree.retrieveDatabaseTree(baseLink);
             const localTreeWithoutCovers = this.tree.removeDirectoryFromTree(localTree, 'Cover');
             const differences = this.tree.compareTrees(databaseTree, localTreeWithoutCovers);
-            
+
             if (differences.length !== 0) {
                 for (const diff of differences) {
                     await this.tree.updateTree(diff, this.extensionLink, extension.id);
