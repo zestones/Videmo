@@ -9,7 +9,6 @@ import FilterListIcon from '@mui/icons-material/FilterList';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import debounce from 'lodash.debounce';
 
-
 // Services & Api
 import FolderManager from "../../utilities/folderManager/FolderManager";
 import SortManager from "../../utilities/sortManager/SortManager";
