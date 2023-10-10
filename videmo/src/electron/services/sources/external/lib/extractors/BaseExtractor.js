@@ -41,7 +41,7 @@ class BaseExtractor {
 
     async get_data() {
         const data = await this._get_data();
-        
+
         if (!data.stream_url) {
             throw new Error('No stream_url found');
         }

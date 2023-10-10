@@ -71,7 +71,8 @@ class Vostfree {
             if (current.length) {
                 episodes.push({
                     link: this.#getLink($(`div[id=content_${current.attr('id')}]`).text(), server),
-                    name: name
+                    name: name,
+                    serverName: server
                 });
                 continue;
             }
@@ -82,7 +83,8 @@ class Vostfree {
             if (current.length) {
                 episodes.push({
                     link: this.#getLink($(`div[id=content_${current.attr('id')}]`).text(), alternateServer),
-                    name: name
+                    name: name,
+                    serverName: alternateServer
                 });
                 continue;
             }

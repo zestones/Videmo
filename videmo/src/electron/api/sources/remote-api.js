@@ -1,7 +1,7 @@
 const { ipcMain } = require('electron');
 
 const SourceManager = require('../../services/sources/SourceManager');
-const SibNet = require('../../services/sources/external/lib/extractors/sibnet/SibNet');
+const ExtractorManager = require('../../services/sources/external/lib/extractors/ExtractorManager');
 
 
 ipcMain.on('/read/remote/anime/', (event, args) => {
@@ -25,13 +25,13 @@ ipcMain.on('/search/remote/anime/', (event, args) => {
 // TODO : Create an extractor factory to handle all the extractors (SibNet, ...)
 ipcMain.on('/extract/remote/episode/', async (event, args) => {
     try {
-        const extractor = new SibNet(args.url, args.quality, args.headers);
-        await extractor.get_data();
+        const extractor = new ExtractorManager(args.url, args.serverName, args.quality, args.headers);
+        const extractedData = await extractor.get_data();
 
         const episode = {
-            stream_url: extractor.stream_url,
-            referer: extractor.referer,
-            meta: extractor.meta,
+            stream_url: extractedData.stream_url,
+            referer: extractedData.referer,
+            meta: extractedData.meta,
         };
 
         event.reply('/extract/remote/episode/', { success: true, data: episode });

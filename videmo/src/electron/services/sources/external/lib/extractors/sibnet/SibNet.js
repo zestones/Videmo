@@ -11,7 +11,7 @@ class SibNet extends BaseExtractor {
         try {
             const resp = await axios.get(this.url);
             const link = "https://video.sibnet.ru" + resp.data.match(/src:\s+?"(.*?mp4)"/)[1];
-    
+
             return {
                 'stream_url': link,
                 'referer': this.url

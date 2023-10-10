@@ -14,8 +14,8 @@ export default class RemoteApi {
         return makeRequest('/search/remote/anime/', { extension: extension, query: query });
     }
 
-    extractEpisode(extension, url, quality = null, headers = null) {
-        return makeRequest('/extract/remote/episode/', { extension: extension, url: url, quality: quality, headers: headers });
+    extractEpisode(extension, url, serverName, quality = null, headers = null) {
+        return makeRequest('/extract/remote/episode/', { extension: extension, url: url, serverName: serverName, quality: quality, headers: headers });
     }
 
     updateAnime(serie) {

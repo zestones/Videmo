@@ -18,6 +18,7 @@ export default class SourceManager {
             let animeList = await this.remote.scrapAnime(extension, page, mode);
 
             if (extension.name === 'FrenchAnime') {
+                console.log('retrieve images from electron backend');
                 const socket = io('http://localhost:4000');
                 socket.on('connect', () => console.log('Connected to Electron backend'));
 
@@ -28,8 +29,8 @@ export default class SourceManager {
 
                 animeList = await socketPromise;
                 socket.disconnect();
-                return animeList;
             }
+            return animeList;
         }
     }
 
@@ -41,8 +42,8 @@ export default class SourceManager {
         return await this.remote.searchAnime(extension, query);
     }
 
-    async extractEpisode(extension, url, quality = null, headers = null) {
-        return await this.remote.extractEpisode(extension, url, quality, headers);
+    async extractEpisode(extension, url, serverName, quality = null, headers = null) {
+        return await this.remote.extractEpisode(extension, url, serverName, quality, headers);
     }
 
     async updateSeries(series) {

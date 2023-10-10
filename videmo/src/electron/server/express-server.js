@@ -1,15 +1,12 @@
-// electron-backend.js
-
-const express = require('express');
-const http = require('http');
-const axios = require('axios');
 const socketIO = require('socket.io');
+const express = require('express');
+const axios = require('axios');
+const http = require('http');
 const path = require('path');
-const cors = require('cors'); // Import the cors middleware
+const cors = require('cors');
 
 const app = express();
 const server = http.createServer(app);
-
 
 const io = socketIO(server, {
     cors: {
@@ -30,27 +27,41 @@ app.use(cors({
 // Serve your React frontend (assuming it's built and in the 'build' directory)
 app.use(express.static(path.join(__dirname, 'build')));
 
+app.get('/stream-video', async (req, res) => {
+    const videoUrl = req.query.videoUrl; // Get the video URL from the query parameters
+    const referer = req.query.referer;   // Get the referer from the query parameters
+
+    console.log('videoUrl', videoUrl);
+    try {
+        // Send the request to the external video source
+        const response = await axios.get(videoUrl, {
+            responseType: 'stream', // Use stream as the response type
+            headers: {
+                Referer: referer,
+                'User-Agent':
+                    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36',
+            },
+        });
+
+        // Set the appropriate response headers
+        res.setHeader('Content-Type', 'video/mp4');
+        res.setHeader('Content-Disposition', 'inline; filename=video.mp4');
+        res.setHeader('Accept-Ranges', 'bytes');
+        res.setHeader('Content-Length', response.headers['content-length']);
+        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+        res.setHeader('Pragma', 'no-cache');
+        res.setHeader('Expires', 0);
+
+        // Stream the video content to the response
+        response.data.pipe(res);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Error streaming the video');
+    }
+});
 
 // Handle incoming socket connections
 io.on('connection', (socket) => {
-    socket.on('fetch-video', async ({ videoUrl, referer }) => {
-        try {
-            // Fetch the video from the external source
-            const response = await axios.get(videoUrl, {
-                headers: {
-                    'Referer': referer,
-                    'Host': 'video.sibnet.ru',
-                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36',
-                },
-                responseType: 'stream',
-            });
-
-            // Send the response url to the client
-            socket.emit('video-stream', { url: response.data.responseUrl });
-        } catch (error) {
-            console.error('Error fetching video:', error);
-        }
-    });
 
     socket.on('get-images', async ({ animes, referer }) => {
         console.log('get-images');

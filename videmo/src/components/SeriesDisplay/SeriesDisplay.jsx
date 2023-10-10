@@ -90,7 +90,7 @@ function SeriesDisplay({ serie, linkedSeries, onPlayClick, onRefresh, calledFrom
                 const extension = await extensionApi.readExtensionById(serie.extension_id);
                 if (!extension.local) {
                     try {
-                        const stream = await sourceManager.extractEpisode(extension, resumeEpisode.link);
+                        const stream = await sourceManager.extractEpisode(extension, resumeEpisode.link, resumeEpisode.serverName);
                         const updatedEpisode = { ...resumeEpisode, stream: stream };
                         setResumeEpisode(updatedEpisode);
                     } catch (error) {

@@ -9,17 +9,14 @@ import ReactPlayer from 'react-player'
 // Styles
 import styles from "./VideoPlayer.module.scss";
 
-import io from 'socket.io-client';
-
 function VideoPlayer({ episode, startTime, onCloseVideoPlayer }) {
     // State initialization
     const [isPlayerHovered, setIsPlayerHovered] = useState(false);
     const [playedTime, setPlayedTime] = useState(0);
-    const isSeekingToStartTime = useRef(false);
-    const [videoRef] = useState(React.createRef());
+    const [videoUrl, setVideoUrl] = useState('');
 
-    // Set the video url to "/" to avoid display the video player before the video is ready
-    const [videoUrl, setVideoUrl] = useState("/");
+    const [videoRef] = useState(React.createRef());
+    const isSeekingToStartTime = useRef(false);
 
     useEffect(() => {
         if (!episode.stream) {
@@ -28,33 +25,12 @@ function VideoPlayer({ episode, startTime, onCloseVideoPlayer }) {
     }, [episode]);
 
     useEffect(() => {
-        if (!episode.stream) return;
-
-        const socket = io('http://localhost:4000'); // TODO - Move to config file
-
-        const videoUrl = episode.stream.stream_url;
         const referer = episode.stream.referer;
+        const videoUrl = episode.stream.stream_url;
 
-        socket.on('connect', () => {
-            console.log('Connected to Electron backend');
-        });
-
-        // Send a request to Electron to fetch and stream the video
-        socket.emit('fetch-video', { videoUrl, referer });
-
-        socket.on('video-stream', (response) => {
-            if (videoRef.current) setVideoUrl(response.url);
-        });
-
-        socket.on('video-end', () => {
-            console.log('Video streaming ended');
-        });
-
-        // Clean up when the component unmounts
-        return () => {
-            socket.disconnect();
-        };
-    }, [videoRef, episode]);
+        const streamUrl = `http://localhost:4000/stream-video?videoUrl=${videoUrl}&referer=${referer}`;
+        setVideoUrl(streamUrl);
+    }, [episode]);
 
     useEffect(() => {
         return () => {
@@ -75,6 +51,7 @@ function VideoPlayer({ episode, startTime, onCloseVideoPlayer }) {
         const newTime = Math.min(videoRef.current.getDuration(), playedTime + 90);
         videoRef.current.seekTo(newTime);
     };
+
 
     return (
         <div className={styles.videoPlayer}>
@@ -111,6 +88,6 @@ function VideoPlayer({ episode, startTime, onCloseVideoPlayer }) {
             </div>
         </div>
     );
-}
+};
 
 export default VideoPlayer;

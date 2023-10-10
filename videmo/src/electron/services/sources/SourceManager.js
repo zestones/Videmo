@@ -27,7 +27,6 @@ class SourceManager {
     }
 
     async scrapAnime(source, page, mode) {
-        console.log(`Scraping ${source.name} for page ${page} and mode ${mode}`);
         return await this.sources[source.name.toLowerCase()][`get${mode.charAt(0).toUpperCase() + mode.slice(1)}Anime`](page);
     }
 
