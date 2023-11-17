@@ -28,37 +28,115 @@ app.use(cors({
 app.use(express.static(path.join(__dirname, 'build')));
 
 app.get('/stream-video', async (req, res) => {
-    const videoUrl = req.query.videoUrl; // Get the video URL from the query parameters
-    const referer = req.query.referer;   // Get the referer from the query parameters
+    const videoUrl = req.query.url;
+    const referer = req.query.referer;
+    const rangeHeader = req.headers.range;
 
-    console.log('videoUrl', videoUrl);
     try {
-        // Send the request to the external video source
+        const headers = {
+            Referer: referer,
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36',
+            Accept: 'video/mp4',
+        };
+
+        if (rangeHeader) {
+            headers.Range = rangeHeader;
+        }
+
         const response = await axios.get(videoUrl, {
-            responseType: 'stream', // Use stream as the response type
+            responseType: 'stream',
+            headers: headers,
+        });
+
+        res.writeHead(response.status, {
+            ...response.headers,
+            'Access-Control-Allow-Origin': '*',
+        });
+
+        response.data.pipe(res);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Error streaming video');
+    }
+});
+
+app.get('/stream-video', async (req, res) => {
+    const { referer, url } = req.query; // Récupérer l'URL de la vidéo et le referer depuis les paramètres de la requête
+
+    // Vérification de la validité du referer et de l'URL (à personnaliser selon vos besoins)
+    try {
+        // Utiliser Axios pour récupérer la vidéo depuis l'URL fournie
+        const response = await axios.get(url, {
+            headers:
+            {
+                Referer: referer,
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36',
+            },
+            responseType: 'stream', // Indiquer à Axios de retourner une réponse en streaming
+        });
+
+        // Envoyer la vidéo récupérée en tant que réponse à la requête actuelle
+        response.data.pipe(res);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Erreur lors de la récupération de la vidéo');
+    }
+
+});
+
+app.get('/stream-video', async (req, res) => {
+    const videoUrl = req.query.videoUrl;
+    const referer = req.query.referer;
+    const videoTotalLength = req.query.videoTotalLength;
+
+    const range = req.headers.range;
+
+    console.log('--> range', range);
+
+
+    try {
+        const response = await axios.get(videoUrl, {
+            responseType: 'stream',
             headers: {
                 Referer: referer,
-                'User-Agent':
-                    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36',
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36',
+                'Range': range,
+                'Accept-Ranges': 'bytes',
             },
         });
 
-        // Set the appropriate response headers
-        res.setHeader('Content-Type', 'video/mp4');
-        res.setHeader('Content-Disposition', 'inline; filename=video.mp4');
-        res.setHeader('Accept-Ranges', 'bytes');
-        res.setHeader('Content-Length', response.headers['content-length']);
-        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-        res.setHeader('Pragma', 'no-cache');
-        res.setHeader('Expires', 0);
 
-        // Stream the video content to the response
+        let start = 0;
+        let end = videoTotalLength - 1;
+
+        const rangeRegex = /bytes=(\d+)-(\d+)?/;
+        const rangeResult = range.match(rangeRegex);
+
+        if (rangeResult) {
+            start = parseInt(rangeResult[1], 10);
+            end = rangeResult[2] ? parseInt(rangeResult[2], 10) : videoTotalLength - 1;
+        }
+
+        const chunksize = (end - start) + 1;
+
+        res.writeHead(206, {
+            'Content-Range': `bytes ${start}-${end}/${videoTotalLength}`,
+            'Accept-Ranges': 'bytes',
+            'Content-Length': chunksize,
+            'Content-Type': 'video/mp4',
+            'Content-Disposition': 'inline; filename=video.mp4',
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': 0
+        });
+
         response.data.pipe(res);
     } catch (error) {
         console.error(error);
         res.status(500).send('Error streaming the video');
     }
 });
+
 
 // Handle incoming socket connections
 io.on('connection', (socket) => {

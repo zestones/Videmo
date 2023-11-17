@@ -17,6 +17,10 @@ $card-height: 300px;
     box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.2);
 
     list-style: none;
+    flex: 1 0 auto;
+
+    min-width: 150px; 
+    max-width: 300px; 
 
     &:active {
         transform: scale(0.95);
