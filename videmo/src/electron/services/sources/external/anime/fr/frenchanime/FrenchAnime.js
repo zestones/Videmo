@@ -11,7 +11,7 @@ class FrenchAnime {
         this.searchEnpoint = `${this.baseUrl}/?do=search&subaction=search&story=`;
 
         // List of servers to check for (the order is important, it will be used to prioritize the servers)
-        this.servers = ['sibnet', 'vido', 'streamdav', 'uqload'];
+        this.servers = ['sibnet', 'vido', 'uqload'];
         this.defaultServer = 'sibnet';
     }
 
