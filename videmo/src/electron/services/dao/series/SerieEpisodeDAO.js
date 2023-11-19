@@ -11,14 +11,15 @@ class SerieEpisodeDAO {
 
     // Insert a new episode in the Episode table
     async createEpisode(episode) {
-        const sql = `INSERT INTO Episode (name, link, viewed, bookmarked, played_time, hash) VALUES (?, ?, ?, ?, ?, ?)`;
+        const sql = `INSERT INTO Episode (name, link, viewed, bookmarked, played_time, hash, serverName) VALUES (?, ?, ?, ?, ?, ?, ?)`;
         const params = [
             episode.name,
             episode.link,
             this.dataTypesConverter.convertBooleanToInteger(episode.viewed),
             this.dataTypesConverter.convertBooleanToInteger(episode.bookmarked),
             episode.played_time,
-            episode.hash
+            episode.hash,
+            episode?.serverName
         ];
         await this.queryExecutor.executeAndCommit(sql, params);
         return await this.getEpisodeByLink(episode.link);
