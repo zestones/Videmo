@@ -22,7 +22,6 @@ ipcMain.on('/search/remote/anime/', (event, args) => {
         .catch((error) => event.reply('/search/remote/anime/', { success: false, error: error }));
 });
 
-// TODO : Create an extractor factory to handle all the extractors (SibNet, ...)
 ipcMain.on('/extract/remote/episode/', async (event, args) => {
     try {
         const extractor = new ExtractorManager(args.url, args.serverName, args.quality, args.headers);

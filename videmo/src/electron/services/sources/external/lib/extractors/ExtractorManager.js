@@ -1,5 +1,6 @@
 const Sibnet = require('./sibnet/SibNet');
 const Uqload = require('./uqload/Uqload');
+const Vido = require('./vido/Vido');
 
 class ExtractorManager {
     constructor(url, serverName, quality = null, headers = null) {
@@ -11,6 +12,7 @@ class ExtractorManager {
 
         this.extractors = {
             'sibnet': new Sibnet(this.url, this.quality, this.headers),
+            'vido': new Vido(this.url, this.quality, this.headers),
             'uqload': new Uqload(this.url, this.quality, this.headers),
         };
     }

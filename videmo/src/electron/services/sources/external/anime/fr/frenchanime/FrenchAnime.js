@@ -9,6 +9,10 @@ class FrenchAnime {
         this.lang = 'fr';
 
         this.searchEnpoint = `${this.baseUrl}/?do=search&subaction=search&story=`;
+
+        // List of servers to check for (the order is important, it will be used to prioritize the servers)
+        this.servers = ['sibnet', 'vido', 'streamdav', 'uqload'];
+        this.defaultServer = 'sibnet';
     }
 
     async getPopularAnime(page) {
@@ -29,9 +33,6 @@ class FrenchAnime {
     }
 
     async scrapeEpisodes(url) {
-        const defaultServer = 'streamdav'; // TODO : get server from config
-        const servers = ['streamdav', 'doods', 'uqload'];
-
         const response = await axios.get(url);
         const $ = cheerio.load(response.data);
         const epsDiv = $('div.tabs-sel.linkstab div.eps');
@@ -52,21 +53,20 @@ class FrenchAnime {
         const episodes = [];
         for (const result of results) {
             let serverLink = "";
-            let serverName = defaultServer;
+            let serverName = this.defaultServer;
 
-            // First, check if the default server is available in the list of servers
-            const defaultServerLink = result.servers.find(epServer => epServer.includes(defaultServer));
+            // Check servers based on priority
+            for (const server of this.servers) {
+                const foundServer = result.servers.find(epServer => epServer.includes(server));
 
-            if (defaultServerLink) {
-                serverLink = defaultServerLink;
-            } else {
-                // If the default server is not available, check if any of the specified servers are in the link
-                serverLink = result.servers.find(epServer => servers.some(server => epServer.includes(server)));
-                serverName = servers.find(server => serverLink.includes(server));
+                if (foundServer) {
+                    serverLink = foundServer;
+                    serverName = server;
+                    break; // Break loop on finding the highest priority server
+                }
             }
 
             if (serverLink) {
-                // TODO : return the server name for each episode (Vostfree)
                 episodes.push({ link: serverLink, name: `Episode ${result.episode}`, serverName: serverName });
             } else {
                 console.log(`No valid server found for episode ${result.episode}`);

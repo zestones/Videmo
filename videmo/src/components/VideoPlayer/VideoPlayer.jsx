@@ -27,6 +27,7 @@ function VideoPlayer({ episode, startTime, onCloseVideoPlayer }) {
 
     useEffect(() => {
         if (!episode.stream) {
+            console.log("stream undefined");
             console.log("episode", episode);
             setLink(episode.link);
             return;
@@ -35,14 +36,14 @@ function VideoPlayer({ episode, startTime, onCloseVideoPlayer }) {
         const referer = episode.stream.referer;
         const videoUrl = episode.stream.stream_url;
 
+        console.log("==>", episode);
+
         const streamUrl = `http://localhost:4000/stream-video?url=${videoUrl}&referer=${referer}`;
         setLink(streamUrl);
     }, [episode, startTime]);
 
     const handlePlayerReady = () => {
         if (startTime && !isSeekingToStartTime.current) {
-            // ! TODO : Fix BUG 
-            // Seek to the specified startTime when the player is ready and has not already sought to the startTime
             playerRef.current.seekTo(startTime);
             isSeekingToStartTime.current = true; // Set the flag to true to avoid seeking again
         }
