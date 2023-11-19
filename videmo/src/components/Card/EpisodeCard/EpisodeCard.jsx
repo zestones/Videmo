@@ -73,12 +73,6 @@ function EpisodeCard({ serie, episode, setEpisodes, checked, setChecked, exactly
     const handleOnPlayClick = async () => {
         if (!serie.extension.local) {
             try {
-                console.log(serie.extension);
-                console.log("--------------------");
-                console.log(currentEpisode.link);
-                console.log("--------------------");
-                console.log(currentEpisode.serverName);
-
                 const stream = await sourceManager.extractEpisode(serie.extension, currentEpisode.link, currentEpisode.serverName);
                 const updatedEpisode = { ...currentEpisode, stream: stream };
                 setCurrentEpisode(updatedEpisode);

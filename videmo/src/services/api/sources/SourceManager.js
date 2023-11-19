@@ -13,25 +13,28 @@ export default class SourceManager {
         this.local = new LocalApi();
     }
 
+    async getAnimeImages(animeList, extensionLink) {
+        const socket = io('http://localhost:4000');
+        socket.on('connect', () => console.log('Connected to Electron backend'));
+        const socketPromise = new Promise((resolve) => {
+            socket.emit('get-images', { animes: animeList, referer: extensionLink });
+            socket.on('images', (response) => resolve(response.animes));
+        });
+
+        const result = await socketPromise;
+        socket.disconnect();
+
+        return result;
+    }
+
     async scrapAnime(extension, page, mode = EXPLORE_MODES.POPULAR) {
-        if (!extension.local) {
-            let animeList = await this.remote.scrapAnime(extension, page, mode);
+        let animeList = await this.remote.scrapAnime(extension, page, mode);
 
-            if (extension.name === 'FrenchAnime') {
-                console.log('retrieve images from electron backend');
-                const socket = io('http://localhost:4000');
-                socket.on('connect', () => console.log('Connected to Electron backend'));
-
-                const socketPromise = new Promise((resolve) => {
-                    socket.emit('get-images', { animes: animeList, referer: extension.link });
-                    socket.on('images', (response) => resolve(response.animes));
-                });
-
-                animeList = await socketPromise;
-                socket.disconnect();
-            }
-            return animeList;
+        if (extension.name === 'FrenchAnime') {
+            animeList = this.getAnimeImages(animeList, extension.link);
         }
+
+        return animeList;
     }
 
     async scrapAnimeEpisodes(extension, url) {
@@ -39,7 +42,13 @@ export default class SourceManager {
     }
 
     async searchAnime(extension, query) {
-        return await this.remote.searchAnime(extension, query);
+        let animeList = await this.remote.searchAnime(extension, query);
+
+        if (extension.name === 'FrenchAnime') {
+            animeList = this.getAnimeImages(animeList, extension.link);
+        }
+
+        return animeList;
     }
 
     async extractEpisode(extension, url, serverName, quality = null, headers = null) {

@@ -11,12 +11,11 @@ import styles from "./VideoPlayer.module.scss";
 
 function VideoPlayer({ episode, startTime, onCloseVideoPlayer }) {
     const [isPlayerHovered, setIsPlayerHovered] = useState(false);
-    const [link, setLink] = useState(null);
     const [playedTime, setPlayedTime] = useState(0); // Local state to store the played time
+    const [link, setLink] = useState(null);
+    
     const playerRef = useRef(null); // Create a ref to the player
     const isSeekingToStartTime = useRef(false); 
-
-    const videoRef = useRef(null);
 
      useEffect(() => {
             return () => {
@@ -27,8 +26,6 @@ function VideoPlayer({ episode, startTime, onCloseVideoPlayer }) {
 
     useEffect(() => {
         if (!episode.stream) {
-            console.log("stream undefined");
-            console.log("episode", episode);
             setLink(episode.link);
             return;
         }

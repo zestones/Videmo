@@ -75,6 +75,24 @@ class FrenchAnime {
 
         return episodes.reverse();
     }
+
+    async search(query) {
+        const response = await axios.post(`${this.searchEnpoint}${query}`);
+
+        const $ = cheerio.load(response.data);
+        const animeList = [];
+
+        $('div#dle-content div.mov.clearfix').each((_, element) => {
+            const anime = {
+                link: $(element).find('div .mov-t.nowrap').attr('href'),
+                image: this.baseUrl + $(element).find('div .mov-i.img-box.aaa > img').attr('src'),
+                basename: $(element).find('div .mov-t.nowrap').text(),
+            };
+            animeList.push(anime);
+        });
+
+        return animeList;
+    }
 }
 
 module.exports = FrenchAnime;

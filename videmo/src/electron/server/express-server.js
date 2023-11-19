@@ -91,9 +91,6 @@ app.get('/stream-video', async (req, res) => {
 
     const range = req.headers.range;
 
-    console.log('--> range', range);
-
-
     try {
         const response = await axios.get(videoUrl, {
             responseType: 'stream',
