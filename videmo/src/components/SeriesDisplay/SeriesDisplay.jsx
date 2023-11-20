@@ -180,7 +180,7 @@ function SeriesDisplay({ serie, linkedSeries, onPlayClick, onRefresh, calledFrom
     };
 
     const shouldShowResumeButton = episodes.some(episode => !episode.viewed || episode.played_time);
-
+    
     return (
         <div className={styles.sourceContent}>
             {serie && (
