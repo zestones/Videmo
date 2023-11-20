@@ -6,12 +6,16 @@ const SerieTrackDAO = require('../dao/series/SerieTrackDAO');
 const SerieDAO = require('../dao/series/SerieDAO');
 
 const VostfreeApi = require('./external/anime/fr/vostfree/Vostfree');
+const FrenchAnime = require('./external/anime/fr/frenchanime/FrenchAnime');
+
 const LocalFileScrapper = require('./local/local-file-scrapper');
+
 
 class SourceManager {
     constructor() {
         this.sources = {
             vostfree: new VostfreeApi(),
+            frenchanime: new FrenchAnime(),
         }
 
         this.serieDAO = new SerieDAO();

@@ -8,6 +8,9 @@ class Vostfree {
         this.lang = 'fr';
 
         this.searchEnpoint = `${this.baseUrl}?do=search&subaction=search&story=`;
+
+        this.servers = ['sibnet', 'uqload'];
+        this.defaultServer = 'sibnet';
     }
 
     async getPopularAnime(page) {
@@ -53,9 +56,6 @@ class Vostfree {
     }
 
     async scrapeEpisodes(url) {
-        const server = 'sibnet'; // TODO : get server from config
-
-        const servers = ['sibnet', 'uqload'];
         const response = await axios.get(url);
 
         const $ = cheerio.load(response.data);
@@ -66,23 +66,25 @@ class Vostfree {
             const player = players.eq(i);
 
             const name = `Episode ${player.attr('id').split('_')[1]}`;
-            let current = player.find(`div.new_player_${server}`);
+            let current = player.find(`div.new_player_${this.defaultServer}`);
 
             if (current.length) {
                 episodes.push({
-                    link: this.#getLink($(`div[id=content_${current.attr('id')}]`).text(), server),
-                    name: name
+                    link: this.#getLink($(`div[id=content_${current.attr('id')}]`).text(), this.defaultServer),
+                    name: name,
+                    serverName: this.defaultServer
                 });
                 continue;
             }
 
-            const alternateServer = servers[Number(!servers.indexOf(server))];
+            const alternateServer = this.servers[Number(!this.servers.indexOf(this.defaultServer))];
             current = player.find(`div.new_player_${alternateServer}`);
 
             if (current.length) {
                 episodes.push({
                     link: this.#getLink($(`div[id=content_${current.attr('id')}]`).text(), alternateServer),
-                    name: name
+                    name: name,
+                    serverName: alternateServer
                 });
                 continue;
             }

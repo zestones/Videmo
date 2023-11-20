@@ -85,7 +85,6 @@ function CategoryModal({ series, onClose, onMoreClick, shouldUpdateSeries = fals
         try {
             onClose();
             await categoryApi.addSerieToCategories(series, checkedCategories, shouldUpdateSeries);
-
             showNotification("success", "La série a bien été déplacée avec succès");
 
             if (onMoreClick) onMoreClick();
