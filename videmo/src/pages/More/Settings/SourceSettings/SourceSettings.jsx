@@ -30,7 +30,7 @@ function SourceSettings() {
     useEffect(() => {
         // Get the list of extensions from the database
         extensionApi.readExtension()
-            .then((data) => setExtensions(data))
+            .then((data) => setExtensions(data.local))
             .catch((error) => showNotification("error", error.message));
     }, [extensionApi, showNotification]);
 

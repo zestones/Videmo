@@ -16,6 +16,18 @@ class SerieDAO {
         return await this.getSerieByLink(serie.link);
     }
 
+    // Create series in batch if missing
+    async createSeriesIfMissing(series) {
+        const sql = `INSERT OR IGNORE INTO Serie (basename, name, image, link, extension_id, parent_id, inLibrary) VALUES (?, ?, ?, ?, ?, ?, ?)`;
+        const params = [];
+
+        for (const serie of series) {
+            params.push([serie.basename, serie?.name, serie?.image, serie.link, serie.extension_id, serie?.parent_id, this.dataTypesConverter.convertBooleanToInteger(serie.inLibrary)]);
+        }
+
+        await this.queryExecutor.executeManyAndCommit(sql, params);
+    }
+
     // Read all series
     async getAllSeries() {
         const sql = `SELECT * FROM Serie`;
@@ -37,7 +49,7 @@ class SerieDAO {
         try {
             const sql = `SELECT * FROM Serie WHERE link = ?`;
             const params = [link];
-    
+
             const result = await this.queryExecutor.executeAndFetchOne(sql, params);
 
             if (result !== null && result !== undefined) {
@@ -151,7 +163,7 @@ class SerieDAO {
 
         const params = [extension.id];
         const result = await this.queryExecutor.executeAndFetchAll(sql, params);
-        
+
         return result.map(serie => {
             serie.inLibrary = this.dataTypesConverter.convertIntegerToBoolean(serie.inLibrary);
             return serie;
@@ -171,10 +183,13 @@ class SerieDAO {
                 SerieInfos.rating AS serieInfos_rating, 
                 SerieInfos.release_date AS serieInfos_releaseDate,
                 Genre.id AS genre_id,
-                Genre.name AS genre_name
+                Genre.name AS genre_name,
+                Extension.local AS extension_local,
+                Extension.name AS extension_name
             FROM Serie
             INNER JOIN SerieCategory ON Serie.id = SerieCategory.serie_id
-            INNER JOIN SerieInfos ON Serie.id = SerieInfos.serie_id
+            INNER JOIN Extension ON Extension.id = Serie.extension_id
+            LEFT JOIN SerieInfos ON Serie.id = SerieInfos.serie_id
             LEFT JOIN SerieGenre ON SerieInfos.serie_id = SerieGenre.serie_id
             LEFT JOIN Genre ON SerieGenre.genre_id = Genre.id
             WHERE SerieCategory.category_id = ?
@@ -256,6 +271,8 @@ class SerieDAO {
                 release_date: serie.serieInfos_releaseDate,
             };
 
+            serie.extension = { local: serie.extension_local, name: serie.extension_name };
+
             delete serie.serieInfos_id;
             delete serie.serieInfos_description;
             delete serie.serieInfos_duration;
@@ -268,6 +285,8 @@ class SerieDAO {
             delete serie.genre_id;
             delete serie.genre_name;
 
+            delete serie.extension_local;
+            delete serie.extension_name;
             return serie;
         });
     }

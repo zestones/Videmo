@@ -130,6 +130,7 @@ class SerieCategoryDAO {
     async updateSerieCategories(series, serieCategories) {
 
         const serieLinks = series.map((serie) => serie.link);
+
         // Clear existing categories for the series in the SerieCategory table
         await this.deleteSerieCategoryBySerieLinks(serieLinks);
         await this.serieDAO.updateSeriesInLibraryBySerieLinks(serieLinks, true);

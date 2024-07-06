@@ -1,18 +1,14 @@
+import { makeRequest } from "../../../utilities/utils/Utils";
+
 export default class DisplaySettingsApi {
+
+    // Retrieve the display mode
     readDisplayMode() {
-        window.api.send('/read/display/mode/');
-
-        return new Promise((resolve, reject) => {
-            window.api.receive('/read/display/mode/', (data) => data.success ? resolve(data.displayOption) : reject(data.error));
-        });
+        return makeRequest("/read/display/mode/");
     }
 
+    // Update the display mode
     updateDisplayMode(displayModeId) {
-        window.api.send('/update/display/mode/', { displayModeId: displayModeId });
-
-        return new Promise((resolve, reject) => {
-            window.api.receive('/update/display/mode/', (data) => data.success ? resolve(data.mode) : reject(data.error));
-        });
+        return makeRequest("/update/display/mode/", { displayModeId: displayModeId });
     }
-
 }

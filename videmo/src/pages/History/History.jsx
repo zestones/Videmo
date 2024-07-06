@@ -4,16 +4,16 @@ import React, { useState, useEffect, useMemo } from "react";
 import { HISTORY_STRING } from "../../utilities/utils/Constants";
 
 // Components
-import Header from "../../components/Header/Header";
-import VideoPlayer from "../../components/VideoPlayer/VideoPlayer";
 import SeriesDisplay from "../../components/SeriesDisplay/SeriesDisplay";
 import HistoryCard from "../../components/Card/HistoryCard/HistoryCard";
+import VideoPlayer from "../../components/VideoPlayer/VideoPlayer";
+import Header from "../../components/Header/Header";
 
 // Services
+import SortManager from "../../utilities/sortManager/SortManager";
 import HistoryApi from "../../services/api/track/HistoryApi";
 import TrackApi from "../../services/api/track/TrackApi";
-import Utils from "../../utilities/utils/Utils";
-import SortManager from "../../utilities/sortManager/SortManager";
+import { Utils } from "../../utilities/utils/Utils";
 
 // Styles
 import styles from "./History.module.scss";
@@ -35,8 +35,8 @@ function History() {
     const [episodes, setEpisodes] = useState([]);
 
 
+    // Fetch the history
     useEffect(() => {
-        // Fetch the history
         historyApi.retrieveAllEpisodeAndSerieHistory()
             .then((data) => setHistory(data))
             .catch((error) => console.error(error));
@@ -70,7 +70,7 @@ function History() {
         setShowVideoPlayer(false);
 
         if (episodeFinished) {
-            const updatedEpisode = { ...selectedEntry.episode, viewed: !selectedEntry.serie.currentEpisode.viewed, played_time: 0 };
+            const updatedEpisode = { ...selectedEntry.episode, viewed: !selectedEntry.episode.viewed, played_time: 0 };
             trackApi.addEpisodeToViewed(updatedEpisode, updatedEpisode);
         }
 
@@ -128,7 +128,7 @@ function History() {
                     </div>
                     {showVideoPlayer &&
                         <VideoPlayer
-                            link={selectedEntry.episode.link}
+                            episode={selectedEntry.episode}
                             startTime={selectedEntry.episode.played_time}
                             onCloseVideoPlayer={handleCloseVideoPlayer} />
                     }

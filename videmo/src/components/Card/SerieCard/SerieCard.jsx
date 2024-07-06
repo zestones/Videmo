@@ -9,7 +9,7 @@ import LabelIcon from '@mui/icons-material/Label';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 
 // Services
-import Utils from '../../../utilities/utils/Utils';
+import { Utils } from '../../../utilities/utils/Utils';
 import AniListService from '../../../services/extenal/AniListService';
 
 // Components
@@ -107,22 +107,25 @@ function SerieCard({ serie, onPlayClick, onMoreClick, isCalledFromExplore, isCal
                                     <PlayArrowIcon />
                                 </span>
                             </span>
-                            <span
-                                className={styles.iconContainer + " " + styles.checkboxIcon}
-                                onClick={(event) => {
-                                    event.stopPropagation();
-                                    setChecked(!checked);
-                                }}
-                            >
-                                <input
-                                    type="checkbox"
-                                    checked={checked}
-                                    onChange={(event) => {
+
+                            {isCalledFromLibrary && (
+                                <span
+                                    className={styles.iconContainer + " " + styles.checkboxIcon}
+                                    onClick={(event) => {
                                         event.stopPropagation();
                                         setChecked(!checked);
                                     }}
-                                />
-                            </span>
+                                >
+                                    <input
+                                        type="checkbox"
+                                        checked={checked}
+                                        onChange={(event) => {
+                                            event.stopPropagation();
+                                            setChecked(!checked);
+                                        }}
+                                    />
+                                </span>
+                            )}
                         </div>
                     </div>
                 </div>

@@ -1,11 +1,10 @@
+import { makeRequest } from "../../../utilities/utils/Utils";
+
 class FilterApi {
 
+    // Get all filters entries
     getAllFiltersEntries() {
-        window.api.send("/read/filters/");
-
-        return new Promise((resolve, reject) => {
-            window.api.receive("/read/filters/", (data) => data.success ? resolve(data.filters) : reject(data.error));
-        });
+        return makeRequest("/read/filters/");
     }
 }
 

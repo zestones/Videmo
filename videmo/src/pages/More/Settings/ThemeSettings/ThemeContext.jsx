@@ -15,8 +15,8 @@ export function ThemeProvider({ children }) {
         // Retrieve the initial theme when the component mounts
         themeApi
             .readActiveTheme()
-            .then((theme) => setTheme(theme.name))
-            .catch((err) => console.log(err));
+            .then((theme) => setTheme(theme))
+            .catch((err) => console.error(err));
     }, [themeApi]);
 
     const updateTheme = (newTheme) => setTheme(newTheme);

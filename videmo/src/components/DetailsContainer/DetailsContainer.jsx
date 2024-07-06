@@ -84,13 +84,13 @@ function DetailsContainer({ serie, calledFrom }) {
 
 
 	useEffect(() => {
-		serieApi.readSerieBySerieObject(serie.link)
+		serieApi.readSerieByLink(serie.link)
 			.then((serie) => setAlreadyInLibrary(!!serie?.inLibrary))
 			.catch((error) => showNotification('error', error.message));
 	}, [serieApi, serie, showNotification]);
 
 	const refreshSerieState = () => {
-		serieApi.readSerieBySerieObject(serie.link)
+		serieApi.readSerieByLink(serie.link)
 			.then((serie) => setAlreadyInLibrary(!!serie.inLibrary))
 			.catch((error) => showNotification('error', error.message));
 	}
@@ -101,8 +101,10 @@ function DetailsContainer({ serie, calledFrom }) {
 			setIsLoading(true);
 			setShowOptionPanel(false);
 			const infos = await aniList.searchAnimeInfosName(serie.basename);
-			await serieInfosApi.updateSerieInfos(serie.link, infos);
-			serieDataRef.current = { ...serie, infos: infos };
+			if (infos) {
+				await serieInfosApi.updateSerieInfos(serie.link, infos);
+				serieDataRef.current = { ...serie, infos: infos };
+			}
 		} catch (error) {
 			showNotification('error', error.message);
 		} finally {

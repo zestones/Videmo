@@ -9,24 +9,38 @@ import ReactPlayer from 'react-player'
 // Styles
 import styles from "./VideoPlayer.module.scss";
 
-
-function VideoPlayer({ link, startTime, onCloseVideoPlayer }) {
-    // State initialization
+function VideoPlayer({ episode, startTime, onCloseVideoPlayer }) {
     const [isPlayerHovered, setIsPlayerHovered] = useState(false);
     const [playedTime, setPlayedTime] = useState(0); // Local state to store the played time
+    const [link, setLink] = useState(null);
+    
     const playerRef = useRef(null); // Create a ref to the player
-    const isSeekingToStartTime = useRef(false); // Use a ref to track if seeking to startTime has already happened
+    const isSeekingToStartTime = useRef(false); 
+
+     useEffect(() => {
+            return () => {
+                // Reset the flag when the component is unmounted to allow seeking to startTime on next mount
+                isSeekingToStartTime.current = false;
+            };
+    }, []);
 
     useEffect(() => {
-        return () => {
-            // Reset the flag when the component is unmounted to allow seeking to startTime on next mount
-            isSeekingToStartTime.current = false;
-        };
-    }, []);
+        if (!episode.stream) {
+            setLink(episode.link);
+            return;
+        }
+
+        const referer = episode.stream.referer;
+        const videoUrl = episode.stream.stream_url;
+
+        console.log("==>", episode);
+
+        const streamUrl = `http://localhost:4000/stream-video?url=${videoUrl}&referer=${referer}`;
+        setLink(streamUrl);
+    }, [episode, startTime]);
 
     const handlePlayerReady = () => {
         if (startTime && !isSeekingToStartTime.current) {
-            // Seek to the specified startTime when the player is ready and has not already sought to the startTime
             playerRef.current.seekTo(startTime);
             isSeekingToStartTime.current = true; // Set the flag to true to avoid seeking again
         }
@@ -39,7 +53,7 @@ function VideoPlayer({ link, startTime, onCloseVideoPlayer }) {
     };
 
     return (
-        <div className={styles.videoPlayer}>
+         <div className={styles.videoPlayer}>
             <div
                 className={styles.videoWrapper}
                 onMouseEnter={() => setIsPlayerHovered(true)}

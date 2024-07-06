@@ -4,6 +4,8 @@
 const electron = require('electron');
 const Menu = electron.Menu;
 const path = require('path');
+const { server } = require('../src/electron/server/express-server');
+
 
 // Update the electron app automatically when a new version is available on GitHub releases
 // The update is done using the update-electron-app package
@@ -101,25 +103,41 @@ app.whenReady().then(() => {
     });
 });
 
+const PORT = 4000; // TODO : Move this to a config file
+server.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});
 
 // Import the IPC main event handlers for the renderer process (see preload.js)
 // handle the queries to the database using SQLite and the QueryExecutor class from the sqlite folder
 // handle the API requests using the API classes from the api folder
-require(path.resolve(__dirname, '..', 'src', 'electron', 'api', 'serie-category-api'));
-require(path.resolve(__dirname, '..', 'src', 'electron', 'api', 'extension-api'));
-require(path.resolve(__dirname, '..', 'src', 'electron', 'api', 'category-api'));
-require(path.resolve(__dirname, '..', 'src', 'electron', 'api', 'serie-api'));
-require(path.resolve(__dirname, '..', 'src', 'electron', 'api', 'track-serie-api'));
-require(path.resolve(__dirname, '..', 'src', 'electron', 'api', 'serie-history-api'));
-require(path.resolve(__dirname, '..', 'src', 'electron', 'api', 'scrappers', 'local-scrapper-api'));
-require(path.resolve(__dirname, '..', 'src', 'electron', 'api', 'ani-list-api'));
-require(path.resolve(__dirname, '..', 'src', 'electron', 'api', 'serie-infos-api'));
-require(path.resolve(__dirname, '..', 'src', 'electron', 'api', 'category-filter-api'));
-require(path.resolve(__dirname, '..', 'src', 'electron', 'api', 'sort-api'));
-require(path.resolve(__dirname, '..', 'src', 'electron', 'api', 'filter-api'));
-require(path.resolve(__dirname, '..', 'src', 'electron', 'api', 'theme-api'));
-require(path.resolve(__dirname, '..', 'src', 'electron', 'api', 'display-settings-api'));
-require(path.resolve(__dirname, '..', 'src', 'electron', 'api', 'display-mode-api'));
+
+// Serie Api
+require(path.resolve(__dirname, '..', 'src', 'electron', 'api', 'serie', 'serie-category-api'));
+require(path.resolve(__dirname, '..', 'src', 'electron', 'api', 'serie', 'serie-history-api'));
+require(path.resolve(__dirname, '..', 'src', 'electron', 'api', 'serie', 'serie-update-api'));
+require(path.resolve(__dirname, '..', 'src', 'electron', 'api', 'serie', 'serie-infos-api'));
+require(path.resolve(__dirname, '..', 'src', 'electron', 'api', 'serie', 'track-serie-api'));
+require(path.resolve(__dirname, '..', 'src', 'electron', 'api', 'serie', 'serie-api'));
+
+// Category Api
+require(path.resolve(__dirname, '..', 'src', 'electron', 'api', 'category', 'category-filter-api'));
+require(path.resolve(__dirname, '..', 'src', 'electron', 'api', 'category', 'category-api'));
+
+// Settings Api
+require(path.resolve(__dirname, '..', 'src', 'electron', 'api', 'settings', 'display-settings-api'));
+require(path.resolve(__dirname, '..', 'src', 'electron', 'api', 'settings', 'display-mode-api'));
+require(path.resolve(__dirname, '..', 'src', 'electron', 'api', 'settings', 'filter-api'));
+require(path.resolve(__dirname, '..', 'src', 'electron', 'api', 'settings', 'theme-api'));
+require(path.resolve(__dirname, '..', 'src', 'electron', 'api', 'settings', 'sort-api'));
+
+// Sources Api
+require(path.resolve(__dirname, '..', 'src', 'electron', 'api', 'sources', 'extension-api'));
+require(path.resolve(__dirname, '..', 'src', 'electron', 'api', 'sources', 'remote-api'));
+require(path.resolve(__dirname, '..', 'src', 'electron', 'api', 'sources', 'local-api'));
+
+// External Api
+require(path.resolve(__dirname, '..', 'src', 'electron', 'api', 'external', 'ani-list-api'));
 
 // handle local file system requests using the endpoint defined inside the local-file-service file from the sources/local folder
 // The local-file-service file is responsible for reading the local file system and returning the data to the renderer process

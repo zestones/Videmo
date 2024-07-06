@@ -9,6 +9,9 @@ import SerieApi from "../../services/api/serie/SerieApi";
 import TrackApi from "../../services/api/track/TrackApi";
 import CategoryFilterApi from "../../services/api/category/CategoryFilterApi";
 
+// Source
+import SourceManager from "../../services/api/sources/SourceManager";
+
 // Utilities
 import SortManager from "../../utilities/sortManager/SortManager";
 import FilterManager from "../../utilities/filterManager/FilterManager";
@@ -24,18 +27,22 @@ import styles from "./Library.module.scss";
 function Library() {
     // State initialization
     const [navigationHistory, setNavigationHistory] = useState([]);
+    const [updateCategoryName, setUpdateCategoryName] = useState();
     const [currentCategory, setCurrentCategory] = useState();
+    const [updateProgress, setUpdateProgress] = useState(0);
     const [filteredSeries, setFilteredSeries] = useState(); // Filtered array of series (used to display)
     const [searchValue, setSearchValue] = useState("");
     const [subSeries, setSubSeries] = useState([]); // Original array of series (not filtered)
     const [episodes, setEpisodes] = useState([]);
     const [serie, setSerie] = useState(null);
 
+
     // API initialization
     const serieApi = useMemo(() => new SerieApi(), []);
     const trackApi = useMemo(() => new TrackApi(), []);
     const sortManager = useMemo(() => new SortManager(), []);
     const filterManager = useMemo(() => new FilterManager(), []);
+    const sourceManager = useMemo(() => new SourceManager(), []);
     const categoryFilterApi = useMemo(() => new CategoryFilterApi(), []);
 
 
@@ -70,6 +77,16 @@ function Library() {
             .catch((error) => showNotification("error", `Error retrieving series: ${error.message}`));
     }
 
+    // Used to update the series when the update triggered
+    useEffect(() => {
+        if (updateProgress === 100) {
+            if (currentCategory.name === updateCategoryName && !serie) retrieveAllSeries();
+            setUpdateProgress(0);
+            showNotification("success", "Update completed");
+        }
+    }, [updateProgress, showNotification, currentCategory, updateCategoryName, serie, retrieveAllSeries]);
+
+    // Used to update the series when the category change
     useEffect(() => {
         if (!currentCategory) return;
 
@@ -130,6 +147,26 @@ function Library() {
         }
     }
 
+    const handleUpdateSeries = async () => {
+        try {
+            setUpdateCategoryName(currentCategory.name);
+            const totalSeries = serie ? [serie] : subSeries;
+            let completedSeries = 0;
+
+            for (const series of totalSeries) {
+                await sourceManager.updateSeries([series]);
+                completedSeries++;
+                const progressPercentage = Math.floor((completedSeries / totalSeries.length) * 100);
+                setUpdateProgress(progressPercentage);
+            }
+
+            setUpdateProgress(100);
+        } catch (error) {
+            showNotification("error", `Error updating series: ${error.message}`);
+            console.error(error);
+        }
+    }
+
     const filterFolders = sortManager.filterByKeyword(searchValue, filteredSeries || subSeries, 'basename', 'name');
 
     return (
@@ -141,11 +178,14 @@ function Library() {
                     onBack={serie ? onBackClick : null}
                     onRandom={() => filteredSeries.length > 0 && handleSerieSelection(filteredSeries[Math.floor(Math.random() * filteredSeries.length)])}
                     onFilter={setFilteredSeries}
+                    onUpdate={handleUpdateSeries}
+                    progress={updateProgress}
                     series={subSeries}
                     currentCategory={currentCategory}
                 />
 
                 <CategoryHeader selectedCategory={currentCategory} onSelectCategory={setCurrentCategory} />
+
                 <SeriesDisplay
                     linkedSeries={filterFolders}
                     episodes={episodes}

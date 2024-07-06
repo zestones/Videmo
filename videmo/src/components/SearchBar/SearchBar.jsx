@@ -18,12 +18,23 @@ function SearchBar({ onSearch }) {
 
     const handleSearchInputChange = (event) => {
         setSearchValue(event.target.value);
-        onSearch(event.target.value);
+        // TODO : call the search function only if we are in local extension or if we are in the library
+        // onSearch(event.target.value);
     };
 
     const handleSearchInputBlur = () => {
         if (searchValue === "") {
             setIsSearchActive(false);
+        }
+    };
+
+    const handleSearch = () => {
+        onSearch(searchValue);
+    };
+
+    const handleKeyDown = (event) => {
+        if (event.key === 'Enter') {
+            handleSearch();
         }
     };
 
@@ -44,6 +55,7 @@ function SearchBar({ onSearch }) {
                     value={searchValue}
                     onChange={handleSearchInputChange}
                     onBlur={handleSearchInputBlur}
+                    onKeyDown={handleKeyDown}
                 />
             )}
 

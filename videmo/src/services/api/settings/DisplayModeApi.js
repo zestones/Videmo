@@ -1,9 +1,10 @@
-export default class DisplayModeApi {
-    readAllDisplayMode() {
-        window.api.send('/read/all/display/mode/');
+import { makeRequest } from "../../../utilities/utils/Utils";
 
-        return new Promise((resolve, reject) => {
-            window.api.receive('/read/all/display/mode/', (data) => data.success ? resolve(data.modes) : reject(data.error));
-        });
+
+export default class DisplayModeApi {
+
+    // Retrieve the display mode entries
+    readAllDisplayMode() {
+        return makeRequest("/read/all/display/mode/");
     }
 }

@@ -1,4 +1,4 @@
-import Utils from "../../../utilities/utils/Utils";
+import { Utils } from "../../../utilities/utils/Utils";
 
 
 describe('Utils', () => {

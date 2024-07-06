@@ -49,7 +49,7 @@ class AniListService {
                 const anime = data?.data?.Page?.media?.[0];
                 if (anime) {
                     return {
-                        description: anime.description,
+                        description: anime?.description,
                         genres: this.formatGenres(anime.genres),
                         release_date: this.formatDate(anime.startDate),
                         duration: this.formatDuration(anime.duration),

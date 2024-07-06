@@ -1,19 +1,44 @@
-.container {  
+.container {
     margin: 0 auto;
     width: 90%;
 
     border-radius: 10px;
-    background-color: var(--tertiary-color);
+    background-color: var(--secondary-color);
+    margin-top: calc(var(--header-height) + 15px);
 
-    h3 {
-        margin: 0;
-        padding: 14px 22px;
-        color: var(--primary-text-color);
+    .tabs {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+
+        border-radius: 10px 10px 0 0;
+        background-color: var(--tertiary-color);
+
+        .tab {
+            margin: 0;
+            padding: 14px 22px;
+
+            &.active {
+                color: var(--selection-color);
+                border-bottom: 2px solid var(--selection-color);
+                background-color: var(--secondary-color);
+
+                &:first-child {
+                    border-radius: 10px 0 0 0;
+                }
+            }
+
+            &:hover {
+                cursor: pointer;
+            }
+        }
     }
+
 
     .extension {
         display: flex;
         align-items: center;
+
         padding: 14px 22px;
 
         .extensionIcon {
@@ -21,6 +46,7 @@
             height: 50px;
             border-radius: 50%;
             background-color: var(--primary-color);
+
             display: flex;
             align-items: center;
             justify-content: center;
@@ -28,6 +54,14 @@
             .localSource {
                 font-size: 1.9rem;
                 color: #ffdb6a;
+            }
+
+            img {
+                width: 30px;
+                height: 30px;
+
+                object-fit: cover;
+
             }
         }
 
@@ -40,8 +74,6 @@
         }
 
         &:hover {
-            background-color: var(--secondary-color);
-            border-radius: 7px;
             cursor: pointer;
         }
     }

@@ -1,3 +1,115 @@
 .explore {
-    margin-top: calc(var(--header-height) + 15px);
+    position: absolute;
+    margin-top: calc(var(--header-height) + 60px);
+
+    &.spaceOption {
+        margin-top: calc(var(--header-height) + 15px);
+    }
+
+    .optionsHeader {
+        position: fixed;
+        z-index: 9;
+        top: var(--header-height);
+
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+
+        width: 100%;
+        margin: 0 auto;
+        padding: 12px 24px 12px 24px;
+
+        border-bottom: 1px solid var(--secondary-text-color);
+        background-color: var(--tertiary-color);
+
+        .option {
+            display: flex;
+            align-items: center;
+
+            padding: 5px 10px;
+
+            background-color: var(--secondary-color);
+            border-radius: 5px;
+            margin-right: 22px;
+
+            .label {
+                font-weight: 500;
+                color: var(--white-color);
+                margin-left: 7px;
+            }
+
+            &:hover {
+                cursor: pointer;
+                background-color: rgba(255, 255, 255, 0.1);
+            }
+
+            &.active {
+                background-color: var(--selection-color);
+            }
+
+            &:not(.active) {
+                border: 1px solid var(--secondary-text-color);
+            }
+        }
+
+        .search {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            padding: 5px 10px;
+            margin-right: 10px;
+
+            border-radius: 5px;
+            cursor: pointer;
+
+            &:hover {
+                background-color: rgba(255, 255, 255, 0.1);
+            }
+
+            .icon {
+                font-size: 20px;
+                color: var(--white-color);
+            }
+
+            .text {
+                font-size: 14px;
+                font-weight: 500;
+                color: var(--white-color);
+                margin-left: 5px;
+            }
+        }
+    }
+}
+
+.loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 100%;
+    height: 100%;
+
+    position: relative;
+    top: -30px;
+
+    .loader {
+        border: 4px solid rgba(255, 255, 255, 0.3);
+        border-top: 4px solid #3498db;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 2s linear infinite;
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    }
+
 }

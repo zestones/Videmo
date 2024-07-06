@@ -18,6 +18,8 @@ async function initProductionDatabase() {
         await executeFile(tables);
         await executeFile(data);
     }
+
+    fs.chmodSync(production_database, '0666');
 }
 
 function executeFile(filePath) {

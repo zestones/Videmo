@@ -16,7 +16,7 @@ describe('SerieDAO', () => {
     beforeAll(async () => {
         mockQueryExecutor = new QueryExecutor();
         serieDAO = new SerieDAO();
-        
+
         serieDAO.queryExecutor = mockQueryExecutor;
         serieDAO.dataTypesConverter = new DataTypesConverter();
 
@@ -212,7 +212,8 @@ describe('SerieDAO', () => {
             link: 'serie1',
             extension_id: 1,
             inLibrary: true,
-            parent_id: 1
+            parent_id: 1,
+            extension: { name: 'Extension 1', local: 1 }
         };
 
         const serie2 = {
@@ -222,7 +223,8 @@ describe('SerieDAO', () => {
             link: 'serie2',
             extension_id: 1,
             inLibrary: true,
-            parent_id: 1
+            parent_id: 1,
+            extension: { name: 'Extension 1', local: 1 }
         };
 
         const serie3 = {
@@ -230,15 +232,19 @@ describe('SerieDAO', () => {
             name: 'Serie 3',
             image: 'image3.png',
             link: 'serie3',
-            extension_id: 1,
+            extension_id: 3,
             inLibrary: true,
-            parent_id: 1
+            parent_id: 1,
+            extension: { id: 3, name: 'Extension 3' }
         };
 
         // Insert series
         const insertedSerie1 = await serieDAO.createSerie(serie1);
         const insertedSerie2 = await serieDAO.createSerie(serie2);
         await serieDAO.createSerie(serie3);
+
+        // Insert extension
+        await mockQueryExecutor.executeAndCommit(`INSERT INTO Extension (id, name, local) VALUES (?, ?, ?)`, [1, 'Extension 1', 1]);
 
         // Insert category
         await mockQueryExecutor.executeAndCommit(`INSERT INTO Category (id, name) VALUES (?, ?)`, [category.id, category.name]);

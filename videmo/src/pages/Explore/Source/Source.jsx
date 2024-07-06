@@ -22,36 +22,57 @@ function Source({ handleSelectedExtension }) {
     const sortManager = useMemo(() => new SortManager(), []);
 
     // State initialization
-    const [extensions, setExtensions] = useState([]);
+    const [localExtensions, setLocalExtensions] = useState([]);
+    const [remoteExtensions, setRemoteExtensions] = useState([]);
     const [searchValue, setSearchValue] = useState("");
+    const [activeTab, setActiveTab] = useState("local");
 
     useEffect(() => {
         extensionApi.readExtension()
-            .then((data) => setExtensions(data))
+            .then((data) => {
+                setLocalExtensions(data.local)
+                setRemoteExtensions(data.external)
+            })
             .catch((error) => console.error(error));
     }, [extensionApi]);
 
     const handleSearch = (value) => setSearchValue(value);
-    const filterExtensions = sortManager.filterByKeyword(searchValue, extensions, 'name');
- 
+    const filterExtensions = sortManager.filterByKeyword(searchValue, activeTab === "local" ? localExtensions : remoteExtensions, 'name');
+
     return (
         <>
             <Header title="Explorer" onSearch={handleSearch} />
             <div className={styles.container}>
-                <h3>Source local</h3>
-                {filterExtensions.map((extension) => (
-                    <div
-                        key={extension.id}
-                        className={styles.extension}
-                        onClick={() => handleSelectedExtension(extension)}>
-                        <div className={styles.extensionIcon}>
-                            <FolderIcon className={styles.localSource} />
+                <div className={styles.tabs}>
+                    <h3
+                        className={`${styles.tab} ${activeTab === "local" ? styles.active : ""}`}
+                        onClick={() => setActiveTab("local")}
+                    >
+                        Source locale
+                    </h3>
+                    <h3
+                        className={`${styles.tab} ${activeTab === "remote" ? styles.active : ""}`}
+                        onClick={() => setActiveTab("remote")}
+                    >
+                        Source externe
+                    </h3>
+                </div>
+                <div className={styles.extensions}>
+                    {filterExtensions.map((extension) => (
+                        <div
+                            key={extension.id}
+                            className={styles.extension}
+                            onClick={() => handleSelectedExtension(extension)}
+                        >
+                            <div className={styles.extensionIcon}>
+                                <FolderIcon className={activeTab === "local" ? styles.localSource : styles.remoteSource} />
                             </div>
-                        <p className={styles.extensionName}>
-                            {extension.name}
-                        </p>
-                    </div>
-                ))}
+                            <p className={styles.extensionName}>
+                                {extension.name}
+                            </p>
+                        </div>
+                    ))}
+                </div>
             </div>
         </>
     );

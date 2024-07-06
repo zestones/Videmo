@@ -11,14 +11,15 @@ class SerieEpisodeDAO {
 
     // Insert a new episode in the Episode table
     async createEpisode(episode) {
-        const sql = `INSERT INTO Episode (name, link, viewed, bookmarked, played_time, hash) VALUES (?, ?, ?, ?, ?, ?)`;
+        const sql = `INSERT INTO Episode (name, link, viewed, bookmarked, played_time, hash, serverName) VALUES (?, ?, ?, ?, ?, ?, ?)`;
         const params = [
             episode.name,
             episode.link,
             this.dataTypesConverter.convertBooleanToInteger(episode.viewed),
             this.dataTypesConverter.convertBooleanToInteger(episode.bookmarked),
             episode.played_time,
-            episode.hash
+            episode.hash,
+            episode?.serverName
         ];
         await this.queryExecutor.executeAndCommit(sql, params);
         return await this.getEpisodeByLink(episode.link);
@@ -34,7 +35,13 @@ class SerieEpisodeDAO {
         const sql = `SELECT * FROM Episode WHERE link = ?`;
         const params = [link];
 
-        return await this.queryExecutor.executeAndFetchOne(sql, params);
+        const result = await this.queryExecutor.executeAndFetchOne(sql, params);
+        if (result) {
+            result.viewed = this.dataTypesConverter.convertIntegerToBoolean(result.viewed);
+            result.bookmarked = this.dataTypesConverter.convertIntegerToBoolean(result.bookmarked);
+        }
+
+        return result;
     }
 
     // Get all episodes by a serie link
@@ -42,9 +49,15 @@ class SerieEpisodeDAO {
         const sql = `SELECT Episode.* FROM Episode
                     INNER JOIN Track ON Episode.id = Track.episode_id
                     INNER JOIN Serie ON Serie.id = Track.serie_id
-                    WHERE Serie.link = ?`;
+                    WHERE Serie.link = ? ORDER BY CAST(SUBSTRING(Episode.name, 8) AS SIGNED);`;
         const params = [link];
-        return await this.queryExecutor.executeAndFetchAll(sql, params);
+
+        const result = await this.queryExecutor.executeAndFetchAll(sql, params);
+        return result.map(episode => {
+            episode.viewed = this.dataTypesConverter.convertIntegerToBoolean(episode.viewed);
+            episode.bookmarked = this.dataTypesConverter.convertIntegerToBoolean(episode.bookmarked);
+            return episode;
+        }).reverse();
     }
 
     // Get all episodes by a serie id
@@ -52,7 +65,7 @@ class SerieEpisodeDAO {
         const sql = `SELECT Episode.* FROM Episode
                     INNER JOIN Track ON Episode.id = Track.episode_id
                     INNER JOIN Serie ON Serie.id = Track.serie_id
-                    WHERE Serie.id = ?`;
+                    WHERE Serie.id = ? ORDER BY CAST(SUBSTRING(Episode.name, 8) AS SIGNED);`;
         const params = [serieId];
 
         const result = await this.queryExecutor.executeAndFetchAll(sql, params);
@@ -60,7 +73,7 @@ class SerieEpisodeDAO {
             episode.viewed = this.dataTypesConverter.convertIntegerToBoolean(episode.viewed);
             episode.bookmarked = this.dataTypesConverter.convertIntegerToBoolean(episode.bookmarked);
             return episode;
-        }).reverse(); // Reverse the array for the display
+        }).reverse();
     }
 
     // Get all episodes by a table of serie links
