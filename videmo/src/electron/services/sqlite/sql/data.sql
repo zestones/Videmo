@@ -110,3 +110,4 @@ INSERT INTO DisplayMode (name) VALUES ('list');
 -- Insert the external extension available
 INSERT INTO Extension (link, name, local, is_active) VALUES ('https://vostfree.ws/', 'Vostfree', 0, 1);
 INSERT INTO Extension (link, name, local, is_active) VALUES ('https://french-anime.com/', 'FrenchAnime', 0, 1);
+INSERT INTO Extension (link, name, local, is_active) VALUES ('https://yukiflix.pythonanywhere.com/', 'Yukiflix', 0, 1);

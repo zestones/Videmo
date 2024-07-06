@@ -7,6 +7,7 @@ const SerieDAO = require('../dao/series/SerieDAO');
 
 const VostfreeApi = require('./external/anime/fr/vostfree/Vostfree');
 const FrenchAnime = require('./external/anime/fr/frenchanime/FrenchAnime');
+const Yukiflix = require('./external/anime/fr/yukiflix/Yukiflix');
 
 const LocalFileScrapper = require('./local/local-file-scrapper');
 
@@ -16,6 +17,7 @@ class SourceManager {
         this.sources = {
             vostfree: new VostfreeApi(),
             frenchanime: new FrenchAnime(),
+            yukiflix: new Yukiflix(),
         }
 
         this.serieDAO = new SerieDAO();

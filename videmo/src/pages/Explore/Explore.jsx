@@ -208,6 +208,7 @@ function Explore() {
     const handleRemoteSourceExtension = async (clickedSerie) => {
         try {
             const episodes = await sourceManager.scrapAnimeEpisodes(selectedExtension, clickedSerie.link);
+            console.log(episodes)
             setEpisodes(episodes);
             setFolderContents([]);
 
