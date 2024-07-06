@@ -40,13 +40,40 @@
     "test-coverage": "set NODE_ENV=test&&react-scripts test -i --watchAll=false --coverage && npm run cleanup",
     "react-eject": "react-scripts eject",
     "react-build": "react-scripts build",
-    "electron-build": "electron-builder -c electron-builder.config.json --win --x64",
+    "electron-build": "electron-builder --win --x64",
     "build": "set NODE_ENV=production&& npm run init-database && npm run react-build && npm run electron-build",
     "postinstall": "electron-builder install-app-deps",
     "publish": "npm run build && electron-builder --publish always",
     "cleanup": "node scripts/cleanup.js",
     "init-database": "node scripts/database-prod.js",
     "debug": "node --inspect-brk ./node_modules/jest/bin/jest -i"
+  },
+  "build": {
+    "publish": {
+      "provider": "github",
+      "owner": "zestones",
+      "repo": "videmo"
+    },
+    "files": [
+      "public/",
+      "dist/",
+      "src/electron",
+      "build/",
+      "node_modules/"
+    ],
+    "extraResources": [
+      "public/videmo.db"
+    ],
+    "productName": "Videmo",
+    "win": {
+      "target": "nsis"
+    },
+    "nsis": {
+      "perMachine": true,
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true
+    }
   },
   "eslintConfig": {
     "extends": [
