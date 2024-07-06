@@ -17,9 +17,9 @@ async function initProductionDatabase() {
     if (!fs.existsSync(production_database)) {
         await executeFile(tables);
         await executeFile(data);
-
-        fs.chmodSync(production_database, '0666');
     }
+
+    fs.chmodSync(production_database, '0666');
 }
 
 function executeFile(filePath) {
