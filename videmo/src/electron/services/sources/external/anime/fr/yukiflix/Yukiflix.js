@@ -8,7 +8,7 @@ class Yukiflix {
         this.lang = 'fr';
 
         this.currentYear = new Date().getFullYear();
-        this.searchEnpoint = `${this.baseUrl}`;
+        this.searchEnpoint = `${this.baseUrl}/get_suggestions?q=`;
 
         this.servers = ['sibnet'];
         this.defaultServer = 'sibnet';
@@ -114,21 +114,13 @@ class Yukiflix {
     }
 
     async search(query) {
-        const response = await axios.post(`${this.searchEnpoint}${query}`);
+        const response = await axios.get(`${this.searchEnpoint}${query}`);
 
-        const $ = cheerio.load(response.data);
-        const results = $('div.search-result');
-
-        return results.map((_, result) => {
-            const basename = $(result).find('div.info div.title a').text().trim().replace(/\s+/g, ' ');
-            const cleanedBasename = basename.replace(/\s+(FRENCH|VOSTFR)\s*$/, '');
-
-            return {
-                basename: cleanedBasename,
-                link: $(result).find('div.info div.title a').attr('href'),
-                image: `${this.baseUrl}${$(result).find('span.image img').attr('src')}`,
-            };
-        }).get();
+        return response.data.suggestions.map(result => ({
+            basename: result.name,
+            link: result.url,
+            image: result.image_V,
+        }));
     }
 }
 
