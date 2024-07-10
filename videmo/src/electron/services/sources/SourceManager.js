@@ -9,6 +9,7 @@ const VostfreeApi = require('./external/anime/fr/vostfree/Vostfree');
 const FrenchAnime = require('./external/anime/fr/frenchanime/FrenchAnime');
 const Yukiflix = require('./external/anime/fr/yukiflix/Yukiflix');
 const Franime = require('./external/anime/fr/franime/Franime');
+const AnimesUltra = require('./external/anime/fr/animesultra/Animesultra');
 
 const LocalFileScrapper = require('./local/local-file-scrapper');
 
@@ -20,6 +21,7 @@ class SourceManager {
             frenchanime: new FrenchAnime(),
             yukiflix: new Yukiflix(),
             franime: new Franime(),
+            animesultra: new AnimesUltra(),
         }
 
         this.serieDAO = new SerieDAO();

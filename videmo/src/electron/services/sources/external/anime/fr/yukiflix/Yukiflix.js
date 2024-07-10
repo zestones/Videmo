@@ -101,7 +101,6 @@ class Yukiflix {
         return episodes;
     }
 
-
     async scrapeEpisodes(url) {
         let episodes = [];
         if (!url.includes('/watch/movie/')) {

@@ -30,7 +30,7 @@ export default class SourceManager {
     async scrapAnime(extension, page, mode = EXPLORE_MODES.POPULAR) {
         let animeList = await this.remote.scrapAnime(extension, page, mode);
 
-        if (extension.name === 'FrenchAnime') {
+        if (extension.name === 'FrenchAnime' || extension.name === 'AnimesUltra') {
             animeList = this.getAnimeImages(animeList, extension.link);
         }
 
