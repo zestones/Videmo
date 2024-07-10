@@ -8,7 +8,7 @@ class AnimesUltra {
         this.baseUrl = 'https://w4.animesultra.net';
         this.lang = 'fr';
 
-        this.searchEnpoint = `${this.baseUrl}?do=search&subaction=search?story=`;
+        this.searchEnpoint = `${this.baseUrl}/?do=search&subaction=search&story=`;
 
         this.servers = ['sibnet'];
         this.defaultServer = 'sibnet';
@@ -99,10 +99,11 @@ class AnimesUltra {
     }
 
     async search(query) {
-        const response = await axios.post(`${this.searchEnpoint}${query}`);
+        const response = await axios.get(`${this.searchEnpoint}${query}`);
 
         const $ = cheerio.load(response.data);
-        return this.#getAnimeList($);
+        const animeList = this.#getAnimeList($);
+        return animeList;
     }
 }
 
