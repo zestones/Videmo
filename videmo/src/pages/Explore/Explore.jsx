@@ -29,6 +29,8 @@ import Notification from "../../components/Notification/Notification";
 // Styles
 import styles from "./Explore.module.scss";
 
+import io from 'socket.io-client';
+
 
 function Explore() {
     // State initialization
@@ -68,11 +70,55 @@ function Explore() {
                 .then((data) => retrieveSeriesInLibraryByExtension(data.contents))
                 .catch((error) => setError({ message: error.message, type: "error" }));
         } else {
-            sourceManager.scrapAnime(selectedExtension, 1, EXPLORE_MODES.POPULAR)
-                .then((data) => retrieveSeriesInLibraryByExtension(data))
-                .catch((error) => setError({ message: error.message, type: "error" }));
+            async function fetchData() {
+                try {
+                    const data = await sourceManager.scrapAnime(selectedExtension, 1, EXPLORE_MODES.POPULAR)
+                    fetchAnimeImages(data, selectedExtension);
+                    retrieveSeriesInLibraryByExtension(data);
+                }
+                catch (error) {
+                    setError({ message: error.message, type: "error" });
+                }
+            }
+
+            fetchData();
         }
     }, [folderManager, categoryApi, sourceManager, selectedExtension, retrieveSeriesInLibraryByExtension]);
+
+    const fetchAnimeImages = async (animeList, extension) => {
+        if (extension.name !== 'FrenchAnime' && extension.name !== 'AnimesUltra') return;
+
+        const socket = io('http://localhost:4000');
+
+        socket.on('connect', () => {
+            socket.emit('get-images', { animes: animeList, referer: extension.link });
+        });
+
+        socket.on('image-update', (response) => {
+            setFolderContents((prevContents) => {
+                const updatedContents = [...prevContents];
+                const index = updatedContents.findIndex((content) => content.link === response.anime.link);
+                if (index === -1) return updatedContents;
+                updatedContents[index] = { ...updatedContents[index], image: response.anime.image };
+                return updatedContents;
+            });
+
+            setHistory((prevHistory) => {
+                const updatedHistory = [...prevHistory];
+                const index = updatedHistory[updatedHistory.length - 1].content.findIndex((content) => content.link === response.anime.link);
+                if (index === -1) return updatedHistory;
+                updatedHistory[updatedHistory.length - 1].content[index] = {
+                    ...updatedHistory[updatedHistory.length - 1].content[index],
+                    image: response.anime.image
+                };
+                return updatedHistory;
+            });
+        });
+
+        return () => {
+            socket.disconnect();
+        };
+    }
 
     const fetchNextPage = useCallback(() => {
         if (loading || activeOption === EXPLORE_MODES.FILTER) return;
@@ -80,6 +126,7 @@ function Explore() {
 
         sourceManager.scrapAnime(selectedExtension, currentPage + 1, activeOption)
             .then((nextPage) => {
+                fetchAnimeImages(nextPage, selectedExtension);
                 categoryApi.readAllSeriesInLibraryByExtension(selectedExtension)
                     .then((series) => {
                         const formattedSeries = folderManager.mapFolderContentsWithMandatoryFields(nextPage, series, selectedExtension);
@@ -224,6 +271,8 @@ function Explore() {
             if (selectedExtension.local) setFolderContents(sortManager.filterByKeyword(searchValue, folderContents, 'basename'));
             else {
                 const searchResult = await sourceManager.searchAnime(selectedExtension, searchValue);
+                fetchAnimeImages(searchResult, selectedExtension);
+
                 const seriesInLibrary = await categoryApi.readAllSeriesInLibraryByExtension(selectedExtension);
                 const formattedSeries = folderManager.mapFolderContentsWithMandatoryFields(searchResult, seriesInLibrary, selectedExtension);
                 setFolderContents(formattedSeries);
@@ -239,6 +288,7 @@ function Explore() {
         try {
             window.scrollTo(0, 0);
             const series = await sourceManager.scrapAnime(selectedExtension, 1, mode);
+            fetchAnimeImages(series, selectedExtension);
 
             retrieveSeriesInLibraryByExtension(series);
             setActiveOption(mode);

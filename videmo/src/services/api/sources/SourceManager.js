@@ -4,36 +4,14 @@ import LocalApi from './LocalApi.js'
 
 import { EXPLORE_MODES } from '../../../utilities/utils/Constants.js'
 
-import io from 'socket.io-client';
-
-
 export default class SourceManager {
     constructor() {
         this.remote = new RemoteApi();
         this.local = new LocalApi();
     }
 
-    async getAnimeImages(animeList, extensionLink) {
-        const socket = io('http://localhost:4000');
-        socket.on('connect', () => console.log('Connected to Electron backend'));
-        const socketPromise = new Promise((resolve) => {
-            socket.emit('get-images', { animes: animeList, referer: extensionLink });
-            socket.on('images', (response) => resolve(response.animes));
-        });
-
-        const result = await socketPromise;
-        socket.disconnect();
-
-        return result;
-    }
-
     async scrapAnime(extension, page, mode = EXPLORE_MODES.POPULAR) {
         let animeList = await this.remote.scrapAnime(extension, page, mode);
-
-        if (extension.name === 'FrenchAnime' || extension.name === 'AnimesUltra') {
-            animeList = this.getAnimeImages(animeList, extension.link);
-        }
-
         return animeList;
     }
 
@@ -43,11 +21,6 @@ export default class SourceManager {
 
     async searchAnime(extension, query) {
         let animeList = await this.remote.searchAnime(extension, query);
-
-        if (extension.name === 'FrenchAnime') {
-            animeList = this.getAnimeImages(animeList, extension.link);
-        }
-
         return animeList;
     }
 
