@@ -64,28 +64,30 @@ app.get('/stream-video', async (req, res) => {
 io.on('connection', (socket) => {
 
     socket.on('get-images', async ({ animes, referer }) => {
-        console.log('get-images');
         for (let anime of animes) {
-            if (anime.image.startsWith('data:')) continue; // Si l'image est déjà en base64, passez à l'élément suivant
+            if (anime.image.startsWith('data:')) {
+                socket.emit('image-update', { anime });
+                continue;
+            }
 
             try {
                 // Effectuez la requête HTTP vers le serveur distant avec l'en-tête Referer
                 const response = await axios.get(anime.image, {
                     headers: { Referer: referer },
-                    responseType: 'arraybuffer', // Utilisez responseType 'arraybuffer' pour obtenir les données binaires de l'image
+                    responseType: 'arraybuffer',
                 });
                 anime.image = `data:image/jpeg;base64, ${Buffer.from(response.data, 'binary').toString('base64')}`;
             } catch (error) {
-                console.error('Error on anime image:', anime);
                 console.error('Error fetching image:', error);
+                anime.image = null;
             }
 
+            socket.emit('image-update', { anime });
         }
-
-        socket.emit('images', { animes });
     });
 
     socket.on('disconnect', () => console.log('Client disconnected'));
 });
+
 
 module.exports = { server };

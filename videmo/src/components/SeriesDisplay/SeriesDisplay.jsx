@@ -180,7 +180,7 @@ function SeriesDisplay({ serie, linkedSeries, onPlayClick, onRefresh, calledFrom
     };
 
     const shouldShowResumeButton = episodes.some(episode => !episode.viewed || episode.played_time);
-    
+
     return (
         <div className={styles.sourceContent}>
             {serie && (
@@ -190,7 +190,7 @@ function SeriesDisplay({ serie, linkedSeries, onPlayClick, onRefresh, calledFrom
             <div className={styles.seriesContainer}>
                 {linkedSeries.map((linkedSerie, index) => (
                     <SerieCard
-                        key={linkedSerie.link}
+                        key={linkedSerie.link + ' ' + index}
                         serie={linkedSerie}
                         onPlayClick={onPlayClick}
                         onMoreClick={onRefresh}
