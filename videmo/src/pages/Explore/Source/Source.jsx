@@ -4,16 +4,19 @@ import PropTypes from "prop-types";
 // External
 import FolderIcon from '@mui/icons-material/Folder';
 import MiscellaneousServicesIcon from '@mui/icons-material/MiscellaneousServices';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
 // Services
 import ExtensionApi from "../../../services/api/extension/ExtensionApi";
 
 // Utilities
 import SortManager from '../../../utilities/sortManager/SortManager';
+import SourceManager from "../../../services/api/sources/SourceManager";
 
 // Components
 import Header from "../../../components/Header/Header";
 import Extension from "./Extension/Extension";
+import SeriesDisplay from "../../../components/SeriesDisplay/SeriesDisplay";
 
 // Styles
 import styles from "./Source.module.scss";
@@ -22,28 +25,32 @@ function Source({ handleSelectedExtension }) {
     // Utilities and services initialization
     const extensionApi = useMemo(() => new ExtensionApi(), []);
     const sortManager = useMemo(() => new SortManager(), []);
+    const sourceManager = useMemo(() => new SourceManager(), []);
 
     // State initialization
-    const [extensions, setExtensions] = useState({ local: [] });
-    const [searchValue, setSearchValue] = useState("");
+    const [extensions, setExtensions] = useState({ local: [], external: [] });
     const [activeTab, setActiveTab] = useState("source");
+    const [searchResults, setSearchResults] = useState({});
 
     useEffect(() => {
         extensionApi.readExtension()
-            .then((data) => {
-                console.log(data);
-                data.local = sortManager.sortByName(data.local);
-                data.external = sortManager.sortByName(data.external);
-                setExtensions(data)
-            })
+            .then((data) => setExtensions({
+                local: sortManager.sortByName(data.local), external: sortManager.sortByName(data.external)
+            }))
             .catch((error) => console.error(error));
     }, [extensionApi, sortManager]);
 
-    const handleSearch = (value) => setSearchValue(value);
+    const search = async (value) => {
+        if (value === "") return {};
+        for (const source of extensions.external) {
+            const result = await sourceManager.searchAnime(source, value);
+            setSearchResults((prev) => ({ ...prev, [source.id]: result }));
+        }
+    };
 
     return (
         <>
-            <Header title="Explorer" onSearch={handleSearch} />
+            <Header title="Explorer" onSearch={search} />
             <div className={styles.container}>
 
                 <div className={styles.tabs}>
@@ -57,13 +64,42 @@ function Source({ handleSelectedExtension }) {
                     </button>
                 </div>
 
-                {activeTab === "source" && (
+                {(activeTab === "source" && !Object.keys(searchResults).length) && (
                     <Extension
                         extensions={extensions}
                         handleSelectedExtension={handleSelectedExtension}
                     />
                 )}
-            </div>
+
+                {(activeTab === "source" && Object.keys(searchResults).length > 0) && (
+                    <div className={styles.searchResults}>
+                        {Object.keys(searchResults).map((key) => (
+                            <div key={key} className={styles.searchResult}>
+                                <button className={styles.extensionSearch}>
+                                    <FolderIcon className={styles.extensionIcon} />
+                                    <h2>{extensions.external.find((ext) => ext.id == key ? ext : null)?.name}</h2>
+                                    <ArrowForwardIcon className={styles.arrowIcon} />
+                                </button>
+                                <ul className={styles.searchResultList}>
+                                    {/* TODO: display and handle event of series */}
+                                    <SeriesDisplay
+                                        linkedSeries={searchResults[key]}
+                                        extension={extensions.external.find((ext) => ext.id == key ? ext : null)}
+                                        episodes={[]}
+                                        serie={null}
+                                        onPlayClick={() => { }}
+                                        onRefresh={() => { }}
+                                        calledFrom={"source"}
+                                        setEpisodes={() => { }}
+                                    />
+
+                                </ul>
+
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div >
         </>
     );
 }

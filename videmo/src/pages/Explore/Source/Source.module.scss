@@ -28,4 +28,57 @@
             }
         }
     }
+
+    .searchResults {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+
+        width: 100%;
+
+        .searchResult {
+            width: 100%;
+
+            .extensionSearch {
+                display: flex;
+                align-items: center;
+                justify-content: flex-start;
+
+                width: 100%;
+
+                .extensionIcon {
+                    width: 50px;
+                    height: 50px;
+
+                    margin-right: 10px;
+                }
+
+                h2 {
+                    font-size: 1.2rem;
+                    font-weight: 700;
+                    color: var(--primary-text-color);
+                }
+
+                .arrowIcon {
+                    width: 30px;
+                    height: 30px;
+
+                    margin-left: auto;
+                }
+            }
+
+            .searchResultList {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: flex-start;
+
+                width: 100%;
+                padding: 22px 0;
+            }
+
+
+        }
+    }
+
+
 }

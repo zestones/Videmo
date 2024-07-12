@@ -8,6 +8,8 @@ import styles from "./Extension.module.scss";
 
 
 function Extension({ extensions, handleSelectedExtension }) {
+    console.log("extensions");
+    console.log(extensions);
     return (
         <div className={styles.extensions}>
             {extensions?.local?.length === 0 ? (
