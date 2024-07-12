@@ -13,15 +13,15 @@ function VideoPlayer({ episode, startTime, onCloseVideoPlayer }) {
     const [isPlayerHovered, setIsPlayerHovered] = useState(false);
     const [playedTime, setPlayedTime] = useState(0); // Local state to store the played time
     const [link, setLink] = useState(null);
-    
-    const playerRef = useRef(null); // Create a ref to the player
-    const isSeekingToStartTime = useRef(false); 
 
-     useEffect(() => {
-            return () => {
-                // Reset the flag when the component is unmounted to allow seeking to startTime on next mount
-                isSeekingToStartTime.current = false;
-            };
+    const playerRef = useRef(null); // Create a ref to the player
+    const isSeekingToStartTime = useRef(false);
+
+    useEffect(() => {
+        return () => {
+            // Reset the flag when the component is unmounted to allow seeking to startTime on next mount
+            isSeekingToStartTime.current = false;
+        };
     }, []);
 
     useEffect(() => {
@@ -32,8 +32,6 @@ function VideoPlayer({ episode, startTime, onCloseVideoPlayer }) {
 
         const referer = episode.stream.referer;
         const videoUrl = episode.stream.stream_url;
-
-        console.log("==>", episode);
 
         const streamUrl = `http://localhost:4000/stream-video?url=${videoUrl}&referer=${referer}`;
         setLink(streamUrl);
@@ -53,7 +51,7 @@ function VideoPlayer({ episode, startTime, onCloseVideoPlayer }) {
     };
 
     return (
-         <div className={styles.videoPlayer}>
+        <div className={styles.videoPlayer}>
             <div
                 className={styles.videoWrapper}
                 onMouseEnter={() => setIsPlayerHovered(true)}
