@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useEffect, useCallback, useMemo, useRef } from "react";
+import PropTypes from "prop-types";
 
 // Constants
-import { EXPLORE_STRING, LIBRARY_STRING } from "../../utilities/utils/Constants";
+import { EXPLORE_STRING, LIBRARY_STRING, SOURCE_STRING } from "../../utilities/utils/Constants";
 
 // External
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
@@ -32,6 +33,12 @@ function SeriesDisplay({ serie, linkedSeries, onPlayClick, onRefresh, calledFrom
     const extensionApi = useMemo(() => new ExtensionApi(), []);
     const sourceManager = useMemo(() => new SourceManager(), []);
 
+    // Refs initialization
+    const containerRef = useRef(null);
+    const [isDragging, setIsDragging] = useState(false);
+    const [startX, setStartX] = useState(0);
+    const [scrollLeft, setScrollLeft] = useState(0);
+
     // State initialization
     const [openVideoPlayer, setOpenVideoPlayer] = useState(false);
     const [resumeEpisode, setResumeEpisode] = useState(null);
@@ -46,6 +53,42 @@ function SeriesDisplay({ serie, linkedSeries, onPlayClick, onRefresh, calledFrom
 
     // checked episodes initialization
     const [checkedEpisodes, setCheckedEpisodes] = useState([]);
+
+    useEffect(() => {
+        if (document.getElementById('categoryModal')) return;
+
+        const container = containerRef.current;
+
+        const handleMouseDown = (e) => {
+            setIsDragging(true);
+            setStartX(e.pageX - container.offsetLeft);
+            setScrollLeft(container.scrollLeft);
+        };
+
+        const handleMouseLeave = () => setIsDragging(false);
+        const handleMouseUp = () => setIsDragging(false);
+
+        const handleMouseMove = (e) => {
+            if (!isDragging) return;
+            e.preventDefault();
+            const x = e.pageX - container.offsetLeft;
+            const walk = (x - startX) * 3; // scroll-fast
+            container.scrollLeft = scrollLeft - walk;
+        };
+
+        // Mouse events
+        container.addEventListener('mousedown', handleMouseDown);
+        container.addEventListener('mouseleave', handleMouseLeave);
+        container.addEventListener('mouseup', handleMouseUp);
+        container.addEventListener('mousemove', handleMouseMove);
+
+        return () => {
+            container.removeEventListener('mousedown', handleMouseDown);
+            container.removeEventListener('mouseleave', handleMouseLeave);
+            container.removeEventListener('mouseup', handleMouseUp);
+            container.removeEventListener('mousemove', handleMouseMove);
+        };
+    }, [isDragging, startX, scrollLeft]);
 
     useEffect(() => {
         setCheckedSeries(linkedSeries.map(() => false));
@@ -187,8 +230,8 @@ function SeriesDisplay({ serie, linkedSeries, onPlayClick, onRefresh, calledFrom
                 <DetailsContainer serie={serie} calledFrom={calledFrom} />
             )}
 
-            <div className={styles.seriesContainer}>
-                {linkedSeries.map((linkedSerie, index) => (
+            <div className={styles.seriesContainer + (calledFrom === SOURCE_STRING ? ` ${styles.source}` : ` ${styles.explore}`)} ref={containerRef}>
+                {(linkedSeries.length > 0) && (linkedSeries.map((linkedSerie, index) => (
                     <SerieCard
                         key={linkedSerie.link + ' ' + index}
                         serie={linkedSerie}
@@ -200,7 +243,14 @@ function SeriesDisplay({ serie, linkedSeries, onPlayClick, onRefresh, calledFrom
                         checked={checkedSeries[index] || false}
                         setChecked={() => toggleCheckedSeries(index)}
                     />
-                ))}
+                )))}
+
+                {linkedSeries.length === 0 && episodes.length === 0 && (
+                    <div className={styles.noSeries}>
+                        <h1>Aucune série trouvée</h1>
+                    </div>
+                )}
+
             </div>
 
             <div className={styles.episodesContainer}>
@@ -256,5 +306,15 @@ function SeriesDisplay({ serie, linkedSeries, onPlayClick, onRefresh, calledFrom
         </div>
     );
 }
+
+SeriesDisplay.propTypes = {
+    serie: PropTypes.object,
+    linkedSeries: PropTypes.array,
+    episodes: PropTypes.array,
+    onPlayClick: PropTypes.func,
+    onRefresh: PropTypes.func,
+    calledFrom: PropTypes.string,
+    setEpisodes: PropTypes.func
+};
 
 export default SeriesDisplay;

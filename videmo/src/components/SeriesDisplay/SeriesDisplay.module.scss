@@ -1,16 +1,44 @@
 .sourceContent {
-    margin: 0;
     width: 100%;
+    margin: 0;
 
     .seriesContainer {
         margin-top: 12px;
         padding: 0 8px;
-
         width: 100%;
 
         display: flex;
-        flex-wrap: wrap;
         justify-content: flex-start;
+        overflow: hidden;
+
+        &.explore {
+            flex-wrap: wrap;
+        }
+
+        &.source {
+            overflow-x: auto;
+            overflow-y: hidden;
+            white-space: nowrap;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        &.source::-webkit-scrollbar {
+            display: none;
+        }
+
+        .noSeries {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            h1 {
+                margin: 0;
+                color: var(--danger-color);
+                font-weight: bold;
+            }
+        }
     }
 
     .episodesContainer {

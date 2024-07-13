@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
+import propTypes from "prop-types";
+
 import { useNotification } from "../../components/Notification/NotificationProvider";
 
 // External
@@ -84,6 +86,9 @@ function CategoryModal({ series, onClose, onMoreClick, shouldUpdateSeries = fals
     const handleAddToCategory = async () => {
         try {
             onClose();
+            console.log(series);
+            console.log(checkedCategories);
+            console.log(shouldUpdateSeries);
             await categoryApi.addSerieToCategories(series, checkedCategories, shouldUpdateSeries);
             showNotification("success", "La série a bien été déplacée avec succès");
 
@@ -106,7 +111,7 @@ function CategoryModal({ series, onClose, onMoreClick, shouldUpdateSeries = fals
     };
 
     return (
-        <div className={styles.modal}>
+        <div className={styles.modal} id="categoryModal">
             <div className={styles.modalContent}>
                 <div className={styles.modalHeader}>
                     <h2 className={styles.modalTitle}>Déplacer vers une catégorie</h2>
@@ -142,5 +147,12 @@ function CategoryModal({ series, onClose, onMoreClick, shouldUpdateSeries = fals
         </div>
     );
 }
+
+CategoryModal.propTypes = {
+    series: propTypes.array.isRequired,
+    onClose: propTypes.func.isRequired,
+    onMoreClick: propTypes.func,
+    shouldUpdateSeries: propTypes.bool
+};
 
 export default CategoryModal;

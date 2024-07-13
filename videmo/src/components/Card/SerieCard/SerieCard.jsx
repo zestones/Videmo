@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import propTypes from 'prop-types';
 
 // Context
 import { useDisplayMode } from "../../FilterPanel/DisplayOptions/DisplayModeContext";
@@ -142,5 +143,16 @@ function SerieCard({ serie, onPlayClick, onMoreClick, isCalledFromExplore, isCal
         </>
     );
 }
+
+SerieCard.propTypes = {
+    serie: propTypes.object.isRequired,
+    onPlayClick: propTypes.func.isRequired,
+    onMoreClick: propTypes.func,
+    isCalledFromExplore: propTypes.bool,
+    isCalledFromLibrary: propTypes.bool,
+    isOptionBarActive: propTypes.bool,
+    checked: propTypes.bool,
+    setChecked: propTypes.func
+};
 
 export default SerieCard;

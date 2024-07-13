@@ -1,6 +1,10 @@
 import React, { useEffect, useState, useMemo } from "react";
 import PropTypes from "prop-types";
 
+// Constants
+import { SOURCE_STRING } from "../../../utilities/utils/Constants";
+
+
 // External
 import FolderIcon from '@mui/icons-material/Folder';
 import MiscellaneousServicesIcon from '@mui/icons-material/MiscellaneousServices';
@@ -89,7 +93,8 @@ function Source({ handleSelectedExtension }) {
                                         serie={null}
                                         onPlayClick={() => { }}
                                         onRefresh={() => { }}
-                                        calledFrom={"source"}
+                                        // eslint-disable-next-line no-undef
+                                        calledFrom={SOURCE_STRING}
                                         setEpisodes={() => { }}
                                     />
 
