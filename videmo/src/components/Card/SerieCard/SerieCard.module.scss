@@ -7,20 +7,18 @@ $card-height: 300px;
 .spaced {
     position: relative;
 
-    width: $card-width;
-    max-height: $card-height;
+    width: 100%;
+    max-width: $card-width;
     height: $card-height;
-
-    margin: 5px;
 
     border-radius: $card-border-radius;
     box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.2);
 
     list-style: none;
-    flex: 1 0 auto;
 
-    min-width: 150px; 
-    max-width: 300px; 
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 
     &:active {
         transform: scale(0.95);
@@ -34,46 +32,26 @@ $card-height: 300px;
         border: 5px solid var(--highlight-color);
     }
 
-    .inLibraryLabel {
-        position: absolute;
-        top: 5px;
-        left: 5px;
-
-        padding: 4px 8px;
-        border-radius: 4px;
-
-        font-weight: 600;
-        font-size: 0.8rem;
-
-        color: var(--primary-text-color);
-        text-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
-        background-color: var(--selection-color);
-
-        z-index: 1;
+    &.source {
+        min-width: $card-width;
+        margin: 5px;
     }
-
+    .inLibraryLabel,
     .episodeInfos {
         position: absolute;
         top: 5px;
         left: 5px;
-
         padding: 4px 8px;
         border-radius: 4px;
-
         font-weight: 600;
+        font-size: 0.8rem;
+        color: var(--primary-text-color);
         text-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
         background-color: var(--selection-color);
-
         z-index: 1;
 
         &.completed {
             background-color: var(--success-color);
-        }
-
-        .number {
-            position: relative;
-            font-size: 0.8rem;
-            color: var(--primary-text-color);
         }
     }
 
@@ -89,7 +67,6 @@ $card-height: 300px;
         .cardImage {
             width: 100%;
             height: 100%;
-
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -98,10 +75,8 @@ $card-height: 300px;
                 position: absolute;
                 top: 0;
                 left: 0;
-
                 width: 100%;
                 height: 100%;
-
                 background: rgba(255, 255, 255, 0.7);
                 z-index: 1;
 
@@ -111,14 +86,11 @@ $card-height: 300px;
                     width: 40px;
                     height: 40px;
                     border: 4px solid var(--highlight-color);
-
                     border-top-color: transparent;
                     border-radius: 50%;
                     position: absolute;
-
                     top: 50%;
                     left: 50%;
-
                     transform: translate(-50%, -50%);
                     animation: spin 1s linear infinite;
 
@@ -139,16 +111,12 @@ $card-height: 300px;
             position: absolute;
             bottom: 0;
             left: 0;
-
             background-color: rgba(0, 0, 0, 0.3);
             border-radius: $card-border-radius;
-
             overflow: hidden;
             display: none;
-
             width: 100%;
             height: 100%;
-
             animation-duration: 0.5s;
             animation-timing-function: ease-in-out;
 
@@ -160,14 +128,12 @@ $card-height: 300px;
             &.inLibrary {
                 opacity: 0.5;
                 background-color: rgba(0, 0, 0, 0.5);
-
             }
 
             .cardLayerContent {
                 position: relative;
                 bottom: 0;
                 left: 0;
-
                 height: 100%;
                 padding: 0.5rem 2rem;
                 z-index: 2;
@@ -176,16 +142,13 @@ $card-height: 300px;
                     display: flex;
                     align-items: center;
                     justify-content: center;
-
                     width: 40px;
                     height: 40px;
-
                     border-radius: 50%;
 
                     svg {
                         width: 27px;
                         height: 27px;
-
                         padding: 2px;
                     }
 
@@ -193,7 +156,6 @@ $card-height: 300px;
                         position: absolute;
                         bottom: 10px;
                         left: 10px;
-
                         background-color: rgba(0, 0, 0, 0.5);
                         border: 2px solid var(--success-color);
 
@@ -204,10 +166,8 @@ $card-height: 300px;
 
                     &.playIcon {
                         position: absolute;
-
                         bottom: 10px;
                         right: 10px;
-
                         background-color: rgba(0, 0, 0, 0.5);
                         border: 2px solid var(--selection-color-hover);
 
@@ -218,23 +178,18 @@ $card-height: 300px;
 
                     &.checkboxIcon {
                         position: absolute;
-
                         top: 0;
                         right: 0;
-
                         border: none;
 
                         input[type="checkbox"] {
                             width: 23px;
                             height: 23px;
-
                             appearance: none;
                             border: 2px solid var(--secondary-text-color);
                             border-radius: 4px;
-
                             background-color: rgba(0, 0, 0, 0.5);
                             outline: none;
-
                             transition: all 0.2s ease-in-out;
 
                             &:checked {
@@ -244,20 +199,15 @@ $card-height: 300px;
                                 &::after {
                                     content: '';
                                     display: block;
-
                                     width: 10px;
                                     height: 5px;
-
                                     border: 2px solid var(--primary-text-color);
                                     border-top: none;
                                     border-right: none;
-
                                     position: absolute;
                                     top: 50%;
                                     left: 50%;
-
                                     transform: translate(-50%, -50%) rotate(-45deg);
-
                                     animation: checkmark 0.2s ease-in-out;
                                 }
                             }
@@ -279,7 +229,6 @@ $card-height: 300px;
                         &.moreIcon {
                             background-color: rgba(0, 0, 0, 0.2);
                             border: 2px solid var(--primary-text-color);
-
                             animation: pulse 1s ease-in-out infinite;
 
                             @keyframes pulse {
@@ -291,7 +240,6 @@ $card-height: 300px;
                                 50% {
                                     transform: scale(1.05);
                                     opacity: 1;
-
                                 }
 
                                 100% {
@@ -299,7 +247,6 @@ $card-height: 300px;
                                     opacity: 0.7;
                                 }
                             }
-
                         }
 
                         svg {
@@ -307,7 +254,6 @@ $card-height: 300px;
                             transition: all 0.2s ease-in-out;
                         }
                     }
-
                 }
             }
         }

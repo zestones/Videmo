@@ -11,7 +11,10 @@ import MiscellaneousServicesIcon from '@mui/icons-material/MiscellaneousServices
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
 // Services
+import FolderManager from "../../../utilities/folderManager/FolderManager";
 import ExtensionApi from "../../../services/api/extension/ExtensionApi";
+import CategoryApi from "../../../services/api/category/CategoryApi";
+import TrackApi from "../../../services/api/track/TrackApi";
 
 // Utilities
 import SortManager from '../../../utilities/sortManager/SortManager';
@@ -22,19 +25,31 @@ import Header from "../../../components/Header/Header";
 import Extension from "./Extension/Extension";
 import SeriesDisplay from "../../../components/SeriesDisplay/SeriesDisplay";
 
+// Socket
+import io from 'socket.io-client';
+
 // Styles
 import styles from "./Source.module.scss";
+
 
 function Source({ handleSelectedExtension }) {
     // Utilities and services initialization
     const extensionApi = useMemo(() => new ExtensionApi(), []);
     const sortManager = useMemo(() => new SortManager(), []);
     const sourceManager = useMemo(() => new SourceManager(), []);
+    const folderManager = useMemo(() => new FolderManager(), []);
+    const categoryApi = useMemo(() => new CategoryApi(), []);
+    const trackApi = useMemo(() => new TrackApi(), []);
+
 
     // State initialization
     const [extensions, setExtensions] = useState({ local: [], external: [] });
-    const [activeTab, setActiveTab] = useState("source");
+    const [selectedExtension, setSelectedExtension] = useState(null);
+    const [error, setError] = useState({ message: "", type: "" });
     const [searchResults, setSearchResults] = useState({});
+    const [activeTab, setActiveTab] = useState("source");
+    const [episodes, setEpisodes] = useState([]);
+    const [serie, setSerie] = useState(null);
 
     useEffect(() => {
         extensionApi.readExtension()
@@ -47,26 +62,128 @@ function Source({ handleSelectedExtension }) {
     const search = async (value) => {
         if (value === "") return {};
         for (const source of extensions.external) {
-            const result = await sourceManager.searchAnime(source, value);
-            setSearchResults((prev) => ({ ...prev, [source.id]: result }));
+            const result = (await sourceManager.searchAnime(source, value)).map((serie) => ({ ...serie, extension_id: source.id }));
+            const series = await categoryApi.readAllSeriesInLibraryByExtension(source);
+
+            const formattedSeries = folderManager.mapFolderContentsWithMandatoryFields(result, series, source);
+            fetchAnimeImages(formattedSeries, source);
+            setSearchResults((prev) => ({ ...prev, [source.id]: formattedSeries }));
         }
+    };
+
+    const handlePlayClick = async (serie) => {
+        let extension = extensions.external.find((ext) => (ext.id == serie.extension_id) ? ext : null);
+        setSelectedExtension(extension);
+
+        if (!extension) {
+            extension = extensions.local.find((ext) => (ext.id == serie.extension_id) ? ext : null);
+            await _handleLocalSourceExtension(serie, extension);
+        }
+
+        await _handleRemoteSourceExtension(serie, extension);
+    };
+
+    // TODO : fix batch search for local source as there could be tree levels
+    const _handleLocalSourceExtension = async (clickedSerie, selectedExtension) => {
+        try {
+            const level = await folderManager.retrieveLevel(selectedExtension.link, clickedSerie.link);
+            await _retrieveAndSetFolderContents(clickedSerie.link, selectedExtension, level);
+
+            const serie = { ...clickedSerie, name: folderManager.retrieveBaseName(clickedSerie.link), extension_id: selectedExtension.id };
+            setSerie(serie);
+        } catch (error) {
+            setError({ message: error.message, type: "error" })
+        }
+    }
+
+    const _handleRemoteSourceExtension = async (clickedSerie, selectedExtension) => {
+        try {
+            const episodes = await sourceManager.scrapAnimeEpisodes(selectedExtension, clickedSerie.link);
+            setEpisodes(episodes);
+
+            const serie = { ...clickedSerie, extension: selectedExtension, extension_id: selectedExtension.id };
+            setSerie(serie);
+        } catch (error) {
+            setError({ message: error.message, type: "error" })
+        }
+    }
+
+    // TODO : fix batch search for local source as there could be tree levels
+    const _retrieveAndSetFolderContents = async (link, selectedExtension, level = 0) => {
+        try {
+            const data = await folderManager.retrieveFolderContents(link, level);
+            if (data.contents.length === 0) {
+                const data = await folderManager.retrieveFilesInFolder(link);
+                const retrievedEpisodes = await trackApi.readAllEpisodesBySerieLink(link);
+                const episodes = trackApi.mapSerieEpisodeWithDatabaseEpisode(data, retrievedEpisodes)
+
+                setEpisodes(episodes);
+            } else {
+                const series = await categoryApi.readAllSeriesInLibraryByExtension(selectedExtension);
+                const content = folderManager.superMapFolderContentsWithMandatoryFields(data.contents, series, { id: selectedExtension.id }, data.basename);
+                setSearchResults({ [selectedExtension.id]: content }); // ? NEEDED
+                setEpisodes([]);
+            }
+        } catch (error) {
+            setError({ message: error.message, type: "error" })
+        }
+    }
+
+    const refreshFolderContents = (serie) => {
+        const updatedSearchResults = { ...searchResults };
+        const updatedSerie = { ...serie, inLibrary: true };
+        const updatedSeries = updatedSearchResults[serie.extension_id].map((s) => (s.link === serie.link ? updatedSerie : s));
+
+        updatedSearchResults[serie.extension_id] = updatedSeries;
+        setSearchResults(updatedSearchResults);
+    };
+
+    const fetchAnimeImages = async (animeList, extension) => {
+        if (extension.name !== 'FrenchAnime' && extension.name !== 'AnimesUltra') return;
+
+        const socket = io('http://localhost:4000');
+
+        socket.on('connect', () => {
+            socket.emit('get-images', { animes: animeList, referer: extension.link });
+        });
+
+        socket.on('image-update', (response) => {
+            setSearchResults((prev) => {
+                const updatedSeries = prev[extension.id].map((serie) => {
+                    if (serie.link === response.anime.link) return { ...serie, image: response.anime.image };
+                    return serie;
+                });
+
+                return ({ ...prev, [extension.id]: updatedSeries });
+            });
+        });
+
+        return () => {
+            socket.disconnect();
+        };
+    }
+
+    const handleBackClick = () => {
+        // TODO : handle back click
+        console.log("back");
     };
 
     return (
         <>
-            <Header title="Explorer" onSearch={search} />
+            <Header title="Explorer" onSearch={search} onBack={handleBackClick} />
             <div className={styles.container}>
-
-                <div className={styles.tabs}>
-                    <button className={styles.tab + (activeTab === "source" ? ` ${styles.active}` : "")} onClick={() => setActiveTab("source")}>
-                        <FolderIcon className={styles.tabIcon} />
-                        <p className={styles.tabText}>Source</p>
-                    </button>
-                    <button className={styles.tab + (activeTab === "manage" ? ` ${styles.active}` : "")} onClick={() => setActiveTab("manage")}>
-                        <MiscellaneousServicesIcon className={styles.tabIcon} />
-                        <p className={styles.tabText}>Manage</p>
-                    </button>
-                </div>
+                {!serie && (
+                    <div className={styles.tabs}>
+                        <button className={styles.tab + (activeTab === "source" ? ` ${styles.active}` : "")} onClick={() => setActiveTab("source")}>
+                            <FolderIcon className={styles.tabIcon} />
+                            <p className={styles.tabText}>Source</p>
+                        </button>
+                        <button className={styles.tab + (activeTab === "manage" ? ` ${styles.active}` : "")} onClick={() => setActiveTab("manage")}>
+                            <MiscellaneousServicesIcon className={styles.tabIcon} />
+                            <p className={styles.tabText}>Manage</p>
+                        </button>
+                    </div>
+                )}
 
                 {(activeTab === "source" && !Object.keys(searchResults).length) && (
                     <Extension
@@ -77,31 +194,41 @@ function Source({ handleSelectedExtension }) {
 
                 {(activeTab === "source" && Object.keys(searchResults).length > 0) && (
                     <div className={styles.searchResults}>
-                        {Object.keys(searchResults).map((key) => (
-                            <div key={key} className={styles.searchResult}>
-                                <button className={styles.extensionSearch}>
-                                    <FolderIcon className={styles.extensionIcon} />
-                                    <h2>{extensions.external.find((ext) => ext.id == key ? ext : null)?.name}</h2>
-                                    <ArrowForwardIcon className={styles.arrowIcon} />
-                                </button>
-                                <ul className={styles.searchResultList}>
-                                    {/* TODO: display and handle event of series */}
-                                    <SeriesDisplay
-                                        linkedSeries={searchResults[key]}
-                                        extension={extensions.external.find((ext) => ext.id == key ? ext : null)}
-                                        episodes={[]}
-                                        serie={null}
-                                        onPlayClick={() => { }}
-                                        onRefresh={() => { }}
-                                        // eslint-disable-next-line no-undef
-                                        calledFrom={SOURCE_STRING}
-                                        setEpisodes={() => { }}
-                                    />
+                        {!serie ? (
+                            Object.keys(searchResults).map((key) => (
+                                <div key={key} className={styles.searchResult}>
+                                    <button className={styles.extensionSearch}>
+                                        <FolderIcon className={styles.extensionIcon} />
+                                        <h2>{extensions.external.find((ext) => ext.id == key ? ext : null)?.name}</h2>
+                                        <ArrowForwardIcon className={styles.arrowIcon} />
+                                    </button>
+                                    <ul className={styles.searchResultList}>
+                                        <SeriesDisplay
+                                            linkedSeries={searchResults[key]}
+                                            extension={extensions.external.find((ext) => ext.id == key ? ext : null)}
+                                            episodes={episodes}
+                                            serie={serie}
+                                            onPlayClick={handlePlayClick}
+                                            onRefresh={refreshFolderContents}
+                                            calledFrom={SOURCE_STRING}
+                                            setEpisodes={setEpisodes}
+                                        />
+                                    </ul>
 
-                                </ul>
-
-                            </div>
-                        ))}
+                                </div>
+                            ))
+                        ) : (
+                            <SeriesDisplay
+                                linkedSeries={[]}
+                                extension={selectedExtension}
+                                episodes={episodes}
+                                serie={serie}
+                                onPlayClick={handlePlayClick}
+                                onRefresh={refreshFolderContents}
+                                calledFrom={SOURCE_STRING}
+                                setEpisodes={setEpisodes}
+                            />
+                        )}
                     </div>
                 )}
             </div >

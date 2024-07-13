@@ -12,7 +12,7 @@ import CategoryApi from "../../services/api/category/CategoryApi";
 // Styles
 import styles from "./CategoryModal.module.scss";
 
-function CategoryModal({ series, onClose, onMoreClick, shouldUpdateSeries = false }) {
+function CategoryModal({ series, onClose, onRefresh, shouldUpdateSeries = false }) {
     // Constants initialization
     const FLAGS = useMemo(() => ({ CHECKED: "checked", UNCHECKED: "unchecked", REMOVED: "removed" }), []);
 
@@ -86,13 +86,10 @@ function CategoryModal({ series, onClose, onMoreClick, shouldUpdateSeries = fals
     const handleAddToCategory = async () => {
         try {
             onClose();
-            console.log(series);
-            console.log(checkedCategories);
-            console.log(shouldUpdateSeries);
             await categoryApi.addSerieToCategories(series, checkedCategories, shouldUpdateSeries);
             showNotification("success", "La série a bien été déplacée avec succès");
 
-            if (onMoreClick) onMoreClick();
+            if (onRefresh) onRefresh(series[0]);
         } catch (error) {
             showNotification("error", error.message)
             console.error(error);
@@ -151,7 +148,7 @@ function CategoryModal({ series, onClose, onMoreClick, shouldUpdateSeries = fals
 CategoryModal.propTypes = {
     series: propTypes.array.isRequired,
     onClose: propTypes.func.isRequired,
-    onMoreClick: propTypes.func,
+    onRefresh: propTypes.func,
     shouldUpdateSeries: propTypes.bool
 };
 

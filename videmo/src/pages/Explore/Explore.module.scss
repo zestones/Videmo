@@ -1,6 +1,6 @@
 .explore {
-    position: absolute;
-    margin-top: calc(var(--header-height) + 60px);
+    position: relative;
+    margin-top: calc(var(--header-height) + 73px);
 
     &.spaceOption {
         margin-top: calc(var(--header-height) + 15px);

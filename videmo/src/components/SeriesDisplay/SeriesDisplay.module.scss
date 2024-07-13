@@ -2,23 +2,26 @@
     width: 100%;
     margin: 0;
 
+    margin-top: 12px;
+
     .seriesContainer {
-        margin-top: 12px;
-        padding: 0 8px;
+        padding: 0 12px;
         width: 100%;
 
-        display: flex;
-        justify-content: flex-start;
         overflow: hidden;
 
         &.explore {
-            flex-wrap: wrap;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 12px;
         }
 
         &.source {
+            display: flex;
+            justify-content: flex-start;
+
             overflow-x: auto;
             overflow-y: hidden;
-            white-space: nowrap;
             scrollbar-width: none;
             -ms-overflow-style: none;
         }
@@ -34,7 +37,7 @@
             justify-content: center;
 
             h1 {
-                margin: 0;
+                margin-top: 20px;
                 color: var(--danger-color);
                 font-weight: bold;
             }

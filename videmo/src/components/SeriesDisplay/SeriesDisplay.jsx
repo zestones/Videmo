@@ -223,31 +223,44 @@ function SeriesDisplay({ serie, linkedSeries, onPlayClick, onRefresh, calledFrom
     };
 
     const shouldShowResumeButton = episodes.some(episode => !episode.viewed || episode.played_time);
+    const containerClassName = () => {
+        let classname = styles.seriesContainer;
+        if (calledFrom === SOURCE_STRING) classname += ` ${styles.source}`;
+        if ((calledFrom === EXPLORE_STRING || calledFrom === LIBRARY_STRING) && (episodes.length > 0 || linkedSeries.length > 0)) classname += ` ${styles.explore}`;
 
+        return classname;
+    };
     return (
         <div className={styles.sourceContent}>
             {serie && (
                 <DetailsContainer serie={serie} calledFrom={calledFrom} />
             )}
 
-            <div className={styles.seriesContainer + (calledFrom === SOURCE_STRING ? ` ${styles.source}` : ` ${styles.explore}`)} ref={containerRef}>
+            <div ref={containerRef} className={containerClassName()}>
                 {(linkedSeries.length > 0) && (linkedSeries.map((linkedSerie, index) => (
                     <SerieCard
                         key={linkedSerie.link + ' ' + index}
                         serie={linkedSerie}
                         onPlayClick={onPlayClick}
-                        onMoreClick={onRefresh}
+                        onRefresh={onRefresh}
                         isCalledFromExplore={calledFrom === EXPLORE_STRING}
                         isCalledFromLibrary={calledFrom === LIBRARY_STRING}
+                        isCalledFromSource={calledFrom === SOURCE_STRING}
                         isOptionBarActive={isOptionBarActive}
                         checked={checkedSeries[index] || false}
                         setChecked={() => toggleCheckedSeries(index)}
                     />
                 )))}
 
-                {linkedSeries.length === 0 && episodes.length === 0 && (
+                {calledFrom === SOURCE_STRING && linkedSeries.length === 0 && !serie && (
                     <div className={styles.noSeries}>
                         <h1>Aucune série trouvée</h1>
+                    </div>
+                )}
+
+                {serie && episodes.length === 0 && (
+                    <div className={styles.noSeries}>
+                        <h1>Aucun épisode trouvé</h1>
                     </div>
                 )}
 
@@ -275,35 +288,41 @@ function SeriesDisplay({ serie, linkedSeries, onPlayClick, onRefresh, calledFrom
                 )}
             </div>
 
-            {isOptionBarActive && (
-                <OptionBarSerie
-                    series={linkedSeries.filter((_, index) => checkedSeries[index])}
-                    onClose={handleCloseOptionBar}
-                    checked={checkAllSeries}
-                    onCheck={handleCheckAllSeries}
-                    onCategoryChange={onRefresh}
-                    isCalledFromExplore={calledFrom === EXPLORE_STRING}
-                />
-            )}
+            {
+                isOptionBarActive && (
+                    <OptionBarSerie
+                        series={linkedSeries.filter((_, index) => checkedSeries[index])}
+                        onClose={handleCloseOptionBar}
+                        checked={checkAllSeries}
+                        onCheck={handleCheckAllSeries}
+                        onCategoryChange={onRefresh}
+                        isCalledFromExplore={calledFrom === EXPLORE_STRING || calledFrom === SOURCE_STRING}
+                    />
+                )
+            }
 
-            {isEpisodeOptionBarActive && (
-                <OptionBarEpisode
-                    serie={serie}
-                    episodes={episodes.filter((_, index) => checkedEpisodes[index])}
-                    onClose={handleCloseOptionBarEpisode}
-                    checked={checkAllEpisodes}
-                    onCheck={handleCheckAllEpisode}
-                />
-            )}
+            {
+                isEpisodeOptionBarActive && (
+                    <OptionBarEpisode
+                        serie={serie}
+                        episodes={episodes.filter((_, index) => checkedEpisodes[index])}
+                        onClose={handleCloseOptionBarEpisode}
+                        checked={checkAllEpisodes}
+                        onCheck={handleCheckAllEpisode}
+                    />
+                )
+            }
 
-            {openVideoPlayer && (
-                <VideoPlayer
-                    episode={resumeEpisode}
-                    startTime={!resumeEpisode.played_time ? 0 : resumeEpisode.played_time}
-                    onCloseVideoPlayer={handleCloseVideoPlayer}
-                />
-            )}
-        </div>
+            {
+                openVideoPlayer && (
+                    <VideoPlayer
+                        episode={resumeEpisode}
+                        startTime={!resumeEpisode.played_time ? 0 : resumeEpisode.played_time}
+                        onCloseVideoPlayer={handleCloseVideoPlayer}
+                    />
+                )
+            }
+        </div >
     );
 }
 
