@@ -96,8 +96,7 @@ CREATE TABLE IF NOT EXISTS Episode (
   bookmarked INTEGER,
   played_time DATETIME,
   hash DATETIME,
-  serverName TEXT,
-  UNIQUE (link)
+  serverName TEXT
 );
 
 -- Create the History table
