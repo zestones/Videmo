@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect } from "react";
+import PropTypes from "prop-types";
 import { useNotification } from "../../Notification/NotificationProvider";
 
 // External
@@ -115,12 +116,21 @@ function OptionBarSerie({ series, onClose, checked, onCheck, onCategoryChange, i
                 <CategoryModal
                     series={series}
                     onClose={() => setShowCategoryModal(false)}
-                    onMoreClick={onCategoryChange}
+                    onRefresh={onCategoryChange}
                     shouldUpdateSeries={isCalledFromExplore}
                 />
             )}
         </>
     );
 }
+
+OptionBarSerie.propTypes = {
+    series: PropTypes.array.isRequired,
+    onClose: PropTypes.func.isRequired,
+    checked: PropTypes.bool.isRequired,
+    onCheck: PropTypes.func.isRequired,
+    onCategoryChange: PropTypes.func.isRequired,
+    isCalledFromExplore: PropTypes.bool.isRequired,
+};
 
 export default OptionBarSerie;

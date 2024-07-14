@@ -1,4 +1,5 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
+import propTypes from 'prop-types';
 
 // Context
 import { useDisplayMode } from "../../FilterPanel/DisplayOptions/DisplayModeContext";
@@ -19,7 +20,7 @@ import CategoryModal from '../../CategoryModal/CategoryModal';
 import styles from './SerieCard.module.scss';
 
 
-function SerieCard({ serie, onPlayClick, onMoreClick, isCalledFromExplore, isCalledFromLibrary, isOptionBarActive, checked, setChecked }) {
+function SerieCard({ serie, onPlayClick, onRefresh, isCalledFromExplore, isCalledFromLibrary, isCalledFromSource, isOptionBarActive, checked, setChecked }) {
     // State initialization
     const [showCategoryModal, setShowCategoryModal] = useState(false);
     const [imageLoaded, setImageLoaded] = useState(false);
@@ -43,7 +44,7 @@ function SerieCard({ serie, onPlayClick, onMoreClick, isCalledFromExplore, isCal
     const handleAddToCategory = () => {
         setShowCategoryModal(true);
 
-        if (isCalledFromExplore) {
+        if (isCalledFromExplore || isCalledFromSource) {
             aniList.searchAnimeInfosName(serie.basename)
                 .then((data) => serie.infos = data)
                 .catch((error) => showNotification("error", error.message));
@@ -55,12 +56,12 @@ function SerieCard({ serie, onPlayClick, onMoreClick, isCalledFromExplore, isCal
     return (
         <>
             <li
-                className={`${styles[displayMode.name]} ${checked && styles.checked}`}
+                className={styles[displayMode.name] + (checked ? " " + styles.checked : " ") + (isCalledFromSource ? " " + styles.source : "")}
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
                 onClick={() => !isOptionBarActive && onPlayClick(serie)}
             >
-                {(isCalledFromExplore && serie.inLibrary) && <span className={styles.inLibraryLabel}>Dans la bibliothèque</span>}
+                {((isCalledFromExplore || isCalledFromSource) && serie.inLibrary) && <span className={styles.inLibraryLabel}>Dans la bibliothèque</span>}
                 {isCalledFromLibrary && (
                     <div className={`${styles.episodeInfos} ${isSerieCompleted() && styles.completed}`}>
                         <span className={styles.number}>
@@ -69,7 +70,7 @@ function SerieCard({ serie, onPlayClick, onMoreClick, isCalledFromExplore, isCal
                     </div>
                 )}
 
-                <div className={`${styles.cardContent} ${(isSerieCompleted() || (isCalledFromExplore && serie.inLibrary)) && styles.completed}`}>
+                <div className={`${styles.cardContent} ${(isSerieCompleted() || ((isCalledFromExplore || isCalledFromSource) && serie.inLibrary)) && styles.completed}`}>
 
                     <span className={styles.imgContainer}>
                         <img
@@ -135,12 +136,24 @@ function SerieCard({ serie, onPlayClick, onMoreClick, isCalledFromExplore, isCal
                 <CategoryModal
                     series={[serie]}
                     onClose={handleCloseModal}
-                    onMoreClick={onMoreClick}
-                    shouldUpdateSeries={isCalledFromExplore}
+                    onRefresh={onRefresh}
+                    shouldUpdateSeries={isCalledFromExplore || isCalledFromSource}
                 />
             )}
         </>
     );
 }
+
+SerieCard.propTypes = {
+    serie: propTypes.object.isRequired,
+    onPlayClick: propTypes.func.isRequired,
+    onRefresh: propTypes.func,
+    isCalledFromExplore: propTypes.bool,
+    isCalledFromLibrary: propTypes.bool,
+    isCalledFromSource: propTypes.bool,
+    isOptionBarActive: propTypes.bool,
+    checked: propTypes.bool,
+    setChecked: propTypes.func
+};
 
 export default SerieCard;

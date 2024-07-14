@@ -31,7 +31,7 @@ function App() {
 	const library = { library: { component: <Library />, icon: SubscriptionsIcon, label: "Bibliothèque" } };
 	const explore = { explore: { component: <Explore />, icon: ExploreIcon, label: "Explorer" } };
 	const history = { history: { component: <History />, icon: HistoryIcon, label: "Historique" } };
-	const settings = { more: { component: <Settings />, icon: MoreHorizIcon, label: "Plus" } };
+	const settings = { more: { component: <Settings />, icon: MoreHorizIcon, label: "Paramètres" } };
 	const update = { update: { component: <Update />, icon: NewReleasesIcon, label: "Nouveautés" } };
 
 	const { theme } = useTheme();

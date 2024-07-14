@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import PropTypes from "prop-types";
 
 // External
 import SearchIcon from '@mui/icons-material/Search';
@@ -7,7 +8,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import styles from "./SearchBar.module.scss";
 
 
-function SearchBar({ onSearch }) {
+function SearchBar({ onSearch, onDynamiqueSearch }) {
     const [isSearchActive, setIsSearchActive] = useState(false);
     const [searchValue, setSearchValue] = useState("");
     const inputRef = useRef(null);
@@ -18,8 +19,7 @@ function SearchBar({ onSearch }) {
 
     const handleSearchInputChange = (event) => {
         setSearchValue(event.target.value);
-        // TODO : call the search function only if we are in local extension or if we are in the library
-        // onSearch(event.target.value);
+        if (onDynamiqueSearch) onDynamiqueSearch(event.target.value);
     };
 
     const handleSearchInputBlur = () => {
@@ -29,7 +29,7 @@ function SearchBar({ onSearch }) {
     };
 
     const handleSearch = () => {
-        onSearch(searchValue);
+        if (onSearch) onSearch(searchValue);
     };
 
     const handleKeyDown = (event) => {
@@ -65,5 +65,10 @@ function SearchBar({ onSearch }) {
         </div>
     );
 }
+
+SearchBar.propTypes = {
+    onSearch: PropTypes.func,
+    onDynamiqueSearch: PropTypes.func
+};
 
 export default SearchBar;

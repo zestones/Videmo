@@ -1,7 +1,7 @@
 /* Global Styles */
 :root {
     --header-height: 60px;
-    --navigation-width: 65px;
+    --navigation-width: 300px;
 }
 
 /* Theme 1 : Default theme */
@@ -30,9 +30,9 @@
 
 /* Theme 2: Dark Theme */
 .dark-theme {
-    --primary-color: #1a1a1a;
+    --primary-color: #181818;
     --secondary-color: #2c2c2c;
-    --tertiary-color: #333333;
+    --tertiary-color: #1a1a1a;
 
     --primary-text-color: #ffffff;
     --secondary-text-color: #b4b4b4;
@@ -77,16 +77,16 @@
 
 /* Theme 4: Vibrant Gemstone */
 .ocean-theme {
-    --primary-color: #0077b6;
-    --secondary-color: #00b4d8;
-    --tertiary-color: #64c8da;
+    --primary-color: #393e46;
+    --secondary-color: #303844;
+    --tertiary-color: #222831;
 
     --primary-text-color: #ffffff;
     --secondary-text-color: #555;
     --tertiary-text-color: #999;
 
-    --selection-color: #6a0572;
-    --selection-color-hover: #8a1d94;
+    --selection-color: #3c73ff;
+    --selection-color-hover: #2c55bd;
 
     --highlight-color: #f48c06;
     --highlight-color-hover: #e85d04;
@@ -175,25 +175,6 @@ body {
     -moz-osx-font-smoothing: grayscale;
     background-color: var(--primary-color);
     color: var(--primary-text-color);
-}
-
-/* Make text selectable */
-p,
-span,
-a,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-    user-select: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    -o-user-select: none;
-    -webkit-touch-callout: none;
-    -khtml-user-select: none;
 }
 
 * {

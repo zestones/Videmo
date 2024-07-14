@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useEffect, useCallback, useMemo, useRef } from "react";
+import PropTypes from "prop-types";
 
 // Constants
-import { EXPLORE_STRING, LIBRARY_STRING } from "../../utilities/utils/Constants";
+import { EXPLORE_STRING, LIBRARY_STRING, SOURCE_STRING } from "../../utilities/utils/Constants";
 
 // External
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
@@ -32,6 +33,12 @@ function SeriesDisplay({ serie, linkedSeries, onPlayClick, onRefresh, calledFrom
     const extensionApi = useMemo(() => new ExtensionApi(), []);
     const sourceManager = useMemo(() => new SourceManager(), []);
 
+    // Refs initialization
+    const containerRef = useRef(null);
+    const [isDragging, setIsDragging] = useState(false);
+    const [startX, setStartX] = useState(0);
+    const [scrollLeft, setScrollLeft] = useState(0);
+
     // State initialization
     const [openVideoPlayer, setOpenVideoPlayer] = useState(false);
     const [resumeEpisode, setResumeEpisode] = useState(null);
@@ -46,6 +53,42 @@ function SeriesDisplay({ serie, linkedSeries, onPlayClick, onRefresh, calledFrom
 
     // checked episodes initialization
     const [checkedEpisodes, setCheckedEpisodes] = useState([]);
+
+    useEffect(() => {
+        if (document.getElementById('categoryModal')) return;
+
+        const container = containerRef.current;
+
+        const handleMouseDown = (e) => {
+            setIsDragging(true);
+            setStartX(e.pageX - container.offsetLeft);
+            setScrollLeft(container.scrollLeft);
+        };
+
+        const handleMouseLeave = () => setIsDragging(false);
+        const handleMouseUp = () => setIsDragging(false);
+
+        const handleMouseMove = (e) => {
+            if (!isDragging) return;
+            e.preventDefault();
+            const x = e.pageX - container.offsetLeft;
+            const walk = (x - startX) * 3; // scroll-fast
+            container.scrollLeft = scrollLeft - walk;
+        };
+
+        // Mouse events
+        container.addEventListener('mousedown', handleMouseDown);
+        container.addEventListener('mouseleave', handleMouseLeave);
+        container.addEventListener('mouseup', handleMouseUp);
+        container.addEventListener('mousemove', handleMouseMove);
+
+        return () => {
+            container.removeEventListener('mousedown', handleMouseDown);
+            container.removeEventListener('mouseleave', handleMouseLeave);
+            container.removeEventListener('mouseup', handleMouseUp);
+            container.removeEventListener('mousemove', handleMouseMove);
+        };
+    }, [isDragging, startX, scrollLeft]);
 
     useEffect(() => {
         setCheckedSeries(linkedSeries.map(() => false));
@@ -180,27 +223,48 @@ function SeriesDisplay({ serie, linkedSeries, onPlayClick, onRefresh, calledFrom
     };
 
     const shouldShowResumeButton = episodes.some(episode => !episode.viewed || episode.played_time);
+    const containerClassName = () => {
+        let classname = styles.seriesContainer;
+        if (calledFrom === SOURCE_STRING) classname += ` ${styles.source}`;
+        if (serie && linkedSeries.length > 0) classname += ` ${styles.linked}`;
+        if ((calledFrom === EXPLORE_STRING || calledFrom === LIBRARY_STRING) && (episodes.length > 0 || linkedSeries.length > 0)) classname += ` ${styles.explore}`;
 
+        return classname;
+    };
     return (
         <div className={styles.sourceContent}>
             {serie && (
                 <DetailsContainer serie={serie} calledFrom={calledFrom} />
             )}
 
-            <div className={styles.seriesContainer}>
-                {linkedSeries.map((linkedSerie, index) => (
+            <div ref={containerRef} className={containerClassName()}>
+                {(linkedSeries.length > 0) && (linkedSeries.map((linkedSerie, index) => (
                     <SerieCard
                         key={linkedSerie.link + ' ' + index}
                         serie={linkedSerie}
                         onPlayClick={onPlayClick}
-                        onMoreClick={onRefresh}
+                        onRefresh={onRefresh}
                         isCalledFromExplore={calledFrom === EXPLORE_STRING}
                         isCalledFromLibrary={calledFrom === LIBRARY_STRING}
+                        isCalledFromSource={calledFrom === SOURCE_STRING}
                         isOptionBarActive={isOptionBarActive}
                         checked={checkedSeries[index] || false}
                         setChecked={() => toggleCheckedSeries(index)}
                     />
-                ))}
+                )))}
+
+                {calledFrom === SOURCE_STRING && linkedSeries.length === 0 && !serie && (
+                    <div className={styles.noSeries}>
+                        <h1>Aucune série trouvée</h1>
+                    </div>
+                )}
+
+                {serie && episodes.length === 0 && linkedSeries.length === 0 && (
+                    <div className={styles.noSeries}>
+                        <h1>Aucun épisode trouvé</h1>
+                    </div>
+                )}
+
             </div>
 
             <div className={styles.episodesContainer}>
@@ -225,36 +289,52 @@ function SeriesDisplay({ serie, linkedSeries, onPlayClick, onRefresh, calledFrom
                 )}
             </div>
 
-            {isOptionBarActive && (
-                <OptionBarSerie
-                    series={linkedSeries.filter((_, index) => checkedSeries[index])}
-                    onClose={handleCloseOptionBar}
-                    checked={checkAllSeries}
-                    onCheck={handleCheckAllSeries}
-                    onCategoryChange={onRefresh}
-                    isCalledFromExplore={calledFrom === EXPLORE_STRING}
-                />
-            )}
+            {
+                isOptionBarActive && (
+                    <OptionBarSerie
+                        series={linkedSeries.filter((_, index) => checkedSeries[index])}
+                        onClose={handleCloseOptionBar}
+                        checked={checkAllSeries}
+                        onCheck={handleCheckAllSeries}
+                        onCategoryChange={onRefresh}
+                        isCalledFromExplore={calledFrom === EXPLORE_STRING || calledFrom === SOURCE_STRING}
+                    />
+                )
+            }
 
-            {isEpisodeOptionBarActive && (
-                <OptionBarEpisode
-                    serie={serie}
-                    episodes={episodes.filter((_, index) => checkedEpisodes[index])}
-                    onClose={handleCloseOptionBarEpisode}
-                    checked={checkAllEpisodes}
-                    onCheck={handleCheckAllEpisode}
-                />
-            )}
+            {
+                isEpisodeOptionBarActive && (
+                    <OptionBarEpisode
+                        serie={serie}
+                        episodes={episodes.filter((_, index) => checkedEpisodes[index])}
+                        onClose={handleCloseOptionBarEpisode}
+                        checked={checkAllEpisodes}
+                        onCheck={handleCheckAllEpisode}
+                    />
+                )
+            }
 
-            {openVideoPlayer && (
-                <VideoPlayer
-                    episode={resumeEpisode}
-                    startTime={!resumeEpisode.played_time ? 0 : resumeEpisode.played_time}
-                    onCloseVideoPlayer={handleCloseVideoPlayer}
-                />
-            )}
-        </div>
+            {
+                openVideoPlayer && (
+                    <VideoPlayer
+                        episode={resumeEpisode}
+                        startTime={!resumeEpisode.played_time ? 0 : resumeEpisode.played_time}
+                        onCloseVideoPlayer={handleCloseVideoPlayer}
+                    />
+                )
+            }
+        </div >
     );
 }
+
+SeriesDisplay.propTypes = {
+    serie: PropTypes.object,
+    linkedSeries: PropTypes.array,
+    episodes: PropTypes.array,
+    onPlayClick: PropTypes.func,
+    onRefresh: PropTypes.func,
+    calledFrom: PropTypes.string,
+    setEpisodes: PropTypes.func
+};
 
 export default SeriesDisplay;
