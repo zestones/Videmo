@@ -77,6 +77,8 @@ function Source({ handleSelectedExtension }) {
             fetchAnimeImages(formattedSeries, source);
             setSearchResults((prev) => ({ ...prev, [source.id]: formattedSeries }));
         }
+
+        // TODO : Implement local search
     };
 
     const handlePlayClick = async (serie) => {
