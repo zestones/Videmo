@@ -195,7 +195,7 @@ function Library() {
                     currentCategory={currentCategory}
                 />
 
-                <CategoryHeader selectedCategory={currentCategory} onSelectCategory={setCurrentCategory} />
+                <CategoryHeader selectedCategory={currentCategory} onSelectCategory={setCurrentCategory} setNavigationHistory={setNavigationHistory} />
 
                 <SeriesDisplay
                     linkedSeries={filterFolders}
