@@ -1,9 +1,11 @@
 import React, { useEffect, useState, useMemo } from "react";
 import PropTypes from "prop-types";
 
+// Hooks
+import { useNotification } from "../../../components/Notification/NotificationProvider";
+
 // Constants
 import { SOURCE_STRING } from "../../../utilities/utils/Constants";
-
 
 // External
 import FolderIcon from '@mui/icons-material/Folder';
@@ -45,19 +47,25 @@ function Source({ handleSelectedExtension }) {
     // State initialization
     const [extensions, setExtensions] = useState({ local: [], external: [] });
     const [selectedExtension, setSelectedExtension] = useState(null);
-    const [error, setError] = useState({ message: "", type: "" });
     const [searchResults, setSearchResults] = useState({});
     const [activeTab, setActiveTab] = useState("source");
     const [episodes, setEpisodes] = useState([]);
     const [serie, setSerie] = useState(null);
+
+
+    // Initialization of the notification hook
+    const { showNotification } = useNotification();
 
     useEffect(() => {
         extensionApi.readExtension()
             .then((data) => setExtensions({
                 local: sortManager.sortByName(data.local), external: sortManager.sortByName(data.external)
             }))
-            .catch((error) => console.error(error));
-    }, [extensionApi, sortManager]);
+            .catch((error) => {
+                showNotification("error", `Error retrieving extensions: ${error.message}`);
+                console.error(error);
+            });
+    }, [extensionApi, sortManager, showNotification]);
 
     const search = async (value) => {
         if (value === "") return {};
@@ -72,11 +80,11 @@ function Source({ handleSelectedExtension }) {
     };
 
     const handlePlayClick = async (serie) => {
-        let extension = extensions.external.find((ext) => (ext.id == serie.extension_id) ? ext : null);
+        let extension = extensions.external.find((ext) => (Number(ext.id) === Number(serie.extension_id)) ? ext : null);
         setSelectedExtension(extension);
 
         if (!extension) {
-            extension = extensions.local.find((ext) => (ext.id == serie.extension_id) ? ext : null);
+            extension = extensions.local.find((ext) => (Number(ext.id) === Number(serie.extension_id)) ? ext : null);
             await _handleLocalSourceExtension(serie, extension);
         }
 
@@ -92,7 +100,8 @@ function Source({ handleSelectedExtension }) {
             const serie = { ...clickedSerie, name: folderManager.retrieveBaseName(clickedSerie.link), extension_id: selectedExtension.id };
             setSerie(serie);
         } catch (error) {
-            setError({ message: error.message, type: "error" })
+            console.error(error);
+            showNotification("error", `Error retrieving folder contents: ${error.message}`);
         }
     }
 
@@ -104,7 +113,8 @@ function Source({ handleSelectedExtension }) {
             const serie = { ...clickedSerie, extension: selectedExtension, extension_id: selectedExtension.id };
             setSerie(serie);
         } catch (error) {
-            setError({ message: error.message, type: "error" })
+            console.error(error);
+            showNotification("error", `Error retrieving episodes: ${error.message}`);
         }
     }
 
@@ -125,7 +135,8 @@ function Source({ handleSelectedExtension }) {
                 setEpisodes([]);
             }
         } catch (error) {
-            setError({ message: error.message, type: "error" })
+            console.error(error);
+            showNotification("error", `Error retrieving folder contents: ${error.message}`);
         }
     }
 
@@ -199,13 +210,13 @@ function Source({ handleSelectedExtension }) {
                                 <div key={key} className={styles.searchResult}>
                                     <button className={styles.extensionSearch}>
                                         <FolderIcon className={styles.extensionIcon} />
-                                        <h2>{extensions.external.find((ext) => ext.id == key ? ext : null)?.name}</h2>
+                                        <h2>{extensions.external.find((ext) => Number(ext.id) === Number(key) ? ext : null)?.name}</h2>
                                         <ArrowForwardIcon className={styles.arrowIcon} />
                                     </button>
                                     <ul className={styles.searchResultList}>
                                         <SeriesDisplay
                                             linkedSeries={searchResults[key]}
-                                            extension={extensions.external.find((ext) => ext.id == key ? ext : null)}
+                                            extension={extensions.external.find((ext) => Number(ext.id) === Number(key) ? ext : null)}
                                             episodes={episodes}
                                             serie={serie}
                                             onPlayClick={handlePlayClick}
