@@ -98,6 +98,7 @@ function Explore() {
         socket.on('image-update', (response) => {
             setFolderContents((prevContents) => {
                 const updatedContents = [...prevContents];
+
                 const index = updatedContents.findIndex((content) => content.link === response.anime.link);
                 if (index === -1) return updatedContents;
                 updatedContents[index] = { ...updatedContents[index], image: response.anime.image };
@@ -105,15 +106,26 @@ function Explore() {
             });
 
             setHistory((prevHistory) => {
+                if (!prevHistory || prevHistory.length === 0) return [];
+
                 const updatedHistory = [...prevHistory];
-                const index = updatedHistory[updatedHistory.length - 1].content.findIndex((content) => content.link === response.anime.link);
+                const lastHistory = updatedHistory[updatedHistory.length - 1];
+
+                if (!lastHistory?.content) return updatedHistory;
+
+                const index = lastHistory.content.findIndex((content) => content.link === response.anime.link);
                 if (index === -1) return updatedHistory;
-                updatedHistory[updatedHistory.length - 1].content[index] = {
-                    ...updatedHistory[updatedHistory.length - 1].content[index],
+
+                lastHistory.content[index] = {
+                    ...lastHistory.content[index],
                     image: response.anime.image
                 };
+
+                // Assign the updated last history back to the updatedHistory array
+                updatedHistory[updatedHistory.length - 1] = lastHistory;
                 return updatedHistory;
             });
+
         });
 
         return () => {
@@ -170,6 +182,7 @@ function Explore() {
         if (!serie) {
             setSelectedExtension(null)
             setHistory([{}]);
+            setFolderContents([]);
             return
         }
 

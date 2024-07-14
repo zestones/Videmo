@@ -96,8 +96,6 @@ function DetailsContainer({ serie, calledFrom }) {
 	}, [serieApi, serie, showNotification]);
 
 	const refreshSerieState = () => {
-		console.log('refreshing serie state');
-		console.log(serie);
 		serieApi.readSerieByLink(serie.link)
 			.then((serie) => setAlreadyInLibrary(!!serie.inLibrary))
 			.catch((error) => {
