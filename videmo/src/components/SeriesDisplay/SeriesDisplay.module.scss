@@ -16,6 +16,13 @@
             gap: 12px;
         }
 
+        &.linked {
+            width: 80%;
+            margin: 0 auto;
+
+            margin-top: 12px;
+        }
+
         &.source {
             display: flex;
             justify-content: flex-start;

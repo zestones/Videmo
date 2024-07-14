@@ -226,6 +226,7 @@ function SeriesDisplay({ serie, linkedSeries, onPlayClick, onRefresh, calledFrom
     const containerClassName = () => {
         let classname = styles.seriesContainer;
         if (calledFrom === SOURCE_STRING) classname += ` ${styles.source}`;
+        if (serie && linkedSeries.length > 0) classname += ` ${styles.linked}`;
         if ((calledFrom === EXPLORE_STRING || calledFrom === LIBRARY_STRING) && (episodes.length > 0 || linkedSeries.length > 0)) classname += ` ${styles.explore}`;
 
         return classname;
@@ -258,7 +259,7 @@ function SeriesDisplay({ serie, linkedSeries, onPlayClick, onRefresh, calledFrom
                     </div>
                 )}
 
-                {serie && episodes.length === 0 && (
+                {serie && episodes.length === 0 && linkedSeries.length === 0 && (
                     <div className={styles.noSeries}>
                         <h1>Aucun épisode trouvé</h1>
                     </div>

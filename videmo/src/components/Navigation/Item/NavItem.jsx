@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 
 // Components
 import Tooltip from "../../Tooltip/Tooltip";
@@ -17,10 +18,18 @@ function NavItem({ entry, item, activeItem, onPageChange }) {
             >
                 <div className={`${styles.navIconContainer} ${activeItem === entry ? styles.active : ""}`}>
                     {<item.icon className={styles.navIcon} />}
+                    <p>{item.label}</p>
                 </div>
             </li>
         </Tooltip>
     );
 }
+
+NavItem.propTypes = {
+    entry: PropTypes.string.isRequired,
+    item: PropTypes.object.isRequired,
+    activeItem: PropTypes.string.isRequired,
+    onPageChange: PropTypes.func.isRequired,
+};
 
 export default NavItem;

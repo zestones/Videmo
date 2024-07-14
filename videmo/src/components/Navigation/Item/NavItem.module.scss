@@ -4,38 +4,58 @@
     justify-content: center;
     align-items: center;
 
-    height: 80%;
-    width: 100%;
-
-    padding: 0.8rem 0;
+    height: 55px;
+    width: 95%;
+    margin: 0.2rem 0;
 
     transition: background-color 0.2s ease-in-out;
 
     .navIcon {
-        font-size: 2rem;
+        font-size: 1.8rem;
     }
 
     &.active {
-        color: var(--selection-color);
+        border-radius: 0.5rem;
+        border-left: 2px solid var(--selection-color);
     }
-    
+
     &:hover {
         background-color: var(--primary-color);
         cursor: pointer;
+        border-radius: 0.5rem;
     }
 
-    .navIconContainer.active {
+    .navIconContainer {
         display: flex;
-        justify-content: center;
+        justify-content: flex-start;
         align-items: center;
-        height: 100%;
 
+        height: 100%;
         width: 100%;
+        padding: 0 1rem;
+
+        p {
+            margin-left: 1rem;
+        }
+
+        &.active {
+            height: 55px;
+            border-radius: 0.5rem;
+
+            padding: 0 1rem;
+            background-color: var(--primary-color);
+        }
     }
+
 
     .navLabel {
         font-size: 0.85rem;
         font-weight: 600;
         margin-top: 0.25rem;
     }
+}
+
+.navItem:last-child {
+    bottom: 1rem;
+    position: absolute;
 }

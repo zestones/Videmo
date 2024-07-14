@@ -5,10 +5,38 @@
     position: fixed;
     z-index: 99;
 
-    top: var(--header-height);
+    top: 0;
     left: 0;
 
     color: var(--primary-text-color);
+    background-color: var(--tertiary-color);
+
+    .logo {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        height: var(--header-height);
+        color: var(--primary-color);
+
+        h1 {
+            font-size: 1.4rem;
+            margin: 0;
+
+            font-family: 'Lobster', cursive;
+            font-weight: bold;
+            text-transform: capitalize;
+        }
+
+    }
+
+    .divider {
+        height: 1px;
+        width: 90%;
+
+        margin: 0 auto;
+        background-color: var(--primary-text-color);
+    }
 
     .navList {
         display: flex;
@@ -16,7 +44,7 @@
         flex-direction: column;
         height: auto;
 
-        margin-top: 20px;
+        margin-top: 1rem;
     }
 }
 

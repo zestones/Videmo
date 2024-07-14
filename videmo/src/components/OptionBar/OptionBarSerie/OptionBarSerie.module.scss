@@ -1,7 +1,7 @@
 .optionBar {
     position: fixed;
     bottom: 0;
-    
+
     left: calc(50% + var(--navigation-width) / 2);
     right: 50%;
 
@@ -12,7 +12,7 @@
     align-items: center;
     justify-content: center;
 
-    width: 85%;
+    width: calc(85% - var(--navigation-width));
     margin: 0 auto;
 
     height: 50px;
