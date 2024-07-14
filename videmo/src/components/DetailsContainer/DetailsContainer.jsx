@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
+import PropTypes from "prop-types";
+
 import { useNotification } from "../../components/Notification/NotificationProvider";
 
 // Constants
-import { EXPLORE_STRING, HISTORY_STRING } from "../../utilities/utils/Constants";
+import { EXPLORE_STRING, HISTORY_STRING, SOURCE_STRING } from "../../utilities/utils/Constants";
 
 // External
 import FavoriteIcon from '@mui/icons-material/Favorite';
@@ -55,6 +57,7 @@ function DetailsContainer({ serie, calledFrom }) {
 
 				serieDataRef.current = { ...serie, infos: serieDetails };
 			} catch (error) {
+				console.error(error);
 				showNotification('error', error.message);
 			} finally {
 				setIsLoading(false);
@@ -67,6 +70,7 @@ function DetailsContainer({ serie, calledFrom }) {
 				const serieInfos = await serieInfosApi.readSerieInfosById(serie.id);
 				serieDataRef.current = { ...serie, infos: serieInfos };
 			} catch (error) {
+				console.error(error);
 				showNotification('error', error.message);
 			} finally {
 				setIsLoading(false);
@@ -77,22 +81,27 @@ function DetailsContainer({ serie, calledFrom }) {
 
 		if (calledFrom === HISTORY_STRING && areAllValuesNullOrUndefined(serie.infos)) fetchAndUpdateSerieDetails();
 		else if (calledFrom === HISTORY_STRING && !areAllValuesNullOrUndefined(serie.infos)) setIsLoading(false);
-		else if (calledFrom === EXPLORE_STRING && !serie.inLibrary) fetchAndUpdateSerieDetails();
+		else if (calledFrom === (EXPLORE_STRING || SOURCE_STRING) && !serie.inLibrary) fetchAndUpdateSerieDetails();
 		else readSerieInfos();
 
 	}, [aniList, showNotification, serie, serieInfosApi, calledFrom]);
 
-
 	useEffect(() => {
 		serieApi.readSerieByLink(serie.link)
 			.then((serie) => setAlreadyInLibrary(!!serie?.inLibrary))
-			.catch((error) => showNotification('error', error.message));
+			.catch((error) => {
+				console.error(error);
+				showNotification('error', error.message)
+			});
 	}, [serieApi, serie, showNotification]);
 
 	const refreshSerieState = () => {
 		serieApi.readSerieByLink(serie.link)
 			.then((serie) => setAlreadyInLibrary(!!serie.inLibrary))
-			.catch((error) => showNotification('error', error.message));
+			.catch((error) => {
+				console.error(error);
+				showNotification('error', error.message)
+			});
 	}
 
 	const toogleOptionPanel = () => setShowOptionPanel((prev) => !prev);
@@ -102,10 +111,11 @@ function DetailsContainer({ serie, calledFrom }) {
 			setShowOptionPanel(false);
 			const infos = await aniList.searchAnimeInfosName(serie.basename);
 			if (infos) {
-				await serieInfosApi.updateSerieInfos(serie.link, infos);
+				if (serie.inLibrary) await serieInfosApi.updateSerieInfos(serie.link, infos);
 				serieDataRef.current = { ...serie, infos: infos };
 			}
 		} catch (error) {
+			console.error(error);
 			showNotification('error', error.message);
 		} finally {
 			setIsLoading(false);
@@ -175,12 +185,17 @@ function DetailsContainer({ serie, calledFrom }) {
 				<CategoryModal
 					series={[serieDataRef.current]}
 					onClose={() => setShowModal(false)}
-					onMoreClick={refreshSerieState}
-					shouldUpdateSeries={calledFrom === EXPLORE_STRING}
+					onRefresh={refreshSerieState}
+					shouldUpdateSeries={calledFrom === EXPLORE_STRING || calledFrom === SOURCE_STRING}
 				/>
 			)}
 		</div >
 	);
+};
+
+DetailsContainer.propTypes = {
+	serie: PropTypes.object.isRequired,
+	calledFrom: PropTypes.string.isRequired,
 };
 
 export default DetailsContainer;

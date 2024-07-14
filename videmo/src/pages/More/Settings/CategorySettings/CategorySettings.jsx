@@ -36,7 +36,10 @@ function CategorySettings() {
                 setCategories(data)
                 setIsLoading(false);
             })
-            .catch((error) => setError({ message: error.message, type: "error" }));
+            .catch((error) => {
+                console.error(error);
+                setError({ message: error.message, type: "error" });
+            });
     }, [extensionApi, categoryApi]);
 
 
@@ -50,7 +53,10 @@ function CategorySettings() {
             // Create a new category with the name entered by the user
             categoryApi.createCategory(newCategoryName, lastCategoryId + 1)
                 .then((category) => setCategories([...categories, category]))
-                .catch((error) => setError({ message: error.message, type: "error" }));
+                .catch((error) => {
+                    console.error(error);
+                    setError({ message: error.message, type: "error" })
+                });
         }
     };
 
@@ -58,7 +64,11 @@ function CategorySettings() {
         // Delete the category with the given id
         categoryApi.deleteCategory(categoryId)
             .then(() => setCategories(categories.filter((category) => category.id !== categoryId)))
-            .catch((error) => setError({ message: error.message, type: "error" }));
+            .catch((error) => {
+                console.error(error);
+                setError({ message: error.message, type: "error" });
+
+            });
     };
 
     const handleUpdateCategory = (categoryId) => {
@@ -69,7 +79,10 @@ function CategorySettings() {
 
         categoryApi.updateCategory(updatedCategories.find((category) => category.id === categoryId))
             .then(() => setCategories(updatedCategories))
-            .catch((error) => setError({ message: error.message, type: "error" }));
+            .catch((error) => {
+                console.error(error);
+                setError({ message: error.message, type: "error" });
+            });
 
         setEditingCategory(null);
     };
@@ -85,7 +98,10 @@ function CategorySettings() {
         const reorderedCategoriesWithId = reorderedCategories.map((category, index) => ({ ...category, order_id: index + 1 }));
 
         categoryApi.updateCategoriesOrder(reorderedCategoriesWithId)
-            .catch((error) => setError({ message: error.message, type: "error" }));
+            .catch((error) => {
+                console.error(error);
+                setError({ message: error.message, type: "error" })
+            });
 
         // Update the state with the new order of categories
         setCategories(reorderedCategories);

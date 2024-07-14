@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 
 // Components
 import SearchBar from "../SearchBar/SearchBar";
@@ -16,6 +17,7 @@ function Header({ title,
     series,
     currentCategory,
     onSearch = null,
+    onDynamiqueSearch = null,
     onRandom = null,
     onFilter = null,
     onBack = null,
@@ -32,7 +34,7 @@ function Header({ title,
             </div>
 
             <div className={styles.headerRight}>
-                {onSearch && <SearchBar onSearch={onSearch} />}
+                {(onSearch || onDynamiqueSearch) && <SearchBar onSearch={onSearch} onDynamiqueSearch={onDynamiqueSearch} />}
                 {onFilter && <FilterPanel onFilter={onFilter} series={series} currentCategory={currentCategory} />}
                 {onRandom && <RandomButton onClick={onRandom} />}
                 {onDelete && <DeleteButton onClick={onDelete} />}
@@ -42,5 +44,20 @@ function Header({ title,
         </header>
     );
 }
+
+Header.propTypes = {
+    title: PropTypes.string.isRequired,
+    series: PropTypes.array,
+    currentCategory: PropTypes.object,
+    onSearch: PropTypes.func,
+    onDynamiqueSearch: PropTypes.func,
+    onRandom: PropTypes.func,
+    onFilter: PropTypes.func,
+    onBack: PropTypes.func,
+    onDelete: PropTypes.func,
+    onViewMode: PropTypes.func,
+    onUpdate: PropTypes.func,
+    progress: PropTypes.number
+};
 
 export default Header;

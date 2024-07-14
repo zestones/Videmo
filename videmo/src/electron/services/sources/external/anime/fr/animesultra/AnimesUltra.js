@@ -83,6 +83,8 @@ class AnimesUltra {
             $('div[id^="content_player_"]').each((_, element) => {
                 if ($(element).attr('id').split('_')[2].match(/^\d+$/)) {
                     const id = $(element).text().trim();
+
+                    if (!id.match(/^\d+$/)) return;
                     episodes.push({
                         link: this.#getLink(id, this.defaultServer),
                         name: `Episode ${i}`,

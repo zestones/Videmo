@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
+import PropTypes from "prop-types";
 
 // Api
 import CategoryApi from "../../services/api/category/CategoryApi";
@@ -7,7 +8,7 @@ import CategoryApi from "../../services/api/category/CategoryApi";
 import styles from "./CategoryHeader.module.scss";
 
 
-function CategoryHeader({ selectedCategory, onSelectCategory }) {
+function CategoryHeader({ selectedCategory, onSelectCategory, setNavigationHistory }) {
     const headerRef = useRef(null);
     let isDragging = false;
     let startX = 0;
@@ -44,6 +45,7 @@ function CategoryHeader({ selectedCategory, onSelectCategory }) {
 
     const handleSelectCategory = (category) => {
         onSelectCategory(category);
+        setNavigationHistory([]);
         categoryApi
             .updateLastOpenedCategory(category.id)
             .catch((error) => console.error(error));
@@ -93,5 +95,11 @@ function CategoryHeader({ selectedCategory, onSelectCategory }) {
         </div>
     );
 }
+
+CategoryHeader.propTypes = {
+    selectedCategory: PropTypes.object,
+    onSelectCategory: PropTypes.func,
+    setNavigationHistory: PropTypes.func,
+};
 
 export default CategoryHeader;

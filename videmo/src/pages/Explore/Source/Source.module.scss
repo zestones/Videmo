@@ -2,79 +2,83 @@
     margin: 0 auto;
     width: 90%;
 
-    border-radius: 10px;
-    background-color: var(--secondary-color);
     margin-top: calc(var(--header-height) + 15px);
 
     .tabs {
         display: flex;
+        justify-content: center;
         align-items: center;
-        justify-content: flex-start;
 
-        border-radius: 10px 10px 0 0;
-        background-color: var(--tertiary-color);
+        margin-bottom: 20px;
 
         .tab {
-            margin: 0;
-            padding: 14px 22px;
-
-            &.active {
-                color: var(--selection-color);
-                border-bottom: 2px solid var(--selection-color);
-                background-color: var(--secondary-color);
-
-                &:first-child {
-                    border-radius: 10px 0 0 0;
-                }
-            }
-
-            &:hover {
-                cursor: pointer;
-            }
-        }
-    }
-
-
-    .extension {
-        display: flex;
-        align-items: center;
-
-        padding: 14px 22px;
-
-        .extensionIcon {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background-color: var(--primary-color);
-
             display: flex;
             align-items: center;
             justify-content: center;
 
-            .localSource {
-                font-size: 1.9rem;
-                color: #ffdb6a;
-            }
-
-            img {
-                width: 30px;
-                height: 30px;
-
-                object-fit: cover;
-
-            }
-        }
-
-        .extensionName {
-            font-size: 14px;
+            font-size: 1.2rem;
             font-weight: 700;
-
-            margin-left: 10px;
             color: var(--primary-text-color);
-        }
+            background-color: var(--primary-color);
 
-        &:hover {
             cursor: pointer;
+
+            &.active {
+                color: var(--selection-color);
+            }
         }
     }
+
+    .searchResults {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+
+        width: 100%;
+
+        .searchResult {
+            width: 100%;
+
+            .extensionSearch {
+                display: flex;
+                align-items: center;
+                justify-content: flex-start;
+
+                width: 100%;
+
+                .extensionIcon {
+                    width: 50px;
+                    height: 50px;
+
+                    margin-right: 10px;
+                }
+
+                h2 {
+                    font-size: 1.2rem;
+                    font-weight: 700;
+                    color: var(--primary-text-color);
+                }
+
+                .arrowIcon {
+                    width: 30px;
+                    height: 30px;
+
+                    margin-left: auto;
+                }
+            }
+
+            .searchResultList {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: flex-start;
+
+                width: 100%;
+                padding: 22px 0;
+            }
+
+
+        }
+    }
+
+
 }

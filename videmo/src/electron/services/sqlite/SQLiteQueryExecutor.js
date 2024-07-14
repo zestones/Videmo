@@ -11,6 +11,7 @@ class SQLiteQueryExecutor {
         this.database = this.#retrieveDatabasePath();
         this.create_tables_sql = path.join(__dirname, 'sql', 'tables.sql');
         this.fill_data_sql = path.join(__dirname, 'sql', 'data.sql');
+        this.versioning_folder = path.join(__dirname, 'sql', 'version');
     }
 
     /**
@@ -40,7 +41,6 @@ class SQLiteQueryExecutor {
      * @private
     */
     async initializeDatabase() {
-
         if (!fs.existsSync(this.database)) {
             this.db = new sqlite3.Database(this.database);
 
@@ -48,6 +48,35 @@ class SQLiteQueryExecutor {
             await this.executeFile(this.fill_data_sql);
         }
 
+        this.updateDatabase();
+    }
+
+    async updateDatabase() {
+        this.open();
+        const sql = `SELECT name FROM sqlite_master WHERE type='table' AND name='app_version_tracker';`;
+        const row = await this.executeAndFetchOne(sql);
+
+        if (!row) {
+            const files = fs.readdirSync(this.versioning_folder);
+            for (const file of files) {
+                const filePath = path.join(this.versioning_folder, file);
+                await this.executeFile(filePath);
+            }
+        } else {
+            const sql = `SELECT MAX(version) AS last_id FROM app_version_tracker;`;
+            const row = await this.executeAndFetchOne(sql);
+
+            const lastVersion = row.last_id;
+            const files = fs.readdirSync(this.versioning_folder);
+            const filteredFiles = files.filter(file => parseInt(file.split("_")[0]) > lastVersion);
+
+            for (const file of filteredFiles) {
+                const filePath = path.join(this.versioning_folder, file);
+                await this.executeFile(filePath);
+            }
+        }
+
+        this.close();
     }
 
     /**
@@ -285,7 +314,6 @@ class SQLiteQueryExecutor {
         });
     }
 
-
     /**
      * Restores a database backup by replacing the current
      * @param {String} filePath - The path to the backup file.
@@ -295,6 +323,7 @@ class SQLiteQueryExecutor {
             if (err) throw err;
             else fs.unlink(filePath, (err) => {
                 if (err) throw err;
+                else this.updateDatabase();
             });
         });
     }

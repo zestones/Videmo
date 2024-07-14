@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import { useNotification } from '../../components/Notification/NotificationProvider';
 
 // Components
@@ -25,6 +26,12 @@ function Navigation({ navItems, activePage, onPageChange }) {
     return (
         <>
             <nav className={styles.nav}>
+                <div className={styles.logo}>
+                    <h1 className={styles.title}>Videmo</h1>
+                </div>
+
+                <div className={styles.divider} />
+
                 <ul className={styles.navList}>
                     {Object.keys(navItems).map((key) => (
                         <NavItem
@@ -51,5 +58,11 @@ function Navigation({ navItems, activePage, onPageChange }) {
         </>
     );
 }
+
+Navigation.propTypes = {
+    navItems: PropTypes.object.isRequired,
+    activePage: PropTypes.string.isRequired,
+    onPageChange: PropTypes.func.isRequired,
+};
 
 export default Navigation;
