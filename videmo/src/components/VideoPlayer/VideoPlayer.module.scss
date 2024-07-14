@@ -4,6 +4,7 @@
     left: var(--navigation-width);
 
     height: 100%;
+    width: calc(100% - var(--navigation-width));
 
     display: flex;
     justify-content: center;
