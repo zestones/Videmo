@@ -86,46 +86,48 @@ function EpisodeCard({ serie, episode, setEpisodes, checked, setChecked, exactly
     };
 
     return (
-        <li
-            className={`${styles.card} 
+        <>
+            <li
+                className={`${styles.card} 
                 ${currentEpisode.viewed ? styles.viewed : ""} 
                 ${currentEpisode.bookmarked ? styles.bookmarked : ""}
                 ${checked && styles.checked}`}
-        >
-            <div className={styles.cardContent}>
-                <div className={styles.cardCheckboxContainer}>
-                    <input
-                        type="checkbox"
-                        className={styles.cardCheckbox}
-                        checked={checked}
-                        onChange={() => setChecked(!checked)}
-                    />
-                </div>
-                <div className={styles.cardInfo}>
-                    <p className={styles.cardTitle}>{currentEpisode.name}</p>
-                    <div className={styles.cardDescriptionContainer}>
-                        <p className={styles.cardModifiedTime}>{currentEpisode.modifiedTime}</p>
-                        <p className={styles.cardPlayedTime}>{utils.convertPlayedTime(currentEpisode.played_time)}</p>
+            >
+                <div className={styles.cardContent}>
+                    <div className={styles.cardCheckboxContainer}>
+                        <input
+                            type="checkbox"
+                            className={styles.cardCheckbox}
+                            checked={checked}
+                            onChange={() => setChecked(!checked)}
+                        />
+                    </div>
+                    <div className={styles.cardInfo}>
+                        <p className={styles.cardTitle}>{currentEpisode.name}</p>
+                        <div className={styles.cardDescriptionContainer}>
+                            <p className={styles.cardModifiedTime}>{currentEpisode.modifiedTime}</p>
+                            <p className={styles.cardPlayedTime}>{utils.convertPlayedTime(currentEpisode.played_time)}</p>
+                        </div>
+                    </div>
+                    <div className={styles.cardButtonsContainer}>
+                        {(!checked && !exactlyOneChecked) && (
+                            <>
+                                <PlayArrowIcon className={styles.cardButton} onClick={handleOnPlayClick} />
+                                <OpenInNewIcon className={styles.cardButton} onClick={handleOpenLocalVideoPlayer} />
+                                <BookmarkIcon className={`${styles.cardButton} ${currentEpisode.bookmarked ? styles.bookmarked : ""}`} onClick={handleBookmarkClick} />
+                            </>
+                        )}
+                        {!currentEpisode.viewed ? (
+                            <DoneAllIcon className={styles.cardButton} onClick={handleViewedClick} />
+                        ) : (
+                            <RemoveDoneIcon className={styles.cardButton} onClick={handleViewedClick} />
+                        )}
+
+                        {(checked && exactlyOneChecked) && <KeyboardDoubleArrowDownIcon className={styles.cardButton} onClick={setAllCheckedUnderIndex} />}
                     </div>
                 </div>
-                <div className={styles.cardButtonsContainer}>
-                    {(!checked && !exactlyOneChecked) && (
-                        <>
-                            <PlayArrowIcon className={styles.cardButton} onClick={handleOnPlayClick} />
-                            <OpenInNewIcon className={styles.cardButton} onClick={handleOpenLocalVideoPlayer} />
-                            <BookmarkIcon className={`${styles.cardButton} ${currentEpisode.bookmarked ? styles.bookmarked : ""}`} onClick={handleBookmarkClick} />
-                        </>
-                    )}
-                    {!currentEpisode.viewed ? (
-                        <DoneAllIcon className={styles.cardButton} onClick={handleViewedClick} />
-                    ) : (
-                        <RemoveDoneIcon className={styles.cardButton} onClick={handleViewedClick} />
-                    )}
 
-                    {(checked && exactlyOneChecked) && <KeyboardDoubleArrowDownIcon className={styles.cardButton} onClick={setAllCheckedUnderIndex} />}
-                </div>
-            </div>
-
+            </li>
             {openVideoPlayer && (
                 <VideoPlayer
                     episode={currentEpisode}
@@ -133,7 +135,7 @@ function EpisodeCard({ serie, episode, setEpisodes, checked, setChecked, exactly
                     onCloseVideoPlayer={handleCloseVideoPlayer}
                 />
             )}
-        </li>
+        </>
     );
 }
 
