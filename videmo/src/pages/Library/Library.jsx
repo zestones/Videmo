@@ -169,12 +169,23 @@ function Library() {
 
     const filterFolders = sortManager.filterByKeyword(searchValue, filteredSeries || subSeries, 'basename', 'name');
 
+    const handleSearch = (value) => {
+        setSearchValue(value);
+
+        if (value === "") {
+            setFilteredSeries(subSeries);
+        } else {
+            const filtered = sortManager.filterByKeyword(value, subSeries, 'basename', 'name');
+            setFilteredSeries(filtered);
+        }
+    }
+
     return (
         <div className={styles.library}>
             <div className={styles.libraryContainer}>
                 <Header
                     title="Bilbliothèque"
-                    onSearch={setSearchValue}
+                    onDynamiqueSearch={handleSearch}
                     onBack={serie ? onBackClick : null}
                     onRandom={() => filteredSeries.length > 0 && handleSerieSelection(filteredSeries[Math.floor(Math.random() * filteredSeries.length)])}
                     onFilter={setFilteredSeries}
