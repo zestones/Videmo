@@ -175,13 +175,17 @@ function Source({ handleSelectedExtension }) {
     }
 
     const handleBackClick = () => {
-        // TODO : handle back click
-        console.log("back");
+        if (serie) {
+            setSerie(null);
+            setEpisodes([]);
+        } else if (!serie && searchResults) {
+            setSearchResults({});
+        }
     };
 
     return (
         <>
-            <Header title="Explorer" onSearch={search} onBack={handleBackClick} />
+            <Header title="Explorer" onSearch={search} onBack={(Object.keys(searchResults).length > 0 || serie) ? handleBackClick : null} />
             <div className={styles.container}>
                 {!serie && (
                     <div className={styles.tabs}>

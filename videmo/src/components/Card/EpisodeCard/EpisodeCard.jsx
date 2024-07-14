@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import PropTypes from "prop-types";
 
 // External
 import BookmarkIcon from '@mui/icons-material/Bookmark';
@@ -135,5 +136,15 @@ function EpisodeCard({ serie, episode, setEpisodes, checked, setChecked, exactly
         </li>
     );
 }
+
+EpisodeCard.propTypes = {
+    serie: PropTypes.object.isRequired,
+    episode: PropTypes.object.isRequired,
+    setEpisodes: PropTypes.func.isRequired,
+    checked: PropTypes.bool.isRequired,
+    setChecked: PropTypes.func.isRequired,
+    exactlyOneChecked: PropTypes.bool.isRequired,
+    setAllCheckedUnderIndex: PropTypes.func.isRequired,
+};
 
 export default EpisodeCard;
