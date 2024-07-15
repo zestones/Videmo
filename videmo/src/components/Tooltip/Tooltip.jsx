@@ -20,6 +20,7 @@ function Tooltip({ title, children, placement = 'right' }) {
 Tooltip.propTypes = {
     title: PropTypes.string.isRequired,
     children: PropTypes.node.isRequired,
+    placement: PropTypes.oneOf(['top', 'right', 'bottom', 'left']),
 };
 
 export default Tooltip;

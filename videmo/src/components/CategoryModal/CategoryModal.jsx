@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import propTypes from "prop-types";
 
 import { useNotification } from "../../components/Notification/NotificationProvider";
@@ -33,38 +33,36 @@ function CategoryModal({ series, onClose, onRefresh, shouldUpdateSeries = false 
             .catch((error) => showNotification("error", error.message));
     }, [categoryApi, showNotification]);
 
+    const determineFlag = useCallback((isPresentForAllSeries, isPresentForAnySeries) => {
+        if (isPresentForAllSeries) return FLAGS.CHECKED;
+        else if (isPresentForAnySeries) return FLAGS.REMOVED;
+        else return FLAGS.UNCHECKED;
+    }, [FLAGS]);
+
+    const updateCheckedCategories = useCallback((category, data, series, checkedCategories) => {
+        const isPresentForAllSeries = series.every((s) => data[s.link].includes(category.id));
+        const isPresentForAnySeries = series.some((s) => data[s.link].includes(category.id));
+        const flag = determineFlag(isPresentForAllSeries, isPresentForAnySeries);
+
+        const existingEntryIndex = checkedCategories.findIndex((element) => element.category.id === category.id);
+        const seriesForCategory = series.filter(s => data[s.link].includes(category.id));
+
+        if (existingEntryIndex === -1) checkedCategories.push({ flag, category, serie: seriesForCategory });
+        else checkedCategories[existingEntryIndex].serie = seriesForCategory;
+    }, [determineFlag]);
+
     useEffect(() => {
         categoryApi.readSerieCategoryIdsBySerieLinkArray(series.map((s) => s.link))
             .then((data) => {
                 let checkedCategories = [];
                 categories.forEach((category) => {
-                    // Check if the category ID is present for all series
-                    const isPresentForAllSeries = series.every((s) => data[s.link].includes(category.id));
-
-                    // Check if the category ID is present for any series
-                    const isPresentForAnySeries = series.some((s) => data[s.link].includes(category.id));
-
-                    // Determine the flag based on presence and completeness of the category
-                    let flag;
-                    if (isPresentForAllSeries) flag = FLAGS.CHECKED;
-                    else if (isPresentForAnySeries) flag = FLAGS.REMOVED;
-                    else flag = FLAGS.UNCHECKED;
-
-                    // Find the existing entry for this category
-                    const existingEntryIndex = checkedCategories.findIndex((element) => element.category.id === category.id);
-
-                    // Prepare the series array for the category
-                    const seriesForCategory = series.filter(s => data[s.link].includes(category.id));
-
-                    // Update the existing entry or add a new entry
-                    if (existingEntryIndex === -1) checkedCategories.push({ flag, category, serie: seriesForCategory });
-                    else checkedCategories[existingEntryIndex].serie = seriesForCategory;
+                    updateCheckedCategories(category, data, series, checkedCategories);
                 });
 
                 setCheckedCategories(checkedCategories)
             })
             .catch((error) => showNotification("error", error.message));
-    }, [categoryApi, series, FLAGS, categories, showNotification]);
+    }, [categoryApi, series, FLAGS, categories, showNotification, updateCheckedCategories]);
 
     const handleCategoryChange = (e, categoryId) => {
         const isChecked = e.target.checked;

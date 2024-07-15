@@ -1,4 +1,5 @@
 import React, { useMemo } from "react";
+import PropTypes from "prop-types";
 
 // External
 import DoneAllIcon from '@mui/icons-material/DoneAll';
@@ -68,6 +69,14 @@ function OptionBarEpisode({ serie, episodes, onClose, checked, onCheck }) {
             </div>
         </div>
     )
-}
+};
+
+OptionBarEpisode.propTypes = {
+    serie: PropTypes.object.isRequired,
+    episodes: PropTypes.array.isRequired,
+    onClose: PropTypes.func.isRequired,
+    checked: PropTypes.bool.isRequired,
+    onCheck: PropTypes.func.isRequired,
+};
 
 export default OptionBarEpisode;

@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useMemo, useEffect } from "react";
+import PropTypes from "prop-types";
 
 import DisplaySettingsApi from "../../../services/api/settings/DisplaySettingsApi";
 
@@ -31,4 +32,8 @@ export const DisplayModeProvider = ({ children }) => {
             {children}
         </DisplayModeContext.Provider>
     );
+};
+
+DisplayModeProvider.propTypes = {
+    children: PropTypes.node.isRequired,
 };

@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 
 // Styles
 import styles from "./UpdateCard.module.scss";
@@ -26,6 +27,14 @@ function UpdateCard({ isNewDateLabel, currentDateLabel, entry, handleSerieImageC
             </div>
         </>
     )
-}
+};
+
+UpdateCard.propTypes = {
+    isNewDateLabel: PropTypes.bool.isRequired,
+    currentDateLabel: PropTypes.string.isRequired,
+    entry: PropTypes.object.isRequired,
+    handleSerieImageClick: PropTypes.func.isRequired,
+    handleSerieNameClick: PropTypes.func.isRequired,
+};
 
 export default UpdateCard;

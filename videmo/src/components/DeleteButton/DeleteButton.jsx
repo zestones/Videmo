@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 
 // External
 import DeleteSweepIcon from '@mui/icons-material/DeleteSweep';
@@ -14,6 +15,10 @@ function DeleteButton({ onClick }) {
             <DeleteSweepIcon className={styles.deleteButtonIcon} />
         </button>
     );
-}
+};
+
+DeleteButton.propTypes = {
+    onClick: PropTypes.func.isRequired,
+};
 
 export default DeleteButton;

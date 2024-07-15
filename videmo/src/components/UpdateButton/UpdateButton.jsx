@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 
 // External
 import SyncIcon from '@mui/icons-material/Sync';
@@ -20,6 +21,11 @@ function UpdateButton({ onClick, progress }) {
             )}
         </>
     );
-}
+};
+
+UpdateButton.propTypes = {
+    onClick: PropTypes.func.isRequired,
+    progress: PropTypes.number.isRequired,
+};
 
 export default UpdateButton;

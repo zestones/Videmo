@@ -63,6 +63,25 @@ function Explore() {
             .catch((error) => setError({ message: error.message, type: "error" }));
     }, [categoryApi, folderManager, selectedExtension]);
 
+    const fetchAnimeImages = useCallback(async (animeList, extension) => {
+        if (extension.name !== 'FrenchAnime' && extension.name !== 'AnimesUltra') return;
+
+        const socket = io('http://localhost:4000');
+
+        socket.on('connect', () => {
+            socket.emit('get-images', { animes: animeList, referer: extension.link });
+        });
+
+        socket.on('image-update', (response) => {
+            setFolderContents((prevContents) => updateFetchedContentsImages(prevContents, response));
+            setHistory((prevHistory) => updateFetchedHistoryImages(prevHistory, response));
+        });
+
+        return () => {
+            socket.disconnect();
+        };
+    }, []);
+
     useEffect(() => {
         if (!selectedExtension) return;
 
@@ -84,85 +103,65 @@ function Explore() {
 
             fetchData();
         }
-    }, [folderManager, categoryApi, sourceManager, selectedExtension, retrieveSeriesInLibraryByExtension]);
+    }, [folderManager, categoryApi, sourceManager, selectedExtension, retrieveSeriesInLibraryByExtension, fetchAnimeImages]);
 
-    const fetchAnimeImages = async (animeList, extension) => {
-        if (extension.name !== 'FrenchAnime' && extension.name !== 'AnimesUltra') return;
+    const updateFetchedContentsImages = (prevContents, response) => {
+        const updatedContents = [...prevContents];
 
-        const socket = io('http://localhost:4000');
-
-        socket.on('connect', () => {
-            socket.emit('get-images', { animes: animeList, referer: extension.link });
-        });
-
-        socket.on('image-update', (response) => {
-            setFolderContents((prevContents) => {
-                const updatedContents = [...prevContents];
-
-                const index = updatedContents.findIndex((content) => content.link === response.anime.link);
-                if (index === -1) return updatedContents;
-                updatedContents[index] = { ...updatedContents[index], image: response.anime.image };
-                return updatedContents;
-            });
-
-            setHistory((prevHistory) => {
-                if (!prevHistory || prevHistory.length === 0) return [];
-
-                const updatedHistory = [...prevHistory];
-                const lastHistory = updatedHistory[updatedHistory.length - 1];
-
-                if (!lastHistory?.content) return updatedHistory;
-
-                const index = lastHistory.content.findIndex((content) => content.link === response.anime.link);
-                if (index === -1) return updatedHistory;
-
-                lastHistory.content[index] = {
-                    ...lastHistory.content[index],
-                    image: response.anime.image
-                };
-
-                // Assign the updated last history back to the updatedHistory array
-                updatedHistory[updatedHistory.length - 1] = lastHistory;
-                return updatedHistory;
-            });
-
-        });
-
-        return () => {
-            socket.disconnect();
-        };
+        const index = updatedContents.findIndex((content) => content.link === response.anime.link);
+        if (index === -1) return updatedContents;
+        updatedContents[index] = { ...updatedContents[index], image: response.anime.image };
+        return updatedContents;
     }
 
-    const fetchNextPage = useCallback(() => {
+    const updateFetchedHistoryImages = (prevHistory, response) => {
+        if (!prevHistory || prevHistory.length === 0) return [];
+
+        const updatedHistory = [...prevHistory];
+        const lastHistory = updatedHistory[updatedHistory.length - 1];
+
+        if (!lastHistory?.content) return updatedHistory;
+
+        const index = lastHistory.content.findIndex((content) => content.link === response.anime.link);
+        if (index === -1) return updatedHistory;
+
+        lastHistory.content[index] = {
+            ...lastHistory.content[index],
+            image: response.anime.image
+        };
+
+        // Assign the updated last history back to the updatedHistory array
+        updatedHistory[updatedHistory.length - 1] = lastHistory;
+        return updatedHistory;
+    }
+
+    const fetchNextPage = useCallback(async () => {
         if (loading || activeOption === EXPLORE_MODES.FILTER) return;
         setLoading(true);
 
-        sourceManager.scrapAnime(selectedExtension, currentPage + 1, activeOption)
-            .then((nextPage) => {
-                fetchAnimeImages(nextPage, selectedExtension);
-                categoryApi.readAllSeriesInLibraryByExtension(selectedExtension)
-                    .then((series) => {
-                        const formattedSeries = folderManager.mapFolderContentsWithMandatoryFields(nextPage, series, selectedExtension);
-                        setHistory((prevHistory) => {
-                            const newHistory = [...prevHistory];
-                            newHistory[0].content = [...newHistory[0].content, ...formattedSeries];
-                            return newHistory;
-                        });
+        try {
+            const nextPage = await sourceManager.scrapAnime(selectedExtension, currentPage + 1, activeOption)
+            fetchAnimeImages(nextPage, selectedExtension);
 
-                        setFolderContents((prevContents) => [...prevContents, ...formattedSeries]);
-                        setCurrentPage(currentPage + 1);
-                        setLoading(false);
-                    })
-                    .catch((error) => {
-                        setLoading(false);
-                        setError({ message: error.message, type: "error" });
-                    });
-            })
-            .catch((error) => {
-                setLoading(false);
-                setError({ message: error.message, type: "error" });
+            const series = await categoryApi.readAllSeriesInLibraryByExtension(selectedExtension);
+            const formattedSeries = folderManager.mapFolderContentsWithMandatoryFields(nextPage, series, selectedExtension);
+
+            setHistory((prevHistory) => {
+                const newHistory = [...prevHistory];
+                newHistory[0].content = [...newHistory[0].content, ...formattedSeries];
+                return newHistory;
             });
-    }, [sourceManager, activeOption, categoryApi, folderManager, selectedExtension, currentPage, loading]);
+
+            setFolderContents((prevContents) => [...prevContents, ...formattedSeries]);
+            setCurrentPage(currentPage + 1);
+            setLoading(false);
+        }
+        catch (error) {
+            setLoading(false);
+            console.error(error);
+            setError({ message: error.message, type: "error" });
+        }
+    }, [loading, activeOption, sourceManager, selectedExtension, currentPage, fetchAnimeImages, categoryApi, folderManager]);
 
     const handleScroll = useCallback(() => {
         const windowHeight = window.innerHeight;

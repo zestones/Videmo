@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 
 // External
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
@@ -27,5 +28,9 @@ const Dropdown = ({ title, content }) => {
     );
 };
 
+Dropdown.propTypes = {
+    title: PropTypes.string.isRequired,
+    content: PropTypes.node.isRequired,
+};
 
 export default Dropdown;

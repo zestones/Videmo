@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 
 // Styles
 import styles from "./RandButton.module.scss";
@@ -14,6 +15,10 @@ function RandButton({ onClick }) {
             <ShuffleIcon className={styles.randButtonIcon} />
         </button>
     );
-}
+};
+
+RandButton.propTypes = {
+    onClick: PropTypes.func.isRequired,
+};
 
 export default RandButton;

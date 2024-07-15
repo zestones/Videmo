@@ -52,7 +52,7 @@ function Library() {
     const retrieveAllSeries = useCallback(async () => {
         try {
             const seriesInLibrary = await serieApi.readAllSeriesByCategory(currentCategory?.id);
-            const filters = await categoryFilterApi.getFiltersByCategoryId(currentCategory.id);
+            const filters = await categoryFilterApi.getFiltersByCategoryId(currentCategory?.id);
 
             const sortedSeries = [...sortManager.sortSeriesByField(seriesInLibrary, filters.sort.name, filters.sort.flag)];
             const filteredSeries = [...filterManager.filterSeriesByFilters(sortedSeries, filters.filter)];
@@ -66,21 +66,24 @@ function Library() {
     }, [serieApi, currentCategory, sortManager, filterManager, categoryFilterApi, showNotification]);
 
     // Used to update the series when the number of episodes change
-    const retrieveAllSeriesByLinks = (links) => {
+    const retrieveAllSeriesByLinks = async (links) => {
         if (!links) return;
-        serieApi.readAllSeriesByLinks(links)
-            .then((series) => {
-                const map = subSeries.map((serie) => series.find((s) => s.link === serie.link) || serie);
-                setSubSeries(map);
-                setFilteredSeries(map);
-            })
-            .catch((error) => showNotification("error", `Error retrieving series: ${error.message}`));
+
+        try {
+            const series = await serieApi.readAllSeriesByLinks(links);
+            const map = subSeries.map((serie) => series.find((s) => s.link === serie.link) || serie);
+            setSubSeries(map);
+            setFilteredSeries(map);
+        } catch (error) {
+            showNotification("error", `Error retrieving series: ${error.message}`);
+            console.error(error);
+        }
     }
 
     // Used to update the series when the update triggered
     useEffect(() => {
         if (updateProgress === 100) {
-            if (currentCategory.name === updateCategoryName && !serie) retrieveAllSeries();
+            if (currentCategory?.name === updateCategoryName && !serie) retrieveAllSeries();
             setUpdateProgress(0);
             showNotification("success", "Update completed");
         }
@@ -149,7 +152,7 @@ function Library() {
 
     const handleUpdateSeries = async () => {
         try {
-            setUpdateCategoryName(currentCategory.name);
+            setUpdateCategoryName(currentCategory?.name);
             const totalSeries = serie ? [serie] : subSeries;
             let completedSeries = 0;
 
@@ -176,6 +179,7 @@ function Library() {
             setFilteredSeries(subSeries);
         } else {
             const filtered = sortManager.filterByKeyword(value, subSeries, 'basename', 'name');
+            sortManager.sortByName(filtered);
             setFilteredSeries(filtered);
         }
     }
@@ -187,7 +191,7 @@ function Library() {
                     title="Bilbliothèque"
                     onDynamiqueSearch={handleSearch}
                     onBack={serie ? onBackClick : null}
-                    onRandom={() => filteredSeries.length > 0 && handleSerieSelection(filteredSeries[Math.floor(Math.random() * filteredSeries.length)])}
+                    onRandom={() => (filteredSeries && filteredSeries.length > 0) && handleSerieSelection(filteredSeries[Math.floor(Math.random() * filteredSeries.length)])}
                     onFilter={setFilteredSeries}
                     onUpdate={handleUpdateSeries}
                     progress={updateProgress}
