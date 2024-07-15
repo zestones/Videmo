@@ -71,7 +71,8 @@ function Notification({ type, message, closable, onClose }) {
 Notification.propTypes = {
     type: PropTypes.oneOf(['error', 'warning', 'success', 'loading']).isRequired,
     message: PropTypes.string.isRequired,
-    closable: PropTypes.bool
+    closable: PropTypes.bool,
+    onClose: PropTypes.func,
 };
 
 export default Notification;

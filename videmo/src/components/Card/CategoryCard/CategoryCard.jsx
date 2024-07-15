@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 
 // External
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -45,5 +46,15 @@ function CategoryCard({ category, provided, snapshot, editingCategory, setEditin
         </li>
     );
 }
+
+CategoryCard.propTypes = {
+    category: PropTypes.object.isRequired,
+    provided: PropTypes.object.isRequired,
+    snapshot: PropTypes.object.isRequired,
+    editingCategory: PropTypes.object,
+    setEditingCategory: PropTypes.func.isRequired,
+    handleDeleteCategory: PropTypes.func.isRequired,
+    handleUpdateCategory: PropTypes.func.isRequired,
+};
 
 export default CategoryCard;

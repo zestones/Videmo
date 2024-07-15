@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useMemo } from "react";
+import PropTypes from "prop-types";
 
 // External
 import NorthIcon from '@mui/icons-material/North';
@@ -76,6 +77,11 @@ function SortContent({ onFilter, currentCategory }) {
             ))}
         </div>
     );
-}
+};
+
+SortContent.propTypes = {
+    onFilter: PropTypes.func.isRequired,
+    currentCategory: PropTypes.object.isRequired,
+};
 
 export default SortContent;

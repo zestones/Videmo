@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 
 // External
 import { Skeleton } from '@mui/material';
@@ -49,6 +50,11 @@ function DetailsContainerSkeleton({ children, isLoading }) {
     }
 
     return <>{children}</>;
-}
+};
+
+DetailsContainerSkeleton.propTypes = {
+    children: PropTypes.node.isRequired,
+    isLoading: PropTypes.bool.isRequired,
+};
 
 export default DetailsContainerSkeleton;

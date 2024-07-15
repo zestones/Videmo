@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 
 // External
 import FilterListIcon from '@mui/icons-material/FilterList';
@@ -80,6 +81,12 @@ const FilterPanel = ({ onFilter, series, currentCategory }) => {
             </div>
         </>
     );
+};
+
+FilterPanel.propTypes = {
+    onFilter: PropTypes.func.isRequired,
+    series: PropTypes.array.isRequired,
+    currentCategory: PropTypes.object,
 };
 
 export default FilterPanel;

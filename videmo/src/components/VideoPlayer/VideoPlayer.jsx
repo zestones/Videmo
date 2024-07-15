@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
+import PropTypes from "prop-types";
 
 // External
 import CloseIcon from '@mui/icons-material/Close';
@@ -84,6 +85,12 @@ function VideoPlayer({ episode, startTime, onCloseVideoPlayer }) {
             </div>
         </div>
     );
-}
+};
+
+VideoPlayer.propTypes = {
+    episode: PropTypes.object.isRequired,
+    startTime: PropTypes.number,
+    onCloseVideoPlayer: PropTypes.func.isRequired,
+};
 
 export default VideoPlayer;

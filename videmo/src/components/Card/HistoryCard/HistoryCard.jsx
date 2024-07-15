@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 
 // External
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
@@ -35,6 +36,16 @@ const HistoryCard = ({ entry, isNewDateLabel, currentDateLabel, serieTime, handl
             </div>
         </>
     );
+};
+
+HistoryCard.propTypes = {
+    entry: PropTypes.object.isRequired,
+    isNewDateLabel: PropTypes.bool.isRequired,
+    currentDateLabel: PropTypes.string.isRequired,
+    serieTime: PropTypes.string.isRequired,
+    handleSerieImageClick: PropTypes.func.isRequired,
+    handleSerieNameClick: PropTypes.func.isRequired,
+    handleDeleteEpisodeHistory: PropTypes.func.isRequired,
 };
 
 export default HistoryCard;

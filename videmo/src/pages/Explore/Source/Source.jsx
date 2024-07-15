@@ -151,6 +151,12 @@ function Source({ handleSelectedExtension }) {
         setSearchResults(updatedSearchResults);
     };
 
+    function updateFetchedSeriesImage(seriesArray, response) {
+        return seriesArray.map((serie) => serie.link === response.anime.link
+            ? { ...serie, image: response.anime.image }
+            : serie);
+    }
+
     const fetchAnimeImages = async (animeList, extension) => {
         if (extension.name !== 'FrenchAnime' && extension.name !== 'AnimesUltra') return;
 
@@ -162,13 +168,10 @@ function Source({ handleSelectedExtension }) {
 
         socket.on('image-update', (response) => {
             setSearchResults((prev) => {
-                const updatedSeries = prev[extension.id].map((serie) => {
-                    if (serie.link === response.anime.link) return { ...serie, image: response.anime.image };
-                    return serie;
-                });
-
-                return ({ ...prev, [extension.id]: updatedSeries });
+                const updatedSeries = updateFetchedSeriesImage(prev[extension.id], response);
+                return { ...prev, [extension.id]: updatedSeries }
             });
+
         });
 
         return () => {

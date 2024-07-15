@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import PropTypes from "prop-types";
 
 // Constants
 import { FLAGS as FILTER_FLAGS, TYPES as FILTERS_TYPES } from "../../../utilities/utils/Constants";
@@ -72,6 +73,12 @@ function FilterContent({ onFilter, currentCategory, series }) {
             ))}
         </div>
     );
-}
+};
+
+FilterContent.propTypes = {
+    onFilter: PropTypes.func.isRequired,
+    currentCategory: PropTypes.object.isRequired,
+    series: PropTypes.array.isRequired,
+};
 
 export default FilterContent;

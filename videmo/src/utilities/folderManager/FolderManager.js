@@ -17,7 +17,7 @@ class FolderManager {
 
         // Listen for the response from the main Electron process
         return new Promise((resolve, reject) => {
-            window.api.receive("retrieveFolderContents", (data) => data.success ? resolve({ contents: data.folderContents, basename: data.basename }) : reject(data.error));
+            window.api.receive("retrieveFolderContents", (data) => data.success ? resolve({ contents: data.folderContents, basename: data.basename }) : reject(new Error(data.error)));
         });
     }
 
@@ -34,7 +34,7 @@ class FolderManager {
 
         // Listen for the response from the main Electron process
         return new Promise((resolve, reject) => {
-            window.api.receive("retrieveFoderCover", (data) => data.success ? resolve(data.cover) : reject(data.error));
+            window.api.receive("retrieveFoderCover", (data) => data.success ? resolve(data.cover) : reject(new Error(data.error)));
         });
     }
 
@@ -47,7 +47,7 @@ class FolderManager {
         window.api.send("retrieveLevel", { baseLink, link });
 
         return new Promise((resolve, reject) => {
-            window.api.receive("retrieveLevel", (data) => data.success ? resolve(data.level) : reject(data.error));
+            window.api.receive("retrieveLevel", (data) => data.success ? resolve(data.level) : reject(new Error(data.error)));
         });
     }
 
@@ -59,7 +59,7 @@ class FolderManager {
         window.api.send("retrieveFilesInFolder", { folderPath });
 
         return new Promise((resolve, reject) => {
-            window.api.receive("retrieveFilesInFolder", (data) => data.success ? resolve(data.files) : reject(data.error));
+            window.api.receive("retrieveFilesInFolder", (data) => data.success ? resolve(data.files) : reject(new Error(data.error)));
         });
     }
 
@@ -73,7 +73,7 @@ class FolderManager {
         window.api.send("retrieveBaseNameByLevel", { basePath, level });
 
         return new Promise((resolve, reject) => {
-            window.api.receive("retrieveBaseNameByLevel", (data) => data.success ? resolve(data.basename) : reject(data.error));
+            window.api.receive("retrieveBaseNameByLevel", (data) => data.success ? resolve(data.basename) : reject(new Error(data.error)));
         });
     }
 
@@ -85,7 +85,7 @@ class FolderManager {
         window.api.send("openFileInLocalVideoPlayer", { filePath });
 
         return new Promise((resolve, reject) => {
-            window.api.receive("openFileInLocalVideoPlayer", (data) => data.success ? resolve(data.success) : reject(data.error));
+            window.api.receive("openFileInLocalVideoPlayer", (data) => data.success ? resolve(data.success) : reject(new Error(data.error)));
         });
     }
 
@@ -98,7 +98,7 @@ class FolderManager {
 
         // Create a promise to handle the response from window.api.receive
         return new Promise((resolve, reject) => {
-            window.api.receive("openFolderDialog", (data) => data.success ? resolve(data.folderPath) : reject(data.error));
+            window.api.receive("openFolderDialog", (data) => data.success ? resolve(data.folderPath) : reject(new Error(data.error)));
         });
     }
 
@@ -111,7 +111,7 @@ class FolderManager {
 
         // Create a promise to handle the response from window.api.receive
         return new Promise((resolve, reject) => {
-            window.api.receive("createBackupFile", (data) => data.success ? resolve(data.success) : reject(data.error));
+            window.api.receive("createBackupFile", (data) => data.success ? resolve(data.success) : reject(new Error(data.error)));
         });
     }
 
@@ -124,7 +124,7 @@ class FolderManager {
 
         // Create a promise to handle the response from window.api.receive
         return new Promise((resolve, reject) => {
-            window.api.receive("restoreBackupFile", (data) => data.success ? resolve(data.success) : reject(data.error));
+            window.api.receive("restoreBackupFile", (data) => data.success ? resolve(data.success) : reject(new Error(data.error)));
         });
     }
 
