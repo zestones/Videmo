@@ -1,0 +1,233 @@
+.modal {
+    position: fixed;
+    top: 0;
+    left: var(--navigation-width);
+    width: calc(100% - var(--navigation-width));
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 20px;
+    overflow-y: auto;
+    scrollbar-width: none;
+}
+
+.modalContent {
+    width: 100%;
+    max-width: 750px;
+    max-height: calc(100% - 40px);
+    background: var(--primary-color);
+    padding: 15px 22px;
+    border-radius: 10px;
+    overflow-y: auto;
+    box-sizing: border-box;
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+.modalHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--secondary-color);
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+
+    h2 {
+        margin: 0;
+        font-size: 1.75em;
+    }
+
+    .close {
+        font-size: 1.75em;
+        cursor: pointer;
+
+        &:hover {
+            color: var(--danger-color);
+        }
+    }
+}
+
+.modalFooter {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+
+    button {
+        padding: 12px 25px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-left: 15px;
+        font-size: 1em;
+        transition: background-color 0.3s ease;
+
+        &:first-child {
+            background: var(--danger-color);
+            color: var(--primary-text-color);
+
+            &:hover {
+                background: var(--danger-color-hover);
+            }
+        }
+
+        &:last-child {
+            background: var(--highlight-color);
+            color: var(--primary-text-color);
+
+            &:hover {
+                background: var(--highlight-color-hover);
+            }
+        }
+    }
+}
+
+.modalBody {
+    display: flex;
+    width: 100%;
+    background: var(--primary-color);
+}
+
+.content {
+    width: 100%;
+    background: var(--primary-color);
+    color: var(--primary-text-color);
+    box-sizing: border-box;
+}
+
+.modalContentItem {
+    margin-bottom: 20px;
+
+    label {
+        display: block;
+        margin-bottom: 8px;
+        color: var(--primary-text-color);
+        font-size: 1em;
+    }
+
+    input[type="text"] {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid var(--secondary-color);
+        border-radius: 5px;
+        background: var(--tertiary-color);
+        color: var(--primary-text-color);
+        outline: none;
+        box-sizing: border-box;
+
+        &:focus {
+            border-color: var(--selection-color);
+        }
+
+        &:hover {
+            border-color: var(--primary-text-color);
+        }
+    }
+
+    input[type="number"] {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid var(--secondary-color);
+        border-radius: 5px;
+        background: var(--tertiary-color);
+        color: var(--primary-text-color);
+        outline: none;
+        box-sizing: border-box;
+
+        &:focus {
+            border-color: var(--selection-color);
+        }
+
+        &:hover {
+            border-color: var(--primary-text-color);
+        }
+    }
+
+    input[type="date"] {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid var(--secondary-color);
+        border-radius: 5px;
+        background: var(--tertiary-color);
+        color: var(--primary-text-color);
+        outline: none;
+        box-sizing: border-box;
+
+        &:focus {
+            border-color: var(--selection-color);
+        }
+
+        &:hover {
+            border-color: var(--primary-text-color);
+        }
+    }
+
+    textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid var(--secondary-color);
+        border-radius: 5px;
+        background: var(--tertiary-color);
+        color: var(--primary-text-color);
+        outline: none;
+        box-sizing: border-box;
+        height: 120px;
+        resize: none;
+        font-family: inherit;
+
+        &:focus {
+            border-color: var(--selection-color);
+        }
+
+        &:hover {
+            border-color: var(--primary-text-color);
+        }
+    }
+}
+
+.genresContainer {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 10px;
+    background: var(--tertiary-color);
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid var(--secondary-color);
+}
+
+.genreItem {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+
+    input[type="checkbox"] {
+        margin-right: 10px;
+        width: 15px;
+        height: 15px;
+        cursor: pointer;
+
+        &:hover+label {
+            &:hover {
+                cursor: pointer;
+            }
+        }
+    }
+
+    label {
+        display: inline-block;
+        color: var(--primary-text-color);
+        margin: 0;
+    }
+}
+
+.modalContentGroupedItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .modalContentItem {
+        width: 48%;
+    }
+}

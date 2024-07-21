@@ -196,9 +196,23 @@
                     padding: 15px;
                     border-radius: 10px;
 
+                    color: var(--primary-text-color);
+                    background-color: var(--primary-color);
+                    border: none;
+
+                    span {
+                        font-size: 1rem;
+                        font-weight: bold;
+
+                        margin-left: 10px;
+                        text-align: left;
+                    }
+
                     &:hover {
-                        background-color: var(--tertiary-color);
+                        opacity: 0.8;
+                        background-color: var(--secondary-color);
                         cursor: pointer;
+                        border-radius: 0;
                     }
                 }
             }

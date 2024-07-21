@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import propTypes from "prop-types";
 
-import { useNotification } from "../../components/Notification/NotificationProvider";
+import { useNotification } from "../../Notification/NotificationProvider";
 
 // External
 import CloseIcon from '@mui/icons-material/Close';
 
 // Api
-import CategoryApi from "../../services/api/category/CategoryApi";
+import CategoryApi from "../../../services/api/category/CategoryApi";
 
 // Styles
 import styles from "./CategoryModal.module.scss";

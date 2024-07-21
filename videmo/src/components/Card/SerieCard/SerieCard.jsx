@@ -14,7 +14,7 @@ import { Utils } from '../../../utilities/utils/Utils';
 import AniListService from '../../../services/extenal/AniListService';
 
 // Components
-import CategoryModal from '../../CategoryModal/CategoryModal';
+import CategoryModal from '../../Modal/CategoryModal/CategoryModal';
 
 // Styles
 import styles from './SerieCard.module.scss';
