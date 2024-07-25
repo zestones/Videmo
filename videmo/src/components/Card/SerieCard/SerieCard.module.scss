@@ -36,6 +36,7 @@ $card-height: 300px;
         min-width: $card-width;
         margin: 5px;
     }
+
     .inLibraryLabel,
     .episodeInfos {
         position: absolute;
@@ -61,7 +62,7 @@ $card-height: 300px;
         height: 100%;
 
         &.completed {
-            opacity: 0.6;
+            opacity: 0.9;
         }
 
         .cardImage {
