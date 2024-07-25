@@ -11,7 +11,7 @@ import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 
 // Components
 import Tooltip from "../../Tooltip/Tooltip";
-import CategoryModal from "../../CategoryModal/CategoryModal";
+import CategoryModal from "../../Modal/CategoryModal/CategoryModal";
 
 // Services
 import TrackApi from "../../../services/api/track/TrackApi";

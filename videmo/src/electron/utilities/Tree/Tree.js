@@ -267,7 +267,7 @@ class Tree {
                 const entryStats = fs.statSync(fullPath);
                 tree.content.push(this.#retrieveLocalTree(fullPath, entryStats));
             }
-        } else {
+        } else if (this.folderManager.isVideoFile(entryPath)) {
             tree.name = path.basename(entryPath);
             tree.type = this.type.FILE;
             tree.modified = stats.mtimeMs; // Modification time in milliseconds

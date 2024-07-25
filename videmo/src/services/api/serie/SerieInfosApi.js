@@ -11,4 +11,9 @@ export default class SerieInfosApi {
     updateSerieInfos(link, infos) {
         return makeRequest("/update/serie-infos/", { link: link, infos: infos });
     }
+
+    // read all the genres registered in the database 
+    readGenres() {
+        return makeRequest("/read/genres/");
+    }
 }

@@ -33,6 +33,12 @@ class SerieInfosDAO {
         return { ...serieInfos, genres: serieGenres };
     }
 
+    // Get all genres
+    async getGenres() {
+        const sql = `SELECT * FROM Genre`;
+        return await this.queryExecutor.executeAndFetchAll(sql);
+    }
+
     async #getSerieInfosBySerieId(serieId) {
         const sql = `SELECT * FROM SerieInfos WHERE serie_id = ?`;
         const params = [serieId];
@@ -44,7 +50,7 @@ class SerieInfosDAO {
     async updateSerieTotalEpisodes(serieId, numberOfEpisodes) {
         const sql = `UPDATE SerieInfos SET number_of_episodes = ? WHERE serie_id = ?`;
         const params = [numberOfEpisodes, serieId];
-        
+
         await this.queryExecutor.executeAndCommit(sql, params);
     }
 
@@ -61,7 +67,7 @@ class SerieInfosDAO {
 
         // We check if an entry exists
         const serieInfoExists = await this.#getSerieInfosBySerieId(serieId);
-        
+
         // If it does not exist, we create it
         if (!serieInfoExists) await this.createSerieInfo(serieId, infos);
         else await this.#updateSerieInfos(serieId, infos);
