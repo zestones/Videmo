@@ -18,9 +18,10 @@ import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import LoopIcon from '@mui/icons-material/Loop';
 
 // Api 
+import FolderManager from '../../utilities/folderManager/FolderManager';
 import SerieInfosApi from '../../services/api/serie/SerieInfosApi';
-import SerieApi from '../../services/api/serie/SerieApi';
 import AniList from '../../services/extenal/AniListService';
+import SerieApi from '../../services/api/serie/SerieApi';
 
 // Components
 import CategoryModal from '../Modal/CategoryModal/CategoryModal';
@@ -39,11 +40,13 @@ function DetailsContainer({ serie, calledFrom }) {
 	const [showEditModal, setShowEditModal] = useState(false);
 	const [isLoading, setIsLoading] = useState(true);
 	const [serieData, setSerieData] = useState(serie);
+	const [isImageHovered, setIsImageHovered] = useState(false);
 
 	// Initialization of the notification hook
 	const { showNotification } = useNotification();
 
 	// Api initialization
+	const folderManager = useMemo(() => new FolderManager(), []);
 	const serieInfosApi = useMemo(() => new SerieInfosApi(), []);
 	const serieApi = useMemo(() => new SerieApi(), []);
 	const aniList = useMemo(() => new AniList(), []);
@@ -102,6 +105,8 @@ function DetailsContainer({ serie, calledFrom }) {
 		serieApi.readSerieByLink(serie.link)
 			.then((serie) => {
 				setAlreadyInLibrary(!!serie.inLibrary);
+				console.log('Serie updated');
+				console.log(serie.image);
 				setSerieData(serie);
 				readSerieInfos();
 			})
@@ -129,12 +134,41 @@ function DetailsContainer({ serie, calledFrom }) {
 		}
 	}
 
+	const handleImageModification = async () => {
+		try {
+			const imagePath = await folderManager.selectImageFile();
+			await serieApi.updateSerieImage(serie.id, imagePath);
+			setSerieData((prev) => ({ ...prev, image: 'app:///' + imagePath }));
+		} catch (error) {
+			console.error(error);
+			showNotification('error', error.message);
+		}
+	}
 
 	return (
 		<div className={styles.detailsContainer}>
 			<DetailsContainerSkeleton isLoading={isLoading} >
 				<div className={styles.serieBackground} >
-					<img className={styles.serieImage} src={serieData.image} alt={serieData.basename} />
+					<div className={styles.imageContainer}>
+						<button
+							className={styles.imageButton}
+							onMouseEnter={() => setIsImageHovered(true)}
+							onMouseLeave={() => setIsImageHovered(false)}
+						>
+							<img
+								className={styles.serieImage}
+								src={serieData.image}
+								alt={serieData.basename}
+							/>
+
+							{isImageHovered && (
+								<div className={styles.imageHovered}>
+									<ModeEditIcon className={styles.editIcon} onClick={handleImageModification} />
+								</div>
+							)}
+						</button>
+					</div>
+
 					<div className={styles.serieFavoriteContainer}>
 						<span className={styles.serieFavoriteIcon} onClick={() => setShowCategoryModal(true)}>
 							<FavoriteIcon className={`${styles.serieFavorite} ${alreadyInLibrary ? styles.active : ''}`} />

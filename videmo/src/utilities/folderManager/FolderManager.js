@@ -102,6 +102,16 @@ class FolderManager {
         });
     }
 
+    selectImageFile() {
+        // Send a message to the main process to open a file dialog
+        window.api.send("openImageFileDialog");
+
+        // Create a promise to handle the response from window.api.receive
+        return new Promise((resolve, reject) => {
+            window.api.receive("openImageFileDialog", (data) => data.success ? resolve(data.imagePath) : reject(new Error(data.error)));
+        });
+    }
+
     /**
      * @returns {Promise<String>} A promise that resolves with the selected file path.
      */

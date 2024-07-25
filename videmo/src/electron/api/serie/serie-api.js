@@ -45,3 +45,10 @@ ipcMain.on('/read/serie/by/id/', (event, arg) => {
         .then((serie) => event.reply('/read/serie/by/id/', { success: true, data: serie }))
         .catch((err) => event.reply('/read/serie/by/id/', { success: false, error: err }));
 })
+
+// Update serie image
+ipcMain.on('/update/serie/image/', (event, arg) => {
+    new SerieDAO().updateSerieImage(arg.serieId, arg.image)
+        .then(() => event.reply('/update/serie/image/', { success: true }))
+        .catch((err) => event.reply('/update/serie/image/', { success: false, error: err }));
+})

@@ -1,10 +1,11 @@
 const QueryExecutor = require('../../sqlite/QueryExecutor');
 const DataTypesConverter = require('../../../utilities/converter/DataTypesConverter.js');
-
+const FolderManager = require('../../../utilities/folderManager/FolderManager');
 class SerieDAO {
     constructor() {
         this.queryExecutor = new QueryExecutor();
         this.dataTypesConverter = new DataTypesConverter();
+        this.folderManager = new FolderManager();
     }
 
     // Create a new serie
@@ -302,6 +303,13 @@ class SerieDAO {
     async updateSeriesInLibraryBySerieLinks(serieLinks, inLibrary) {
         const sql = `UPDATE Serie SET inLibrary = ? WHERE link IN (${serieLinks.map(() => '?').join(',')})`;
         const params = [this.dataTypesConverter.convertBooleanToInteger(inLibrary), ...serieLinks];
+        await this.queryExecutor.executeAndCommit(sql, params);
+    }
+
+    // Update serie image by ID
+    async updateSerieImage(serieId, image) {
+        const sql = `UPDATE Serie SET image = ? WHERE id = ?`;
+        const params = [this.folderManager.accessFileWithCustomProtocol(image), serieId];
         await this.queryExecutor.executeAndCommit(sql, params);
     }
 
