@@ -22,3 +22,10 @@ ipcMain.on('/update/serie-infos/', (event, arg) => {
         })
         .catch((err) => event.reply('/update/serie-infos/', { success: false, error: err }));
 })
+
+// Read all the genres registered in the database
+ipcMain.on('/read/genres/', (event, arg) => {
+    new SerieInfosDAO().getGenres()
+        .then((genres) => event.reply('/read/genres/', { success: true, data: genres }))
+        .catch((err) => event.reply('/read/genres/', { success: false, error: err }));
+})

@@ -26,4 +26,8 @@ export default class SerieApi {
     readAllSeriesByLinks(links) {
         return makeRequest("/read/all/series/by/links/", { links: links });
     }
+
+    updateSerieImage(serieId, image) {
+        return makeRequest("/update/serie/image/", { serieId: serieId, image: image });
+    }
 }

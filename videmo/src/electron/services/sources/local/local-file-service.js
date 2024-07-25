@@ -45,6 +45,20 @@ ipcMain.on('retrieveFoderCover', (event, { folderPath, coverFolder, level }) => 
 });
 
 
+ipcMain.on('openImageFileDialog', async (event) => {
+    try {
+        const result = await dialog.showOpenDialog({ properties: ['openFile'], filters: [{ name: 'Images', extensions: ['jpg', 'png', 'jpeg', 'gif', 'bmp', 'webp'] }] });
+
+        if (!result.canceled) {
+            event.reply('openImageFileDialog', { success: true, error: null, imagePath: result.filePaths[0] });
+        } else {
+            event.reply('openImageFileDialog', { success: false, error: 'No image selected', imagePath: null });
+        }
+    } catch (error) {
+        event.reply('openImageFileDialog', { success: false, error: error.message, imagePath: null });
+    }
+});
+
 // Register the 'openFolderDialog' event listener to the ipcMain module to open a folder dialog
 ipcMain.on("openFolderDialog", async (event) => {
     try {
@@ -63,8 +77,8 @@ ipcMain.on("openFolderDialog", async (event) => {
 // Register the 'createBackupFile' event listener to the ipcMain module to create a backup file
 ipcMain.on("createBackupFile", async (event) => {
     new BackupDAO().generateBackup()
-            .then(() => event.reply("createBackupFile", { success: true, error: null }))
-            .catch((error) => event.reply("createBackupFile", { success: false, error: error.message }));
+        .then(() => event.reply("createBackupFile", { success: true, error: null }))
+        .catch((error) => event.reply("createBackupFile", { success: false, error: error.message }));
 });
 
 // Register the 'restoreBackupFile' event listener to the ipcMain module to restore a backup file
@@ -79,8 +93,8 @@ ipcMain.on("restoreBackupFile", async (event) => {
     // Get the path of the backup file
     const filePath = result.filePaths[0];
     new BackupDAO().restoreBackup(filePath)
-            .then(() => event.reply("restoreBackupFile", { success: true, error: null }))
-            .catch((error) => event.reply("restoreBackupFile", { success: false, error: error.message }));
+        .then(() => event.reply("restoreBackupFile", { success: true, error: null }))
+        .catch((error) => event.reply("restoreBackupFile", { success: false, error: error.message }));
 });
 
 // Register the 'retrieveFilesInFolder' event listener to the ipcMain module to get the files in a folder

@@ -28,7 +28,7 @@ function History() {
 
     // State initialization
     const [history, setHistory] = useState([]);
-    const [searchValue, setSearchValue] = useState("");
+    const [filteredHistory, setFilteredHistory] = useState([]);
     const [selectedEntry, setSelectedEntry] = useState(null);
     const [showSerieDisplay, setShowSerieDisplay] = useState(false);
     const [showVideoPlayer, setShowVideoPlayer] = useState(false);
@@ -38,7 +38,10 @@ function History() {
     // Fetch the history
     useEffect(() => {
         historyApi.retrieveAllEpisodeAndSerieHistory()
-            .then((data) => setHistory(data))
+            .then((data) => {
+                setHistory(data);
+                setFilteredHistory(data);
+            })
             .catch((error) => console.error(error));
     }, [historyApi]);
 
@@ -92,23 +95,28 @@ function History() {
         setEpisodes([]);
     };
 
-    const filterHistory = sortManager.filterByKeyword(searchValue, history, 'serie.basename', 'serie.name', 'episode.name');
+    const handleSearch = (value) => {
+        if (value === "") setFilteredHistory(history);
+        else setFilteredHistory(filterHistory(value));
+    }
+
+    const filterHistory = (value) => sortManager.filterByKeyword(value, history, 'serie.basename', 'serie.name', 'episode.name');
 
     return (
         <div className={styles.history}>
             <Header
                 title="Historique"
                 onBack={selectedEntry && showSerieDisplay ? handleBackClick : null}
-                onSearch={setSearchValue}
+                onDynamiqueSearch={handleSearch}
                 onDelete={() => historyApi.deleteAllHistory().then(() => setHistory([]))}
             />
 
             {!showSerieDisplay ? (
                 <>
                     <div className={styles.content}>
-                        {filterHistory.map((entry, index) => {
+                        {filteredHistory.map((entry, index) => {
                             const currentDateLabel = utils.getDateFromTimestamp(entry.history.timestamp);
-                            const prevEntry = index > 0 ? filterHistory[index - 1] : null;
+                            const prevEntry = index > 0 ? filteredHistory[index - 1] : null;
                             const prevDateLabel = prevEntry ? utils.getDateFromTimestamp(prevEntry.history.timestamp) : null;
                             const isNewDateLabel = currentDateLabel !== prevDateLabel;
 

@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect } from "react";
 import PropTypes from "prop-types";
+
 import { useNotification } from "../../Notification/NotificationProvider";
 
 // External
@@ -10,7 +11,7 @@ import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 
 // Components
 import Tooltip from "../../Tooltip/Tooltip";
-import CategoryModal from "../../CategoryModal/CategoryModal";
+import CategoryModal from "../../Modal/CategoryModal/CategoryModal";
 
 // Services
 import TrackApi from "../../../services/api/track/TrackApi";

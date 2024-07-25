@@ -45,7 +45,7 @@ function makeRequest(route, data) {
     window.api.send(route, data);
 
     return new Promise((resolve, reject) => {
-        window.api.receive(route, (response) => response.success ? resolve(response.data) : reject(response.error));
+        window.api.receive(route, (response) => response.success ? resolve(response.data) : reject(new Error(response.error)));
     });
 }
 
