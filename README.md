@@ -12,3 +12,11 @@ Videmo is a lightweight software for watching and managing videos. It is designe
 
 - Database schema: [https://dbdiagram.io/d/Videmo-64b65fdf02bd1c4a5e433fa6](https://dbdiagram.io/d/Videmo-64b65fdf02bd1c4a5e433fa6)
 - SonarCloud: [https://sonarcloud.io/project/overview?id=zestones_Videmo](https://sonarcloud.io/project/overview?id=zestones_Videmo)
+
+## Contributing
+
+In case you encounter any issues, first checkout the logs of the application before creating an issue.
+The logs can be found in the following locations:
+- Windows: `%APPDATA%\Videmo\logs`
+- ~~Linux: `~/.config/Videmo/logs`~~
+- ~~MacOS: `~/Library/Application Support/Videmo/logs`~~
