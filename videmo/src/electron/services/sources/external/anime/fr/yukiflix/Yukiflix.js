@@ -15,12 +15,12 @@ class Yukiflix {
     }
 
     async getPopularAnime(page) {
-        const response = await axios.get(`${this.baseUrl}/catalog/top/${page}`);
+        const response = await axios.get(`${this.baseUrl}/catalog/?page=${page}`);
 
         const $ = cheerio.load(response.data);
         const animeList = [];
 
-        $('div#animes-grid-movies div.anime-card').each((_, element) => {
+        $('div.animes-grid div.anime-card').each((_, element) => {
             const anime = {
                 link: $(element).find('div.anime-card a').attr('href'),
                 image: $(element).find('div.anime-card div.card-head img.card-img').attr('src'),
@@ -33,11 +33,11 @@ class Yukiflix {
     }
 
     async getRecentAnime(page) {
-        const response = await axios.get(`${this.baseUrl}/catalog/year/${this.currentYear}/${page}`);
+        const response = await axios.get(`${this.baseUrl}/catalog/?sort=date&page=${page}`);
         const $ = cheerio.load(response.data);
         const animeList = [];
 
-        $('div#animes-grid-movies div.anime-card').each((_, element) => {
+        $('div.animes-grid div.anime-card').each((_, element) => {
             const anime = {
                 link: $(element).find('div.anime-card a').attr('href'),
                 image: $(element).find('div.anime-card div.card-head img.card-img').attr('src'),
@@ -53,12 +53,12 @@ class Yukiflix {
         const response = await axios.get(`${this.baseUrl}/${url}`);
         const $ = cheerio.load(response.data);
 
-        const seasons = $('div.seasons div.anime-card.s');
+        const seasons = $('div.seasons div.season-card');
         const seasonsObj = {};
 
         seasons.each((_, season) => {
             const seasonName = $(season).find('h3.card-title').text().trim();
-            const seasonUrl = $(season).find('a').attr('href').replace('/vf/', '/vostfr/');
+            const seasonUrl = $(season).find('a').attr('href')?.replace('/vf/', '/vostfr/');
             seasonsObj[seasonName] = {
                 url: this.baseUrl + seasonUrl,
                 episodes: [],
@@ -87,7 +87,6 @@ class Yukiflix {
         await Promise.all(seasonPromises);
 
         const episodes = [];
-
         for (const season in seasonsObj) {
             seasonsObj[season].episodes.forEach(episode => {
                 episodes.push({
@@ -98,7 +97,7 @@ class Yukiflix {
             });
         }
 
-        return episodes;
+        return episodes.reverse();
     }
 
     async scrapeEpisodes(url) {

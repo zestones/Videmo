@@ -7,6 +7,7 @@ Videmo is a lightweight software for watching and managing videos. It is designe
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=zestones_Videmo&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=zestones_Videmo)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=zestones_Videmo&metric=bugs)](https://sonarcloud.io/summary/new_code?id=zestones_Videmo)
 [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=zestones_Videmo&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=zestones_Videmo)
+[![CodeFactor](https://www.codefactor.io/repository/github/zestones/videmo/badge/main)](https://www.codefactor.io/repository/github/zestones/videmo/overview/main)
 
 ## Documentation 
 
