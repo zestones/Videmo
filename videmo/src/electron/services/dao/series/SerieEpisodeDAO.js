@@ -57,7 +57,7 @@ class SerieEpisodeDAO {
             episode.viewed = this.dataTypesConverter.convertIntegerToBoolean(episode.viewed);
             episode.bookmarked = this.dataTypesConverter.convertIntegerToBoolean(episode.bookmarked);
             return episode;
-        }).reverse();
+        }).sort((a, b) => a.name.localeCompare(b.name)).reverse();
     }
 
     // Get all episodes by a serie id
@@ -73,7 +73,7 @@ class SerieEpisodeDAO {
             episode.viewed = this.dataTypesConverter.convertIntegerToBoolean(episode.viewed);
             episode.bookmarked = this.dataTypesConverter.convertIntegerToBoolean(episode.bookmarked);
             return episode;
-        }).reverse();
+        }).sort((a, b) => a.name.localeCompare(b.name)).reverse();
     }
 
     // Get all episodes by a table of serie links
