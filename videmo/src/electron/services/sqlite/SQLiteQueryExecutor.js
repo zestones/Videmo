@@ -73,6 +73,7 @@ class SQLiteQueryExecutor {
             for (const file of filteredFiles) {
                 const filePath = path.join(this.versioning_folder, file);
                 await this.executeFile(filePath);
+                
                 console.info(`Database updated to version ${file.split("_")[0]}`);
             }
         }
