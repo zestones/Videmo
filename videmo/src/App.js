@@ -37,7 +37,7 @@ function App() {
 	const { theme } = useTheme();
 
 	const [activePage, setActivePage] = useState(Object.keys(library)[0]);
-	const navigationItems = { ...library, ...update, ...explore, ...history, ...settings };
+	const navigationItems = { ...library, ...explore, ...update, ...history, ...settings };
 
 
 	useEffect(() => {

@@ -67,6 +67,11 @@ class SerieInfosDAO {
 
         // We check if an entry exists
         const serieInfoExists = await this.#getSerieInfosBySerieId(serieId);
+        const serie = await this.serieDAO.getSerieById(serieId);
+        if (infos.basename && serie.basename !== infos.basename) {
+            await this.serieDAO.updateSerieBaseName(serieId, infos.basename);
+            if (serie.basename === serie.name) await this.serieDAO.updateSerieName(serieId, infos.basename);
+        }
 
         // If it does not exist, we create it
         if (!serieInfoExists) await this.createSerieInfo(serieId, infos);
