@@ -313,6 +313,18 @@ class SerieDAO {
         await this.queryExecutor.executeAndCommit(sql, params);
     }
 
+    async updateSerieBaseName(serieId, basename) {
+        const sql = `UPDATE Serie SET basename = ? WHERE id = ?`;
+        const params = [basename, serieId];
+        await this.queryExecutor.executeAndCommit(sql, params);
+    }
+
+    async updateSerieName(serieId, name) {
+        const sql = `UPDATE Serie SET name = ? WHERE id = ?`;
+        const params = [name, serieId];
+        await this.queryExecutor.executeAndCommit(sql, params);
+    }
+
     // Delete serie by ID
     async deleteSerieById(serieId) {
         const sql = `DELETE FROM Serie WHERE id = ?`;

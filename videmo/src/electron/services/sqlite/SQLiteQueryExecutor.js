@@ -19,19 +19,19 @@ class SQLiteQueryExecutor {
      * @returns {string} The path to the SQLite database file.
      */
     #retrieveDatabasePath() {
-        if (process.env.NODE_ENV === 'development') {
-            return path.join(__dirname, 'sql', 'videmo.db');
-        }
+        if (process.env.NODE_ENV === 'development') return path.join(__dirname, 'sql', 'videmo.db');
+        if (process.env.NODE_ENV === 'test') return path.join(__dirname, 'sql', 'videmo.test.db');
 
-        if (process.env.NODE_ENV === 'test') {
-            return path.join(__dirname, 'sql', 'videmo.test.db');
-        }
-
-        let appPath = app.getAppPath();
+        // In production, the database file is stored in the user data folder
         if (app.isPackaged) {
-            appPath = appPath.replace('\\app.asar', '');
+            const db_name = 'videmo.db';
+            const db_folder = 'db';
+
+            let db_path = path.join(app.getPath('userData'), db_folder);
+            if (!fs.existsSync(db_path)) fs.mkdirSync(db_path, { recursive: true });
+
+            return path.join(db_path, db_name);
         }
-        return path.join(appPath, 'public/videmo.db');
     }
 
     /**

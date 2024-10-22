@@ -94,7 +94,7 @@ function DetailsContainer({ serie, calledFrom }) {
 
 	useEffect(() => {
 		serieApi.readSerieByLink(serie.link)
-			.then((serie) => setAlreadyInLibrary(!!serie?.inLibrary))
+			.then((data) => setAlreadyInLibrary(!!data?.inLibrary))
 			.catch((error) => {
 				console.error(error);
 				showNotification('error', error.message)
@@ -103,11 +103,9 @@ function DetailsContainer({ serie, calledFrom }) {
 
 	const refreshSerieState = () => {
 		serieApi.readSerieByLink(serie.link)
-			.then((serie) => {
-				setAlreadyInLibrary(!!serie.inLibrary);
-				console.log('Serie updated');
-				console.log(serie.image);
-				setSerieData(serie);
+			.then((data) => {
+				setAlreadyInLibrary(!!data.inLibrary);
+				setSerieData(data);
 				readSerieInfos();
 			})
 			.catch((error) => {
@@ -121,7 +119,7 @@ function DetailsContainer({ serie, calledFrom }) {
 		try {
 			setIsLoading(true);
 			setShowOptionPanel(false);
-			const infos = await aniList.searchAnimeInfosName(serie.basename);
+			const infos = await aniList.searchAnimeInfosName(serieData.basename);
 			if (infos) {
 				if (serie.inLibrary) await serieInfosApi.updateSerieInfos(serie.link, infos);
 				setSerieData((prev) => ({ ...prev, infos: infos }));

@@ -36,7 +36,7 @@ function EditDetailsModal({ serie, onClose, onRefresh }) {
             duration: document.getElementById("duration").value,
             rating: document.getElementById("rating").value,
             release_date: document.getElementById("release_date").value,
-            title: document.getElementById("title").value,
+            basename: document.getElementById("title").value,
             genres: selectedGenres
         };
 
