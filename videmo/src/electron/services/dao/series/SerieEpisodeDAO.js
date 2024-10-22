@@ -49,7 +49,7 @@ class SerieEpisodeDAO {
         const sql = `SELECT Episode.* FROM Episode
                     INNER JOIN Track ON Episode.id = Track.episode_id
                     INNER JOIN Serie ON Serie.id = Track.serie_id
-                    WHERE Serie.link = ? ORDER BY CAST(SUBSTRING(Episode.name, 8) AS SIGNED);`;
+                    WHERE Serie.link = ?;`;
         const params = [link];
 
         const result = await this.queryExecutor.executeAndFetchAll(sql, params);
@@ -57,7 +57,7 @@ class SerieEpisodeDAO {
             episode.viewed = this.dataTypesConverter.convertIntegerToBoolean(episode.viewed);
             episode.bookmarked = this.dataTypesConverter.convertIntegerToBoolean(episode.bookmarked);
             return episode;
-        }).sort((a, b) => a.name.localeCompare(b.name)).reverse();
+        }).sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true })).reverse();
     }
 
     // Get all episodes by a serie id
@@ -65,7 +65,7 @@ class SerieEpisodeDAO {
         const sql = `SELECT Episode.* FROM Episode
                     INNER JOIN Track ON Episode.id = Track.episode_id
                     INNER JOIN Serie ON Serie.id = Track.serie_id
-                    WHERE Serie.id = ? ORDER BY CAST(SUBSTRING(Episode.name, 8) AS SIGNED);`;
+                    WHERE Serie.id = ?;`;
         const params = [serieId];
 
         const result = await this.queryExecutor.executeAndFetchAll(sql, params);
@@ -73,7 +73,7 @@ class SerieEpisodeDAO {
             episode.viewed = this.dataTypesConverter.convertIntegerToBoolean(episode.viewed);
             episode.bookmarked = this.dataTypesConverter.convertIntegerToBoolean(episode.bookmarked);
             return episode;
-        }).sort((a, b) => a.name.localeCompare(b.name)).reverse();
+        }).sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true })).reverse();
     }
 
     // Get all episodes by a table of serie links
