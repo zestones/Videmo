@@ -117,11 +117,10 @@ function CategorySettings() {
                             <ul className={styles.categoryList} {...provided.droppableProps} ref={provided.innerRef}>
                                 {categories.map((category, index) => (
                                     <Draggable key={category.name} draggableId={category.name} index={index}>
-                                        {(provided, snapshot) => (
+                                        {(provided, _) => (
                                             <CategoryCard
                                                 category={category}
                                                 provided={provided}
-                                                snapshot={snapshot}
                                                 editingCategory={editingCategory}
                                                 setEditingCategory={setEditingCategory}
                                                 handleUpdateCategory={handleUpdateCategory}
