@@ -33,7 +33,7 @@
             }
         }
 
-        label {
+        button {
             display: flex;
             align-items: center;
             cursor: pointer;
@@ -42,6 +42,13 @@
             position: relative;
             left: 17px;
 
+            background: none;
+            
+            outline: none;
+            border: none;
+            color: inherit;
+            
+            font-weight: 500;
             transition: background-color 0.3s ease-in-out;
 
             &.selectedSort {
