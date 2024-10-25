@@ -12,7 +12,7 @@ function NavItem({ entry, item, activeItem, onPageChange }) {
 
     return (
         <Tooltip title={item.label} placement="right">
-            <li
+            <button
                 className={`${styles.navItem} ${activeItem === entry ? styles.active : ""}`}
                 onClick={() => entry !== activeItem && onPageChange(entry)}
             >
@@ -20,7 +20,7 @@ function NavItem({ entry, item, activeItem, onPageChange }) {
                     {<item.icon className={styles.navIcon} />}
                     <p>{item.label}</p>
                 </div>
-            </li>
+            </button>
         </Tooltip>
     );
 }

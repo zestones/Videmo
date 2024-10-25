@@ -10,6 +10,12 @@
 
     transition: background-color 0.2s ease-in-out;
 
+    background: none;
+    border: none;
+    outline: none;
+    color: inherit;
+    padding: 0;
+
     .navIcon {
         font-size: 1.8rem;
     }
