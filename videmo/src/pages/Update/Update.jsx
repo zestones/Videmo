@@ -105,7 +105,7 @@ function Update() {
                                     entry={entry}
                                     handleSerieImageClick={handleSerieImageClick}
                                     handleSerieNameClick={handleSerieNameClick}
-                                    key={index}
+                                    key={`${entry.serie.id}-${entry.episode.id}`}
                                 />
                             )
                         })}
