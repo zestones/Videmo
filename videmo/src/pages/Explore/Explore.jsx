@@ -328,28 +328,28 @@ function Explore() {
 
                     {(!selectedExtension.local && !serie) && (
                         <div className={styles.optionsHeader}>
-                            <div
+                            <button
                                 onClick={() => handleOptionClick(EXPLORE_MODES.POPULAR)}
                                 className={`${styles.option} ${activeOption === EXPLORE_MODES.POPULAR ? styles.active : ""}`}
                             >
                                 <FavoriteIcon />
                                 <span className={styles.label}>Popular</span>
-                            </div>
-                            <div
+                            </button>
+                            <button
                                 onClick={() => handleOptionClick(EXPLORE_MODES.RECENT)}
                                 className={`${styles.option} ${activeOption === EXPLORE_MODES.RECENT ? styles.active : ""}`}
                             >
                                 <NewReleasesIcon />
                                 <span className={styles.label}>Recent</span>
-                            </div>
+                            </button>
 
-                            <div
+                            <button
                                 onClick={() => setActiveOption(EXPLORE_MODES.FILTER)}
                                 className={`${styles.option} ${activeOption === EXPLORE_MODES.FILTER ? styles.active : ""}`}
                             >
                                 <FilterListIcon />
                                 <span className={styles.label}>Filter</span>
-                            </div>
+                            </button>
                         </div>
                     )}
 
