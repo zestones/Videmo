@@ -65,7 +65,7 @@ function EditDetailsModal({ serie, onClose, onRefresh }) {
             <div className={styles.modalContent}>
                 <div className={styles.modalHeader}>
                     <h2>Edit Information</h2>
-                    <span className={styles.close} onClick={onClose}>&times;</span>
+                    <button className={styles.close} onClick={onClose}>&times;</button>
                 </div>
                 <div className={styles.modalBody}>
                     <div className={styles.content}>
