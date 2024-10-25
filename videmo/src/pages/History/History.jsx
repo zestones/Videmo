@@ -46,13 +46,11 @@ function History() {
     }, [historyApi]);
 
 
-    // Handle click on serie name to show VideoPlayer
     const handleSerieNameClick = (serie) => {
         setSelectedEntry(serie);
         setShowVideoPlayer(true);
     };
 
-    // Handle click on serie image to show SerieDisplay
     const handleSerieImageClick = (entry) => {
         trackApi.readAllEpisodesBySerieLink(entry.serie.link)
             .then((data) => setEpisodes(data))
@@ -64,7 +62,12 @@ function History() {
 
     const handleDeleteEpisodeHistory = (episode) => {
         historyApi.deleteEpisodeHistory(episode.id)
-            .then(() => setHistory(history.filter((entry) => entry.episode.id !== episode.id)))
+            .then(() => {
+                const newHistory = history.filter((entry) => entry.episode.id !== episode.id); 
+
+                setHistory(newHistory);
+                setFilteredHistory(newHistory);
+            })
             .catch((error) => console.error(error));
     };
 
@@ -108,7 +111,7 @@ function History() {
                 title="Historique"
                 onBack={selectedEntry && showSerieDisplay ? handleBackClick : null}
                 onDynamiqueSearch={handleSearch}
-                onDelete={() => historyApi.deleteAllHistory().then(() => setHistory([]))}
+                onDelete={() => historyApi.deleteAllHistory().then(() => setHistory([], setFilteredHistory([])))}
             />
 
             {!showSerieDisplay ? (
