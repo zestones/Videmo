@@ -11,9 +11,9 @@ function UpdateButton({ onClick, progress }) {
     return (
         <>
             {progress === 0 ? (
-                <div role="button" className={styles.updateButton} onClick={onClick}>
+                <button className={styles.updateButton} onClick={onClick}>
                     <SyncIcon className={styles.updateButtonIcon} />
-                </div>
+                </button>
             ) : (
                 <div className={styles.updateButtonSpinner}>
                     <span>{progress}</span>
