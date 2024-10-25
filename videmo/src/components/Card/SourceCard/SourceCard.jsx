@@ -8,7 +8,7 @@ import styles from "./SourceCard.module.scss";
 import FolderIcon from '@mui/icons-material/Folder';
 
 
-function UpdateCard({ extension, status, callback }) {
+function SourceCard({ extension, status, callback }) {
 
     return (
         <button
@@ -25,10 +25,10 @@ function UpdateCard({ extension, status, callback }) {
     )
 }
 
-UpdateCard.propTypes = {
+SourceCard.propTypes = {
     extension: PropTypes.object.isRequired,
     status: PropTypes.string.isRequired,
     callback: PropTypes.func.isRequired
 }
 
-export default UpdateCard;
+export default SourceCard;

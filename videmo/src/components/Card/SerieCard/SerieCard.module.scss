@@ -5,6 +5,7 @@ $card-height: 300px;
 
 .compact,
 .spaced {
+    text-align: left;
     position: relative;
 
     width: 100%;
@@ -19,6 +20,18 @@ $card-height: 300px;
     display: flex;
     flex-direction: column;
     overflow: hidden;
+
+    background: none;
+    padding: 0;
+
+    font: inherit;
+    color: inherit;
+    outline: none;
+
+    &:hover {
+        background: none;
+        color: inherit;
+    }
 
     &:active {
         transform: scale(0.95);
@@ -121,6 +134,7 @@ $card-height: 300px;
             animation-duration: 0.5s;
             animation-timing-function: ease-in-out;
 
+
             &.hovered {
                 display: block;
                 animation: fadeIn 0.2s ease-in-out;
@@ -182,6 +196,17 @@ $card-height: 300px;
                         top: 0;
                         right: 0;
                         border: none;
+
+                        padding: 0;
+                        background: none;
+                        font: inherit;
+                        color: inherit;
+                        outline: none;
+
+                        &:hover {
+                            background: none;
+                            color: inherit;
+                        }
 
                         input[type="checkbox"] {
                             width: 23px;

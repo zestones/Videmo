@@ -15,14 +15,14 @@ function UpdateCard({ isNewDateLabel, currentDateLabel, entry, handleSerieImageC
                 ${entry.episode.viewed ? styles.viewed : ''}
                 ${entry.episode.bookmarked ? styles.bookmarked : ''}`}
                 key={entry.episode.link}>
-                <div className={styles.serieInfo} onClick={() => handleSerieImageClick(entry)}>
+                <button className={styles.serieInfo} onClick={() => handleSerieImageClick(entry)}>
                     <img src={entry.serie.image} alt={entry.serie.name} className={styles.serieImage} />
-                </div>
+                </button>
                 <div className={styles.episodeInfos}>
                     <div className={styles.serieName}>{entry.serie.name}</div>
-                    <div className={styles.episodeName} onClick={() => handleSerieNameClick(entry)}>
+                    <button className={styles.episodeName} onClick={() => handleSerieNameClick(entry)}>
                         {entry.episode.name}
-                    </div>
+                    </button>
                 </div>
             </div>
         </>

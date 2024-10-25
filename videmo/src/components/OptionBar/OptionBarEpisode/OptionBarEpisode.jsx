@@ -52,19 +52,19 @@ function OptionBarEpisode({ serie, episodes, onClose, checked, onCheck }) {
             </div>
             <div className={styles.episodeOptionBarButtonsContainer}>
                 <Tooltip title="Marquer comme vu" placement="right">
-                    <div className={styles.episodeOptionBarButton} onClick={handleMarkAsViewed}>
+                    <button className={styles.episodeOptionBarButton} onClick={handleMarkAsViewed}>
                         <DoneAllIcon />
-                    </div>
+                    </button>
                 </Tooltip>
                 <Tooltip title="Marquer comme non vu" placement="right">
-                    <div className={styles.episodeOptionBarButton} onClick={handleMarkAsNotViewed}>
+                    <button className={styles.episodeOptionBarButton} onClick={handleMarkAsNotViewed}>
                         <RemoveDoneIcon />
-                    </div>
+                    </button>
                 </Tooltip>
                 <Tooltip title="Marquer comme favori" placement="right">
-                    <div className={styles.episodeOptionBarButton} onClick={handleMarkAsBookmarked}>
+                    <button className={styles.episodeOptionBarButton} onClick={handleMarkAsBookmarked}>
                         <BookmarkIcon />
-                    </div>
+                    </button>
                 </Tooltip>
             </div>
         </div>

@@ -44,7 +44,7 @@ function ThemeSettings() {
                         key={theme.id}
                         className={`${styles.themeCard} ${theme.name}`}
                     >
-                        <div
+                        <button
                             className={`${styles.cardContent} ${theme.is_active ? styles.active : ""}`}
                             onClick={() => updateActiveTheme(theme.id)}
                         >
@@ -63,7 +63,7 @@ function ThemeSettings() {
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </button>
                         <div className={styles.themeName}>{theme.name}</div>
                     </div>
                 ))}

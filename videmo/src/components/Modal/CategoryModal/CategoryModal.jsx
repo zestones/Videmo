@@ -110,9 +110,9 @@ function CategoryModal({ series, onClose, onRefresh, shouldUpdateSeries = false 
             <div className={styles.modalContent}>
                 <div className={styles.modalHeader}>
                     <h2 className={styles.modalTitle}>Déplacer vers une catégorie</h2>
-                    <span className={styles.modalClose} onClick={() => onClose()}>
+                    <button className={styles.modalClose} onClick={() => onClose()}>
                         <CloseIcon />
-                    </span>
+                    </button>
                 </div>
                 <div className={styles.modalBody}>
                     <div className={styles.modalCategories}>

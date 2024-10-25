@@ -36,22 +36,22 @@ function BackupSettings() {
     return (
         <div className={styles.container}>
             {error && <Notification type={error.type} message={error.message} onClose={setError} />}
-            <div className={styles.backup} onClick={handleBackupCreation}>
+            <button className={styles.backup} onClick={handleBackupCreation}>
                 <div className={styles.title}>Create Backup</div>
                 <div className={styles.description}>Create a backup of your data and download it to your computer.</div>
                 <div className={styles.action}>
                     <CloudDownloadIcon className={styles.icon} />
                     <div className={styles.actionText}>Download</div>
                 </div>
-            </div>
-            <div className={styles.restore} onClick={handleBackupRestoration}>
+            </button>
+            <button className={styles.restore} onClick={handleBackupRestoration}>
                 <div className={styles.title}>Restore Backup</div>
                 <div className={styles.description}>Restore your data from a backup file.</div>
                 <div className={styles.action}>
                     <DownloadingIcon className={styles.icon} />
                     <div className={styles.actionText}>Restore</div>
                 </div>
-            </div>
+            </button>
         </div>
     );
 }

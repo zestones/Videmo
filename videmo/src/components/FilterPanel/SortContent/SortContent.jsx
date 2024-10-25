@@ -67,12 +67,12 @@ function SortContent({ onFilter, currentCategory }) {
                     <div className={`${selectedSortField === sort.name && arrowClassNames()}`}>
                         {selectedSortField === sort.name && <NorthIcon />}
                     </div>
-                    <label
+                    <button
                         className={`${selectedSortField === sort.name ? styles.selectedSortField : ''}`}
                         onClick={() => handleSortOptionClick(sort.name)}
                     >
                         {sort.name}
-                    </label>
+                    </button>
                 </div>
             ))}
         </div>

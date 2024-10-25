@@ -55,7 +55,7 @@ function SerieCard({ serie, onPlayClick, onRefresh, isCalledFromExplore, isCalle
 
     return (
         <>
-            <li
+            <div
                 className={styles[displayMode.name] + (checked ? " " + styles.checked : " ") + (isCalledFromSource ? " " + styles.source : "")}
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
@@ -87,7 +87,7 @@ function SerieCard({ serie, onPlayClick, onRefresh, isCalledFromExplore, isCalle
                         className={`${styles.cardLayer} ${(isHovered || isOptionBarActive) && styles.hovered}`}>
                         <div className={styles.cardLayerContent}>
                             <span className={styles.cardOptions}>
-                                <span
+                                <button
                                     className={styles.iconContainer + " " + styles.moreIcon}
                                     style={{ display: isOptionBarActive ? "none" : "" }}
                                     onClick={(event) => {
@@ -96,8 +96,8 @@ function SerieCard({ serie, onPlayClick, onRefresh, isCalledFromExplore, isCalle
                                     }}
                                 >
                                     <LabelIcon />
-                                </span>
-                                <span
+                                </button>
+                                <button
                                     className={styles.iconContainer + " " + styles.playIcon}
                                     style={{ display: isOptionBarActive ? "none" : "" }}
                                     onClick={(event) => {
@@ -106,11 +106,11 @@ function SerieCard({ serie, onPlayClick, onRefresh, isCalledFromExplore, isCalle
                                     }}
                                 >
                                     <PlayArrowIcon />
-                                </span>
+                                </button>
                             </span>
 
                             {isCalledFromLibrary && (
-                                <span
+                                <button
                                     className={styles.iconContainer + " " + styles.checkboxIcon}
                                     onClick={(event) => {
                                         event.stopPropagation();
@@ -125,12 +125,12 @@ function SerieCard({ serie, onPlayClick, onRefresh, isCalledFromExplore, isCalle
                                             setChecked(!checked);
                                         }}
                                     />
-                                </span>
+                                </button>
                             )}
                         </div>
                     </div>
                 </div>
-            </li>
+            </div>
 
             {showCategoryModal && (
                 <CategoryModal

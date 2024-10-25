@@ -68,46 +68,46 @@ function OptionBarSerie({ series, onClose, checked, onCheck, onCategoryChange, i
                 <div className={styles.container}>
                     <div className={styles.checkbox}>
                         <input type="checkbox" checked={checked} onChange={() => onCheck()} />
-                        <span
+                        <button
                             className={styles.label}
                             onClick={() => onCheck()}
                         >
                             {series.length} Séries sélectionnées
-                        </span>
-                        <span className={styles.erase} onClick={() => onClose()}>Effacer</span>
+                        </button>
+                        <button className={styles.erase} onClick={() => onClose()}>Effacer</button>
                     </div>
 
                     <div className={styles.optionContainer}>
                         <Tooltip title="Ajouter à une catégorie" placement="top">
-                            <div className={styles.option} onClick={() => setShowCategoryModal(true)}>
+                            <button className={styles.option} onClick={() => setShowCategoryModal(true)}>
                                 <span className={styles.icon}>
                                     <LabelIcon />
                                 </span>
-                            </div>
+                            </button>
                         </Tooltip>
 
                         <Tooltip title="Marquer comme vu" placement="top">
-                            <div className={styles.option} onClick={() => handleViewedState(true)}>
+                            <button className={styles.option} onClick={() => handleViewedState(true)}>
                                 <span className={styles.icon}>
                                     <DoneAllIcon />
                                 </span>
-                            </div>
+                            </button>
                         </Tooltip>
 
                         <Tooltip title="Marquer comme non vu" placement="top" >
-                            <div className={styles.option} onClick={() => handleViewedState(false)}>
+                            <button className={styles.option} onClick={() => handleViewedState(false)}>
                                 <span className={styles.icon}>
                                     <RemoveDoneIcon />
                                 </span>
-                            </div>
+                            </button>
                         </Tooltip>
 
                         <Tooltip title="Supprimer" placement="top">
-                            <div className={styles.option} onClick={() => handleDeleteFromLibrary()}>
+                            <button className={styles.option} onClick={() => handleDeleteFromLibrary()}>
                                 <span className={styles.icon}>
                                     <DeleteOutlinedIcon />
                                 </span>
-                            </div>
+                            </button>
                         </Tooltip>
                     </div>
                 </div>

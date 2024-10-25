@@ -10,11 +10,10 @@ import MenuIcon from '@mui/icons-material/Menu';
 // Styles
 import styles from "./CategoryCard.module.scss";
 
-function CategoryCard({ category, provided, snapshot, editingCategory, setEditingCategory, handleDeleteCategory, handleUpdateCategory }) {
+function CategoryCard({ category, provided, editingCategory, setEditingCategory, handleDeleteCategory, handleUpdateCategory }) {
     return (
         <li
             ref={provided.innerRef}
-            snapshot={snapshot}
             {...provided.draggableProps}
             {...provided.dragHandleProps}
             className={styles.categoryItem}
@@ -50,7 +49,6 @@ function CategoryCard({ category, provided, snapshot, editingCategory, setEditin
 CategoryCard.propTypes = {
     category: PropTypes.object.isRequired,
     provided: PropTypes.object.isRequired,
-    snapshot: PropTypes.object.isRequired,
     editingCategory: PropTypes.object,
     setEditingCategory: PropTypes.func.isRequired,
     handleDeleteCategory: PropTypes.func.isRequired,
