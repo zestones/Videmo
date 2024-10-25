@@ -105,7 +105,7 @@ function Update() {
                                     entry={entry}
                                     handleSerieImageClick={handleSerieImageClick}
                                     handleSerieNameClick={handleSerieNameClick}
-                                    key={entry.episode.link}
+                                    key={index}
                                 />
                             )
                         })}
