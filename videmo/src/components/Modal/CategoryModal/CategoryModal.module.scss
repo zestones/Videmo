@@ -62,6 +62,10 @@
 
                 transition: color 0.3s ease;
 
+                background: none;
+                outline: none;
+                border: none;
+
                 &:hover {
                     color: var(--danger-color);
                 }
