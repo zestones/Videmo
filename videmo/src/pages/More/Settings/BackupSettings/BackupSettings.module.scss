@@ -12,6 +12,11 @@
     transition: background-color 0.3s ease;
     color: var(--text-color);
 
+    border: none;
+    outline: none;
+    text-align: left;
+    font-weight: 500;
+
     &:hover {
         background-color: var(--primary-text-color);
         color: var(--tertiary-text-color);
