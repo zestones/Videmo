@@ -168,18 +168,18 @@ function DetailsContainer({ serie, calledFrom }) {
 					</div>
 
 					<div className={styles.serieFavoriteContainer}>
-						<span className={styles.serieFavoriteIcon} onClick={() => setShowCategoryModal(true)}>
+						<button className={styles.serieFavoriteIcon} onClick={() => setShowCategoryModal(true)}>
 							<FavoriteIcon className={`${styles.serieFavorite} ${alreadyInLibrary ? styles.active : ''}`} />
-						</span>
+						</button>
 						<p className={styles.serieFavoriteLabel}>Ajouter à ma liste</p>
 					</div>
 				</div>
 
 				<div className={styles.options}>
-					<span className={styles.optionsIcon} onClick={toogleOptionPanel}>
+					<button className={styles.optionsIcon} onClick={toogleOptionPanel}>
 						{showOptionPanel ? <CloseIcon className={styles.icon} /> :
 							<MoreHorizIcon className={styles.icon} />}
-					</span>
+					</button>
 					<div className={`${styles.optionsPanel} ${showOptionPanel ? styles.active : ''}`}>
 						<div className={styles.optionsPanelContent}>
 							<button className={styles.optionsPanelItem} onClick={() => setShowCategoryModal(true)}>
