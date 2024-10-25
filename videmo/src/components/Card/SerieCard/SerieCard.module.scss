@@ -3,22 +3,6 @@ $card-border-radius: 4px;
 $card-width: 250px;
 $card-height: 300px;
 
-button {
-    background: none;
-    border: none;
-    padding: 0;
-    font: inherit;
-    color: inherit;
-    cursor: pointer;
-    outline: none;
-
-    &:hover {
-        background: none;
-        color: inherit;
-    }
-}
-
-
 .compact,
 .spaced {
     text-align: left;
@@ -36,6 +20,18 @@ button {
     display: flex;
     flex-direction: column;
     overflow: hidden;
+
+    background: none;
+    padding: 0;
+
+    font: inherit;
+    color: inherit;
+    outline: none;
+
+    &:hover {
+        background: none;
+        color: inherit;
+    }
 
     &:active {
         transform: scale(0.95);
@@ -138,6 +134,7 @@ button {
             animation-duration: 0.5s;
             animation-timing-function: ease-in-out;
 
+
             &.hovered {
                 display: block;
                 animation: fadeIn 0.2s ease-in-out;
@@ -199,6 +196,17 @@ button {
                         top: 0;
                         right: 0;
                         border: none;
+
+                        padding: 0;
+                        background: none;
+                        font: inherit;
+                        color: inherit;
+                        outline: none;
+
+                        &:hover {
+                            background: none;
+                            color: inherit;
+                        }
 
                         input[type="checkbox"] {
                             width: 23px;
