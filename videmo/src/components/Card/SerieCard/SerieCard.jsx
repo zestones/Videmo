@@ -36,6 +36,8 @@ function SerieCard({ serie, onPlayClick, onRefresh, isCalledFromExplore, isCalle
     // Context initialization
     const { displayMode } = useDisplayMode();
 
+    const memoizedSeries = useMemo(() => [serie], [serie]);
+
     const handleCloseModal = () => {
         setShowCategoryModal(false);
     }
@@ -70,7 +72,6 @@ function SerieCard({ serie, onPlayClick, onRefresh, isCalledFromExplore, isCalle
                 )}
 
                 <div className={`${styles.cardContent} ${(isSerieCompleted() || ((isCalledFromExplore || isCalledFromSource) && serie.inLibrary)) && styles.completed}`}>
-
                     <span className={styles.imgContainer}>
                         <img
                             className={`${styles.cardImage} ${imageLoaded ? styles.imageLoaded : ''}`}
@@ -82,8 +83,7 @@ function SerieCard({ serie, onPlayClick, onRefresh, isCalledFromExplore, isCalle
                     </span>
                     <p className={styles.cardTitle}>{utils.constructTitle(serie)}</p>
 
-                    <div
-                        className={`${styles.cardLayer} ${(isHovered || isOptionBarActive) && styles.hovered}`}>
+                    <div className={`${styles.cardLayer} ${(isHovered || isOptionBarActive) && styles.hovered}`}>
                         <div className={styles.cardLayerContent}>
                             <span className={styles.cardOptions}>
                                 <button
@@ -133,7 +133,7 @@ function SerieCard({ serie, onPlayClick, onRefresh, isCalledFromExplore, isCalle
 
             {showCategoryModal && (
                 <CategoryModal
-                    series={[serie]}
+                    series={memoizedSeries}
                     onClose={handleCloseModal}
                     onRefresh={onRefresh}
                     shouldUpdateSeries={isCalledFromExplore || isCalledFromSource}
