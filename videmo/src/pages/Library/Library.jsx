@@ -170,7 +170,9 @@ function Library() {
         }
     }
 
-    const filterFolders = sortManager.filterByKeyword(searchValue, filteredSeries || subSeries, 'basename', 'name');
+    const filterFolders = useMemo(() => {
+        return sortManager.filterByKeyword(searchValue, filteredSeries || subSeries, 'basename', 'name');
+    }, [searchValue, filteredSeries, subSeries, sortManager]);
 
     const handleSearch = (value) => {
         setSearchValue(value);
