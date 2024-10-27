@@ -57,6 +57,7 @@ function SerieCard({ serie, onPlayClick, onRefresh, isCalledFromExplore, isCalle
     return (
         <>
             <div
+                role="button"
                 className={styles[displayMode.name] + (checked ? " " + styles.checked : " ") + (isCalledFromSource ? " " + styles.source : "")}
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
