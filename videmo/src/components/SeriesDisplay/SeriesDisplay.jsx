@@ -53,7 +53,7 @@ function SeriesDisplay({ serie, linkedSeries, onPlayClick, onRefresh, calledFrom
 
     // checked episodes initialization
     const [checkedEpisodes, setCheckedEpisodes] = useState([]);
-
+    
     useEffect(() => {
         if (document.getElementById('categoryModal')) return;
 
@@ -231,11 +231,10 @@ function SeriesDisplay({ serie, linkedSeries, onPlayClick, onRefresh, calledFrom
 
         return classname;
     };
+
     return (
         <div className={styles.sourceContent}>
-            {serie && (
-                <DetailsContainer serie={serie} calledFrom={calledFrom} />
-            )}
+            {serie && <DetailsContainer serie={serie} calledFrom={calledFrom} />}
 
             <div ref={containerRef} className={containerClassName()}>
                 {(linkedSeries.length > 0) && (linkedSeries.map((linkedSerie, index) => (
@@ -290,38 +289,33 @@ function SeriesDisplay({ serie, linkedSeries, onPlayClick, onRefresh, calledFrom
             </div>
 
             {isOptionBarActive && (
-                    <OptionBarSerie
-                        series={linkedSeries.filter((_, index) => checkedSeries[index])}
-                        onClose={handleCloseOptionBar}
-                        checked={checkAllSeries}
-                        onCheck={handleCheckAllSeries}
-                        onCategoryChange={onRefresh}
-                        isCalledFromExplore={calledFrom === EXPLORE_STRING || calledFrom === SOURCE_STRING}
-                    />
-                )
-            }
+                <OptionBarSerie
+                    series={linkedSeries.filter((_, index) => checkedSeries[index])}
+                    onClose={handleCloseOptionBar}
+                    checked={checkAllSeries}
+                    onCheck={handleCheckAllSeries}
+                    onCategoryChange={onRefresh}
+                    isCalledFromExplore={calledFrom === EXPLORE_STRING || calledFrom === SOURCE_STRING}
+                />
+            )}
 
-            {
-                isEpisodeOptionBarActive && (
-                    <OptionBarEpisode
-                        serie={serie}
-                        episodes={episodes.filter((_, index) => checkedEpisodes[index])}
-                        onClose={handleCloseOptionBarEpisode}
-                        checked={checkAllEpisodes}
-                        onCheck={handleCheckAllEpisode}
-                    />
-                )
-            }
+            {isEpisodeOptionBarActive && (
+                <OptionBarEpisode
+                    serie={serie}
+                    episodes={episodes.filter((_, index) => checkedEpisodes[index])}
+                    onClose={handleCloseOptionBarEpisode}
+                    checked={checkAllEpisodes}
+                    onCheck={handleCheckAllEpisode}
+                />
+            )}
 
-            {
-                openVideoPlayer && (
-                    <VideoPlayer
-                        episode={resumeEpisode}
-                        startTime={!resumeEpisode.played_time ? 0 : resumeEpisode.played_time}
-                        onCloseVideoPlayer={handleCloseVideoPlayer}
-                    />
-                )
-            }
+            {openVideoPlayer && (
+                <VideoPlayer
+                    episode={resumeEpisode}
+                    startTime={!resumeEpisode.played_time ? 0 : resumeEpisode.played_time}
+                    onCloseVideoPlayer={handleCloseVideoPlayer}
+                />
+            )}
         </div >
     );
 }

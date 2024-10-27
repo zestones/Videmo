@@ -68,13 +68,7 @@ function CategoryModal({ series, onClose, onRefresh, shouldUpdateSeries = false 
                 setCheckedCategories(updatedCheckedCategories);
             })
             .catch((error) => showNotification("error", error.message));
-    
-    // No need to add series as the condition categories is enough to trigger the effect
-    // ! DO NOT ADD SERIES TO THE DEPENDENCY ARRAY !
-    // ! Adding the series will cause unwanted re-renders and the new checked-Categories will be lost
-    // Checking if the series is empty is enough to ensure that the effect is triggered *only* when the categories change
-    // and the categories change only when the component is mounted
-    }, [categoryApi, categories, updateCheckedCategories, showNotification]);
+    }, [categoryApi, categories, updateCheckedCategories, showNotification, series]);
 
 
     const handleCategoryChange = (e, categoryId) => {
