@@ -13,7 +13,7 @@ import styles from './Navigation.module.scss';
 function Navigation({ navItems, activePage, onPageChange }) {
 
     const [dynamicComponent, setDynamicComponent] = useState(null);
-    const { notification, hideNotification } = useNotification();
+    const { notification } = useNotification();
 
     useEffect(() => {
         // Get the active page object
@@ -50,7 +50,6 @@ function Navigation({ navItems, activePage, onPageChange }) {
                         type={notification.type}
                         message={notification.message}
                         closable={notification.closable}
-                        onClose={hideNotification}
                     />
                 )}
                 {dynamicComponent}

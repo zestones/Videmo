@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 
 // External
@@ -12,19 +12,23 @@ import CloseIcon from '@mui/icons-material/Close';
 import CircularProgress from '@mui/material/CircularProgress';
 
 
+// Contexts
+import { useNotification } from './NotificationProvider';
+
 // Styles
 import styles from './Notification.module.scss';
 
 
-function Notification({ type, message, closable, onClose }) {
+function Notification({ type, message, closable }) {
+    const { hideNotification } = useNotification();
+    const timerRef = useRef(null);
 
     useEffect(() => {
-        if (!closable) return;
-        const timer = setTimeout(() => {
-            onClose(null);
-        }, 5000);
-        return () => clearTimeout(timer);
-    }, [onClose, closable]);
+        if (!closable) return; 
+        timerRef.current = setTimeout(hideNotification, 5000);
+        return () => clearTimeout(timerRef.current);
+    }, [closable, hideNotification]);
+    
 
 
     let icon = null;
@@ -59,7 +63,9 @@ function Notification({ type, message, closable, onClose }) {
                 aria-label="close"
                 color="inherit"
                 size="small"
-                onClick={() => closable && onClose(null)}
+                onClick={() => {
+                    if (closable) hideNotification();
+                }}
                 className={styles.closeButton}
             >
                 {closable && <CloseIcon className={styles.closeIcon} fontSize="inherit" color="inherit" />}
@@ -71,8 +77,7 @@ function Notification({ type, message, closable, onClose }) {
 Notification.propTypes = {
     type: PropTypes.oneOf(['error', 'warning', 'success', 'loading']).isRequired,
     message: PropTypes.string.isRequired,
-    closable: PropTypes.bool,
-    onClose: PropTypes.func,
+    closable: PropTypes.bool
 };
 
 export default Notification;

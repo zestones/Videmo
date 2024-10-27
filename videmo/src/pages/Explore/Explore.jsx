@@ -313,7 +313,7 @@ function Explore() {
 
     return (
         <>
-            {error && <Notification message={error.message} type={error.type} onClose={setError} />}
+            {error && <Notification message={error.message} type={error.type} />}
             {!selectedExtension ? (
                 <Source handleSelectedExtension={setSelectedExtension} />
             ) : (

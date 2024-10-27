@@ -35,7 +35,7 @@ function BackupSettings() {
 
     return (
         <div className={styles.container}>
-            {error && <Notification type={error.type} message={error.message} onClose={setError} />}
+            {error && <Notification type={error.type} message={error.message} />}
             <button className={styles.backup} onClick={handleBackupCreation}>
                 <div className={styles.title}>Create Backup</div>
                 <div className={styles.description}>Create a backup of your data and download it to your computer.</div>

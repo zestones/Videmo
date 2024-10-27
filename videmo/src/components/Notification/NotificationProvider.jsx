@@ -9,13 +9,13 @@ const NotificationProvider = ({ children }) => {
         setNotification({ type, message, closable });
     }, []); // Only recompute when type, message or closable changes
 
-    const hideNotification = () => {
+    const hideNotification = useCallback(() => {
         setNotification(null);
-    };
+    }, []);
 
     const contextValue = useMemo(() => {
         return { notification, showNotification, hideNotification };
-    }, [notification, showNotification]); // Only recompute when notification changes
+    }, [hideNotification, notification, showNotification]); // Only recompute when notification changes
 
     return (
         <NotificationContext.Provider
