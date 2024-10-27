@@ -51,6 +51,9 @@ function DetailsContainer({ serie, calledFrom }) {
 	const serieApi = useMemo(() => new SerieApi(), []);
 	const aniList = useMemo(() => new AniList(), []);
 
+	// Memoized values
+	const memoizedSerieData = useMemo(() => [serieData], [serieData]);
+	
 	const readSerieInfos = useCallback(async () => {
 		try {
 			setIsLoading(true);
@@ -232,7 +235,7 @@ function DetailsContainer({ serie, calledFrom }) {
 			</DetailsContainerSkeleton>
 			{showCategoryModal && (
 				<CategoryModal
-					series={[serieData]}
+					series={memoizedSerieData}
 					onClose={() => setShowCategoryModal(false)}
 					onRefresh={refreshSerieState}
 					shouldUpdateSeries={calledFrom === EXPLORE_STRING || calledFrom === SOURCE_STRING}
