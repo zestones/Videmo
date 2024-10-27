@@ -47,22 +47,35 @@ function CategoryModal({ series, onClose, onRefresh, shouldUpdateSeries = false 
         const existingEntryIndex = checkedCategories.findIndex((element) => element.category.id === category.id);
         const seriesForCategory = series.filter(s => data[s.link].includes(category.id));
 
-        if (existingEntryIndex === -1) checkedCategories.push({ flag, category, serie: seriesForCategory });
-        else checkedCategories[existingEntryIndex].serie = seriesForCategory;
+        if (existingEntryIndex === -1) {
+            return [...checkedCategories, { flag, category, serie: seriesForCategory }];
+        } else {
+            return checkedCategories.map((entry, index) =>
+                index === existingEntryIndex
+                    ? { ...entry, serie: seriesForCategory, flag }
+                    : entry
+            );
+        }
     }, [determineFlag]);
 
     useEffect(() => {
+        if (series.length === 0) return;
+
         categoryApi.readSerieCategoryIdsBySerieLinkArray(series.map((s) => s.link))
             .then((data) => {
-                let checkedCategories = [];
-                categories.forEach((category) => {
-                    updateCheckedCategories(category, data, series, checkedCategories);
-                });
-
-                setCheckedCategories(checkedCategories)
+                let updatedCheckedCategories = [];
+                categories.forEach((category) => updatedCheckedCategories = updateCheckedCategories(category, data, series, updatedCheckedCategories));
+                setCheckedCategories(updatedCheckedCategories);
             })
             .catch((error) => showNotification("error", error.message));
-    }, [categoryApi, series, FLAGS, categories, showNotification, updateCheckedCategories]);
+    
+    // No need to add series as the condition categories is enough to trigger the effect
+    // ! DO NOT ADD SERIES TO THE DEPENDENCY ARRAY !
+    // ! Adding the series will cause unwanted re-renders and the new checked-Categories will be lost
+    // Checking if the series is empty is enough to ensure that the effect is triggered *only* when the categories change
+    // and the categories change only when the component is mounted
+    }, [categoryApi, categories, updateCheckedCategories, showNotification]);
+
 
     const handleCategoryChange = (e, categoryId) => {
         const isChecked = e.target.checked;
@@ -81,7 +94,7 @@ function CategoryModal({ series, onClose, onRefresh, shouldUpdateSeries = false 
         setCheckedCategories(newCategories);
     };
 
-    const handleAddToCategory = async () => {
+    const handleAddToCategory = useCallback(async () => {
         try {
             onClose();
             await categoryApi.addSerieToCategories(series, checkedCategories, shouldUpdateSeries);
@@ -92,7 +105,7 @@ function CategoryModal({ series, onClose, onRefresh, shouldUpdateSeries = false 
             showNotification("error", error.message)
             console.error(error);
         }
-    };
+    }, [categoryApi, series, checkedCategories, shouldUpdateSeries, onClose, onRefresh, showNotification]);
 
     const retrieveDisplayedCheckboxClass = (categoryId) => {
         const category = checkedCategories.find((element) => element.category.id === categoryId);

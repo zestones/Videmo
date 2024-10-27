@@ -109,7 +109,7 @@ function CategorySettings() {
 
     return (
         <>
-            {error && <Notification type={error.type} message={error.message} onClose={setError} />}
+            {error && <Notification type={error.type} message={error.message} />}
             <DragDropContext onDragEnd={handleDragEnd}>
                 {!isLoading && (
                     <Droppable droppableId="droppable">

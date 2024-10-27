@@ -36,9 +36,8 @@ function SerieCard({ serie, onPlayClick, onRefresh, isCalledFromExplore, isCalle
     // Context initialization
     const { displayMode } = useDisplayMode();
 
-    const handleCloseModal = (notification) => {
+    const handleCloseModal = () => {
         setShowCategoryModal(false);
-        if (notification) showNotification(notification.type, notification.message);
     }
 
     const handleAddToCategory = () => {
