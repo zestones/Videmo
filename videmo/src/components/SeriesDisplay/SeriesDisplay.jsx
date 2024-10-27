@@ -289,8 +289,7 @@ function SeriesDisplay({ serie, linkedSeries, onPlayClick, onRefresh, calledFrom
                 )}
             </div>
 
-            {
-                isOptionBarActive && (
+            {isOptionBarActive && (
                     <OptionBarSerie
                         series={linkedSeries.filter((_, index) => checkedSeries[index])}
                         onClose={handleCloseOptionBar}
