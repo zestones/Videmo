@@ -19,17 +19,14 @@ const HistoryCard = ({ entry, isNewDateLabel, currentDateLabel, serieTime, handl
         <>
             {isNewDateLabel && <p className={styles.dateLabel}>{currentDateLabel}</p>}
             <div className={styles.historyCard}>
-                <img
-                    className={styles.cover}
-                    src={entry.serie.image}
-                    alt={entry.serie.name}
-                    onClick={() => handleSerieImageClick(entry)}
-                />
+                <button className={styles.cover} onClick={() => handleSerieImageClick(entry)}>
+                    <img className={styles.img} src={entry.serie.image} alt={entry.serie.name} />
+                </button>
                 <div className={styles.info}>
-                    <h2 className={styles.title} onClick={() => handleSerieImageClick(entry)}>
+                    <button className={styles.title} onClick={() => handleSerieImageClick(entry)}>
                         {utils.constructTitle(entry.serie)}
-                    </h2>
-                    <p className={styles.episodeName} onClick={() => handleSerieNameClick(entry)}>{entry.episode.name}</p>
+                    </button>
+                    <button className={styles.episodeName} onClick={() => handleSerieNameClick(entry)}>{entry.episode.name}</button>
                     <p className={styles.episodeTime}> - {serieTime} </p>
                 </div>
                 <DeleteOutlineIcon className={styles.deleteIcon} onClick={() => handleDeleteEpisodeHistory(entry.episode)} />
