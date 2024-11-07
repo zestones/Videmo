@@ -66,8 +66,6 @@ ipcMain.on("openFolderDialog", async (event) => {
 
         if (!result.canceled) {
             event.reply("openFolderDialog", { success: true, error: null, folderPath: result.filePaths[0] });
-        } else {
-            event.reply("openFolderDialog", { success: false, error: "No folder selected", folderPath: null });
         }
     } catch (error) {
         event.reply("openFolderDialog", { success: false, error: error.message, folderPath: null });
