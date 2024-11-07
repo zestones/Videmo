@@ -8,6 +8,7 @@ import { useNotification } from "../../Notification/NotificationProvider";
 // External
 import LabelIcon from '@mui/icons-material/Label';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import FolderIcon from '@mui/icons-material/Folder';
 
 // Services
 import { Utils } from '../../../utilities/utils/Utils';
@@ -70,6 +71,12 @@ function SerieCard({ serie, onPlayClick, onRefresh, isCalledFromExplore, isCalle
                             {serie?.infos?.total_viewed_episodes} / {serie?.infos?.number_of_episodes}
                         </span>
                     </div>
+                )}
+
+                {(isCalledFromLibrary && serie.extension.local) && (
+                    <span className={styles.localLabel}>
+                        <FolderIcon className={styles.localIcon} />
+                    </span>
                 )}
 
                 <div className={`${styles.cardContent} ${(isSerieCompleted() || ((isCalledFromExplore || isCalledFromSource) && serie.inLibrary)) && styles.completed}`}>
