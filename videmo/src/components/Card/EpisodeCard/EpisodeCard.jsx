@@ -54,6 +54,7 @@ function EpisodeCard({ serie, episode, setEpisodes, checked, setChecked, exactly
     };
 
     const handleCloseVideoPlayer = (playedTime, finished) => {
+        finished = finished || currentEpisode.viewed;
         setOpenVideoPlayer(false);
         if (finished) return handleViewedClick(true);
         updateCurrentEpisode(null, playedTime);
