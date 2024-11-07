@@ -33,6 +33,13 @@
                 color: var(--selection-color);
                 font-weight: bold;
                 cursor: pointer;
+
+                background: none;
+                outline: none;
+                border: none;
+                padding: 0;
+
+                text-align: left;
             }
 
             .editInput {
@@ -105,6 +112,8 @@
 
     border-radius: 4px;
     background-color: var(--primary-color);
+    width: 100%;
+    padding: 0;
 
     &:hover {
         cursor: pointer;
@@ -119,6 +128,7 @@
 
         margin-right: 20px;
         padding: 10px;
+        color: var(--primary-text-color);
     }
 
     .addSource {

@@ -107,7 +107,7 @@ function SourceSettings() {
                             ) : (
                                 <p className={styles.sourceName}>{extension.name}</p>
                             )}
-                            <p className={styles.sourcePath} onClick={() => updateExtensionPath(extension.id)}>{extension.link}</p>
+                            <button className={styles.sourcePath} onClick={() => updateExtensionPath(extension.id)}>{extension.link}</button>
                         </div>
                         <div className={styles.sourceEdit}>
                             {editingExtension?.id !== extension.id ? (
@@ -129,10 +129,10 @@ function SourceSettings() {
 
             <hr className={styles.separator} />
 
-            <div className={styles.dropdownFooter} onClick={selectLocalSourceFolder}>
+            <button className={styles.dropdownFooter} onClick={selectLocalSourceFolder}>
                 <CreateNewFolderOutlinedIcon className={styles.addIcon} />
                 <p className={styles.addSource}>Ajouter un dossier</p>
-            </div>
+            </button>
         </>
     );
 }
